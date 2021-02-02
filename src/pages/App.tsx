@@ -17,6 +17,7 @@ import {
   RedirectOldAddLiquidityPathStructure,
   RedirectToAddLiquidity
 } from './AddLiquidity/redirects'
+import Develop from './Develop'
 import Earn from './Earn'
 import Manage from './Earn/Manage'
 import MigrateV1 from './MigrateV1'
@@ -89,6 +90,7 @@ export default function App() {
           <TopLevelModals />
           <Web3ReactManager>
             <Switch>
+              <Route exact strict path="/develop" component={Develop} />
               <Route exact strict path="/swap" component={Swap} />
               <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} />
               <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
