@@ -17,12 +17,13 @@ const AccountBalance: FC<Props> = ({ url }: Props) => {
         .then(({ tokens }) => setTokens(tokens))
         .catch(error => console.debug('interval list fetching error', error))
     }
+     // eslint-disable-next-line
   }, [url])
 
   return (
     <div className={styles.balanceWrapper}>
       {tokens.length &&
-        tokens.map((token, index) => (
+        tokens.map((token) => (
           <div className={styles.tokenItem} key={token.chainId + token.address}>
             <img height={24} width={24} src={token.logoURI} alt={token.symbol} />
             <div className={styles.nameDiv}>
