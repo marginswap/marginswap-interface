@@ -5,7 +5,6 @@ import { useFetchListCallback } from 'hooks/useFetchListCallback'
 import EnhancedTable from 'components/AccountBalance'
 
 const Develop = () => {
-
   const lists = useAllLists()
   const [tokens, setTokens] = useState<TokenInfo[]>([])
   const fetchList = useFetchListCallback()
