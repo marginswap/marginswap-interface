@@ -20,24 +20,26 @@ const AccountBalance: FC<Props> = ({ url }: Props) => {
     // eslint-disable-next-line
   }, [url])
 
-  console.log(tokens);
+  console.log(tokens)
 
   return (
     <div className={styles.balanceWrapper}>
       <div className={styles.tokenItem}>
-
         <h3>Token Name</h3>
         <div style={{ display: 'flex', justifyContent: 'space-between', width: '50%' }}>
           <div className={styles.tooltip}>
             IR
-            <span className={styles.tooltiptext}>The Annual Interest Rate is the rate of growth of your asset if you allowed the asset to be deposited on the platform for a year. Interest rates are subject to fluctuations, either modified by the platform owner or by supply-demand mechanics of users interacting with the platform.</span>
+            <span className={styles.tooltiptext}>
+              The Annual Interest Rate is the rate of growth of your asset if you allowed the asset to be deposited on
+              the platform for a year. Interest rates are subject to fluctuations, either modified by the platform owner
+              or by supply-demand mechanics of users interacting with the platform.
+            </span>
           </div>
           <div>Balance</div>
         </div>
-
       </div>
       {tokens.length &&
-        tokens.map((token) => (
+        tokens.map(token => (
           <div className={styles.tokenItem} key={token.chainId + token.address}>
             <div style={{ display: 'flex' }}>
               <img height={24} width={24} src={token.logoURI} alt={token.symbol} />
