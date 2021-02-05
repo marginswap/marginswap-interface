@@ -41,7 +41,12 @@ const HeaderFrame = styled.div`
   width: 100%;
   top: 0;
   position: relative;
-  background: linear-gradient(180deg, rgba(52,61,118,0.9402135854341737) 0%, rgba(52,61,118,1) 55%, rgba(29,34,68,1) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(52, 61, 118, 0.9402135854341737) 0%,
+    rgba(52, 61, 118, 1) 55%,
+    rgba(29, 34, 68, 1) 100%
+  );
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding: 1rem;
   z-index: 2;
@@ -322,7 +327,11 @@ export default function Header() {
       <HeaderRow>
         <Title href=".">
           <UniIcon>
-            <img width={'24px'} src='https://marginswap.finance/wp-content/uploads/2021/01/Longitude_BC_Icon_Dark_2048px.png' alt="logo" />
+            <img
+              width={'24px'}
+              src="https://marginswap.finance/wp-content/uploads/2021/01/Longitude_BC_Icon_Dark_2048px.png"
+              alt="logo"
+            />
           </UniIcon>
         </Title>
         <HeaderLinks>
