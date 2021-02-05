@@ -1,7 +1,8 @@
 /* eslint-disable */
 import React, { useEffect, useState } from 'react';
-import { Button, createStyles, FormControlLabel, lighten, makeStyles, Paper, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, Theme, Toolbar, Typography } from '@material-ui/core';
+import { Box, Button, Collapse, createStyles, FormControlLabel, lighten, makeStyles, Paper, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Theme, Toolbar, Typography } from '@material-ui/core';
 import clsx from 'clsx';
+import { useDarkModeManager } from 'state/user/hooks';
 
 interface Data {
   img: string;
@@ -29,8 +30,6 @@ function createData(
     ir
   };
 }
-
-
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -120,7 +119,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         ))}
         <TableCell padding="default" align="right">
           Actions
-         </TableCell>
+        </TableCell>
       </TableRow>
     </TableHead>
   );
@@ -136,41 +135,35 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
       theme.palette.type === 'light'
         ? {
           color: theme.palette.secondary.main,
-          backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+          backgroundColor: lighten('#343D76', 0.85),
         }
         : {
           color: theme.palette.text.primary,
-          backgroundColor: theme.palette.secondary.dark,
+          backgroundColor: '#343D76',
         },
     title: {
       flex: '1 1 100%',
     },
+    darkMode: {
+      backgroundColor: lighten('#343D76', 0.75),
+    }
   }),
 );
 
-interface EnhancedTableToolbarProps {
-  numSelected: number;
-}
 
-const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
+const EnhancedTableToolbar = () => {
   const classes = useToolbarStyles();
-  const { numSelected } = props;
+  const [darkMode] = useDarkModeManager();
 
   return (
     <Toolbar
       className={clsx(classes.root, {
-        [classes.highlight]: numSelected > 0,
+        [classes.darkMode]: darkMode,
       })}
     >
-      {numSelected > 0 ? (
-        <Typography className={classes.title} color="inherit" variant="subtitle1" component="div">
-          {numSelected} selected
-        </Typography>
-      ) : (
-          <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-            Account Balance
-          </Typography>
-        )}
+      <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
+        Account Balance
+      </Typography>
     </Toolbar>
   );
 };
@@ -183,6 +176,8 @@ const useStyles = makeStyles((theme: Theme) =>
     paper: {
       width: '100%',
       marginBottom: theme.spacing(2),
+      borderRadius: 20,
+      overflow: 'hidden'
     },
     table: {
       minWidth: 750,
@@ -198,6 +193,18 @@ const useStyles = makeStyles((theme: Theme) =>
       top: 20,
       width: 1,
     },
+    pointer: {
+      cursor: 'pointer',
+      "&.Mui-selected": {
+        backgroundColor: lighten('#343D76', 0.85),
+        "&:hover": {
+          backgroundColor: lighten('#343D76', 0.85),
+        }
+      },
+    },
+    darkMode: {
+      backgroundColor: lighten('#343D76', 0.75),
+    }
   }),
 );
 
@@ -205,11 +212,12 @@ export default function EnhancedTable({ tokens }: any) {
   const classes = useStyles();
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<keyof Data>('coin');
-  const [selected] = useState<string[]>([]);
+  const [selected, setSelected] = useState<string[]>([]);
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [rows, setRows] = useState([createData('', '', 0, 0, 0, 0)]);
+  const [darkMode] = useDarkModeManager();
 
   useEffect(() => {
     const unique: string[] = [];
@@ -248,7 +256,7 @@ export default function EnhancedTable({ tokens }: any) {
       );
     }
 
-    // setSelected(newSelected);
+    setSelected(newSelected);
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -269,10 +277,12 @@ export default function EnhancedTable({ tokens }: any) {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar />
         <TableContainer>
           <Table
-            className={classes.table}
+            className={clsx(classes.table, {
+              [classes.darkMode]: darkMode,
+            })}
             aria-labelledby="tableTitle"
             size={dense ? 'small' : 'medium'}
             aria-label="enhanced table"
@@ -293,37 +303,58 @@ export default function EnhancedTable({ tokens }: any) {
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
-                    <TableRow
-                      hover
-                      onClick={(event) => handleClick(event, row.coin)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.borrowed}
-                      selected={isItemSelected}
-                    >
-                      <TableCell padding="checkbox" align="right">
-                        <img src={row.img} alt={row.coin} height={24} />
-                      </TableCell>
-                      <TableCell id={labelId} align="left">{row.coin}</TableCell>
-                      <TableCell align="right">{row.balance.toFixed(6)}</TableCell>
-                      <TableCell align="right">{row.available.toFixed(6)}</TableCell>
-                      <TableCell align="right" padding="none">
-                        {row.borrowed.toFixed(6)}
-                      </TableCell>
-                      <TableCell align="right">{row.ir.toFixed(6)}</TableCell>
-                      <TableCell align="right">
-                        <Button variant="text" style={{ textTransform: 'none' }} color="primary" onClick={e => e.preventDefault()}>Borrow/Repay</Button>
-                        <Button variant="text" style={{ textTransform: 'none' }} color="primary" onClick={e => e.preventDefault()}>Withdraw</Button>
-                        <Button variant="text" style={{ textTransform: 'none' }} color="primary" onClick={e => e.preventDefault()}>Deposit</Button>
-                      </TableCell>
-                    </TableRow>
+                    <>
+                      <TableRow
+                        hover
+                        className={classes.pointer}
+                        onClick={(event) => handleClick(event, row.coin)}
+                        role="button"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row.borrowed}
+                        selected={isItemSelected}
+                      >
+                        <TableCell padding="checkbox" align="right">
+                          <img src={row.img} alt={row.coin} height={24} />
+                        </TableCell>
+                        <TableCell id={labelId} align="left">{row.coin}</TableCell>
+                        <TableCell align="right">{row.balance.toFixed(6)}</TableCell>
+                        <TableCell align="right">{row.available.toFixed(6)}</TableCell>
+                        <TableCell align="right" padding="none">
+                          {row.borrowed.toFixed(6)}
+                        </TableCell>
+                        <TableCell align="right">{row.ir.toFixed(6)}</TableCell>
+                        <TableCell align="right">
+                          <Button variant="text" style={{ textTransform: 'none' }} color="primary" onClick={e => e.stopPropagation()}>Borrow/Repay</Button>
+                          <Button variant="text" style={{ textTransform: 'none' }} color="primary" onClick={e => e.stopPropagation()}>Withdraw</Button>
+                          <Button variant="text" style={{ textTransform: 'none' }} color="primary" onClick={e => e.stopPropagation()}>Deposit</Button>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                          <Collapse in={isItemSelected} timeout="auto" unmountOnExit>
+                            <Box margin={6}>
+                              <Typography variant="h6" gutterBottom component="div">
+                                Borrow / Lend
+                              </Typography>
+                              <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around' }}>
+                                <TextField label="Amount" type="number" />
+                                <Button type="button" color="primary" variant="contained">Confirm Transaction</Button>
+                              </div>
+                            </Box>
+                          </Collapse>
+                        </TableCell>
+                      </TableRow>
+                    </>
                   );
                 })}
             </TableBody>
           </Table>
         </TableContainer>
         <TablePagination
+          className={clsx({
+            [classes.darkMode]: darkMode
+          })}
           rowsPerPageOptions={[10, 25, 50, 100]}
           component="div"
           count={rows.length}
