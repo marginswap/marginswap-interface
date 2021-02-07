@@ -7,8 +7,8 @@ import { useTranslation } from 'react-i18next'
 
 import styled from 'styled-components'
 
-import Logo from '../../assets/svg/logo.svg'
-import LogoDark from '../../assets/svg/logo_white.svg'
+// import Logo from '../../assets/svg/logo.svg'
+// import LogoDark from '../../assets/svg/logo_white.svg'
 import { useActiveWeb3React } from '../../hooks'
 import { useDarkModeManager } from '../../state/user/hooks'
 import { useETHBalances, useAggregateUniBalance } from '../../state/wallet/hooks'
@@ -41,6 +41,12 @@ const HeaderFrame = styled.div`
   width: 100%;
   top: 0;
   position: relative;
+  background: linear-gradient(
+    180deg,
+    rgba(52, 61, 118, 0.9402135854341737) 0%,
+    rgba(52, 61, 118, 1) 55%,
+    rgba(29, 34, 68, 1) 100%
+  );
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding: 1rem;
   z-index: 2;
@@ -205,7 +211,7 @@ const StyledNavLink = styled(NavLink).attrs({
   outline: none;
   cursor: pointer;
   text-decoration: none;
-  color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.white};
   font-size: 1rem;
   width: fit-content;
   margin: 0 12px;
@@ -214,12 +220,12 @@ const StyledNavLink = styled(NavLink).attrs({
   &.${activeClassName} {
     border-radius: 12px;
     font-weight: 600;
-    color: ${({ theme }) => theme.text1};
+    color: ${({ theme }) => theme.white};
   }
 
   :hover,
   :focus {
-    color: ${({ theme }) => darken(0.1, theme.text1)};
+    color: ${({ theme }) => darken(0.1, theme.white)};
   }
 `
 
@@ -232,7 +238,7 @@ const StyledExternalLink = styled(ExternalLink).attrs({
   outline: none;
   cursor: pointer;
   text-decoration: none;
-  color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.white};
   font-size: 1rem;
   width: fit-content;
   margin: 0 12px;
@@ -241,12 +247,12 @@ const StyledExternalLink = styled(ExternalLink).attrs({
   &.${activeClassName} {
     border-radius: 12px;
     font-weight: 600;
-    color: ${({ theme }) => theme.text1};
+    color: ${({ theme }) => theme.white};
   }
 
   :hover,
   :focus {
-    color: ${({ theme }) => darken(0.1, theme.text1)};
+    color: ${({ theme }) => darken(0.1, theme.white)};
   }
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
@@ -321,7 +327,11 @@ export default function Header() {
       <HeaderRow>
         <Title href=".">
           <UniIcon>
-            <img width={'24px'} src={darkMode ? LogoDark : Logo} alt="logo" />
+            <img
+              width={'24px'}
+              src="https://marginswap.finance/wp-content/uploads/2021/01/Longitude_BC_Icon_Dark_2048px.png"
+              alt="logo"
+            />
           </UniIcon>
         </Title>
         <HeaderLinks>
