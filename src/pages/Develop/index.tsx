@@ -3,6 +3,7 @@ import { useAllLists } from 'state/lists/hooks'
 import { TokenInfo } from '@uniswap/token-lists'
 import { useFetchListCallback } from 'hooks/useFetchListCallback'
 import EnhancedTable from 'components/AccountBalance'
+import { Staking } from 'components/Staking'
 
 const Develop = () => {
   const lists = useAllLists()
@@ -23,6 +24,7 @@ const Develop = () => {
   return (
     <div style={{ width: '80%', margin: 'auto', padding: 40 }}>
       <EnhancedTable tokens={tokens || []} />
+      <Staking />
     </div>
   )
 }
