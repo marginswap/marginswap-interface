@@ -1,3 +1,4 @@
+import { GasFees } from 'components/GasFees'
 import React, { Suspense } from 'react'
 import { Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
@@ -92,6 +93,7 @@ export default function App() {
             <Switch>
               <Route exact strict path="/develop" component={Develop} />
               <Route exact strict path="/swap" component={Swap} />
+              <Route exact strict path="/gas-fees" component={GasFees} />
               <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} />
               <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
               <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
