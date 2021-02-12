@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { useAllLists } from 'state/lists/hooks'
 import { TokenInfo } from '@uniswap/token-lists'
 import { useFetchListCallback } from 'hooks/useFetchListCallback'
-import EnhancedTable from 'components/AccountBalance'
+import AccountBalanceTable from 'components/AccountBalance'
 import { Staking } from 'components/Staking'
+import BondHoldingsTable from 'components/BondHoldings'
 
 const Develop = () => {
   const lists = useAllLists()
@@ -23,7 +24,8 @@ const Develop = () => {
 
   return (
     <div style={{ width: '80%', margin: 'auto', padding: 40 }}>
-      <EnhancedTable tokens={tokens || []} />
+      <BondHoldingsTable tokens={tokens || []} />
+      <AccountBalanceTable tokens={tokens || []} />
       <Staking />
     </div>
   )

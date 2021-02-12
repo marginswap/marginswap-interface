@@ -1,12 +1,15 @@
 /* eslint-disable */
 import React, { FC, useEffect, useState } from 'react';
-import { Box, Button, Collapse, createStyles, FormControlLabel, lighten, makeStyles, Paper, Switch, 
-  Table, TableBody, TableCell, TableContainer, TablePagination, TableRow,  TextField, Theme, Typography } from '@material-ui/core';
+import {
+  Box, Button, Checkbox, Collapse, createStyles, FormControlLabel, lighten, makeStyles, Paper, Switch,
+  Table, TableBody, TableCell, TableContainer, TablePagination, TableRow, Theme,
+} from '@material-ui/core';
 import clsx from 'clsx';
 import { useDarkModeManager } from 'state/user/hooks';
 import { EnhancedTableToolbar } from '../Table/common/EnhancedTableToolbar';
 import { AccountBalanceData, getComparator, HeadCell, Order, stableSort } from '../Table/common/utils';
 import { EnhancedTableHead } from '../Table/common/EnhancedTableHead';
+import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 
 function createAccountBalanceData(
   img: string,
@@ -28,11 +31,11 @@ function createAccountBalanceData(
 
 const headCellsAccountBalance: HeadCell[] = [
   { id: 'img', numeric: false, disablePadding: true, label: '' },
-  { id: 'coin', numeric: false, disablePadding: true, label: 'Coin' },
-  { id: 'balance', numeric: true, disablePadding: false, label: 'Total Balance' },
-  { id: 'available', numeric: true, disablePadding: false, label: 'Available' },
-  { id: 'borrowed', numeric: true, disablePadding: false, label: 'Borrowed' },
-  { id: 'ir', numeric: true, disablePadding: false, label: 'Interest Rate' },
+  { id: 'coin', numeric: false, disablePadding: true, label: 'Assets' },
+  { id: 'balance', numeric: true, disablePadding: false, label: 'Total' },
+  { id: 'available', numeric: true, disablePadding: false, label: 'Length' },
+  { id: 'borrowed', numeric: true, disablePadding: false, label: 'Rate' },
+  { id: 'ir', numeric: true, disablePadding: false, label: 'Maturity' },
 ];
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -71,54 +74,110 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     darkMode: {
       backgroundColor: lighten('#343D76', 0.75),
+    },
+    arrow: {
+      transitionDuration: '0.2s',
+      transitionProperty: 'transform',
+      overflow: 'hidden',
+      "&.rotate": {
+        transform: 'rotate(90deg)',
+      }
+    },
+    coin: {
+      display: 'flex',
+      alignItems: 'center',
+      overflow: 'hidden',
+      // justifyContent: 'space-between'
+    },
+    checkbox: {
+      color: 'blue',
+      "& .MuiTypography-root": {
+        fontSize: 14,
+      }
     }
   }),
 );
 
-interface AccountBalanceCell {
+interface BondRateCell {
   row: AccountBalanceData,
   labelId: string,
+  isSelected: boolean,
 }
 
-const AccountBalanceCells: FC<AccountBalanceCell> = ({ row, labelId }: AccountBalanceCell) => (
-  <>
-    <TableCell padding="checkbox" align="right">
-      <img src={row.img} alt={row.coin} height={24} />
-    </TableCell>
-    <TableCell id={labelId} align="left">{row.coin}</TableCell>
-    <TableCell align="right">{row.balance.toFixed(6)}</TableCell>
-    <TableCell align="right">{row.available.toFixed(6)}</TableCell>
-    <TableCell align="right" padding="none">
-      {row.borrowed.toFixed(6)}
-    </TableCell>
-    <TableCell align="right">{row.ir.toFixed(6)}</TableCell>
-    <TableCell align="right">
-      <Button variant="text" style={{ textTransform: 'none' }} color="primary" onClick={e => e.stopPropagation()}>Borrow/Repay</Button>
-      <Button variant="text" style={{ textTransform: 'none' }} color="primary" onClick={e => e.stopPropagation()}>Withdraw</Button>
-      <Button variant="text" style={{ textTransform: 'none' }} color="primary" onClick={e => e.stopPropagation()}>Deposit</Button>
-    </TableCell>
-  </>
-)
+const BondHoldingsCells: FC<BondRateCell> = ({ row, labelId, isSelected }: BondRateCell) => {
+  const classes = useStyles();
+  return (
+    <>
+      <TableCell padding="checkbox" align="right">
+        <img src={row.img} alt={row.coin} height={24} />
+      </TableCell>
+      <TableCell id={labelId} align="left">
+        <div className={classes.coin}>
+          {row.coin}
+          <KeyboardArrowRightIcon className={clsx(classes.arrow, {
+            'rotate': isSelected
+          })} />
+        </div>
+      </TableCell>
+      <TableCell align="right">{row.balance.toFixed(6)}</TableCell>
+      <TableCell align="right">{row.available.toFixed(6)}</TableCell>
+      <TableCell align="right" padding="none">
+        {row.borrowed.toFixed(6)}
+      </TableCell>
+      <TableCell align="right">{row.ir.toFixed(6)}</TableCell>
+      <TableCell align="right">
+        <Button variant="text" style={{ textTransform: 'none' }} color="primary" onClick={e => e.stopPropagation()}>Withdraw</Button>
+      </TableCell>
+    </>
+  )
+}
+
+const FormCheckbox = ({ title, label }: { title: string, label: string }) => {
+  const classes = useStyles()
+  return (<FormControlLabel
+    control={
+      <Checkbox
+        name={title}
+        color="primary"
+      />
+    }
+    label={label}
+    className={classes.checkbox}
+  />
+  )
+}
 
 const AccountBalanceSecondaryCells = ({ isItemSelected }: { isItemSelected: boolean }) => (
   <TableRow>
     <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
       <Collapse in={isItemSelected} timeout="auto" unmountOnExit>
         <Box margin={6}>
-          <Typography variant="h6" gutterBottom component="div">
-            Borrow / Lend
-          </Typography>
-          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around' }}>
-            <TextField label="Amount" type="number" />
-            <Button type="button" color="primary" variant="contained">Confirm Transaction</Button>
-          </div>
+          <form style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', marginLeft: 100 }}>
+            <FormCheckbox
+              title="Daily"
+              label={`Daily ${5.89}`}
+            />
+            <FormCheckbox
+              title="Weekly"
+              label={`Weekly ${8.5}`}
+            />
+            <FormCheckbox
+              title="Monthly"
+              label={`Monthly ${12.5} %`}
+            />
+            <FormCheckbox
+              title="Yearly"
+              label={`Yearly ${15} %`}
+            />
+            <Button color="primary" variant="contained">BUY</Button>
+          </form>
         </Box>
       </Collapse>
     </TableCell>
   </TableRow>
 )
 
-export default function AccountBalanceTable({ tokens }: any) {
+export default function BondHoldingsTable({ tokens }: any) {
   const classes = useStyles();
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<keyof AccountBalanceData>('coin');
@@ -186,7 +245,7 @@ export default function AccountBalanceTable({ tokens }: any) {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar title="Account Balance" />
+        <EnhancedTableToolbar title="Bond Holdings" />
         <TableContainer>
           <Table
             className={clsx(classes.table, {
@@ -224,7 +283,7 @@ export default function AccountBalanceTable({ tokens }: any) {
                         key={row.borrowed}
                         selected={isItemSelected}
                       >
-                        <AccountBalanceCells row={row} labelId={labelId} />
+                        <BondHoldingsCells row={row} labelId={labelId} isSelected={isItemSelected} />
                       </TableRow>
                       <AccountBalanceSecondaryCells isItemSelected={isItemSelected} />
                     </>
