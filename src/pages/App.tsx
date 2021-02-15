@@ -32,6 +32,7 @@ import Swap from './Swap'
 import { OpenClaimAddressModalAndRedirectToSwap, RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
 import Vote from './Vote'
 import VotePage from './Vote/VotePage'
+import { PagerSwap } from './../components/PagerSwap/index'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -92,6 +93,7 @@ export default function App() {
           <Web3ReactManager>
             <Switch>
               <Route exact strict path="/develop" component={Develop} />
+              <Route exact strict path="/pagerSwap" component={PagerSwap} />
               <Route exact strict path="/swap" component={Swap} />
               <Route exact strict path="/gas-fees" component={GasFees} />
               <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} />
