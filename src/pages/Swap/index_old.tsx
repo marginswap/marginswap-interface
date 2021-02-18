@@ -116,13 +116,13 @@ export default function Swap() {
 
   const parsedAmounts = showWrap
     ? {
-      [Field.INPUT]: parsedAmount,
-      [Field.OUTPUT]: parsedAmount
-    }
+        [Field.INPUT]: parsedAmount,
+        [Field.OUTPUT]: parsedAmount
+      }
     : {
-      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount
-    }
+        [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+        [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount
+      }
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   const isValid = !swapInputError
@@ -210,8 +210,8 @@ export default function Swap() {
             recipient === null
               ? 'Swap w/o Send'
               : (recipientAddress ?? recipient) === account
-                ? 'Swap w/o Send + recipient'
-                : 'Swap w/ Send',
+              ? 'Swap w/o Send + recipient'
+              : 'Swap w/ Send',
           label: [
             trade?.inputAmount?.currency?.symbol,
             trade?.outputAmount?.currency?.symbol,
@@ -434,8 +434,8 @@ export default function Swap() {
                   ) : approvalSubmitted && approval === ApprovalState.APPROVED ? (
                     'Approved'
                   ) : (
-                        'Approve ' + currencies[Field.INPUT]?.symbol
-                      )}
+                    'Approve ' + currencies[Field.INPUT]?.symbol
+                  )}
                 </ButtonConfirmed>
                 <ButtonError
                   onClick={() => {
@@ -466,33 +466,33 @@ export default function Swap() {
                 </ButtonError>
               </RowBetween>
             ) : (
-                        <ButtonError
-                          onClick={() => {
-                            if (isExpertMode) {
-                              handleSwap()
-                            } else {
-                              setSwapState({
-                                tradeToConfirm: trade,
-                                attemptingTxn: false,
-                                swapErrorMessage: undefined,
-                                showConfirm: true,
-                                txHash: undefined
-                              })
-                            }
-                          }}
-                          id="swap-button"
-                          disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
-                          error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
-                        >
-                          <Text fontSize={20} fontWeight={500}>
-                            {swapInputError
-                              ? swapInputError
-                              : priceImpactSeverity > 3 && !isExpertMode
-                                ? `Price Impact Too High`
-                                : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
-                          </Text>
-                        </ButtonError>
-                      )}
+              <ButtonError
+                onClick={() => {
+                  if (isExpertMode) {
+                    handleSwap()
+                  } else {
+                    setSwapState({
+                      tradeToConfirm: trade,
+                      attemptingTxn: false,
+                      swapErrorMessage: undefined,
+                      showConfirm: true,
+                      txHash: undefined
+                    })
+                  }
+                }}
+                id="swap-button"
+                disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
+                error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
+              >
+                <Text fontSize={20} fontWeight={500}>
+                  {swapInputError
+                    ? swapInputError
+                    : priceImpactSeverity > 3 && !isExpertMode
+                    ? `Price Impact Too High`
+                    : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
+                </Text>
+              </ButtonError>
+            )}
             {showApproveFlow && (
               <Column style={{ marginTop: '1rem' }}>
                 <ProgressSteps steps={[approval === ApprovalState.APPROVED]} />
@@ -510,8 +510,8 @@ export default function Swap() {
       {!swapIsUnsupported ? (
         <AdvancedSwapDetailsDropdown trade={trade} />
       ) : (
-          <UnsupportedCurrencyFooter show={swapIsUnsupported} currencies={[currencies.INPUT, currencies.OUTPUT]} />
-        )}
+        <UnsupportedCurrencyFooter show={swapIsUnsupported} currencies={[currencies.INPUT, currencies.OUTPUT]} />
+      )}
     </>
   )
 }
