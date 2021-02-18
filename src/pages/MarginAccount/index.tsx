@@ -1,7 +1,5 @@
-import { GasFees } from 'components/GasFees'
 import { makeStyles, Theme } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
-import { PagerSwap } from './../../components/PagerSwap/index'
 import AccountBalanceTable from 'components/AccountBalance'
 import { TokenInfo } from '@uniswap/token-lists'
 import { useAllLists } from 'state/lists/hooks'
@@ -40,10 +38,6 @@ export const MarginAccount = () => {
 
   return (
     <div className={classes.wrapper}>
-      <div className={classes.section}>
-        <PagerSwap tokens={tokens} />
-        <GasFees />
-      </div>
       <div className={classes.section}>
         <TotalBalance />
         <AccountBalanceTable tokens={tokens} />
