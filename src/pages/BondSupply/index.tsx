@@ -1,28 +1,22 @@
-import { GasFees } from 'components/GasFees'
+import React, { useState, useEffect } from 'react'
 import { makeStyles, Theme } from '@material-ui/core'
-import React, { useEffect, useState } from 'react'
-import { PagerSwap } from './../../components/PagerSwap/index'
-import AccountBalanceTable from 'components/AccountBalance'
+import BondHoldingsTable from 'components/BondHoldings'
 import { TokenInfo } from '@uniswap/token-lists'
 import { useAllLists } from 'state/lists/hooks'
 import { useFetchListCallback } from './../../hooks/useFetchListCallback'
-import { TotalBalance } from 'components/TotalBalance'
-
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
     display: 'flex',
-    flexDirection: 'row',
-    paddingLeft: '20px'
-  },
-  section: {
-    display: 'flex',
     flexDirection: 'column',
-    paddingRight: '20px',
+    width: '100%',
+    padding: '0 20px',
     gap: '20px'
   }
 }))
-export const MarginAccount = () => {
+
+export const BondSupply = () => {
   const classes = useStyles()
+
   const lists = useAllLists()
   const [tokens, setTokens] = useState<TokenInfo[]>([])
 
@@ -40,14 +34,8 @@ export const MarginAccount = () => {
 
   return (
     <div className={classes.wrapper}>
-      <div className={classes.section}>
-        <PagerSwap tokens={tokens} />
-        <GasFees />
-      </div>
-      <div className={classes.section}>
-        <TotalBalance />
-        <AccountBalanceTable tokens={tokens} />
-      </div>
+      <BondHoldingsTable tokens={tokens} />
+      <div>B</div>
     </div>
   )
 }

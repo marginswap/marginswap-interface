@@ -34,6 +34,8 @@ import { OpenClaimAddressModalAndRedirectToSwap, RedirectPathToSwapOnly, Redirec
 import Vote from './Vote'
 import VotePage from './Vote/VotePage'
 import { PagerSwap } from './../components/PagerSwap/index'
+import { BondSupply } from './BondSupply/index'
+import { Staking } from './../components/Staking/index'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -94,6 +96,7 @@ export default function App() {
               <Route exact strict path="/develop" component={Develop} />
               <Route exact strict path="/pagerSwap" component={PagerSwap} />
               <Route exact strict path="/swap" component={Swap} />
+              <Route exact strict path="/stake" component={Staking} />
               <Route exact strict path="/gas-fees" component={GasFees} />
               <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} />
               <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
@@ -103,6 +106,7 @@ export default function App() {
               <Route exact strict path="/uni" component={Earn} />
               <Route exact strict path="/vote" component={Vote} />
               <Route exact strict path="/margin-account" component={MarginAccount} />
+              <Route exact strict path="/bond-supply" component={BondSupply} />
               <Route exact strict path="/create" component={RedirectToAddLiquidity} />
               <Route exact path="/add" component={AddLiquidity} />
               <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
