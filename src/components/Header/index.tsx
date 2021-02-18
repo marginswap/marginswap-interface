@@ -351,14 +351,17 @@ export default function Header() {
           >
             {t('pool')}
           </StyledNavLink>
-          <StyledNavLink id={`stake-nav-link`} to={'/uni'}>
-            UNI
+          <StyledNavLink id={`stake-nav-link`} to={'/margin-account'}>
+            Margin Account
+          </StyledNavLink>
+          <StyledNavLink id={`stake-nav-link`} to={'/bond-supply'}>
+            Bond Supply
+          </StyledNavLink>
+          <StyledNavLink id={`stake-nav-link`} to={'/stake'}>
+            Stake
           </StyledNavLink>
           <StyledNavLink id={`stake-nav-link`} to={'/vote'}>
             Vote
-          </StyledNavLink>
-          <StyledNavLink id={`stake-nav-link`} to={'/margin-account'}>
-            Margin Account
           </StyledNavLink>
           <StyledExternalLink id={`stake-nav-link`} href={'https://uniswap.info'}>
             Charts <span style={{ fontSize: '11px' }}>↗</span>

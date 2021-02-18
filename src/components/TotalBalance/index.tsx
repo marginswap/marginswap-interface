@@ -1,7 +1,7 @@
 import { Divider, makeStyles } from '@material-ui/core'
 import React, { FC } from 'react'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
     borderRadius: 20,
@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
     padding: 20,
     display: 'flex',
     flexDirection: 'column',
-    color: 'white',
+    color: 'white'
   },
   header: {
     width: '100%',
@@ -17,23 +17,21 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: 0,
     justifyContent: 'space-between',
     display: 'flex',
-    "& li": {
+    '& li': {
       display: 'inline-block'
     }
   },
-  itemRoot: {
-
-  }
-}));
+  itemRoot: {}
+}))
 
 interface BalanceProps {
-  balance?: number,
-  debt?: number,
+  balance?: number
+  debt?: number
   equity?: number
 }
 
-const BalanceItem: FC<BalanceProps> = ({ balance = 0, debt = 0, equity = 0 }) => (
-  <div style={{display: 'flex', justifyContent: 'space-between', margin: '1em 0'}}>
+const BalanceItem: FC<BalanceProps> = ({ balance = 0, debt = 0, equity = 0 }: BalanceProps) => (
+  <div style={{ display: 'flex', justifyContent: 'space-between', margin: '1em 0' }}>
     <span>{balance.toFixed(7)}</span>
     <span>{debt.toFixed(7)}</span>
     <span>{equity.toFixed(7)}</span>
@@ -41,7 +39,7 @@ const BalanceItem: FC<BalanceProps> = ({ balance = 0, debt = 0, equity = 0 }) =>
 )
 
 export const TotalBalance = () => {
-  const classes = useStyles();
+  const classes = useStyles()
   return (
     <div className={classes.root}>
       <ul className={classes.header}>
@@ -49,7 +47,7 @@ export const TotalBalance = () => {
         <li>Debt</li>
         <li>Account Equity</li>
       </ul>
-      <Divider style={{backgroundColor: 'white'}}/>
+      <Divider style={{ backgroundColor: 'white' }} />
       <BalanceItem />
     </div>
   )
