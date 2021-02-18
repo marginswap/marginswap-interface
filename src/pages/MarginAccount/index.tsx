@@ -1,4 +1,3 @@
-import { GasFees } from 'components/GasFees'
 import { makeStyles, Theme } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 import AccountBalanceTable from 'components/AccountBalance'
@@ -39,9 +38,6 @@ export const MarginAccount = () => {
 
   return (
     <div className={classes.wrapper}>
-      <div className={classes.section}>
-        <GasFees />
-      </div>
       <div className={classes.section}>
         <TotalBalance />
         <AccountBalanceTable tokens={tokens} />
