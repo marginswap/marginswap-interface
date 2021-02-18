@@ -8,10 +8,8 @@ import { SwapHoriz } from '@material-ui/icons'
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined'
 import { TokenInfo } from '@uniswap/token-lists'
-import { useFetchListCallback } from 'hooks/useFetchListCallback'
 import AppBody from 'pages/AppBody'
 import React, { FC, useEffect, useState } from 'react'
-import { useAllLists } from 'state/lists/hooks'
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
     backgroundColor: '#2c2c5b',
@@ -117,19 +115,24 @@ const useInputStyles = makeStyles(theme => ({
     margin: '6px 0',
     fontWeight: 600
   },
+  midleWrapper: {
+    height: 32,
+    display: 'flex',
+    alignItems: 'center'
+  },
   input: {
     width: '100%',
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'flex-end',
+    alignItems: 'center',
+    gap: '6px',
     '& .value': {
       width: '40%',
       fontWeight: 'bold',
       fontSize: 18,
       color: '#2c2c5b',
       fontFamily: 'sans-serif',
-      MozAppearance: 'textfield',
-      border: 'none'
+      MozAppearance: 'textfield'
     }
   },
   button: {
@@ -146,7 +149,11 @@ const useInputStyles = makeStyles(theme => ({
   },
   selectEmpty: {
     marginTop: 0,
-    color: '#2c2c5b'
+    color: '#2c2c5b',
+    '.MuiSelect-root': {
+      display: 'flex',
+      alignItems: 'center'
+    }
   },
   currencyImg: {
     margin: '4px 8px 0px 8px',
@@ -156,6 +163,11 @@ const useInputStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center'
+  },
+  swapArrow: {
+    color: '#2c2c5b',
+    position: 'absolute',
+    left: '46.5%'
   }
 }))
 
@@ -168,24 +180,11 @@ interface StakeInput {
     currency: number
     setCurrency: React.Dispatch<React.SetStateAction<number>>
   }
+  tokens: TokenInfo[]
 }
-const StakeInput: FC<StakeInput> = ({ title, balance, deal }: StakeInput) => {
+const StakeInput: FC<StakeInput> = ({ title, balance, deal, tokens }: StakeInput) => {
   const classes = useInputStyles()
   const styles = useStyles()
-
-  const lists = useAllLists()
-  const [tokens, setTokens] = useState<TokenInfo[]>([])
-  const fetchList = useFetchListCallback()
-
-  useEffect(() => {
-    const url = Object.keys(lists)[0]
-    if (url) {
-      fetchList(url, false)
-        .then(({ tokens }) => setTokens(tokens))
-        .catch(error => console.debug('interval list fetching error', error))
-    }
-    // eslint-disable-next-line
-  }, [])
 
   const handleChange = (event: any) => {
     if (!deal.setQuantity) return
@@ -206,7 +205,7 @@ const StakeInput: FC<StakeInput> = ({ title, balance, deal }: StakeInput) => {
       <div className={classes.input}>
         <input type="number" value={deal.quantity} min={0} onChange={event => handleChange(event)} className="value" />
         {deal.setQuantity && (
-          <Button variant="contained" size="small" className={classes.button} onClick={handleSetMax}>
+          <Button variant="text" size="small" className={classes.button} onClick={handleSetMax}>
             MAX
           </Button>
         )}
@@ -234,14 +233,14 @@ const CurrencyInput: FC<CurrencyInput> = ({ tokens, deal }: CurrencyInput) => {
 
   useEffect(() => {
     const unique: string[] = []
-    const Tokens = tokens.filter(({ symbol, logoURI }: any) => {
+    const tempTokens = tokens.filter(({ symbol, logoURI }: any) => {
       if (!unique.includes(symbol) && logoURI) {
         unique.push(symbol)
         return true
       }
       return false
     })
-    setNewTokens(Tokens)
+    setNewTokens(tempTokens)
   }, [tokens])
 
   const handleChangeCurrency = (event: any) => {
@@ -274,11 +273,9 @@ interface MultiplierInput {
     multiplier: number
     setMultiplier: React.Dispatch<React.SetStateAction<number>>
   }
-
-  swapCurrencies: any
 }
 
-const MultiplierInput: FC<MultiplierInput> = ({ deal, swapCurrencies }: MultiplierInput) => {
+const MultiplierInput: FC<MultiplierInput> = ({ deal }: MultiplierInput) => {
   const classes = useInputStyles()
 
   const handleChangeMultiplier = (event: any) => {
@@ -304,7 +301,6 @@ const MultiplierInput: FC<MultiplierInput> = ({ deal, swapCurrencies }: Multipli
           )
         })}
       </Select>
-      <ArrowDownwardIcon style={{ color: '#2c2c5b', float: 'right' }} onClick={swapCurrencies} />
     </FormControl>
   )
 }
@@ -363,29 +359,31 @@ function LinkTab(props: LinkTabProps) {
     />
   )
 }
-export const PagerSwap = () => {
+export const PagerSwap = ({ tokens }: { tokens: TokenInfo[] }) => {
   const classes = useStyles()
+  const styles = useInputStyles()
 
   const [currentTab, setCurrentTab] = useState(0)
-  const [quantityFrom, setQuantityFrom] = useState(0)
-  const [currencyFrom, setCurrencyFrom] = useState(1)
-  const [quantityTo, setQuantityTo] = useState(0)
-  const [currencyTo, setCurrencyTo] = useState(3)
+
+  const [spotQuantityFrom, setSpotQuantityFrom] = useState(0)
+  const [spotCurrencyFrom, setSpotCurrencyFrom] = useState(1)
+  const [spotQuantityTo, setSpotQuantityTo] = useState(0)
+  const [spotCurrencyTo, setSpotCurrencyTo] = useState(3)
+
+  const [marginQuantityFrom, setMarginQuantityFrom] = useState(0)
+  const [marginCurrencyFrom, setMarginCurrencyFrom] = useState(1)
+  const [marginQuantityTo, setMarginQuantityTo] = useState(0)
+  const [marginCurrencyTo, setMarginCurrencyTo] = useState(3)
   const [multiplier, setMultiplier] = useState(1)
 
   const handleChangeTab = (event: React.ChangeEvent<{}>, newValue: number) => {
     setCurrentTab(newValue)
   }
 
-  const handleSwapCurrencies = () => {
-    const temp = currencyFrom
-    setCurrencyFrom(currencyTo)
-    setCurrencyTo(temp)
-  }
-
   useEffect(() => {
-    setQuantityTo(quantityFrom * multiplier)
-  }, [quantityFrom, multiplier])
+    setSpotQuantityTo(spotQuantityFrom)
+    setMarginQuantityTo(marginQuantityFrom * multiplier)
+  }, [spotQuantityFrom, marginQuantityFrom, multiplier])
 
   return (
     <AppBody>
@@ -413,21 +411,59 @@ export const PagerSwap = () => {
               title="From"
               balance={0.642379}
               deal={{
-                quantity: quantityFrom,
-                setQuantity: setQuantityFrom,
-                currency: currencyFrom,
-                setCurrency: setCurrencyFrom
+                quantity: spotQuantityFrom,
+                setQuantity: setSpotQuantityFrom,
+                currency: spotCurrencyFrom,
+                setCurrency: setSpotCurrencyFrom
               }}
+              tokens={tokens}
             />
-            <MultiplierInput deal={{ multiplier, setMultiplier }} swapCurrencies={handleSwapCurrencies} />
+            <div className={styles.midleWrapper}>
+              <ArrowDownwardIcon
+                className={styles.swapArrow}
+                onClick={() => {
+                  const temp = spotCurrencyFrom
+                  setSpotCurrencyFrom(spotCurrencyTo)
+                  setSpotCurrencyTo(temp)
+                }}
+              />
+            </div>
             <StakeInput
               title="To (estimated)"
               balance={1.314269}
-              deal={{ quantity: quantityTo, currency: currencyTo, setCurrency: setCurrencyTo }}
+              deal={{ quantity: spotQuantityTo, currency: spotCurrencyTo, setCurrency: setSpotCurrencyTo }}
+              tokens={tokens}
             />
           </TabPanel>
           <TabPanel value={currentTab} index={1}>
-            Page Two
+            <StakeInput
+              title="From"
+              balance={0.642379}
+              deal={{
+                quantity: marginQuantityFrom,
+                setQuantity: setMarginQuantityFrom,
+                currency: marginCurrencyFrom,
+                setCurrency: setMarginCurrencyFrom
+              }}
+              tokens={tokens}
+            />
+            <div className={styles.midleWrapper}>
+              <MultiplierInput deal={{ multiplier, setMultiplier }} />
+              <ArrowDownwardIcon
+                className={styles.swapArrow}
+                onClick={() => {
+                  const temp = marginCurrencyFrom
+                  setMarginCurrencyFrom(marginCurrencyTo)
+                  setMarginCurrencyTo(temp)
+                }}
+              />
+            </div>
+            <StakeInput
+              title="To (estimated)"
+              balance={1.314269}
+              deal={{ quantity: marginQuantityTo, currency: marginCurrencyTo, setCurrency: setMarginCurrencyTo }}
+              tokens={tokens}
+            />
           </TabPanel>
         </AppBar>
         <div className={classes.parameters + ' ' + classes.fullWidthPair}>
