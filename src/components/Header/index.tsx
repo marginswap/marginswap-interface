@@ -406,7 +406,7 @@ export default function Header() {
                     </TYPE.white>
                   </HideSmall>
                 )}
-                UNI
+                MFI
               </UNIAmount>
               <CardNoise />
             </UNIWrapper>
