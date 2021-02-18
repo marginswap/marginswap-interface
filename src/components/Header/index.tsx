@@ -355,7 +355,7 @@ export default function Header() {
             Margin Account
           </StyledNavLink>
           <StyledNavLink id={`stake-nav-link`} to={'/bond-supply'}>
-            Bond Supply
+            Bond Lending
           </StyledNavLink>
           <StyledNavLink id={`stake-nav-link`} to={'/stake'}>
             Stake
