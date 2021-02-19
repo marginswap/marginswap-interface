@@ -1,12 +1,15 @@
 /* eslint-disable */
 import React, { FC, useEffect, useState } from 'react';
-import { Box, Button, Collapse, createStyles, FormControlLabel, lighten, makeStyles, Paper, Switch, 
-  Table, TableBody, TableCell, TableContainer, TablePagination, TableRow,  TextField, Theme, Typography } from '@material-ui/core';
+import {
+  Box, Button, Collapse, createStyles, FormControlLabel, lighten, makeStyles, Paper, Switch,
+  Table, TableBody, TableCell, TableContainer, TablePagination, TableRow, TextField, Theme, Typography
+} from '@material-ui/core';
 import clsx from 'clsx';
 import { useDarkModeManager } from 'state/user/hooks';
 import { EnhancedTableToolbar } from '../Table/common/EnhancedTableToolbar';
 import { AccountBalanceData, getComparator, HeadCell, Order, stableSort } from '../Table/common/utils';
 import { EnhancedTableHead } from '../Table/common/EnhancedTableHead';
+import { Query } from '@uniswap/sdk';
 
 function createAccountBalanceData(
   img: string,
@@ -24,6 +27,10 @@ function createAccountBalanceData(
     borrowed,
     ir
   };
+}
+
+async function getAccountBalances(traderAddress: string) {
+  return Query.getAccountBalances(traderAddress);
 }
 
 const headCellsAccountBalance: HeadCell[] = [
