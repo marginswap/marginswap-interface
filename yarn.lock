@@ -2982,8 +2982,8 @@
   "resolved" "https://registry.yarnpkg.com/@uniswap/merkle-distributor/-/merkle-distributor-1.0.1.tgz"
   "version" "1.0.1"
 
-"@uniswap/sdk@github:marginswap/marginswap-sdk":
-  "resolved" "git+ssh://git@github.com/marginswap/marginswap-sdk.git#925acd77916b8a74800d7746e3c3df39ab585c14"
+"@uniswap/sdk@github:marginswap/marginswap-sdk#vr-query":
+  "resolved" "git+ssh://git@github.com/marginswap/marginswap-sdk.git#ae76420d046f42df251850b50e8ab24f277e0717"
   "version" "3.0.3"
   dependencies:
     "@uniswap/v2-core" "^1.0.0"
