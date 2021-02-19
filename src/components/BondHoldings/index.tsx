@@ -1,15 +1,16 @@
 /* eslint-disable */
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react'
 import {
   Box, Button, Checkbox, Collapse, createStyles, FormControlLabel, lighten, makeStyles, Paper, Switch,
   Table, TableBody, TableCell, TableContainer, TablePagination, TableRow, Theme,
-} from '@material-ui/core';
-import clsx from 'clsx';
-import { useDarkModeManager } from 'state/user/hooks';
-import { EnhancedTableToolbar } from '../Table/common/EnhancedTableToolbar';
-import { AccountBalanceData, getComparator, HeadCell, Order, stableSort } from '../Table/common/utils';
-import { EnhancedTableHead } from '../Table/common/EnhancedTableHead';
-import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+} from '@material-ui/core'
+import clsx from 'clsx'
+import { useDarkModeManager } from 'state/user/hooks'
+import { EnhancedTableToolbar } from '../Table/common/EnhancedTableToolbar'
+import { AccountBalanceData, getComparator, HeadCell, Order, stableSort } from '../Table/common/utils'
+import { EnhancedTableHead } from '../Table/common/EnhancedTableHead'
+import SearchIcon from '@material-ui/icons/Search'
+import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight'
 
 function createAccountBalanceData(
   img: string,
@@ -51,6 +52,23 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     table: {
       minWidth: 750,
+    },
+    tableHeader: {
+      display: 'flex',
+      justifyContent: 'space-between'
+    },
+    searchInput: {
+      display: 'flex',
+      alignItems: 'center',
+      height: '30px',
+      margin: 'auto 17px',
+      padding: '0 4px 0 10px',
+      border: 'solid #eee 2px',
+      borderRadius: '15px',
+      background: '#f7f8fa',
+      ' & input ': {
+        border: 'none'
+      }
     },
     visuallyHidden: {
       border: 0,
@@ -186,7 +204,10 @@ export default function BondHoldingsTable({ tokens }: any) {
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [rows, setRows] = useState([createAccountBalanceData('', '', 0, 0, 0, 0)]);
+  const [searchRows, setSearchRows] = useState(rows);
+  const [search, setSearch] = useState<string>('');
   const [darkMode] = useDarkModeManager();
+
 
   useEffect(() => {
     const unique: string[] = [];
@@ -200,7 +221,17 @@ export default function BondHoldingsTable({ tokens }: any) {
       })
       .map(({ logoURI, symbol }: any) => createAccountBalanceData(logoURI, symbol, Math.random(), Math.random(), Math.random(), Math.random()))
     setRows(newTokens)
+    setSearchRows(newTokens)
   }, [tokens])
+
+  useEffect(() => {
+    const newRows: AccountBalanceData[] = [];
+    rows.map((row) => {
+      if (row.coin.toLowerCase().startsWith(search.toLowerCase())) newRows.push(row)
+    })
+    console.log(search)
+    setSearchRows(newRows)
+  }, [search])
 
   const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof AccountBalanceData) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -245,7 +276,13 @@ export default function BondHoldingsTable({ tokens }: any) {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar title="Bond Holdings" />
+        <div className={classes.tableHeader}>
+          <EnhancedTableToolbar title="Bond Holdings" />
+          <div className={classes.searchInput}>
+            <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} />
+            <SearchIcon />
+          </div>
+        </div>
         <TableContainer>
           <Table
             className={clsx(classes.table, {
@@ -261,11 +298,11 @@ export default function BondHoldingsTable({ tokens }: any) {
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
-              rowCount={rows.length}
+              rowCount={searchRows.length}
               headCells={headCellsAccountBalance}
             />
             <TableBody>
-              {stableSort(rows, getComparator(order, orderBy))
+              {stableSort(searchRows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.coin as string);
@@ -298,7 +335,7 @@ export default function BondHoldingsTable({ tokens }: any) {
           })}
           rowsPerPageOptions={[10, 25, 50, 100]}
           component="div"
-          count={rows.length}
+          count={searchRows.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onChangePage={handleChangePage}
