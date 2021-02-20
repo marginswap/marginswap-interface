@@ -1,9 +1,9 @@
 import { Button, IconButton, makeStyles } from '@material-ui/core'
 import React, { FC } from 'react'
-import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   wrapper: {
     width: '96%',
     maxWidth: 600,
@@ -13,8 +13,7 @@ const useStyles = makeStyles((theme) => ({
     color: 'white',
     padding: 20,
     display: 'flex',
-    flexDirection: 'column',
-
+    flexDirection: 'column'
   },
   header: {
     display: 'flex',
@@ -29,27 +28,26 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: 'white',
     minHeight: 20,
     alignSelf: 'center',
-    padding: 20,
+    padding: 20
   },
   actions: {
     display: 'flex',
     width: '100%',
     justifyContent: 'space-between',
     marginTop: 20,
-    "& .MuiButtonBase-root": {
+    '& .MuiButtonBase-root': {
       backgroundColor: 'white',
       textTransform: 'none',
       color: '#2c2c5b',
       borderRadius: 20,
-      width: '46%',
-
+      width: '46%'
     }
   },
   settings: {
-    maxWidth: 40,
+    maxWidth: 40
   }
-}));
-const useInputStyles = makeStyles((theme) => ({
+}))
+const useInputStyles = makeStyles(theme => ({
   wrapper: {
     borderRadius: 10,
     border: '1px solid lightgray',
@@ -57,14 +55,14 @@ const useInputStyles = makeStyles((theme) => ({
     color: '#2c2c5b',
     fontSize: 14,
     margin: '10px 0',
-    fontWeight: 600,
+    fontWeight: 600
   },
   input: {
     width: '100%',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
-    "& .value": {
+    '& .value': {
       fontWeight: 'bold',
       fontSize: 18,
       color: 'lightgray',
@@ -73,27 +71,29 @@ const useInputStyles = makeStyles((theme) => ({
   },
   button: {
     backgroundColor: '#eff3f5',
-    maxHeight: 30,
+    maxHeight: 30
   }
 }))
 interface StakeInput {
-  title: string,
+  title: string
 }
 const StakeInput: FC<StakeInput> = ({ title }: StakeInput) => {
-  const classes = useInputStyles();
+  const classes = useInputStyles()
   return (
     <div className={classes.wrapper}>
       <span>{title}</span>
       <div className={classes.input}>
-        <span className='value'>0</span>
-        <Button variant="contained" size="small" className={classes.button}>MAX</Button>
+        <span className="value">0</span>
+        <Button variant="contained" size="small" className={classes.button}>
+          MAX
+        </Button>
       </div>
     </div>
   )
 }
 
 export const Staking = () => {
-  const classes = useStyles();
+  const classes = useStyles()
   return (
     <div className={classes.wrapper}>
       <div className={classes.header}>
@@ -110,8 +110,12 @@ export const Staking = () => {
         <StakeInput title="Stake MFI" />
       </div>
       <div className={classes.actions}>
-        <Button variant="outlined" size="large">Deposit</Button>
-        <Button variant="outlined" size="large">Withdraw</Button>
+        <Button variant="outlined" size="large">
+          Deposit
+        </Button>
+        <Button variant="outlined" size="large">
+          Withdraw
+        </Button>
       </div>
     </div>
   )
