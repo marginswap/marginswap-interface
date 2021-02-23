@@ -21,7 +21,6 @@ import {
 } from '@material-ui/core'
 import clsx from 'clsx'
 import { useDarkModeManager } from 'state/user/hooks'
-import { EnhancedTableToolbar } from '../Table/common/EnhancedTableToolbar'
 import { AccountBalanceData, getComparator, HeadCell, Order, stableSort } from '../Table/common/utils'
 import { EnhancedTableHead } from '../Table/common/EnhancedTableHead'
 import SearchIcon from '@material-ui/icons/Search'
@@ -63,7 +62,10 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
       marginBottom: theme.spacing(2),
       borderRadius: 20,
-      overflow: 'hidden'
+      overflow: 'hidden',
+      '& h3': {
+        paddingLeft: '25px'
+      }
     },
     table: {
       minWidth: 750
@@ -279,7 +281,7 @@ export default function BondHoldingsTable({ tokens }: any) {
             [classes.darkMode]: darkMode
           })}
         >
-          <EnhancedTableToolbar title="Bond Holdings" />
+          <h3>Bond Holdings</h3>
           <div className={classes.searchInput}>
             <input type="text" value={search} onChange={e => setSearch(e.target.value)} />
             <SearchIcon />

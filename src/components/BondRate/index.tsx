@@ -16,7 +16,6 @@ import {
 } from '@material-ui/core'
 import clsx from 'clsx'
 import { useDarkModeManager } from 'state/user/hooks'
-import { EnhancedTableToolbar } from '../Table/common/EnhancedTableToolbar'
 import { BondRateData, getComparator, HeadCell, Order, stableSort } from '../Table/common/utils'
 import { EnhancedTableHead } from '../Table/common/EnhancedTableHead'
 
@@ -56,7 +55,10 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
       marginBottom: theme.spacing(2),
       borderRadius: 20,
-      overflow: 'hidden'
+      overflow: 'hidden',
+      '& h3': {
+        paddingLeft: '25px'
+      }
     },
     table: {
       minWidth: 750
@@ -209,7 +211,7 @@ export default function BondRateTable({ tokens }: any) {
             [classes.darkMode]: darkMode
           })}
         >
-          <EnhancedTableToolbar title="Bond Rate" />
+          <h3>Bond Rate</h3>
         </div>
         <TableContainer>
           <Table
