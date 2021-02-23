@@ -38,6 +38,15 @@ export interface AccountBalanceData {
   ir: number
 }
 
+export interface BondRateData {
+  img: string
+  coin: string
+  daily: number
+  weekly: number
+  monthly: number
+  yearly: number
+}
+
 export interface HeadCell {
   disablePadding: boolean
   id: keyof AccountBalanceData

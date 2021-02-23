@@ -204,6 +204,7 @@ export default function AccountBalanceTable({ tokens }: any) {
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
               headCells={headCellsAccountBalance}
+              withActions={true}
             />
             <TableBody>
               {stableSort(rows, getComparator(order, orderBy))
