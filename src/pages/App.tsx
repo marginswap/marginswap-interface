@@ -36,6 +36,7 @@ import VotePage from './Vote/VotePage'
 import { PagerSwap } from './../components/PagerSwap/index'
 import { BondSupply } from './BondSupply/index'
 import { Staking } from './../components/Staking/index'
+import { Analytics } from './Analytics'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -107,6 +108,7 @@ export default function App() {
               <Route exact strict path="/vote" component={Vote} />
               <Route exact strict path="/margin-account" component={MarginAccount} />
               <Route exact strict path="/bond-supply" component={BondSupply} />
+              <Route exact strict path="/analytics" component={Analytics} />
               <Route exact strict path="/create" component={RedirectToAddLiquidity} />
               <Route exact path="/add" component={AddLiquidity} />
               <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
