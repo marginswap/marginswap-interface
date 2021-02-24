@@ -4,7 +4,6 @@ import { Box, Button, Collapse, createStyles, FormControlLabel, lighten, makeSty
   Table, TableBody, TableCell, TableContainer, TablePagination, TableRow,  TextField, Theme, Typography } from '@material-ui/core';
 import clsx from 'clsx';
 import { useDarkModeManager } from 'state/user/hooks';
-import { EnhancedTableToolbar } from '../Table/common/EnhancedTableToolbar';
 import { AccountBalanceData, getComparator, HeadCell, Order, stableSort } from '../Table/common/utils';
 import { EnhancedTableHead } from '../Table/common/EnhancedTableHead';
 
@@ -44,7 +43,10 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
       marginBottom: theme.spacing(2),
       borderRadius: 20,
-      overflow: 'hidden'
+      overflow: 'hidden',
+      '& h3': {
+        paddingLeft: '25px'
+      }
     },
     table: {
       minWidth: 750,
@@ -186,7 +188,7 @@ export default function AccountBalanceTable({ tokens }: any) {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar title="Account Balance" />
+        <h3>Account Balance</h3>
         <TableContainer>
           <Table
             className={clsx(classes.table, {
@@ -204,6 +206,7 @@ export default function AccountBalanceTable({ tokens }: any) {
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
               headCells={headCellsAccountBalance}
+              withActions={true}
             />
             <TableBody>
               {stableSort(rows, getComparator(order, orderBy))

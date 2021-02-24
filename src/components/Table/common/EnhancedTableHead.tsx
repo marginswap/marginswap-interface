@@ -53,16 +53,17 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface EnhancedTableProps {
   classes: ReturnType<typeof useStyles>
-  numSelected: number
+  numSelected?: number
   onRequestSort: (event: React.MouseEvent<unknown>, property: keyof AccountBalanceData) => void
   order: Order
   orderBy: string
   rowCount: number
+  withActions: boolean
   headCells: HeadCell[]
 }
 
 export function EnhancedTableHead(props: EnhancedTableProps) {
-  const { classes, order, orderBy, onRequestSort, headCells } = props
+  const { classes, order, orderBy, onRequestSort, headCells, withActions } = props
   const createSortHandler = (property: keyof AccountBalanceData) => (event: React.MouseEvent<unknown>) => {
     onRequestSort(event, property)
   }
@@ -70,7 +71,7 @@ export function EnhancedTableHead(props: EnhancedTableProps) {
   return (
     <TableHead>
       <TableRow>
-        {headCells.map(headCell => (
+        {(headCells as HeadCell[]).map(headCell => (
           <TableCell
             key={headCell.id}
             align={headCell.numeric ? 'right' : 'left'}
@@ -91,9 +92,11 @@ export function EnhancedTableHead(props: EnhancedTableProps) {
             </TableSortLabel>
           </TableCell>
         ))}
-        <TableCell padding="default" align="right">
-          Actions
-        </TableCell>
+        {withActions && (
+          <TableCell padding="default" align="right">
+            Actions
+          </TableCell>
+        )}
       </TableRow>
     </TableHead>
   )

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { makeStyles, Theme } from '@material-ui/core'
 import BondHoldingsTable from 'components/BondHoldings'
+import BondRateTable from 'components/BondRate'
 import { TokenInfo } from '@uniswap/token-lists'
 import { useAllLists } from 'state/lists/hooks'
 import { useFetchListCallback } from './../../hooks/useFetchListCallback'
@@ -35,7 +36,7 @@ export const BondSupply = () => {
   return (
     <div className={classes.wrapper}>
       <BondHoldingsTable tokens={tokens} />
-      <div>B</div>
+      <BondRateTable tokens={tokens} />
     </div>
   )
 }

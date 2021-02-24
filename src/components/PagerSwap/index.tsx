@@ -150,13 +150,13 @@ const useInputStyles = makeStyles(theme => ({
   selectEmpty: {
     marginTop: 0,
     color: '#2c2c5b',
-    '.MuiSelect-root': {
+    '& .MuiSelect-root': {
       display: 'flex',
       alignItems: 'center'
     }
   },
   currencyImg: {
-    margin: '4px 8px 0px 8px',
+    margin: '4px 8px 4px 8px',
     height: '24px'
   },
   currencyWrapper: {
