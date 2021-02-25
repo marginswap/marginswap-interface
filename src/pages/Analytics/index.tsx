@@ -1,5 +1,8 @@
 import React from 'react'
-import { makeStyles, Paper, Theme } from '@material-ui/core'
+import { makeStyles, Theme } from '@material-ui/core'
+import { Graphics } from './Graphics'
+import { Stats } from './Stats'
+import { Wallets } from './Wallets'
 
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
@@ -7,30 +10,20 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
     width: '100%',
     padding: '0 20px',
-    gap: '20px'
-  },
-  header: {
-    margin: 0
+    gap: '20px',
+    '& h2, h3, p': {
+      marginLeft: '12px'
+    }
   },
   stats: {
     display: 'flex',
     flexDirection: 'row',
-    gap: '20px'
-  },
-  graphics: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    height: 400,
-    width: '100%',
-    borderRadius: '10px'
-  },
-  graphic: {
-    width: '48%',
-    height: '96%',
-    backgroundColor: 'grey',
-    borderRadius: '10px'
+    gap: '20px',
+    '& p': {
+      margin: '10px 0',
+      fontWeight: 600,
+      fontSize: '15px'
+    }
   }
 }))
 
@@ -39,19 +32,11 @@ export const Analytics = () => {
 
   return (
     <div className={classes.wrapper}>
-      <div className={classes.header}>
-        <h2>MarginSwap Analytics</h2>
-        <div className={classes.stats}>
-          <p>ETH Price: $1,594</p>
-          <p>Transactions (24H): 110,284</p>
-          <p>Fees (24H): $5,313,268</p>
-          <p>Total volume: 26</p>
-        </div>
-      </div>
-      <Paper className={classes.graphics}>
-        <div className={classes.graphic}></div>
-        <div className={classes.graphic}></div>
-      </Paper>
+      <h2>MarginSwap Analytics</h2>
+      <Stats ethPrice={1594} transactions={110284} fees={5313268} totalVolume={26} />
+      <Graphics />
+      <h3>Top Traders</h3>
+      <Wallets />
     </div>
   )
 }
