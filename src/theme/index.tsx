@@ -178,7 +178,7 @@ export const TYPE = {
 
 export const FixedGlobalStyle = createGlobalStyle`
 html, input, textarea, button, div, span, p, td, th, li, h6 {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', sans-serif !important;
   font-display: fallback;
 }
 @supports (font-variation-settings: normal) {
