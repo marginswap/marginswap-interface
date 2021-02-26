@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Collapse from '@material-ui/core/Collapse'
-import { WalletInfo, wallets } from './constants'
 import { makeStyles, Paper } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
@@ -13,12 +12,13 @@ export const useStyles = makeStyles(() => ({
     display: 'flex',
     justifyContent: 'space-between',
     borderBottom: '2px solid gray',
-    fontSize: '15px',
+    fontSize: '17px',
     margin: '12px 24px 0 24px',
     padding: '10px 0'
   },
   main: {
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+    borderRadius: '10px'
   },
   container: {
     display: 'flex',
@@ -28,12 +28,22 @@ export const useStyles = makeStyles(() => ({
     backgroundColor: '#2E2F3C',
     color: '#fff'
   },
-  exchange: {
-    fontSize: '14px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    margin: '2px 24px',
-    padding: '10px 0'
+  walletsList: {
+    '& li': {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      borderBottom: '3px solid transparent',
+      padding: '12px 24px',
+      '& span': {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '12px'
+      }
+    },
+    '& li:hover': {
+      borderBottom: '3px solid #80808033'
+    }
   },
   expand: {
     margin: 'auto',
@@ -45,28 +55,67 @@ export const useStyles = makeStyles(() => ({
   }
 }))
 
-const Wallet = ({ exchange, price, gasFees }: WalletInfo) => {
-  const classes = useStyles()
+interface WalletData {
+  logoURI: string
+  coin: string
+  address: number
+  volume: number
+}
+
+function createWalletData(logoURI: string, coin: string, address: number, volume: number): WalletData {
+  return {
+    logoURI,
+    coin,
+    address,
+    volume
+  }
+}
+
+const Wallet = ({ wallet, index }: { wallet: WalletData; index: number }) => {
   const numberFormat = new Intl.NumberFormat()
+  const { coin, logoURI, address, volume } = wallet
 
   return (
-    <div key={exchange} className={classes.exchange}>
-      <span>{exchange}</span>
-      <span>{price}</span>
-      <span>${numberFormat.format(gasFees)}</span>
-    </div>
+    <li key={coin}>
+      <span>
+        {index + 1}
+        <img src={logoURI} alt={coin} height={24} />
+        {coin}
+      </span>
+      <span>{address}</span>
+      <span>${numberFormat.format(volume)}</span>
+    </li>
   )
 }
 
-const WalletsInfo = ({ wallets }: { wallets: WalletInfo[] }) => {
-  return <>{wallets.map(wallet => Wallet(wallet))}</>
-}
-
-export function Wallets() {
+export const Wallets = ({ tokens }: any) => {
   const classes = useStyles()
   const [darkMode] = useDarkModeManager()
 
   const [checked, setChecked] = useState(false)
+
+  const [wallets, setWallets] = useState<WalletData[]>([createWalletData('', '', 0, 0)])
+  const [renderedWallets, setRenderedWallets] = useState<JSX.Element[] | undefined>()
+
+  useEffect(() => {
+    const unique: string[] = []
+    const newTokens = tokens
+      .filter(({ symbol, logoURI }: any) => {
+        if (!unique.includes(symbol) && logoURI) {
+          unique.push(symbol)
+          return true
+        }
+        return false
+      })
+      .map(({ logoURI, symbol, address }: any) => createWalletData(logoURI, symbol, address, Math.random() * 10000))
+    setWallets(newTokens)
+  }, [tokens])
+
+  useEffect(() => {
+    const renderResult: JSX.Element[] = []
+    wallets.map((wallet, index) => renderResult.push(Wallet({ wallet, index })))
+    setRenderedWallets(renderResult)
+  }, [wallets])
 
   const handleChange = () => {
     setChecked(prev => !prev)
@@ -80,12 +129,13 @@ export function Wallets() {
     >
       <div className={classes.container}>
         <div className={classes.root}>
+          <span>Coin</span>
           <span>Wallet</span>
           <span>Volume (24hrs)</span>
         </div>
-        <WalletsInfo wallets={wallets.slice(0, 3)} />
+        <div className={classes.walletsList}>{renderedWallets && renderedWallets.slice(0, 5)}</div>
         <Collapse in={checked}>
-          <WalletsInfo wallets={wallets.slice(3)} />
+          <div className={classes.walletsList}>{renderedWallets && renderedWallets.slice(5)}</div>
         </Collapse>
         <IconButton className={classes.expand} onClick={handleChange}>
           {checked ? <ExpandLessIcon /> : <ExpandMoreIcon />}
