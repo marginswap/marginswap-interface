@@ -3,6 +3,7 @@ import { lighten, makeStyles, Paper, Theme } from '@material-ui/core'
 import clsx from 'clsx'
 import { useDarkModeManager } from 'state/user/hooks'
 import { Graphic } from 'components/Graphic'
+import { firstChartState, secondChartState } from './constants'
 
 const useStyles = makeStyles((theme: Theme) => ({
   darkMode: {
@@ -29,8 +30,8 @@ export const Graphics = () => {
         [classes.darkMode]: darkMode
       })}
     >
-      <Graphic />
-      <Graphic />
+      <Graphic state={firstChartState} />
+      <Graphic state={secondChartState} />
     </Paper>
   )
 }
