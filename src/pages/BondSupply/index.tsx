@@ -5,6 +5,7 @@ import BondRateTable from 'components/BondRate'
 import { TokenInfo } from '@uniswap/token-lists'
 import { useAllLists } from 'state/lists/hooks'
 import { useFetchListCallback } from './../../hooks/useFetchListCallback'
+
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
     display: 'flex',
@@ -27,7 +28,10 @@ export const BondSupply = () => {
     const url = Object.keys(lists)[0]
     if (url) {
       fetchList(url, false)
-        .then(({ tokens }) => setTokens(tokens))
+        .then(({ tokens }) => {
+          setTokens(tokens)
+          console.log(tokens)
+        })
         .catch(error => console.debug('interval list fetching error', error))
     }
     // eslint-disable-next-line
