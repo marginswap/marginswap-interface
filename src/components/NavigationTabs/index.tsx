@@ -37,7 +37,7 @@ const StyledNavLink = styled(NavLink).attrs({
 
   &.${activeClassName} {
     border-radius: 12px;
-    font-weight: 500;
+    font-weight: 200;
     color: ${({ theme }) => theme.text1};
   }
 

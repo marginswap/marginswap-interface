@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 
 import styled from 'styled-components'
 
-// import Logo from '../../assets/svg/logo.svg'
+import Logo from '../../assets/images/Logo_BC_Icon_White_4096px.png'
 // import LogoDark from '../../assets/svg/logo_white.svg'
 import { useActiveWeb3React } from '../../hooks'
 import { useDarkModeManager } from '../../state/user/hooks'
@@ -221,7 +221,7 @@ const StyledNavLink = styled(NavLink).attrs({
   &.${activeClassName} {
     border-radius: 12px;
     font-weight: 600;
-    color: ${({ theme }) => theme.white};
+    color: ${({ theme }) => theme.advancedBG};
   }
 
   :hover,
@@ -328,11 +328,7 @@ export default function Header() {
       <HeaderRow>
         <Title href=".">
           <UniIcon>
-            <img
-              width={'24px'}
-              src="https://marginswap.finance/wp-content/uploads/2021/01/Longitude_BC_Icon_Dark_2048px.png"
-              alt="logo"
-            />
+            <img width={'24px'} src={Logo} alt="logo" />
           </UniIcon>
         </Title>
         <HeaderLinks>
