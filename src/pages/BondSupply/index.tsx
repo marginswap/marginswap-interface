@@ -10,8 +10,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
     display: 'flex',
     flexDirection: 'column',
-    width: '100%',
-    padding: '0 20px',
+    width: '75%',
+    paddingRight: '20px',
     gap: '20px'
   }
 }))

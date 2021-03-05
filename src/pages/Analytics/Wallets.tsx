@@ -56,32 +56,23 @@ export const useStyles = makeStyles(() => ({
 }))
 
 interface WalletData {
-  logoURI: string
-  coin: string
   address: number
   volume: number
 }
 
-function createWalletData(logoURI: string, coin: string, address: number, volume: number): WalletData {
+function createWalletData(address: number, volume: number): WalletData {
   return {
-    logoURI,
-    coin,
     address,
     volume
   }
 }
 
-const Wallet = ({ wallet, index }: { wallet: WalletData; index: number }) => {
+const Wallet = ({ wallet }: { wallet: WalletData; index: number }) => {
   const numberFormat = new Intl.NumberFormat()
-  const { coin, logoURI, address, volume } = wallet
+  const { address, volume } = wallet
 
   return (
-    <li key={coin}>
-      <span>
-        {index + 1}
-        <img src={logoURI} alt={coin} height={24} />
-        {coin}
-      </span>
+    <li key={address}>
       <span>{address}</span>
       <span>${numberFormat.format(volume)}</span>
     </li>
@@ -94,7 +85,7 @@ export const Wallets = ({ tokens }: any) => {
 
   const [checked, setChecked] = useState(false)
 
-  const [wallets, setWallets] = useState<WalletData[]>([createWalletData('', '', 0, 0)])
+  const [wallets, setWallets] = useState<WalletData[]>([createWalletData(0, 0)])
   const [renderedWallets, setRenderedWallets] = useState<JSX.Element[] | undefined>()
 
   useEffect(() => {
@@ -107,7 +98,7 @@ export const Wallets = ({ tokens }: any) => {
         }
         return false
       })
-      .map(({ logoURI, symbol, address }: any) => createWalletData(logoURI, symbol, address, Math.random() * 10000))
+      .map(({ address }: any) => createWalletData(address, Math.random() * 10000))
     setWallets(newTokens)
   }, [tokens])
 
@@ -129,7 +120,6 @@ export const Wallets = ({ tokens }: any) => {
     >
       <div className={classes.container}>
         <div className={classes.root}>
-          <span>Coin</span>
           <span>Wallet</span>
           <span>Volume (24hrs)</span>
         </div>
