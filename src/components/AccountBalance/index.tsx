@@ -24,7 +24,7 @@ import clsx from 'clsx'
 import { useDarkModeManager } from 'state/user/hooks'
 import { AccountBalanceData, getComparator, HeadCell, Order, stableSort } from '../Table/common/utils'
 import { EnhancedTableHead } from '../Table/common/EnhancedTableHead'
-import { MarginAccount } from '@uniswap/sdk/src/index'
+//import { MarginAccount } from '@uniswap/sdk/src/index'
 
 function createAccountBalanceData(
   img: string,
@@ -44,9 +44,9 @@ function createAccountBalanceData(
   }
 }
 
-async function getAccountBalances(traderAddress: string) {
+/* async function getAccountBalances(traderAddress: string) {
   return MarginAccount.getAccountBalances(traderAddress);
-}
+} */
 
 const headCellsAccountBalance: HeadCell[] = [
   { id: 'img', numeric: false, disablePadding: true, label: '' },

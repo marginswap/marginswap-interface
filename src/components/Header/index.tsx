@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 
 import styled from 'styled-components'
 
-import Logo from '../../assets/images/Logo_BC_Icon_White_4096px.png'
+import Logo from '../../assets/images/Union.svg'
 // import LogoDark from '../../assets/svg/logo_white.svg'
 import { useActiveWeb3React } from '../../hooks'
 import { useDarkModeManager } from '../../state/user/hooks'
@@ -19,7 +19,7 @@ import { TYPE } from '../../theme'
 
 import { YellowCard } from '../Card'
 import { Moon, Sun } from 'react-feather'
-import Menu from '../Menu'
+//import Menu from '../Menu'
 
 import Row, { RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
@@ -33,8 +33,7 @@ import UniBalanceContent from './UniBalanceContent'
 import usePrevious from '../../hooks/usePrevious'
 
 const HeaderFrame = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 120px;
+  display: flex;
   align-items: center;
   justify-content: space-between;
   align-items: center;
@@ -42,13 +41,7 @@ const HeaderFrame = styled.div`
   width: 100%;
   top: 0;
   position: relative;
-  background: linear-gradient(
-    180deg,
-    rgba(52, 61, 118, 0.9402135854341737) 0%,
-    rgba(52, 61, 118, 1) 55%,
-    rgba(29, 34, 68, 1) 100%
-  );
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background: initial;
   padding: 1rem;
   z-index: 2;
   ${({ theme }) => theme.mediaWidth.upToMedium`
@@ -121,10 +114,11 @@ const AccountElement = styled.div<{ active: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: ${({ theme, active }) => (!active ? theme.bg1 : theme.bg3)};
-  border-radius: 12px;
+  background: #4255ff;
+  border-radius: 19px;
   white-space: nowrap;
   width: 100%;
+  color: #e0e0e0;
   cursor: pointer;
 
   :focus {
@@ -134,11 +128,13 @@ const AccountElement = styled.div<{ active: boolean }>`
 
 const UNIAmount = styled(AccountElement)`
   color: white;
-  padding: 4px 8px;
-  height: 36px;
+  padding: 4px 16px;
+  width: 87px;
+  height: 37px;
   font-weight: 500;
-  background-color: ${({ theme }) => theme.bg3};
-  background: radial-gradient(174.47% 188.91% at 1.84% 0%, #ff007a 0%, #2172e5 100%), #edeef2;
+  background: #9906fe;
+  border-radius: 19px;
+  justify-content: center;
 `
 
 const UNIWrapper = styled.span`
@@ -186,11 +182,20 @@ const Title = styled.a`
   pointer-events: auto;
   justify-self: flex-start;
   margin-right: 12px;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 22px;
+  color: ${({ theme }) => theme.text1};
+  text-decoration: none;
+  gap: 14px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     justify-self: center;
-  `};
+    `};
   :hover {
     cursor: pointer;
+  }
+  span {
+    padding-bottom: 4px;
   }
 `
 
@@ -208,20 +213,23 @@ const StyledNavLink = styled(NavLink).attrs({
 })`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: left;
-  border-radius: 3rem;
   outline: none;
   cursor: pointer;
   text-decoration: none;
-  color: ${({ theme }) => theme.white};
+  color: ${({ theme }) => theme.text2};
   font-size: 1rem;
+  height: 40px;
+  line-height: 40px;
   width: fit-content;
   margin: 0 12px;
   font-weight: 500;
 
   &.${activeClassName} {
-    border-radius: 12px;
     font-weight: 600;
-    color: ${({ theme }) => theme.advancedBG};
+    color: ${({ theme }) => theme.text1};
+    border-bottom-width: 4px;
+    border-bottom-style: solid;
+    border-bottom-color: ${({ theme }) => theme.blue4};
   }
 
   :hover,
@@ -325,12 +333,13 @@ export default function Header() {
       <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
         <UniBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
       </Modal>
+      <Title href=".">
+        <UniIcon>
+          <img width={'33px'} src={Logo} alt="logo" />
+        </UniIcon>
+        <span>Marginswap</span>
+      </Title>
       <HeaderRow>
-        <Title href=".">
-          <UniIcon>
-            <img width={'24px'} src={Logo} alt="logo" />
-          </UniIcon>
-        </Title>
         <HeaderLinks>
           <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
             {t('swap')}
@@ -405,7 +414,9 @@ export default function Header() {
           <StyledMenuButton onClick={() => toggleDarkMode()}>
             {darkMode ? <Moon size={20} /> : <Sun size={20} />}
           </StyledMenuButton>
-          <Menu />
+          {
+            //<Menu />
+          }
         </HeaderElementWrap>
       </HeaderControls>
     </HeaderFrame>

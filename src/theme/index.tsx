@@ -1,4 +1,4 @@
-import { transparentize } from 'polished'
+//import { transparentize } from 'polished'
 import React, { useMemo } from 'react'
 import styled, {
   ThemeProvider as StyledComponentsThemeProvider,
@@ -42,7 +42,7 @@ export function colors(darkMode: boolean): Colors {
 
     // text
     text1: darkMode ? '#FFFFFF' : '#000000',
-    text2: darkMode ? '#C3C5CB' : '#565A69',
+    text2: darkMode ? '#D0D0D0' : '#565A69',
     text3: darkMode ? '#6C7284' : '#888D9B',
     text4: darkMode ? '#565A69' : '#C3C5CB',
     text5: darkMode ? '#2C2F36' : '#EDEEF2',
@@ -57,6 +57,7 @@ export function colors(darkMode: boolean): Colors {
     //specialty colors
     modalBG: darkMode ? 'rgba(0,0,0,.425)' : 'rgba(0,0,0,0.3)',
     advancedBG: darkMode ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.6)',
+    testBG: darkMode ? 'rgba(50, 50, 50, 0.25)' : 'rgba(255,255,255,0.6)',
 
     //primary colors
     primary1: darkMode ? '#2172E5' : '#ff007a',
@@ -66,7 +67,7 @@ export function colors(darkMode: boolean): Colors {
     primary5: darkMode ? '#153d6f70' : '#FDEAF1',
 
     // color text
-    primaryText1: darkMode ? '#6da8ff' : '#ff007a',
+    primaryText1: darkMode ? '#E0E0E0' : '#ff007a',
 
     // secondary colors
     secondary1: darkMode ? '#2172E5' : '#ff007a',
@@ -80,10 +81,10 @@ export function colors(darkMode: boolean): Colors {
     green1: '#27AE60',
     yellow1: '#FFE270',
     yellow2: '#F3841E',
-    blue1: '#2172E5'
+    blue1: '#2172E5',
 
     // dont wanna forget these blue yet
-    // blue4: darkMode ? '#153d6f70' : '#C4D9F8',
+    blue4: darkMode ? '#9906FE;' : '#C4D9F8'
     // blue5: darkMode ? '#153d6f70' : '#EBF4FF',
   }
 }
@@ -226,7 +227,6 @@ body {
   min-height: 100vh;
   background-position: 0 -30vh;
   background-repeat: no-repeat;
-  background-image: ${({ theme }) =>
-    `radial-gradient(50% 50% at 50% 50%, ${transparentize(0.9, '#423189')} 0%, ${transparentize(1, theme.bg1)} 100%)`};
+  background-image: ${({ theme }) => `#212121;`};
 }
 `

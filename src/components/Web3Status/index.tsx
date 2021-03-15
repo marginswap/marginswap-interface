@@ -18,6 +18,7 @@ import { isTransactionRecent, useAllTransactions } from '../../state/transaction
 import { TransactionDetails } from '../../state/transactions/reducer'
 import { shortenAddress } from '../../utils'
 import { ButtonSecondary } from '../Button'
+import WalletConnect from '../../assets/images/walletConnect.svg'
 
 import Identicon from '../Identicon'
 import Loader from '../Loader'
@@ -37,6 +38,7 @@ const IconWrapper = styled.div<{ size?: number }>`
 
 const Web3StatusGeneric = styled(ButtonSecondary)`
   ${({ theme }) => theme.flexRowNoWrap}
+  justify-content: space-between;
   width: 100%;
   align-items: center;
   padding: 0.5rem;
@@ -66,7 +68,7 @@ const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
 
   :hover,
   :focus {
-    border: 1px solid ${({ theme }) => darken(0.05, theme.primary4)};
+    //border: 1px solid ${({ theme }) => darken(0.05, theme.primary4)};
     color: ${({ theme }) => theme.primaryText1};
   }
 
@@ -206,6 +208,7 @@ function Web3StatusInner() {
   } else {
     return (
       <Web3StatusConnect id="connect-wallet" onClick={toggleWalletModal} faded={!account}>
+        <img src={WalletConnect} width={'14px'} alt="wallet connect" />
         <Text>{t('Connect to a wallet')}</Text>
       </Web3StatusConnect>
     )
