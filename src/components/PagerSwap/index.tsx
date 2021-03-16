@@ -10,12 +10,14 @@ import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined'
 import { TokenInfo } from '@uniswap/token-lists'
 import AppBody from 'pages/AppBody'
 import React, { FC, useEffect, useState } from 'react'
+
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
-    backgroundColor: '#2c2c5b',
+    backgroundColor: 'initial',
+    background: 'rgba(50, 50, 50, 0.25)',
+    backdropFilter: 'blur(10px)',
     borderRadius: 20,
     margin: 'auto',
-    color: 'white',
     padding: '0 20px',
     display: 'flex',
     flexDirection: 'column'
@@ -54,17 +56,25 @@ const useStyles = makeStyles((theme: Theme) => ({
   actions: {
     display: 'flex',
     width: '100%',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     margin: 'auto 0 18px 0',
     '& .MuiButtonBase-root': {
       backgroundColor: 'white',
       textTransform: 'none',
-      color: '#2c2c5b',
-      borderRadius: 20,
-      width: '48%',
+      width: '100%',
+      borderRadius: '30px',
+      height: '51px',
       fontWeight: 700,
       fontSize: '16px',
-      lineHeight: '24px'
+      lineHeight: '24px',
+      '&#spot': {
+        background: 'linear-gradient(270deg, #2DDE9E 0%, #4255FF 100%)',
+        color: '#fff'
+      },
+      '&#swap': {
+        background: 'linear-gradient(270deg, #AD01FF 0%, #3122FB 100%)',
+        color: '#fff'
+      }
     }
   },
   settings: {
@@ -76,43 +86,38 @@ const useStyles = makeStyles((theme: Theme) => ({
     right: '-10px'
   },
   root: {
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: 'initial',
     borderRadius: '20px',
-    height: 285
+    justifyContent: 'space-between',
+    boxShadow: 'none'
   },
   tabs: {
-    height: '36px',
+    height: '48px',
+    background: 'rgba(49, 49, 49, 0.5)',
+    borderRadius: '7px',
     '& a': {
-      color: '#2c2c5b',
       padding: '0',
-      heigth: '36px',
+      heigth: '48px',
       '&[aria-selected=true]': {
-        border: '1px solid #2c2c5b',
-        borderBottom: 'none',
-        borderRadius: '20px 20px 0 0',
-        borderTopWidth: '1px',
-        '&[aria-controls=nav-tabpanel-0]': {
-          borderLeftWidth: '0px'
-        },
-        '&[aria-controls=nav-tabpanel-1]': {
-          borderRightWidth: '0px'
-        }
+        background: '#4255FF',
+        borderRadius: '7px'
       },
-      '&[aria-selected=false]': {
-        borderBottomWidth: '1px',
-        borderBottomStyle: 'solid'
-      }
+      '&[aria-selected=false]': {}
     }
+  },
+  tabPanel: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+    marginTop: '16px'
   }
 }))
 const useInputStyles = makeStyles(theme => ({
   wrapper: {
-    borderRadius: '26px',
+    borderRadius: '10px',
     border: '1px solid lightgray',
     padding: '12px 18px',
-    color: '#2c2c5b',
     fontSize: 14,
-    margin: '6px 0',
     fontWeight: 600
   },
   midleWrapper: {
@@ -130,26 +135,32 @@ const useInputStyles = makeStyles(theme => ({
       width: '40%',
       fontWeight: 'bold',
       fontSize: 18,
-      color: '#2c2c5b',
+      color: '#fff',
+      border: '0',
       fontFamily: 'sans-serif',
+      backgroundColor: 'initial',
       MozAppearance: 'textfield'
     }
   },
-  button: {
-    backgroundColor: '#eff3f5',
+  maxButton: {
+    backgroundColor: '#4255FF',
+    color: '#fff',
     maxHeight: 30,
     fontWeight: 700,
-    letterSpacing: '0.085em'
+    letterSpacing: '0.085em',
+    borderRadius: '4px'
   },
   formControl: {
     display: 'inline-block',
     width: '50%',
     minWidth: 70,
-    paddingLeft: '12px'
+    paddingLeft: '12px',
+    '& .MuiInputBase-root': {
+      color: '#fff'
+    }
   },
   selectEmpty: {
     marginTop: 0,
-    color: '#2c2c5b',
     '& .MuiSelect-root': {
       display: 'flex',
       alignItems: 'center'
@@ -162,10 +173,12 @@ const useInputStyles = makeStyles(theme => ({
   currencyWrapper: {
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    '& .MuiInputBase-root': {
+      color: '#fff'
+    }
   },
   swapArrow: {
-    color: '#2c2c5b',
     position: 'absolute',
     left: '46.5%'
   }
@@ -205,7 +218,7 @@ const StakeInput: FC<StakeInput> = ({ title, balance, deal, tokens }: StakeInput
       <div className={classes.input}>
         <input type="number" value={deal.quantity} min={0} onChange={event => handleChange(event)} className="value" />
         {deal.setQuantity && (
-          <Button variant="text" size="small" className={classes.button} onClick={handleSetMax}>
+          <Button variant="text" size="small" className={classes.maxButton} onClick={handleSetMax}>
             MAX
           </Button>
         )}
@@ -407,76 +420,86 @@ export const PagerSwap = ({ tokens }: { tokens: TokenInfo[] }) => {
             <LinkTab label="Margin" href="/#" {...applyTabProps(1)} />
           </Tabs>
           <TabPanel value={currentTab} index={0}>
-            <StakeInput
-              title="From"
-              balance={0.642379}
-              deal={{
-                quantity: spotQuantityFrom,
-                setQuantity: setSpotQuantityFrom,
-                currency: spotCurrencyFrom,
-                setCurrency: setSpotCurrencyFrom
-              }}
-              tokens={tokens}
-            />
-            <div className={styles.midleWrapper}>
-              <ArrowDownwardIcon
-                className={styles.swapArrow}
-                onClick={() => {
-                  const temp = spotCurrencyFrom
-                  setSpotCurrencyFrom(spotCurrencyTo)
-                  setSpotCurrencyTo(temp)
+            <div className={classes.tabPanel}>
+              <StakeInput
+                title="From"
+                balance={0.642379}
+                deal={{
+                  quantity: spotQuantityFrom,
+                  setQuantity: setSpotQuantityFrom,
+                  currency: spotCurrencyFrom,
+                  setCurrency: setSpotCurrencyFrom
                 }}
+                tokens={tokens}
               />
+              <div className={styles.midleWrapper}>
+                <ArrowDownwardIcon
+                  className={styles.swapArrow}
+                  onClick={() => {
+                    const temp = spotCurrencyFrom
+                    setSpotCurrencyFrom(spotCurrencyTo)
+                    setSpotCurrencyTo(temp)
+                  }}
+                />
+              </div>
+              <StakeInput
+                title="To (estimated)"
+                balance={1.314269}
+                deal={{ quantity: spotQuantityTo, currency: spotCurrencyTo, setCurrency: setSpotCurrencyTo }}
+                tokens={tokens}
+              />
+              <div className={classes.parameters + ' ' + classes.fullWidthPair}>
+                <TradeParameters price={0.135426798} slippageTolerance={8} />
+              </div>
+              <div className={classes.actions}>
+                <Button variant="outlined" size="large" id="spot">
+                  Approve USDT
+                </Button>
+              </div>
             </div>
-            <StakeInput
-              title="To (estimated)"
-              balance={1.314269}
-              deal={{ quantity: spotQuantityTo, currency: spotCurrencyTo, setCurrency: setSpotCurrencyTo }}
-              tokens={tokens}
-            />
           </TabPanel>
           <TabPanel value={currentTab} index={1}>
-            <StakeInput
-              title="From"
-              balance={0.642379}
-              deal={{
-                quantity: marginQuantityFrom,
-                setQuantity: setMarginQuantityFrom,
-                currency: marginCurrencyFrom,
-                setCurrency: setMarginCurrencyFrom
-              }}
-              tokens={tokens}
-            />
-            <div className={styles.midleWrapper}>
-              <MultiplierInput deal={{ multiplier, setMultiplier }} />
-              <ArrowDownwardIcon
-                className={styles.swapArrow}
-                onClick={() => {
-                  const temp = marginCurrencyFrom
-                  setMarginCurrencyFrom(marginCurrencyTo)
-                  setMarginCurrencyTo(temp)
+            <div className={classes.tabPanel}>
+              <StakeInput
+                title="From"
+                balance={0.642379}
+                deal={{
+                  quantity: marginQuantityFrom,
+                  setQuantity: setMarginQuantityFrom,
+                  currency: marginCurrencyFrom,
+                  setCurrency: setMarginCurrencyFrom
                 }}
+                tokens={tokens}
               />
+              <div className={styles.midleWrapper}>
+                <span>Leverage</span>
+                <MultiplierInput deal={{ multiplier, setMultiplier }} />
+                <ArrowDownwardIcon
+                  className={styles.swapArrow}
+                  onClick={() => {
+                    const temp = marginCurrencyFrom
+                    setMarginCurrencyFrom(marginCurrencyTo)
+                    setMarginCurrencyTo(temp)
+                  }}
+                />
+              </div>
+              <StakeInput
+                title="To (estimated)"
+                balance={1.314269}
+                deal={{ quantity: marginQuantityTo, currency: marginCurrencyTo, setCurrency: setMarginCurrencyTo }}
+                tokens={tokens}
+              />
+              <div className={classes.parameters + ' ' + classes.fullWidthPair}>
+                <TradeParameters price={0.135426798} slippageTolerance={8} />
+              </div>
+              <div className={classes.actions}>
+                <Button variant="outlined" size="large" id="swap">
+                  Swap
+                </Button>
+              </div>
             </div>
-            <StakeInput
-              title="To (estimated)"
-              balance={1.314269}
-              deal={{ quantity: marginQuantityTo, currency: marginCurrencyTo, setCurrency: setMarginCurrencyTo }}
-              tokens={tokens}
-            />
           </TabPanel>
         </AppBar>
-        <div className={classes.parameters + ' ' + classes.fullWidthPair}>
-          <TradeParameters price={0.135426798} slippageTolerance={8} />
-        </div>
-        <div className={classes.actions}>
-          <Button variant="outlined" size="large">
-            Approve
-          </Button>
-          <Button variant="outlined" size="large">
-            Swap
-          </Button>
-        </div>
       </div>
     </AppBody>
   )
