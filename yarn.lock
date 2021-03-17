@@ -1981,16 +1981,17 @@
   dependencies:
     "@json-rpc-tools/types" "^1.6.1"
 
-"@marginswap/sdk@4.0.2":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.0.2.tgz#955112431621687b894b35698345c06f6244c858"
-  integrity sha512-MxitUHQNpUZKGNOrnc62WxNdsf7Z1GsN8amGB+uxFzITKdX6aOibroYK7IXnnYHiWUu23Ge+Mlgg0vdAAb5s6Q==
+"@marginswap/sdk@4.0.3":
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.0.3.tgz#d890c9e2932d5f769dacb2a30e9d20b2090f1ff9"
+  integrity sha512-+pDpQZ53lUy08VTu7JWiMSLVnqGZt28mdDd06c/mu4IyKORDXHf2sGq447vOnRS4dTCJ2jMOPltPB7U8eWuboQ==
   dependencies:
     "@uniswap/v2-core" "^1.0.0"
     big.js "^5.2.2"
     decimal.js-light "^2.5.0"
     jsbi "^3.1.1"
     lodash "^4.17.20"
+    lodash-es "^4.17.21"
     marginswap-abi "github:marginswap/abi"
     tiny-invariant "^1.1.0"
     tiny-warning "^1.0.3"
@@ -10558,6 +10559,11 @@ locate-path@^5.0.0:
   integrity sha512-t7hw9pI+WvuwNJXwk5zVHpyhIqzg2qTlklJOf0mVxGSbe3Fp2VieZcduNYjaLDoy6p9uGpQEGWG87WpMKlNq8g==
   dependencies:
     p-locate "^4.1.0"
+
+lodash-es@^4.17.21:
+  version "4.17.21"
+  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
+  integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
 
 lodash._reinterpolate@^3.0.0:
   version "3.0.0"
