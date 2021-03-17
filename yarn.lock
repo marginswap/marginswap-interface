@@ -1981,10 +1981,10 @@
   dependencies:
     "@json-rpc-tools/types" "^1.6.1"
 
-"@marginswap/sdk@4.0.1":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.0.1.tgz#04484d99e7d644670c931f21aa83acf78f5e61e0"
-  integrity sha512-c/6FP5/n5mQ+fUzcP4+FI7YbZF9oPazjjIWJzfDQfOP9r8oHYeJplERa6EDO3YUAkAMeQVI66anp525L6zPVfA==
+"@marginswap/sdk@4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.0.2.tgz#955112431621687b894b35698345c06f6244c858"
+  integrity sha512-MxitUHQNpUZKGNOrnc62WxNdsf7Z1GsN8amGB+uxFzITKdX6aOibroYK7IXnnYHiWUu23Ge+Mlgg0vdAAb5s6Q==
   dependencies:
     "@uniswap/v2-core" "^1.0.0"
     big.js "^5.2.2"
@@ -8765,9 +8765,9 @@ immer@1.10.0:
   integrity sha512-O3sR1/opvCDGLEVcvrGTMtLac8GJ5IwZC4puPrLuRj3l7ICKvkmA0vGuU9OW8mV9WIBRnaxp5GJh9IEAaNOoYg==
 
 immer@^8.0.0:
-  version "8.0.1"
-  resolved "https://registry.yarnpkg.com/immer/-/immer-8.0.1.tgz#9c73db683e2b3975c424fb0572af5889877ae656"
-  integrity sha512-aqXhGP7//Gui2+UrEtvxZxSquQVXTpZ7KDxfCcKAF3Vysvw0CViVaW9RZ1j1xlIYqaaaipBoqdqeibkc18PNvA==
+  version "8.0.2"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-8.0.2.tgz#16d01364b9b27fa1adebdbfbf69ec750b46701b8"
+  integrity sha512-PC9UlH8GYfBCoTbPbDEULuXhdmr21+tlv10IzA9Eycpi2Qrgas0j8pUt8Z2ZxVJ/OHIzQq4W8AWymMGkCJplBA==
 
 import-cwd@^2.0.0:
   version "2.1.0"
