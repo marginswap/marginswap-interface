@@ -1981,6 +1981,21 @@
   dependencies:
     "@json-rpc-tools/types" "^1.6.1"
 
+"@marginswap/sdk@4.0.1":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.0.1.tgz#04484d99e7d644670c931f21aa83acf78f5e61e0"
+  integrity sha512-c/6FP5/n5mQ+fUzcP4+FI7YbZF9oPazjjIWJzfDQfOP9r8oHYeJplERa6EDO3YUAkAMeQVI66anp525L6zPVfA==
+  dependencies:
+    "@uniswap/v2-core" "^1.0.0"
+    big.js "^5.2.2"
+    decimal.js-light "^2.5.0"
+    jsbi "^3.1.1"
+    lodash "^4.17.20"
+    marginswap-abi "github:marginswap/abi"
+    tiny-invariant "^1.1.0"
+    tiny-warning "^1.0.3"
+    toformat "^2.0.0"
+
 "@material-ui/core@^4.11.3":
   version "4.11.3"
   resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-4.11.3.tgz#f22e41775b0bd075e36a7a093d43951bf7f63850"
@@ -2836,20 +2851,6 @@
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@uniswap/merkle-distributor/-/merkle-distributor-1.0.1.tgz#dc3d911f65a860fc3f0cae074bdcd08ed6a27a4d"
   integrity sha512-5gDiTI5hrXIh5UWTrxKYjw30QQDnpl8ckDSpefldNenDlYO1RKkdUYMYpvrqGi2r7YzLYTlO6+TDlNs6O7hDRw==
-
-"marginswap-sdk@github:marginswap/marginswap-sdk.git#v2":
-  version "3.0.3"
-  resolved "git+ssh://git@github.com/marginswap/marginswap-sdk.git#4de27da374fbf790e245d75bd1a5e19af1320060"
-  dependencies:
-    "@uniswap/v2-core" "^1.0.0"
-    big.js "^5.2.2"
-    decimal.js-light "^2.5.0"
-    jsbi "^3.1.1"
-    lodash "^4.17.20"
-    marginswap-abi "github:marginswap/abi"
-    tiny-invariant "^1.1.0"
-    tiny-warning "^1.0.3"
-    toformat "^2.0.0"
 
 "@uniswap/token-lists@^1.0.0-beta.19":
   version "1.0.0-beta.19"

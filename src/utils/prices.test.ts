@@ -1,4 +1,4 @@
-import { ChainId, JSBI, Pair, Route, Token, TokenAmount, Trade, TradeType } from 'marginswap-sdk'
+import { ChainId, JSBI, Pair, Route, Token, TokenAmount, Trade, TradeType } from '@marginswap/sdk'
 import { computeTradePriceBreakdown } from './prices'
 
 describe('prices', () => {

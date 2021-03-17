@@ -1,5 +1,5 @@
 import React, { CSSProperties } from 'react'
-import { Token } from 'marginswap-sdk'
+import { Token } from '@marginswap/sdk'
 import { RowBetween, RowFixed, AutoRow } from 'components/Row'
 import { AutoColumn } from 'components/Column'
 import CurrencyLogo from 'components/CurrencyLogo'

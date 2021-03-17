@@ -1,4 +1,4 @@
-import { currencyEquals, Trade } from 'marginswap-sdk'
+import { currencyEquals, Trade } from '@marginswap/sdk'
 import React, { useCallback, useMemo } from 'react'
 import TransactionConfirmationModal, {
   ConfirmationModalContent,

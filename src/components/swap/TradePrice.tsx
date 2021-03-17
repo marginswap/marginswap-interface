@@ -1,5 +1,5 @@
 import React from 'react'
-import { Price } from 'marginswap-sdk'
+import { Price } from '@marginswap/sdk'
 import { useContext } from 'react'
 import { Repeat } from 'react-feather'
 import { Text } from 'rebass'
