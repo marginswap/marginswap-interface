@@ -7,8 +7,12 @@ import Tabs from '@material-ui/core/Tabs'
 import { SwapHoriz } from '@material-ui/icons'
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined'
+import XIcon from '../../assets/images/x.svg'
 import { TokenInfo } from '@uniswap/token-lists'
 import AppBody from 'pages/AppBody'
+import Modal from '@material-ui/core/Modal'
+import Backdrop from '@material-ui/core/Backdrop'
+import Fade from '@material-ui/core/Fade'
 import React, { FC, useEffect, useState } from 'react'
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -224,7 +228,9 @@ const StakeInput: FC<StakeInput> = ({ title, balance, deal, tokens }: StakeInput
         )}
         <div className={classes.currencyWrapper}>
           {tokens && (
-            <CurrencyInput tokens={tokens} deal={{ currency: deal.currency, setCurrency: deal.setCurrency }} />
+            <>
+              <CurrencyModal tokens={tokens} deal={{ currency: deal.currency, setCurrency: deal.setCurrency }} />
+            </>
           )}
         </div>
       </div>
@@ -240,8 +246,78 @@ interface CurrencyInput {
   }
 }
 
-const CurrencyInput: FC<CurrencyInput> = ({ tokens, deal }: CurrencyInput) => {
-  const classes = useInputStyles()
+const useModalStyles = makeStyles((theme: Theme) => ({
+  modal: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  paper: {
+    width: '478px',
+    height: '665px',
+    background: '#212121',
+    borderRadius: '12px',
+    border: 'none',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3)
+  },
+  modalButton: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: '6px',
+    height: '45px',
+    background: 'initial',
+    color: 'inherit',
+    border: 'none',
+    '& #select': {
+      height: '28px',
+      background: '#4255FF',
+      borderRadius: '19px'
+    },
+    '& img': {
+      height: '26px'
+    }
+  },
+  modalHeader: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    '& img': {
+      filter: 'invert()'
+    }
+  },
+  currencyList: {
+    height: '380px',
+    overflowY: 'auto'
+  },
+  currency: {
+    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'row',
+    gap: '10px'
+  },
+  currencyImg: {
+    height: '50px'
+  },
+  modalConfirm: {
+    width: '100%',
+    height: '51px',
+    background: '#4255FF',
+    borderRadius: '30px',
+    border: 'none',
+    color: 'inherit'
+  }
+}))
+
+const CurrencyModal: FC<CurrencyInput> = ({ tokens, deal }: CurrencyInput) => {
+  const classes = useModalStyles()
+
+  const [open, setOpen] = React.useState(false)
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
+
   const [newTokens, setNewTokens] = useState<TokenInfo[]>([])
 
   useEffect(() => {
@@ -256,28 +332,58 @@ const CurrencyInput: FC<CurrencyInput> = ({ tokens, deal }: CurrencyInput) => {
     setNewTokens(tempTokens)
   }, [tokens])
 
-  const handleChangeCurrency = (event: any) => {
-    deal.setCurrency(event.target.value)
-  }
-
   return (
-    <Select
-      value={deal.currency}
-      onChange={handleChangeCurrency}
-      name="age"
-      className={classes.selectEmpty}
-      inputProps={{ 'aria-label': 'age' }}
-    >
-      {newTokens &&
-        newTokens.map((token, index) => {
-          return (
-            <MenuItem key={index} value={index}>
-              <img src={token?.logoURI} alt={token?.chainId.toString()} className={classes.currencyImg} />
-              <span>{token.symbol}</span>
-            </MenuItem>
-          )
-        })}
-    </Select>
+    <div>
+      <button type="button" onClick={handleOpen} className={classes.modalButton}>
+        {deal.currency !== -1 && newTokens ? (
+          <>
+            <img
+              src={newTokens[deal.currency]?.logoURI}
+              alt={newTokens[deal.currency]?.chainId.toString()}
+              className={classes.currencyImg}
+            />
+            <span>{newTokens[deal.currency]?.symbol}</span>
+          </>
+        ) : (
+          <span id="select">Select Token</span>
+        )}
+      </button>
+      <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        className={classes.modal}
+        open={open}
+        onClose={handleClose}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500
+        }}
+      >
+        <Fade in={open}>
+          <div className={classes.paper}>
+            <div className={classes.modalHeader}>
+              <h3>Select a token</h3>
+              <img src={XIcon} width="20px" height="20px" alt="X" onClick={handleClose} />
+            </div>
+            <div className={classes.currencyList}>
+              {newTokens &&
+                newTokens.map((token, index) => {
+                  return (
+                    <div key={index} className={classes.currency} onClick={() => deal.setCurrency(index)}>
+                      <img src={token?.logoURI} alt={token?.chainId.toString()} className={classes.currencyImg} />
+                      <span>{token.symbol}</span>
+                    </div>
+                  )
+                })}
+            </div>
+            <button className={classes.modalConfirm} onClick={handleClose}>
+              Manage
+            </button>
+          </div>
+        </Fade>
+      </Modal>
+    </div>
   )
 }
 
@@ -379,14 +485,14 @@ export const PagerSwap = ({ tokens }: { tokens: TokenInfo[] }) => {
   const [currentTab, setCurrentTab] = useState(0)
 
   const [spotQuantityFrom, setSpotQuantityFrom] = useState(0)
-  const [spotCurrencyFrom, setSpotCurrencyFrom] = useState(1)
+  const [spotCurrencyFrom, setSpotCurrencyFrom] = useState(-1)
   const [spotQuantityTo, setSpotQuantityTo] = useState(0)
-  const [spotCurrencyTo, setSpotCurrencyTo] = useState(3)
+  const [spotCurrencyTo, setSpotCurrencyTo] = useState(-1)
 
   const [marginQuantityFrom, setMarginQuantityFrom] = useState(0)
-  const [marginCurrencyFrom, setMarginCurrencyFrom] = useState(1)
+  const [marginCurrencyFrom, setMarginCurrencyFrom] = useState(-1)
   const [marginQuantityTo, setMarginQuantityTo] = useState(0)
-  const [marginCurrencyTo, setMarginCurrencyTo] = useState(3)
+  const [marginCurrencyTo, setMarginCurrencyTo] = useState(-1)
   const [multiplier, setMultiplier] = useState(1)
 
   const handleChangeTab = (event: React.ChangeEvent<{}>, newValue: number) => {
