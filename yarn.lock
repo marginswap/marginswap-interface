@@ -2837,7 +2837,7 @@
   resolved "https://registry.yarnpkg.com/@uniswap/merkle-distributor/-/merkle-distributor-1.0.1.tgz#dc3d911f65a860fc3f0cae074bdcd08ed6a27a4d"
   integrity sha512-5gDiTI5hrXIh5UWTrxKYjw30QQDnpl8ckDSpefldNenDlYO1RKkdUYMYpvrqGi2r7YzLYTlO6+TDlNs6O7hDRw==
 
-"@uniswap/sdk@github:marginswap/marginswap-sdk.git#v2":
+"marginswap-sdk@github:marginswap/marginswap-sdk.git#v2":
   version "3.0.3"
   resolved "git+ssh://git@github.com/marginswap/marginswap-sdk.git#4de27da374fbf790e245d75bd1a5e19af1320060"
   dependencies:
