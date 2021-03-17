@@ -1,6 +1,6 @@
 import { UNSUPPORTED_LIST_URLS } from './../../constants/lists'
 import DEFAULT_TOKEN_LIST from 'constants/tokenLists/uniswap-default.tokenlist.json'
-import { ChainId, Token } from '@uniswap/sdk'
+import { ChainId, Token } from '@marginswap/sdk'
 import { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
