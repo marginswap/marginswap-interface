@@ -24,7 +24,7 @@ import clsx from 'clsx'
 import { useDarkModeManager } from 'state/user/hooks'
 import { AccountBalanceData, getComparator, HeadCell, Order, stableSort } from '../Table/common/utils'
 import { EnhancedTableHead } from '../Table/common/EnhancedTableHead'
-import { MarginAccount } from '@marginswap/sdk/src/index'
+import { MarginAccount } from '@marginswap/sdk';
 
 function createAccountBalanceData(
   img: string,
