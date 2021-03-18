@@ -1,13 +1,15 @@
-import { Box, Button, IconButton, makeStyles, Theme } from '@material-ui/core'
+import { Box, Button, Divider, IconButton, makeStyles, Theme } from '@material-ui/core'
 import AppBar from '@material-ui/core/AppBar'
 import FormControl from '@material-ui/core/FormControl'
 import { Select, MenuItem } from '@material-ui/core'
 import Tab from '@material-ui/core/Tab'
 import Tabs from '@material-ui/core/Tabs'
 import { SwapHoriz } from '@material-ui/icons'
+import SearchIcon from '@material-ui/icons/Search'
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined'
 import XIcon from '../../assets/images/x.svg'
+import Dropdown from '../../assets/images/dropdown.svg'
 import { TokenInfo } from '@uniswap/token-lists'
 import AppBody from 'pages/AppBody'
 import Modal from '@material-ui/core/Modal'
@@ -253,6 +255,9 @@ const useModalStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'center'
   },
   paper: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
     width: '478px',
     height: '665px',
     background: '#212121',
@@ -270,10 +275,25 @@ const useModalStyles = makeStyles((theme: Theme) => ({
     background: 'initial',
     color: 'inherit',
     border: 'none',
+    padding: '0',
+    cursor: 'pointer',
     '& #select': {
+      display: 'flex',
+      padding: '5px 8px',
+      gap: '6px',
       height: '28px',
+      width: '100%',
       background: '#4255FF',
       borderRadius: '19px'
+    },
+    '& img#dropdown': {
+      width: '14px',
+      height: '18px'
+    },
+    '& span#currencySymbol': {
+      fontWeight: '500',
+      fontSize: '22px',
+      lineHeight: '27px'
     },
     '& img': {
       height: '26px'
@@ -285,18 +305,55 @@ const useModalStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     '& img': {
-      filter: 'invert()'
+      filter: 'invert()',
+      cursor: 'pointer'
+    }
+  },
+  search: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    height: '47px',
+    background: 'rgba(59, 59, 60, 0.7)',
+    borderRadius: '38.5px',
+    padding: '15px 30px',
+    '& input': {
+      background: 'none',
+      border: 'none',
+      fontSize: '15px',
+      lineHeight: '18px',
+      color: 'inherit'
     }
   },
   currencyList: {
     height: '380px',
-    overflowY: 'auto'
+    overflowY: 'auto',
+    marginLeft: '-32px',
+    '& #selected': {
+      background: 'linear-gradient(90deg, #525252 41.64%, rgba(47, 47, 47, 0) 83.43%)'
+    }
   },
   currency: {
     alignItems: 'center',
     display: 'flex',
     flexDirection: 'row',
-    gap: '10px'
+    gap: '10px',
+    padding: '13px 0',
+    paddingLeft: '32px',
+    cursor: 'pointer',
+    '& h3': {
+      margin: '0',
+      fontWeight: '500',
+      fontSize: '15px',
+      lineHeight: '18px'
+    },
+    '& span': {
+      fontSize: '13px',
+      lineHeight: '16px',
+      color: '#777777'
+    }
   },
   currencyImg: {
     height: '50px'
@@ -307,7 +364,10 @@ const useModalStyles = makeStyles((theme: Theme) => ({
     background: '#4255FF',
     borderRadius: '30px',
     border: 'none',
-    color: 'inherit'
+    fontSize: '16px',
+    lineHeight: '19px',
+    color: 'inherit',
+    cursor: 'pointer'
   }
 }))
 
@@ -317,6 +377,8 @@ const CurrencyModal: FC<CurrencyInput> = ({ tokens, deal }: CurrencyInput) => {
   const [open, setOpen] = React.useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
+
+  const [selected, setSelected] = useState(deal.currency)
 
   const [newTokens, setNewTokens] = useState<TokenInfo[]>([])
 
@@ -342,10 +404,14 @@ const CurrencyModal: FC<CurrencyInput> = ({ tokens, deal }: CurrencyInput) => {
               alt={newTokens[deal.currency]?.chainId.toString()}
               className={classes.currencyImg}
             />
-            <span>{newTokens[deal.currency]?.symbol}</span>
+            <span id="currencySymbol">{newTokens[deal.currency]?.symbol}</span>
+            <img src={Dropdown} width="8px" height="14px" alt="_" id="dropdown" />
           </>
         ) : (
-          <span id="select">Select Token</span>
+          <div id="select">
+            <span>Select Token</span>
+            <img src={Dropdown} width="8px" height="14px" alt="_" id="dropdown" />
+          </div>
         )}
       </button>
       <Modal
@@ -366,18 +432,38 @@ const CurrencyModal: FC<CurrencyInput> = ({ tokens, deal }: CurrencyInput) => {
               <h3>Select a token</h3>
               <img src={XIcon} width="20px" height="20px" alt="X" onClick={handleClose} />
             </div>
+            <div className={classes.search}>
+              <input type="text" placeholder="Search" />
+              <SearchIcon />
+            </div>
+            <Divider />
             <div className={classes.currencyList}>
               {newTokens &&
                 newTokens.map((token, index) => {
                   return (
-                    <div key={index} className={classes.currency} onClick={() => deal.setCurrency(index)}>
+                    <div
+                      key={index}
+                      className={classes.currency}
+                      id={index === selected ? 'selected' : ''}
+                      onClick={() => setSelected(index)}
+                    >
                       <img src={token?.logoURI} alt={token?.chainId.toString()} className={classes.currencyImg} />
-                      <span>{token.symbol}</span>
+                      <div>
+                        <h3>{token.symbol}</h3>
+                        <span>{token.name}</span>
+                      </div>
                     </div>
                   )
                 })}
             </div>
-            <button className={classes.modalConfirm} onClick={handleClose}>
+            <button
+              className={classes.modalConfirm}
+              onClick={() => {
+                deal.setCurrency(selected)
+                setSelected(-1)
+                handleClose()
+              }}
+            >
               Manage
             </button>
           </div>
