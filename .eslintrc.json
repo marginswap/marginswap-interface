@@ -9,9 +9,7 @@
     }
   },
   "plugins": ["import"],
-  "ignorePatterns": [
-    "node_modules/**/*"
-  ],
+  "ignorePatterns": ["node_modules/**/*"],
   "settings": {
     "react": {
       "version": "detect"
@@ -31,11 +29,14 @@
     "@typescript-eslint/no-explicit-any": "off",
     // Can break code with auto-fix option, we are checking it separately (see package.json lint script)
     "react-hooks/exhaustive-deps": 0,
-    "no-console": [2, {
-      "allow": ["error"]
-    }],
+    "no-console": [
+      2,
+      {
+        "allow": ["error"]
+      }
+    ],
     "no-debugger": 2,
-    "import/no-extraneous-dependencies": [2, {"devDependencies": false}],
+    "import/no-extraneous-dependencies": [2, { "devDependencies": false }],
     // I believe we should remove this too
     "@typescript-eslint/explicit-module-boundary-types": 0
   }
