@@ -3,11 +3,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useActiveWeb3React } from '../../hooks'
 import { useAddPopup, useBlockNumber } from '../application/hooks'
 import { AppDispatch, AppState } from '../index'
-import { checkedTransaction, finalizeTransaction } from './actions'
+import { checkedTransaction, finalizeTransaction, SerializableTransactionReceipt } from './actions'
 
 export function shouldCheck(
   lastBlockNumber: number,
-  tx: { addedTime: number; receipt?: {}; lastCheckedBlockNumber?: number }
+  tx: { addedTime: number; receipt?: SerializableTransactionReceipt; lastCheckedBlockNumber?: number }
 ): boolean {
   if (tx.receipt) return false
   if (!tx.lastCheckedBlockNumber) return true

@@ -165,7 +165,7 @@ const StakeInput: FC<StakeInput> = ({ title }: StakeInput) => {
   }
 
   const [currentTab, setCurrentTab] = useState(0)
-  const handleChangeTab = (event: React.ChangeEvent<{}>, newValue: number) => {
+  const handleChangeTab = (event: React.ChangeEvent<Record<string, unknown>>, newValue: number) => {
     setCurrentTab(newValue)
   }
 

@@ -169,7 +169,7 @@ export const PagerSwap = ({ tokens }: { tokens: TokenInfo[] }) => {
   const [marginCurrencyTo, setMarginCurrencyTo] = useState(-1)
   const [multiplier, setMultiplier] = useState(1)
 
-  const handleChangeTab = (event: React.ChangeEvent<{}>, newValue: number) => {
+  const handleChangeTab = (event: React.ChangeEvent<Record<string, unknown>>, newValue: number) => {
     setCurrentTab(newValue)
   }
 
