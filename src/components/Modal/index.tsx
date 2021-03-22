@@ -97,7 +97,7 @@ export default function Modal({
     leave: { opacity: 0 }
   })
 
-  const [{ y }, set] = useSpring(() => ({ y: 0, config: { mass: 1, tension: 210, friction: 20 } }))
+  const [{ y }, set] = useSpring<{ y: number }>(() => ({ y: 0, config: { mass: 1, tension: 210, friction: 20 } }))
   const bind = useGesture({
     onDrag: state => {
       set({
