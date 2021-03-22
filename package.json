@@ -87,7 +87,8 @@
     "styled-components": "^4.2.0",
     "typescript": "^3.8.3",
     "use-count-up": "^2.2.5",
-    "wcag-contrast": "^3.0.0"
+    "wcag-contrast": "^3.0.0",
+    "webpack-bundle-analyzer": "^4.4.0"
   },
   "resolutions": {
     "@walletconnect/web3-provider": "1.1.1-alpha.0"
@@ -97,7 +98,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "integration-test": "start-server-and-test 'serve build -l 3000' http://localhost:3000 'cypress run'"
+    "integration-test": "start-server-and-test 'serve build -l 3000' http://localhost:3000 'cypress run'",
+    "analyze": "node analyze.js"
   },
   "eslintConfig": {
     "extends": "react-app",
