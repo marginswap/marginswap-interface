@@ -30,9 +30,8 @@ export const BondSupply = () => {
       fetchList(url, false)
         .then(({ tokens }) => {
           setTokens(tokens)
-          console.log(tokens)
         })
-        .catch(error => console.debug('interval list fetching error', error))
+        .catch(error => console.error('interval list fetching error', error))
     }
     // eslint-disable-next-line
   }, [])

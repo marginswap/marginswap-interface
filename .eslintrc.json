@@ -29,6 +29,10 @@
     // Not a good thing, we should get rid of this and use any only as a last resort
     "@typescript-eslint/no-explicit-any": "off",
     // Can break code with auto-fix option, we are checking it separately (see package.json lint script)
-    "react-hooks/exhaustive-deps": 0
+    "react-hooks/exhaustive-deps": 0,
+    "no-console": [2, {
+      "allow": ["error"]
+    }],
+    "no-debugger": 2
   }
 }

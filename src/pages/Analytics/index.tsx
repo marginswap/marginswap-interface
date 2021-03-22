@@ -45,7 +45,7 @@ export const Analytics = () => {
         .then(({ tokens }) => {
           setTokens(tokens)
         })
-        .catch(error => console.debug('interval list fetching error', error))
+        .catch(error => console.error('interval list fetching error', error))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

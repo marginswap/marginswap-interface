@@ -52,7 +52,7 @@ export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo }: Sta
         })
         .catch((error: any) => {
           setAttempting(false)
-          console.log(error)
+          console.error(error)
         })
     }
   }

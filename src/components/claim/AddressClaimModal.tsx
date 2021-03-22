@@ -81,7 +81,7 @@ export default function AddressClaimModal({ isOpen, onDismiss }: { isOpen: boole
       // reset modal and log error
       .catch(error => {
         setAttempting(false)
-        console.log(error)
+        console.error(error)
       })
   }
 

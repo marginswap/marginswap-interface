@@ -11,13 +11,12 @@ const Develop = () => {
   const [tokens, setTokens] = useState<TokenInfo[]>([])
   const fetchList = useFetchListCallback()
 
-  console.log(tokens)
   useEffect(() => {
     const url = Object.keys(lists)[0]
     if (url) {
       fetchList(url, false)
         .then(({ tokens }) => setTokens(tokens))
-        .catch(error => console.debug('interval list fetching error', error))
+        .catch(error => console.error('interval list fetching error', error))
     }
     // eslint-disable-next-line
   }, [])
