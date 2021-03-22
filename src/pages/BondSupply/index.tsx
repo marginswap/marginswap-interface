@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { makeStyles, Theme } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core'
 import BondHoldingsTable from 'components/BondHoldings'
 import BondRateTable from 'components/BondRate'
 import { TokenInfo } from '@uniswap/token-lists'
 import { useAllLists } from 'state/lists/hooks'
 import { useFetchListCallback } from './../../hooks/useFetchListCallback'
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   wrapper: {
     display: 'flex',
     flexDirection: 'column',
@@ -30,9 +30,8 @@ export const BondSupply = () => {
       fetchList(url, false)
         .then(({ tokens }) => {
           setTokens(tokens)
-          console.log(tokens)
         })
-        .catch(error => console.debug('interval list fetching error', error))
+        .catch(error => console.error('interval list fetching error', error))
     }
     // eslint-disable-next-line
   }, [])

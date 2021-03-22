@@ -1,11 +1,11 @@
 import React from 'react'
-import { lighten, makeStyles, Paper, Theme } from '@material-ui/core'
+import { lighten, makeStyles, Paper } from '@material-ui/core'
 import clsx from 'clsx'
 import { useDarkModeManager } from 'state/user/hooks'
 import { Graphic } from 'components/Graphic'
 import { firstChartState, secondChartState } from './constants'
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   darkMode: {
     backgroundColor: lighten('#1b2041', 0.25)
   },

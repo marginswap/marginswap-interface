@@ -34,7 +34,7 @@ function fetchClaim(account: string, chainId: ChainId): Promise<UserClaimData | 
         if (res.status === 200) {
           return res.json()
         } else {
-          console.debug(`No claim for account ${formatted} on chain ID ${chainId}`)
+          console.error(`No claim for account ${formatted} on chain ID ${chainId}`)
           return null
         }
       })

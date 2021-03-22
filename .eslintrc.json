@@ -8,6 +8,7 @@
       "jsx": true
     }
   },
+  "plugins": ["import"],
   "ignorePatterns": [
     "node_modules/**/*"
   ],
@@ -20,12 +21,22 @@
     "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:react-hooks/recommended",
-    "prettier/@typescript-eslint",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "prettier"
   ],
   "rules": {
     "@typescript-eslint/explicit-function-return-type": "off",
     "prettier/prettier": "error",
-    "@typescript-eslint/no-explicit-any": "off"
+    // Not a good thing, we should get rid of this and use any only as a last resort
+    "@typescript-eslint/no-explicit-any": "off",
+    // Can break code with auto-fix option, we are checking it separately (see package.json lint script)
+    "react-hooks/exhaustive-deps": 0,
+    "no-console": [2, {
+      "allow": ["error"]
+    }],
+    "no-debugger": 2,
+    "import/no-extraneous-dependencies": [2, {"devDependencies": false}],
+    // I believe we should remove this too
+    "@typescript-eslint/explicit-module-boundary-types": 0
   }
 }

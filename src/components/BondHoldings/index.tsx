@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { FC, useEffect, useState } from 'react'
 import {
   Box,

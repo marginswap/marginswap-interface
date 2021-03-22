@@ -1,5 +1,4 @@
-/* eslint-disable */
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState, Fragment } from 'react'
 import {
   Box,
   Button,
@@ -25,8 +24,6 @@ import { useDarkModeManager } from 'state/user/hooks'
 import { AccountBalanceData, getComparator, HeadCell, Order, stableSort } from '../Table/common/utils'
 import { EnhancedTableHead } from '../Table/common/EnhancedTableHead'
 
-//import { MarginAccount } from '@marginswap/sdk';
-
 function createAccountBalanceData(
   img: string,
   coin: string,
@@ -44,7 +41,6 @@ function createAccountBalanceData(
     ir
   }
 }
-
 
 /* async function getAccountBalances(traderAddress: string) {
   return MarginAccount.getAccountBalances(traderAddress);
@@ -255,7 +251,7 @@ export default function AccountBalanceTable({ tokens }: any) {
                   const labelId = `enhanced-table-checkbox-${index}`
 
                   return (
-                    <>
+                    <Fragment key={index}>
                       <TableRow
                         hover
                         className={classes.pointer}
@@ -269,7 +265,7 @@ export default function AccountBalanceTable({ tokens }: any) {
                         <AccountBalanceCells row={row} labelId={labelId} />
                       </TableRow>
                       <AccountBalanceSecondaryCells isItemSelected={isItemSelected} />
-                    </>
+                    </Fragment>
                   )
                 })}
             </TableBody>

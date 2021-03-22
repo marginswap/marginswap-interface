@@ -1,11 +1,11 @@
-import { makeStyles, Theme } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core'
 import { useAllLists } from 'state/lists/hooks'
 import React, { useEffect, useState } from 'react'
 import { useFetchListCallback } from './../../hooks/useFetchListCallback'
 import { TokenInfo } from '@uniswap/token-lists'
 import { PagerSwap } from './../../components/PagerSwap/index'
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   wrapper: {
     display: 'flex',
     flexDirection: 'row',
@@ -31,7 +31,7 @@ export default function Swap() {
     if (url) {
       fetchList(url, false)
         .then(({ tokens }) => setTokens(tokens))
-        .catch(error => console.debug('interval list fetching error', error))
+        .catch(error => console.error('interval list fetching error', error))
     }
     // eslint-disable-next-line
     }, [])
