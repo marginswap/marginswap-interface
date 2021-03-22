@@ -48,11 +48,6 @@ const Token = ({ token, index, deal, handleClose }: TokenInput) => {
   )
 }
 
-interface RenderedTokens {
-  element: JSX.Element
-  name: string
-}
-
 export const CurrencyModal: FC<CurrencyInput> = ({ tokens, deal }: CurrencyInput) => {
   const classes = useModalStyles()
 
@@ -61,45 +56,20 @@ export const CurrencyModal: FC<CurrencyInput> = ({ tokens, deal }: CurrencyInput
   const handleClose = () => setOpen(false)
 
   const [newTokens, setNewTokens] = useState<TokenInfo[]>([])
-  const [renderedTokens, setRenderedTokens] = useState<RenderedTokens[] | undefined>()
-  const [searchTokens, setSearchTokens] = useState(renderedTokens)
   const [search, setSearch] = useState('')
 
   useEffect(() => {
     const unique: string[] = []
-    const tempTokens = tokens.filter(({ symbol, logoURI }: any) => {
-      if (!unique.includes(symbol) && logoURI) {
-        unique.push(symbol)
-        return true
-      }
-      return false
-    })
-    setNewTokens(tempTokens)
-  }, [tokens])
-
-  useEffect(() => {
-    if (!newTokens) return
-    const render: RenderedTokens[] = []
-    newTokens.map((token, index) =>
-      render.push({
-        element: <Token token={token} index={index} deal={deal} handleClose={handleClose} />,
-        name: token.symbol
+    setNewTokens(
+      tokens.filter(({ symbol, logoURI }) => {
+        if (!unique.includes(symbol) && logoURI) {
+          unique.push(symbol)
+          return true
+        }
+        return false
       })
     )
-    setRenderedTokens(render)
-    setSearchTokens(render)
-  }, [deal, newTokens])
-
-  useEffect(() => {
-    if (!renderedTokens) return
-    const tempTokens: RenderedTokens[] = []
-    renderedTokens.map(token => {
-      // eslint-disable-next-line
-      if (!token.name.toLowerCase().startsWith(search.toLowerCase())) return
-      return tempTokens.push(token)
-    })
-    setSearchTokens(tempTokens)
-  }, [renderedTokens, search])
+  }, [tokens])
 
   return (
     <div>
@@ -144,7 +114,13 @@ export const CurrencyModal: FC<CurrencyInput> = ({ tokens, deal }: CurrencyInput
               <SearchIcon />
             </div>
             <Divider />
-            <div className={classes.currencyList}>{searchTokens?.map(token => token.element)}</div>
+            <div className={classes.currencyList}>
+              {newTokens
+                ?.filter(token => (search ? token.symbol.toLowerCase().startsWith(search.toLowerCase()) : true))
+                .map((token, index) => (
+                  <Token key={token.symbol} token={token} index={index} deal={deal} handleClose={handleClose} />
+                ))}
+            </div>
             <button
               className={classes.modalConfirm}
               onClick={() => {
