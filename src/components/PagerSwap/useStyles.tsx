@@ -1,6 +1,6 @@
-import { makeStyles, Theme } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core'
 
-export const useStyles = makeStyles((theme: Theme) => ({
+export const useStyles = makeStyles(() => ({
   wrapper: {
     backgroundColor: 'initial',
     background: 'rgba(50, 50, 50, 0.25)',
@@ -102,7 +102,7 @@ export const useStyles = makeStyles((theme: Theme) => ({
   }
 }))
 
-export const useInputStyles = makeStyles(theme => ({
+export const useInputStyles = makeStyles(() => ({
   wrapper: {
     borderRadius: '10px',
     border: '1px solid lightgray',

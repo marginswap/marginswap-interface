@@ -100,7 +100,7 @@ export const useModalStyles = makeStyles((theme: Theme) => ({
   }
 }))
 
-export const useCurrencyStyles = makeStyles((theme: Theme) => ({
+export const useCurrencyStyles = makeStyles(() => ({
   currency: {
     alignItems: 'center',
     display: 'flex',

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { makeStyles, Theme } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core'
 import { Graphics } from './Graphics'
 import { Stats } from './Stats'
 import { Wallets } from './Wallets'
@@ -7,7 +7,7 @@ import { TokenInfo } from '@uniswap/token-lists'
 import { useFetchListCallback } from 'hooks/useFetchListCallback'
 import { useAllLists } from 'state/lists/hooks'
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   wrapper: {
     display: 'flex',
     flexDirection: 'column',
@@ -47,7 +47,7 @@ export const Analytics = () => {
         })
         .catch(error => console.debug('interval list fetching error', error))
     }
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

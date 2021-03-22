@@ -1,11 +1,10 @@
-//@ts-nocheck
-import React, { useEffect, useRef } from 'react'
-import { makeStyles, Paper, Theme } from '@material-ui/core'
+import React, { FunctionComponent, useEffect, useRef } from 'react'
+import { makeStyles, Paper } from '@material-ui/core'
 import clsx from 'clsx'
 import { useDarkModeManager } from 'state/user/hooks'
 import { createChart } from 'lightweight-charts'
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   graphic: {
     width: '49%',
     height: '90%',
@@ -17,7 +16,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }))
 
-export const Graphic = ({ state }: { state: any }) => {
+export const Graphic: FunctionComponent<{ state: unknown }> = () => {
   const classes = useStyles()
   const [darkMode] = useDarkModeManager()
   const ref = useRef<HTMLDivElement | null>(null)
@@ -162,7 +161,7 @@ export const Graphic = ({ state }: { state: any }) => {
         [classes.darkMode]: darkMode
       })}
     >
-      <div id="chart" ref={ref}></div>
+      <div id="chart" ref={ref} />
     </Paper>
   )
 }

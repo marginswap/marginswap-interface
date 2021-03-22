@@ -1,4 +1,4 @@
-import { makeStyles, Theme } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 import AccountBalanceTable from 'components/AccountBalance'
 import { TokenInfo } from '@uniswap/token-lists'
@@ -6,7 +6,7 @@ import { useAllLists } from 'state/lists/hooks'
 import { useFetchListCallback } from './../../hooks/useFetchListCallback'
 import { TotalBalance } from 'components/TotalBalance'
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   wrapper: {
     display: 'flex',
     flexDirection: 'row',

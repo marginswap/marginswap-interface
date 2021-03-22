@@ -1,4 +1,3 @@
-//import { transparentize } from 'polished'
 import React, { useMemo } from 'react'
 import styled, {
   ThemeProvider as StyledComponentsThemeProvider,
@@ -227,6 +226,6 @@ body {
   min-height: 100vh;
   background-position: 0 -30vh;
   background-repeat: no-repeat;
-  background-image: ${({ theme }) => `#212121;`};
+  background-image: ${() => `#212121;`};
 }
 `

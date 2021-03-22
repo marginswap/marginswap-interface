@@ -1,7 +1,7 @@
 import { Divider, makeStyles } from '@material-ui/core'
 import React, { FC } from 'react'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     width: '100%',
     borderRadius: 20,

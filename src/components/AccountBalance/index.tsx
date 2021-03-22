@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { FC, useEffect, useState } from 'react'
 import {
   Box,
@@ -44,7 +43,6 @@ function createAccountBalanceData(
     ir
   }
 }
-
 
 /* async function getAccountBalances(traderAddress: string) {
   return MarginAccount.getAccountBalances(traderAddress);

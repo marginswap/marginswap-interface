@@ -99,7 +99,8 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "integration-test": "start-server-and-test 'serve build -l 3000' http://localhost:3000 'cypress run'",
-    "analyze": "node analyze.js"
+    "analyze": "node analyze.js",
+    "lint": "eslint --ext .ts --ext .tsx --fix src/ ; eslint --no-eslintrc --parser \"@typescript-eslint/parser\" --parser-options \"{\"ecmaVersion\": 2018, \"sourceType\": \"module\"}\" --plugin \"react-hooks\" --rule \"{\"react-hooks/exhaustive-deps\": 2}\" --ext .ts --ext .tsx src/"
   },
   "eslintConfig": {
     "extends": "react-app",

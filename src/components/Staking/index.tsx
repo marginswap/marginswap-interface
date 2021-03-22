@@ -5,7 +5,7 @@ import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   wrapper: {
     width: '96%',
     maxWidth: 600,

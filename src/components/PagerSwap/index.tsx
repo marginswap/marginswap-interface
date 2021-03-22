@@ -32,7 +32,7 @@ const StakeInput: FC<StakeInput> = ({ title, balance, deal, tokens }: StakeInput
     deal.setQuantity(event.target.value)
   }
 
-  const handleSetMax = (event: any) => {
+  const handleSetMax = () => {
     if (!deal.setQuantity) return
     deal.setQuantity(balance)
   }
