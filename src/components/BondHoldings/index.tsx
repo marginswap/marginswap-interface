@@ -296,7 +296,6 @@ export default function BondHoldingsTable({ tokens }: any) {
             aria-label="enhanced table"
           >
             <EnhancedTableHead
-              classes={classes}
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}

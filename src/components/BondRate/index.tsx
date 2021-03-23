@@ -223,7 +223,6 @@ export default function BondRateTable({ tokens }: any) {
             aria-label="enhanced table"
           >
             <EnhancedTableHead
-              classes={classes}
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}

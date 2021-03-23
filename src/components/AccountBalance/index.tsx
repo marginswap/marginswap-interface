@@ -1,28 +1,15 @@
 import React, { FC, useEffect, useState, Fragment } from 'react'
-import {
-  Box,
-  Button,
-  Collapse,
-  createStyles,
-  FormControlLabel,
-  lighten,
-  makeStyles,
-  Paper,
-  Switch,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TablePagination,
-  TableRow,
-  TextField,
-  Theme,
-  Typography
-} from '@material-ui/core'
-import clsx from 'clsx'
-import { useDarkModeManager } from 'state/user/hooks'
+import { Box, Collapse, FormControlLabel, Switch, TableBody, TableRow } from '@material-ui/core'
 import { AccountBalanceData, getComparator, HeadCell, Order, stableSort } from '../Table/common/utils'
 import { EnhancedTableHead } from '../Table/common/EnhancedTableHead'
+import {
+  StyledTableWrapper,
+  StyledTable,
+  StyledTableContainer,
+  StyledTableCell,
+  StyledTableRow
+} from 'components/Table/common/StyledTable'
+import { StyledButton, StyledTextField } from '../../theme'
 
 function createAccountBalanceData(
   img: string,
@@ -42,12 +29,7 @@ function createAccountBalanceData(
   }
 }
 
-/* async function getAccountBalances(traderAddress: string) {
-  return MarginAccount.getAccountBalances(traderAddress);
-} */
-
 const headCellsAccountBalance: HeadCell[] = [
-  { id: 'img', numeric: false, disablePadding: true, label: '' },
   { id: 'coin', numeric: false, disablePadding: true, label: 'Coin' },
   { id: 'balance', numeric: true, disablePadding: false, label: 'Total Balance' },
   { id: 'available', numeric: true, disablePadding: false, label: 'Available' },
@@ -55,115 +37,68 @@ const headCellsAccountBalance: HeadCell[] = [
   { id: 'ir', numeric: true, disablePadding: false, label: 'Interest Rate' }
 ]
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      width: '100%'
-    },
-    paper: {
-      width: '100%',
-      marginBottom: theme.spacing(2),
-      borderRadius: 20,
-      overflow: 'hidden',
-      '& h3': {
-        paddingLeft: '25px'
-      }
-    },
-    table: {
-      minWidth: 750
-    },
-    visuallyHidden: {
-      border: 0,
-      clip: 'rect(0 0 0 0)',
-      height: 1,
-      margin: -1,
-      overflow: 'hidden',
-      padding: 0,
-      position: 'absolute',
-      top: 20,
-      width: 1
-    },
-    pointer: {
-      cursor: 'pointer',
-      '&.Mui-selected': {
-        backgroundColor: lighten('#343D76', 0.85),
-        '&:hover': {
-          backgroundColor: lighten('#343D76', 0.85)
-        }
-      }
-    },
-    darkMode: {
-      backgroundColor: lighten('#343D76', 0.75)
-    }
-  })
-)
-
 interface AccountBalanceCell {
   row: AccountBalanceData
   labelId: string
 }
 
-const AccountBalanceCells: FC<AccountBalanceCell> = ({ row, labelId }: AccountBalanceCell) => (
+const AccountBalanceCells: FC<AccountBalanceCell> = ({ row, labelId }) => (
   <>
-    <TableCell padding="checkbox" align="right">
-      <img src={row.img} alt={row.coin} height={24} />
-    </TableCell>
-    <TableCell id={labelId} align="left">
-      {row.coin}
-    </TableCell>
-    <TableCell align="right">{row.balance.toFixed(6)}</TableCell>
-    <TableCell align="right">{row.available.toFixed(6)}</TableCell>
-    <TableCell align="right" padding="none">
+    <StyledTableCell width={52} style={{ borderBottom: 'none' }} />
+    <StyledTableCell id={labelId} align="left">
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <img src={row.img} alt={row.coin} height={30} />
+        <span style={{ marginLeft: '5px' }}>{row.coin}</span>
+      </div>
+    </StyledTableCell>
+    <StyledTableCell align="left">{row.balance.toFixed(6)}</StyledTableCell>
+    <StyledTableCell align="left">{row.available.toFixed(6)}</StyledTableCell>
+    <StyledTableCell align="left" padding="none">
       {row.borrowed.toFixed(6)}
-    </TableCell>
-    <TableCell align="right">{row.ir.toFixed(6)}</TableCell>
-    <TableCell align="right">
-      <Button variant="text" style={{ textTransform: 'none' }} color="primary" onClick={e => e.stopPropagation()}>
-        Borrow
-      </Button>
-      <Button variant="text" style={{ textTransform: 'none' }} color="primary" onClick={e => e.stopPropagation()}>
-        Repay
-      </Button>
-      <Button variant="text" style={{ textTransform: 'none' }} color="primary" onClick={e => e.stopPropagation()}>
-        Withdraw
-      </Button>
-      <Button variant="text" style={{ textTransform: 'none' }} color="primary" onClick={e => e.stopPropagation()}>
-        Deposit
-      </Button>
-    </TableCell>
+    </StyledTableCell>
+    <StyledTableCell align="left">{row.ir.toFixed(6)}</StyledTableCell>
+    <StyledTableCell align="left">
+      <StyledButton onClick={e => e.stopPropagation()}>Borrow</StyledButton>
+      <StyledButton onClick={e => e.stopPropagation()}>Repay</StyledButton>
+      <StyledButton onClick={e => e.stopPropagation()}>Withdraw</StyledButton>
+      <StyledButton onClick={e => e.stopPropagation()}>Deposit</StyledButton>
+    </StyledTableCell>
+    <StyledTableCell width={24} style={{ borderBottom: 'none' }} />
   </>
 )
 
 const AccountBalanceSecondaryCells = ({ isItemSelected }: { isItemSelected: boolean }) => (
   <TableRow>
-    <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+    <StyledTableCell style={{ paddingBottom: 0, paddingTop: 0, borderBottom: 'none' }} colSpan={6}>
       <Collapse in={isItemSelected} timeout="auto" unmountOnExit>
         <Box margin={6}>
-          <Typography variant="h6" gutterBottom component="div">
-            Borrow / Lend
-          </Typography>
-          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around' }}>
-            <TextField label="Amount" type="number" />
-            <Button type="button" color="primary" variant="contained">
+          <h4>Borrow / Lend</h4>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ position: 'relative' }}>
+              <StyledTextField label="Amount" type="number" />
+              <StyledButton
+                color="primary"
+                style={{ position: 'absolute', right: 0, top: '50%', padding: '4px 10px', margin: '-10px 0 0 0' }}
+              >
+                MAX
+              </StyledButton>
+            </div>
+            <StyledButton color="primary" style={{ borderRadius: '16px', padding: '10px 16px', margin: '0 0 0 32px' }}>
               Confirm Transaction
-            </Button>
+            </StyledButton>
           </div>
         </Box>
       </Collapse>
-    </TableCell>
+    </StyledTableCell>
   </TableRow>
 )
 
 export default function AccountBalanceTable({ tokens }: any) {
-  const classes = useStyles()
   const [order, setOrder] = useState<Order>('asc')
   const [orderBy, setOrderBy] = useState<keyof AccountBalanceData>('coin')
   const [selected, setSelected] = useState<string[]>([])
-  const [page, setPage] = useState(0)
   const [dense, setDense] = useState(false)
-  const [rowsPerPage, setRowsPerPage] = useState(25)
   const [rows, setRows] = useState([createAccountBalanceData('', '', 0, 0, 0, 0)])
-  const [darkMode] = useDarkModeManager()
 
   useEffect(() => {
     const unique: string[] = []
@@ -203,15 +138,6 @@ export default function AccountBalanceTable({ tokens }: any) {
     setSelected(newSelected)
   }
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage)
-  }
-
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10))
-    setPage(0)
-  }
-
   const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDense(event.target.checked)
   }
@@ -219,22 +145,18 @@ export default function AccountBalanceTable({ tokens }: any) {
   const isSelected = (name: string) => selected.indexOf(name) !== -1
 
   return (
-    <div className={classes.root}>
-      <Paper
-        className={clsx(classes.paper, {
-          [classes.darkMode]: darkMode
-        })}
-      >
-        <h3>Account Balance</h3>
-        <TableContainer>
-          <Table
-            className={classes.table}
-            aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
-            aria-label="enhanced table"
-          >
+    <div>
+      <StyledTableWrapper>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginRight: '24px' }}>
+          <h3>Account Balance</h3>
+          <FormControlLabel
+            control={<Switch checked={dense} onChange={handleChangeDense} />}
+            label="Hide zero balances (not implemented)"
+          />
+        </div>
+        <StyledTableContainer>
+          <StyledTable aria-labelledby="tableTitle" aria-label="enhanced table">
             <EnhancedTableHead
-              classes={classes}
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
@@ -244,50 +166,30 @@ export default function AccountBalanceTable({ tokens }: any) {
               withActions={true}
             />
             <TableBody>
-              {stableSort(rows, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.coin as string)
-                  const labelId = `enhanced-table-checkbox-${index}`
+              {stableSort(rows, getComparator(order, orderBy)).map((row, index) => {
+                const isItemSelected = isSelected(row.coin as string)
+                const labelId = `enhanced-table-checkbox-${index}`
 
-                  return (
-                    <Fragment key={index}>
-                      <TableRow
-                        hover
-                        className={classes.pointer}
-                        onClick={event => handleClick(event, row.coin)}
-                        role="button"
-                        aria-checked={isItemSelected}
-                        tabIndex={-1}
-                        key={row.borrowed}
-                        selected={isItemSelected}
-                      >
-                        <AccountBalanceCells row={row} labelId={labelId} />
-                      </TableRow>
-                      <AccountBalanceSecondaryCells isItemSelected={isItemSelected} />
-                    </Fragment>
-                  )
-                })}
+                return (
+                  <Fragment key={index}>
+                    <StyledTableRow
+                      onClick={event => handleClick(event, row.coin)}
+                      role="button"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={row.borrowed}
+                      selected={isItemSelected}
+                    >
+                      <AccountBalanceCells row={row} labelId={labelId} />
+                    </StyledTableRow>
+                    <AccountBalanceSecondaryCells isItemSelected={isItemSelected} />
+                  </Fragment>
+                )
+              })}
             </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          className={clsx({
-            [classes.darkMode]: darkMode
-          })}
-          rowsPerPageOptions={[10, 25, 50, 100]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
-      </Paper>
-      <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Hide zero balances (not implemented)"
-      />
+          </StyledTable>
+        </StyledTableContainer>
+      </StyledTableWrapper>
     </div>
   )
 }
