@@ -185,7 +185,7 @@ export const PagerSwap = ({ tokens }: { tokens: TokenInfo[] }) => {
       '0.000004014 ETH',
       'This is the text dummy data of help. text help arrives here'
     ],
-    priceImpact: ['Price Impact', '0.01%', 'This is the text dummy data of help. text help arrives here'],
+    priceImpact: ['Price Impact', '0.01%', 'TODO This is the text dummy data of help. text help arrives here'],
     transactionFee: ['Transaction Fee', '0.01%', 'This is the text dummy data of help. text help arrives here'],
     route: ['Route ', 'MFI > USDC > ETH', 'This is the text dummy data of help. text help arrives here']
   }
