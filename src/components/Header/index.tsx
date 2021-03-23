@@ -4,23 +4,14 @@ import { Text } from 'rebass'
 import { NavLink } from 'react-router-dom'
 import { darken } from 'polished'
 import { useTranslation } from 'react-i18next'
-
 import styled from 'styled-components'
-
 import Logo from '../../assets/images/Union.svg'
-// import LogoDark from '../../assets/svg/logo_white.svg'
 import { useActiveWeb3React } from '../../hooks'
-import { useDarkModeManager } from '../../state/user/hooks'
 import { useETHBalances, useAggregateUniBalance } from '../../state/wallet/hooks'
 import { CardNoise } from '../earn/styled'
 import { CountUp } from 'use-count-up'
-// import { TYPE, ExternalLink } from '../../theme'
 import { TYPE } from '../../theme'
-
 import { YellowCard } from '../Card'
-import { Moon, Sun } from 'react-feather'
-//import Menu from '../Menu'
-
 import Row, { RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
@@ -310,8 +301,7 @@ export default function Header() {
   const { t } = useTranslation()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
-  // const [isDark] = useDarkModeManager()
-  const [darkMode, toggleDarkMode] = useDarkModeManager()
+  // const [darkMode, toggleDarkMode] = useDarkModeManager()
 
   const toggleClaimModal = useToggleSelfClaimModal()
 
@@ -411,9 +401,10 @@ export default function Header() {
           </AccountElement>
         </HeaderElement>
         <HeaderElementWrap>
-          <StyledMenuButton onClick={() => toggleDarkMode()}>
-            {darkMode ? <Moon size={20} /> : <Sun size={20} />}
-          </StyledMenuButton>
+          {/* TODO: dark mode selector */}
+          {/*<StyledMenuButton onClick={() => toggleDarkMode()}>*/}
+          {/*  {darkMode ? <Moon size={20} /> : <Sun size={20} />}*/}
+          {/*</StyledMenuButton>*/}
           {
             //<Menu />
           }

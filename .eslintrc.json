@@ -24,7 +24,13 @@
   ],
   "rules": {
     "@typescript-eslint/explicit-function-return-type": "off",
-    "prettier/prettier": "error",
+    "prettier/prettier": ["warn", {
+      "semi": false,
+      "singleQuote": true,
+      "printWidth": 120,
+      "trailingComma": "none",
+      "arrowParens": "avoid"
+    }],
     // Not a good thing, we should get rid of this and use any only as a last resort
     "@typescript-eslint/no-explicit-any": "off",
     // Can break code with auto-fix option, we are checking it separately (see package.json lint script)
