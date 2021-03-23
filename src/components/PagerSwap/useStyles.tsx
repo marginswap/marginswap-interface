@@ -7,6 +7,7 @@ export const useStyles = makeStyles(() => ({
     backdropFilter: 'blur(10px)',
     borderRadius: 20,
     margin: 'auto',
+    height: '660px',
     padding: '0 20px',
     display: 'flex',
     flexDirection: 'column'
@@ -17,14 +18,17 @@ export const useStyles = makeStyles(() => ({
     justifyContent: 'space-between',
     '& > h4': {
       margin: '20px 5px',
-      fontWeight: '900',
-      fontSize: '1.1em',
-      lineHeight: '1.1'
+      fontHeight: '600',
+      fontSize: '22px',
+      lineHeight: '27px'
     }
   },
   fullWidthPair: {
     '& p > span:nth-child(odd)': {
-      float: 'left'
+      float: 'left',
+      '& img': {
+        margin: '0 0 -3px 11px'
+      }
     },
     '& > p > span:nth-child(even)': {
       float: 'right'
@@ -39,7 +43,8 @@ export const useStyles = makeStyles(() => ({
     height: '58px',
     display: 'flex',
     flexDirection: 'column',
-    padding: '0 28px',
+    gap: '12px',
+    padding: '0 8px',
     justifyContent: 'space-evenly'
   },
   actions: {
@@ -56,6 +61,7 @@ export const useStyles = makeStyles(() => ({
       fontWeight: 700,
       fontSize: '16px',
       lineHeight: '24px',
+      marginBottom: '12px',
       '&#spot': {
         background: 'linear-gradient(270deg, #2DDE9E 0%, #4255FF 100%)',
         color: '#fff'
@@ -67,7 +73,6 @@ export const useStyles = makeStyles(() => ({
     }
   },
   settings: {
-    padding: '12px',
     width: '40px',
     height: '40px',
     margin: 'auto 0',
@@ -181,5 +186,13 @@ export const useInputStyles = makeStyles(() => ({
   swapArrow: {
     position: 'absolute',
     left: '46.5%'
+  }
+}))
+
+export const useTooltipStyles = makeStyles(() => ({
+  tooltip: {
+    maxWidth: '120px',
+    background: '#181818',
+    border: '0.4px solid #777777'
   }
 }))

@@ -1,15 +1,18 @@
 import { Box, Button, IconButton } from '@material-ui/core'
 import AppBar from '@material-ui/core/AppBar'
 import FormControl from '@material-ui/core/FormControl'
+import Tooltip from '@material-ui/core/Tooltip'
 import { Select, MenuItem } from '@material-ui/core'
 import Tab from '@material-ui/core/Tab'
 import Tabs from '@material-ui/core/Tabs'
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined'
+import walletIcon from 'assets/svg/walletIcon.svg'
+import question from 'assets/svg/question.svg'
 import { TokenInfo } from '@uniswap/token-lists'
 import AppBody from 'pages/AppBody'
 import { CurrencyModal } from '../CurrencyModal/index'
-import { useStyles, useInputStyles } from './useStyles'
+import { useStyles, useInputStyles, useTooltipStyles } from './useStyles'
 import React, { FC, useEffect, useState } from 'react'
 
 interface StakeInput {
@@ -99,16 +102,21 @@ const MultiplierInput: FC<MultiplierInput> = ({ deal }: MultiplierInput) => {
   )
 }
 
-const TradeParameters = ({ price, slippageTolerance }: { price: number; slippageTolerance: number }) => {
+const Parameters = ({ parameters }: { parameters: any }) => {
+  const classes = useTooltipStyles()
+
   return (
-    <>
-      <p>
-        <span>Price</span> <span>{price}</span>
-      </p>
-      <p>
-        <span>Slippage Tolerance</span> <span>{slippageTolerance}%</span>
-      </p>
-    </>
+    <p>
+      <span>
+        {parameters[0]}
+        {parameters[2] && (
+          <Tooltip title={parameters[2]} placement="right" classes={{ tooltip: classes.tooltip }} arrow>
+            <img src={question} width={16} height={16} alt="?" />
+          </Tooltip>
+        )}
+      </span>
+      <span>{parameters[1]}</span>
+    </p>
   )
 }
 
@@ -169,7 +177,36 @@ export const PagerSwap = ({ tokens }: { tokens: TokenInfo[] }) => {
   const [marginCurrencyTo, setMarginCurrencyTo] = useState(-1)
   const [multiplier, setMultiplier] = useState(1)
 
-  const handleChangeTab = (event: React.ChangeEvent<Record<string, unknown>>, newValue: number) => {
+  const parameters = {
+    price: ['Price ', 0.135426798],
+    slippageTolerance: ['Slippage Tolerance', 8],
+    minimumReceived: [
+      'Minimum received',
+      '0.000004014 ETH',
+      'This is the text dummy data of help. text help arrives here'
+    ],
+    priceImpact: ['Price Impact', '0.01%', 'TODO This is the text dummy data of help. text help arrives here'],
+    transactionFee: ['Transaction Fee', '0.01%', 'This is the text dummy data of help. text help arrives here'],
+    route: ['Route ', 'MFI > USDC > ETH', 'This is the text dummy data of help. text help arrives here']
+  }
+
+  const middleParameters = (
+    <div className={classes.parameters + ' ' + classes.fullWidthPair}>
+      <Parameters parameters={parameters.price} />
+      <Parameters parameters={parameters.slippageTolerance} />
+    </div>
+  )
+
+  const bottomParameters = (
+    <div className={classes.parameters + ' ' + classes.fullWidthPair}>
+      <Parameters parameters={parameters.minimumReceived} />
+      <Parameters parameters={parameters.priceImpact} />
+      <Parameters parameters={parameters.transactionFee} />
+      <Parameters parameters={parameters.route} />
+    </div>
+  )
+
+  const handleChangeTab = (event: React.ChangeEvent<{}>, newValue: number) => {
     setCurrentTab(newValue)
   }
 
@@ -228,14 +265,13 @@ export const PagerSwap = ({ tokens }: { tokens: TokenInfo[] }) => {
                 deal={{ quantity: spotQuantityTo, currency: spotCurrencyTo, setCurrency: setSpotCurrencyTo }}
                 tokens={tokens}
               />
-              <div className={classes.parameters + ' ' + classes.fullWidthPair}>
-                <TradeParameters price={0.135426798} slippageTolerance={8} />
-              </div>
+              {middleParameters}
               <div className={classes.actions}>
                 <Button variant="outlined" size="large" id="spot">
                   Approve USDT
                 </Button>
               </div>
+              {bottomParameters}
             </div>
           </TabPanel>
           <TabPanel value={currentTab} index={1}>
@@ -255,13 +291,13 @@ export const PagerSwap = ({ tokens }: { tokens: TokenInfo[] }) => {
                 <span>Leverage</span>
                 <MultiplierInput deal={{ multiplier, setMultiplier }} />
                 <ArrowDownwardIcon
-                  className={styles.swapArrow}
                   onClick={() => {
                     const temp = marginCurrencyFrom
                     setMarginCurrencyFrom(marginCurrencyTo)
                     setMarginCurrencyTo(temp)
                   }}
                 />
+                <img src={walletIcon} width={16} height={15} alt="wallet" />
                 <span>Borrowable: 200 USDC</span>
               </div>
               <StakeInput
@@ -270,14 +306,13 @@ export const PagerSwap = ({ tokens }: { tokens: TokenInfo[] }) => {
                 deal={{ quantity: marginQuantityTo, currency: marginCurrencyTo, setCurrency: setMarginCurrencyTo }}
                 tokens={tokens}
               />
-              <div className={classes.parameters + ' ' + classes.fullWidthPair}>
-                <TradeParameters price={0.135426798} slippageTolerance={8} />
-              </div>
+              {middleParameters}
               <div className={classes.actions}>
                 <Button variant="outlined" size="large" id="swap">
                   Swap
                 </Button>
               </div>
+              {bottomParameters}
             </div>
           </TabPanel>
         </AppBar>
