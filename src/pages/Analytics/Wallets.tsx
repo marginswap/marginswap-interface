@@ -4,45 +4,44 @@ import { makeStyles, Paper } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 import IconButton from '@material-ui/core/IconButton'
-import clsx from 'clsx'
-import { useDarkModeManager } from 'state/user/hooks'
 
 export const useStyles = makeStyles(() => ({
   root: {
     display: 'flex',
     justifyContent: 'space-between',
     borderBottom: '2px solid gray',
-    fontSize: '17px',
-    margin: '12px 24px 0 24px',
-    padding: '10px 0'
+    padding: '10px 0',
+    fontSize: '13px',
+    lineHeight: '16px'
   },
   main: {
-    backgroundColor: '#fff',
-    borderRadius: '10px'
+    width: '1040px',
+    backdropFilter: 'blur(10px)',
+    background: '#212429',
+    boxShadow:
+      '0px 0px 1px rgb(0 0 0 / 1%), 0px 4px 8px rgb(0 0 0 / 4%), 0px 16px 24px rgb(0 0 0 / 4%), 0px 24px 32px rgb(0 0 0 / 1%)',
+    borderRadius: '10px',
+    color: '#fff'
   },
   container: {
     display: 'flex',
+    margin: '12px 27px 0 60px',
     flexDirection: 'column'
-  },
-  darkMode: {
-    backgroundColor: '#2E2F3C',
-    color: '#fff'
   },
   walletsList: {
     '& li': {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      borderBottom: '3px solid transparent',
-      padding: '12px 24px',
+      borderBottom: '3px solid #80808033',
+      padding: '10px 0 16px 0',
       '& span': {
         display: 'flex',
         alignItems: 'center',
-        gap: '12px'
+        gap: '12px',
+        fontSize: '12px',
+        lineHeight: '15px'
       }
-    },
-    '& li:hover': {
-      borderBottom: '3px solid #80808033'
     }
   },
   expand: {
@@ -81,7 +80,6 @@ const Wallet = ({ wallet }: { wallet: WalletData; index: number }) => {
 
 export const Wallets = ({ tokens }: any) => {
   const classes = useStyles()
-  const [darkMode] = useDarkModeManager()
 
   const [checked, setChecked] = useState(false)
 
@@ -114,11 +112,10 @@ export const Wallets = ({ tokens }: any) => {
 
   return (
     <Paper
-      className={clsx(classes.main, {
-        [classes.darkMode]: darkMode
-      })}
+      className={classes.main}
     >
       <div className={classes.container}>
+        <h3>Top Traders</h3>
         <div className={classes.root}>
           <span>Wallet</span>
           <span>Volume (24hrs)</span>

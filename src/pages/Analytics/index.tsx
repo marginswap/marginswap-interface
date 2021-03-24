@@ -11,11 +11,13 @@ const useStyles = makeStyles(() => ({
   wrapper: {
     display: 'flex',
     flexDirection: 'column',
+    alignItems: 'center',
     width: '100%',
     padding: '0 20px',
     gap: '20px',
-    '& h2, h3, p': {
-      marginLeft: '12px'
+    '& h2': {
+      width: '1040px',
+      margin: '39px'
     }
   },
   stats: {
@@ -53,9 +55,8 @@ export const Analytics = () => {
   return (
     <div className={classes.wrapper}>
       <h2>MarginSwap Analytics</h2>
-      <Stats ethPrice={1594} transactions={110284} fees={5313268} totalVolume={26} />
       <Graphics />
-      <h3>Top Traders</h3>
+      <Stats ethPrice={1594} transactions={110284} fees={5313268} totalVolume={26} />
       <Wallets tokens={tokens} />
     </div>
   )

@@ -3,10 +3,13 @@ import { makeStyles } from '@material-ui/core'
 
 const useStyles = makeStyles(() => ({
   stats: {
-    display: 'flex',
-    flexDirection: 'row',
-    gap: '20px',
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '69px',
+    width: '1040px',
+    margin: '40px 0',
     '& p': {
+      height: '90px',
       margin: '10px 0',
       fontWeight: 600,
       fontSize: '15px'
@@ -28,10 +31,12 @@ export const Stats: FC<StatsProps> = ({ ethPrice, transactions, fees, totalVolum
 
   return (
     <div className={classes.stats}>
-      <p>ETH Price: ${numberFormat.format(ethPrice)}</p>
+      <p>MFI Price: ${numberFormat.format(ethPrice)}</p>
       <p>Transactions (24H): {numberFormat.format(transactions)}</p>
       <p>Fees (24H): ${numberFormat.format(fees)}</p>
       <p>Total volume: {numberFormat.format(totalVolume)}</p>
+      <p>Total Bond Lending: {numberFormat.format(totalVolume)}</p>
+      <p>Total Borrowed: {numberFormat.format(totalVolume)}</p>
     </div>
   )
 }
