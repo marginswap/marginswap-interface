@@ -206,7 +206,7 @@ export const PagerSwap = ({ tokens }: { tokens: TokenInfo[] }) => {
     </div>
   )
 
-  const handleChangeTab = (event: React.ChangeEvent<{}>, newValue: number) => {
+  const handleChangeTab = (event: React.ChangeEvent<unknown>, newValue: number) => {
     setCurrentTab(newValue)
   }
 
