@@ -41,7 +41,7 @@
         "allow": ["error"]
       }
     ],
-    "no-alert": "error",
+    "no-alert": "warn",
     "no-debugger": 2,
     "import/no-extraneous-dependencies": [2, { "devDependencies": false }],
     // I believe we should remove this too
