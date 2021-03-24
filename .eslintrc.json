@@ -22,7 +22,7 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:react-hooks/recommended",
     "plugin:prettier/recommended",
-    "prettier"
+    "prettier/@typescript-eslint"
   ],
   "rules": {
     "@typescript-eslint/explicit-function-return-type": "off",
