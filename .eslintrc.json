@@ -36,12 +36,12 @@
     // Can break code with auto-fix option, we are checking it separately (see package.json lint script)
     "react-hooks/exhaustive-deps": 0,
     "no-console": [
-      1,
+      0,
       {
         "allow": ["error"]
       }
     ],
-    "no-alert": "warn",
+    "no-alert": 0,
     "no-debugger": 2,
     "import/no-extraneous-dependencies": [2, { "devDependencies": false }],
     // I believe we should remove this too
