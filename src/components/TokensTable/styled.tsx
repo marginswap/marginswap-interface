@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Table, TableCell, TableContainer, TableRow, TableSortLabel } from '@material-ui/core'
+import { Table, TableCell, TableRow, TableSortLabel } from '@material-ui/core'
 
 export const StyledTableWrapper = styled('div')`
   border: 1px solid #777777;
@@ -18,8 +18,6 @@ export const StyledTableWrapper = styled('div')`
     color: white;
   }
 `
-
-export const StyledTableContainer = styled(TableContainer)``
 
 export const StyledTable = styled(Table)`
   color: white;

@@ -124,7 +124,7 @@ export const CurrencyModal: FC<CurrencyInput> = ({ tokens, deal }: CurrencyInput
             <button
               className={classes.modalConfirm}
               onClick={() => {
-                alert('mock Manage')
+                console.log('mock Manage')
               }}
             >
               Manage
