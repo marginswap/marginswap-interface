@@ -219,13 +219,12 @@ html {
 export const ThemedGlobalStyle = createGlobalStyle`
 html {
   color: ${({ theme }) => theme.text1};
-  background-color: ${({ theme }) => theme.bg2};
 }
 
 body {
   min-height: 100vh;
-  background-position: 0 -30vh;
-  background-repeat: no-repeat;
-  background-image: ${() => `#212121;`};
+	background-repeat: no-repeat;
+	background-size: cover;
+  background-image: url("/images/bg.png");
 }
 `

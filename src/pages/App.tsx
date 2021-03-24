@@ -18,7 +18,6 @@ import {
   RedirectOldAddLiquidityPathStructure,
   RedirectToAddLiquidity
 } from './AddLiquidity/redirects'
-import Develop from './Develop'
 import Earn from './Earn'
 import Manage from './Earn/Manage'
 import { MarginAccount } from './MarginAccount'
@@ -94,7 +93,6 @@ export default function App() {
           <TopLevelModals />
           <Web3ReactManager>
             <Switch>
-              <Route exact strict path="/develop" component={Develop} />
               <Route exact strict path="/pagerSwap" component={PagerSwap} />
               <Route exact strict path="/swap" component={Swap} />
               <Route exact strict path="/stake" component={Staking} />

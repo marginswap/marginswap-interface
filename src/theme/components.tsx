@@ -2,8 +2,50 @@ import React, { HTMLProps, useCallback } from 'react'
 import ReactGA from 'react-ga'
 import { Link } from 'react-router-dom'
 import styled, { keyframes } from 'styled-components'
-import { darken } from 'polished'
 import { ArrowLeft, X, ExternalLink as LinkIconFeather, Trash } from 'react-feather'
+import { Button, TextField } from '@material-ui/core'
+
+export const StyledTextField = styled(TextField)`
+  .MuiInput-input {
+    color: white !important;
+  }
+
+  .MuiFormLabel-root {
+    color: white !important;
+  }
+
+  .MuiInput-underline:before {
+    border-color: white !important;
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+`
+
+export const StyledButton = styled(Button)`
+  border-radius: ${({ style }) => style?.borderRadius ?? '3px'} !important;
+  border: ${({ color }) => (color === 'primary' ? 'none' : '1px solid #777777')} !important;
+  padding: ${({ style }) => style?.padding ?? '10px'} !important;
+  color: white !important;
+  text-transform: none !important;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+  margin: ${({ style }) => style?.margin ?? '0 5px'} !important;
+  background-color: ${({ color }) => (color === 'primary' ? '#4255FF' : 'transparent')} !important;
+  line-height: 1 !important;
+
+  &:hover {
+    background-color: #4255ff !important;
+    border-color: #4255ff !important;
+  }
+`
 
 export const ButtonText = styled.button`
   outline: none;
@@ -20,36 +62,6 @@ export const ButtonText = styled.button`
 
   :focus {
     text-decoration: underline;
-  }
-`
-
-export const Button = styled.button.attrs<{ warning: boolean }, { backgroundColor: string }>(({ warning, theme }) => ({
-  backgroundColor: warning ? theme.red1 : theme.primary1
-}))`
-  padding: 1rem 2rem 1rem 2rem;
-  border-radius: 3rem;
-  cursor: pointer;
-  user-select: none;
-  font-size: 1rem;
-  border: none;
-  outline: none;
-  background-color: ${({ backgroundColor }) => backgroundColor};
-  color: ${({ theme }) => theme.white};
-  width: 100%;
-
-  :hover,
-  :focus {
-    background-color: ${({ backgroundColor }) => darken(0.05, backgroundColor)};
-  }
-
-  :active {
-    background-color: ${({ backgroundColor }) => darken(0.1, backgroundColor)};
-  }
-
-  :disabled {
-    background-color: ${({ theme }) => theme.bg1};
-    color: ${({ theme }) => theme.text4};
-    cursor: auto;
   }
 `
 
