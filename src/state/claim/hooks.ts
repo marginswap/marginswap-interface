@@ -102,7 +102,7 @@ export function useClaimCallback(
   const addTransaction = useTransactionAdder()
   const distributorContract = useMerkleDistributorContract()
 
-  const claimCallback = async function () {
+  const claimCallback = async function() {
     if (!claimData || !account || !library || !chainId || !distributorContract) return
 
     const args = [claimData.index, account, claimData.amount, claimData.proof]

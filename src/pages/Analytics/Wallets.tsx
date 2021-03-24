@@ -111,9 +111,7 @@ export const Wallets = ({ tokens }: any) => {
   }
 
   return (
-    <Paper
-      className={classes.main}
-    >
+    <Paper className={classes.main}>
       <div className={classes.container}>
         <h3>Top Traders</h3>
         <div className={classes.root}>
