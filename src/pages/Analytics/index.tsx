@@ -57,12 +57,12 @@ export const Analytics = () => {
       <h2>MarginSwap Analytics</h2>
       <Graphics />
       <div className={classes.stats}>
-        <Stats title={'MFI Price'} time={'Last 24 hrs'} value={'$1,594'} chartColor={'#BE72F3'}/>
-        <Stats title={'Total Fees'} time={'Ever Collected'} value={'$1,10,284'} chartColor={'#94F572'}/>
-        <Stats title={'Fees'} time={'Last 24 hrs'} value={'$12,000'} chartColor={'#F90B0B'}/>
-        <Stats title={'Total Volume'} time={'Last 24 hrs'} value={'1,10,284'} chartColor={'#F99808'}/>
-        <Stats title={'Total Bond Lending'} value={'0.5m'}/>
-        <Stats title={'Total Borrowed'} value={'0.5m'}/>
+        <Stats title={'MFI Price'} time={'Last 24 hrs'} value={'$1,594'} chartColor={'#BE72F3'} />
+        <Stats title={'Total Fees'} time={'Ever Collected'} value={'$1,10,284'} chartColor={'#94F572'} />
+        <Stats title={'Fees'} time={'Last 24 hrs'} value={'$12,000'} chartColor={'#F90B0B'} />
+        <Stats title={'Total Volume'} time={'Last 24 hrs'} value={'1,10,284'} chartColor={'#F99808'} />
+        <Stats title={'Total Bond Lending'} value={'0.5m'} />
+        <Stats title={'Total Borrowed'} value={'0.5m'} />
       </div>
       <Wallets tokens={tokens} />
     </div>

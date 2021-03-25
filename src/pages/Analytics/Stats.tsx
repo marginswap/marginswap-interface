@@ -40,7 +40,7 @@ const useStyles = makeStyles(() => ({
 interface StatsProps {
   title: string
   time?: string
-  value: string,
+  value: string
   chartColor?: string
 }
 
