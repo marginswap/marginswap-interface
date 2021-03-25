@@ -4,6 +4,9 @@ import { useAllLists } from 'state/lists/hooks'
 import { useFetchListCallback } from '../../hooks/useFetchListCallback'
 import { AccountBalanceData, createAccountBalanceData } from '../MarginAccount'
 import TokensTable from '../../components/TokensTable'
+import InfoCard from '../../components/InfoCard'
+import IconMoneyStackLocked from '../../icons/IconMoneyStackLocked'
+import IconMoneyStack from '../../icons/IconMoneyStack'
 
 type BondRateData = {
   img: string
@@ -128,6 +131,11 @@ export const BondSupply = () => {
 
   return (
     <div className={classes.wrapper}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px 0' }}>
+        <InfoCard title="Bond Holding" amount={0.123456} Icon={IconMoneyStackLocked} />
+        <InfoCard title="Current Earnings" amount={0.123456} ghost Icon={IconMoneyStackLocked} />
+        <InfoCard title="Total Earned" amount={0.123456} color="secondary" ghost Icon={IconMoneyStack} />
+      </div>
       <TokensTable
         title="Bond Holdings"
         data={bondHoldingsRows}
