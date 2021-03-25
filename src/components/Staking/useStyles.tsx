@@ -7,9 +7,10 @@ export const StakingWrapper = styled.div`
   border-radius: 20px;
   flex-direction: column;
   backdrop-filter: blur(10px);
-  background: #212429;
+  background: initial;
   box-shadow: 0px 0px 1px rgb(0 0 0 / 1%), 0px 4px 8px rgb(0 0 0 / 4%), 0px 16px 24px rgb(0 0 0 / 4%),
     0px 24px 32px rgb(0 0 0 / 1%);
+  border: 1px solid #777777;
 `
 export const StakingHeader = styled.div`
   display: flex;

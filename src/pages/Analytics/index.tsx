@@ -16,14 +16,14 @@ const useStyles = makeStyles(() => ({
     padding: '0 20px',
     gap: '20px',
     '& h2': {
-      width: '1040px',
-      margin: '39px'
+      width: '1040px'
     }
   },
   stats: {
-    display: 'flex',
-    flexDirection: 'row',
-    gap: '20px',
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '30px',
+    width: '1040px',
     '& p': {
       margin: '10px 0',
       fontWeight: 600,
@@ -56,7 +56,14 @@ export const Analytics = () => {
     <div className={classes.wrapper}>
       <h2>MarginSwap Analytics</h2>
       <Graphics />
-      <Stats ethPrice={1594} transactions={110284} fees={5313268} totalVolume={26} />
+      <div className={classes.stats}>
+        <Stats title={'MFI Price'} time={'Last 24 hrs'} value={'$1,594'} chartColor={'#BE72F3'}/>
+        <Stats title={'Total Fees'} time={'Ever Collected'} value={'$1,10,284'} chartColor={'#94F572'}/>
+        <Stats title={'Fees'} time={'Last 24 hrs'} value={'$12,000'} chartColor={'#F90B0B'}/>
+        <Stats title={'Total Volume'} time={'Last 24 hrs'} value={'1,10,284'} chartColor={'#F99808'}/>
+        <Stats title={'Total Bond Lending'} value={'0.5m'}/>
+        <Stats title={'Total Borrowed'} value={'0.5m'}/>
+      </div>
       <Wallets tokens={tokens} />
     </div>
   )
