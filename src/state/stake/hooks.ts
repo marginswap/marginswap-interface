@@ -9,8 +9,6 @@ import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
 
 export const STAKING_GENESIS = 1600387200
 
-export const REWARDS_DURATION_DAYS = 60
-
 // TODO add staking rewards addresses here
 export const STAKING_REWARDS_INFO: {
   [chainId in ChainId]?: {

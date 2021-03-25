@@ -298,22 +298,3 @@ export const CustomLightSpinner = styled(Spinner)<{ size: string }>`
   height: ${({ size }) => size};
   width: ${({ size }) => size};
 `
-
-export const HideSmall = styled.span`
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
-  `};
-`
-
-export const HideExtraSmall = styled.span`
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    display: none;
-  `};
-`
-
-export const ExtraSmallOnly = styled.span`
-  display: none;
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    display: block;
-  `};
-`

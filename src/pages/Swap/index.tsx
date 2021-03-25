@@ -1,9 +1,9 @@
 import { makeStyles } from '@material-ui/core'
 import { useAllLists } from 'state/lists/hooks'
 import React, { useEffect, useState } from 'react'
-import { useFetchListCallback } from './../../hooks/useFetchListCallback'
+import { useFetchListCallback } from '../../hooks/useFetchListCallback'
 import { TokenInfo } from '@uniswap/token-lists'
-import { PagerSwap } from './../../components/PagerSwap/index'
+import { PagerSwap } from '../../components/PagerSwap'
 
 const useStyles = makeStyles(() => ({
   wrapper: {

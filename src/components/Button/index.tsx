@@ -1,9 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { darken, lighten } from 'polished'
-
-import { RowBetween } from '../Row'
-import { ChevronDown } from 'react-feather'
+import { darken } from 'polished'
 import { Button as RebassButton, ButtonProps } from 'rebass/styled-components'
 
 const Base = styled(RebassButton)<{
@@ -93,22 +90,6 @@ export const ButtonLight = styled(Base)`
   }
 `
 
-export const ButtonGray = styled(Base)`
-  background-color: ${({ theme }) => theme.bg3};
-  color: ${({ theme }) => theme.text2};
-  font-size: 16px;
-  font-weight: 500;
-  &:focus {
-    background-color: ${({ theme, disabled }) => !disabled && darken(0.05, theme.bg4)};
-  }
-  &:hover {
-    background-color: ${({ theme, disabled }) => !disabled && darken(0.05, theme.bg4)};
-  }
-  &:active {
-    background-color: ${({ theme, disabled }) => !disabled && darken(0.1, theme.bg4)};
-  }
-`
-
 export const ButtonSecondary = styled(Base)`
   border: 1px solid ${({ theme }) => theme.primary4};
   color: ${({ theme }) => theme.primary1};
@@ -170,32 +151,12 @@ export const ButtonUNIGradient = styled(ButtonPrimary)`
   position: relative;
   cursor: pointer;
   border: none;
-  white-space: no-wrap;
+  white-space: nowrap;
   :hover {
     opacity: 0.8;
   }
   :active {
     opacity: 0.9;
-  }
-`
-
-export const ButtonOutlined = styled(Base)`
-  border: 1px solid ${({ theme }) => theme.bg2};
-  background-color: transparent;
-  color: ${({ theme }) => theme.text1};
-
-  &:focus {
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.bg4};
-  }
-  &:hover {
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.bg4};
-  }
-  &:active {
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.bg4};
-  }
-  &:disabled {
-    opacity: 50%;
-    cursor: auto;
   }
 `
 
@@ -242,17 +203,6 @@ export const ButtonWhite = styled(Base)`
   }
 `
 
-const ButtonConfirmedStyle = styled(Base)`
-  background-color: ${({ theme }) => lighten(0.5, theme.green1)};
-  color: ${({ theme }) => theme.green1};
-  border: 1px solid ${({ theme }) => theme.green1};
-
-  &:disabled {
-    opacity: 50%;
-    cursor: auto;
-  }
-`
-
 const ButtonErrorStyle = styled(Base)`
   background-color: ${({ theme }) => theme.red1};
   border: 1px solid ${({ theme }) => theme.red1};
@@ -277,62 +227,9 @@ const ButtonErrorStyle = styled(Base)`
   }
 `
 
-export function ButtonConfirmed({
-  confirmed,
-  altDisabledStyle,
-  ...rest
-}: { confirmed?: boolean; altDisabledStyle?: boolean } & ButtonProps) {
-  if (confirmed) {
-    return <ButtonConfirmedStyle {...rest} />
-  } else {
-    return <ButtonPrimary {...rest} altDisabledStyle={altDisabledStyle} />
-  }
-}
-
 export function ButtonError({ error, ...rest }: { error?: boolean } & ButtonProps) {
   if (error) {
     return <ButtonErrorStyle {...rest} />
-  } else {
-    return <ButtonPrimary {...rest} />
-  }
-}
-
-export function ButtonDropdown({ disabled = false, children, ...rest }: { disabled?: boolean } & ButtonProps) {
-  return (
-    <ButtonPrimary {...rest} disabled={disabled}>
-      <RowBetween>
-        <div style={{ display: 'flex', alignItems: 'center' }}>{children}</div>
-        <ChevronDown size={24} />
-      </RowBetween>
-    </ButtonPrimary>
-  )
-}
-
-export function ButtonDropdownGrey({ disabled = false, children, ...rest }: { disabled?: boolean } & ButtonProps) {
-  return (
-    <ButtonGray {...rest} disabled={disabled} style={{ borderRadius: '20px' }}>
-      <RowBetween>
-        <div style={{ display: 'flex', alignItems: 'center' }}>{children}</div>
-        <ChevronDown size={24} />
-      </RowBetween>
-    </ButtonGray>
-  )
-}
-
-export function ButtonDropdownLight({ disabled = false, children, ...rest }: { disabled?: boolean } & ButtonProps) {
-  return (
-    <ButtonOutlined {...rest} disabled={disabled}>
-      <RowBetween>
-        <div style={{ display: 'flex', alignItems: 'center' }}>{children}</div>
-        <ChevronDown size={24} />
-      </RowBetween>
-    </ButtonOutlined>
-  )
-}
-
-export function ButtonRadio({ active, ...rest }: { active?: boolean } & ButtonProps) {
-  if (!active) {
-    return <ButtonWhite {...rest} />
   } else {
     return <ButtonPrimary {...rest} />
   }

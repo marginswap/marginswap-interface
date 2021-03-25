@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { AutoColumn } from '../Column'
-import { RowBetween, RowFixed } from '../Row'
+import { RowBetween } from '../Row'
 
 export const ModalInfo = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -10,13 +10,6 @@ export const ModalInfo = styled.div`
   justify-content: center;
   flex: 1;
   user-select: none;
-`
-export const StyledMenu = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  border: none;
 `
 
 export const PopoverContainer = styled.div<{ show: boolean }>`
@@ -46,10 +39,6 @@ export const TextDot = styled.div`
   border-radius: 50%;
 `
 
-export const FadedSpan = styled(RowFixed)`
-  color: ${({ theme }) => theme.primary1};
-  font-size: 14px;
-`
 export const Checkbox = styled.input`
   border: 1px solid ${({ theme }) => theme.red3};
   height: 20px;
