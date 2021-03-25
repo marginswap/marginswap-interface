@@ -1,30 +1,24 @@
 import React, { FunctionComponent, useEffect, useRef } from 'react'
 import { makeStyles, Paper } from '@material-ui/core'
-import clsx from 'clsx'
-import { useDarkModeManager } from 'state/user/hooks'
 import { createChart } from 'lightweight-charts'
 
 const useStyles = makeStyles(() => ({
   graphic: {
-    width: '49%',
-    height: '90%',
-    margin: '12px',
-    borderRadius: '10px'
-  },
-  darkMode: {
-    backgroundColor: '#2E2F3C'
+    background:
+      'linear-gradient(138.53deg, rgba(230, 80, 255, 0.0925) -1.05%, rgba(74, 74, 74, 0.25) 28.45%, rgba(50, 50, 50, 0) 76.54%, rgba(146, 163, 180, 0) 76.54%)',
+    backdropFilter: 'blur(10px)',
+    borderRadius: '12px'
   }
 }))
 
 export const Graphic: FunctionComponent<{ state: unknown }> = () => {
   const classes = useStyles()
-  const [darkMode] = useDarkModeManager()
   const ref = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
     if (ref.current) {
       const chart = createChart(ref.current, {
-        width: 400,
-        height: 300,
+        width: 505,
+        height: 338,
         layout: {
           backgroundColor: 'transparent',
           textColor: 'black'
@@ -153,14 +147,7 @@ export const Graphic: FunctionComponent<{ state: unknown }> = () => {
   }, [])
 
   return (
-    <Paper
-      style={{
-        background: 'radial-gradient(50% 50% at 50% 50%,rgba(255,0,122,0.4) 0%,rgba(255,255,255,0) 100%)'
-      }}
-      className={clsx(classes.graphic, {
-        [classes.darkMode]: darkMode
-      })}
-    >
+    <Paper className={classes.graphic}>
       <div id="chart" ref={ref} />
     </Paper>
   )

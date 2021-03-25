@@ -34,7 +34,7 @@ export default function Swap() {
         .catch(error => console.error('interval list fetching error', error))
     }
     // eslint-disable-next-line
-    }, [])
+  }, [])
 
   return (
     <div className={classes.wrapper}>
