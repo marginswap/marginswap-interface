@@ -7,6 +7,7 @@ import InfoCard from '../../components/InfoCard'
 import IconBanknotes from '../../icons/IconBanknotes'
 import IconScales from '../../icons/IconScales'
 import IconCoin from '../../icons/IconCoin'
+import RiskMeter from '../../components/Riskmeter'
 
 export type AccountBalanceData = {
   img: string
@@ -129,14 +130,16 @@ export const MarginAccount = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  const [risk] = useState(Math.round(Math.random() * 100) / 10)
 
   return (
     <div className={classes.wrapper}>
       <div className={classes.section}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px 0' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px 0', alignItems: 'center' }}>
           <InfoCard title="Total Account Balance" amount={0.123456} withUnderlyingCard Icon={IconBanknotes} />
           <InfoCard title="Debt" amount={0.123456} small Icon={IconScales} />
           <InfoCard title="Equity" amount={0.123456} color="secondary" small Icon={IconCoin} />
+          <RiskMeter risk={risk} />
         </div>
         <TokensTable
           title="Account balance"
