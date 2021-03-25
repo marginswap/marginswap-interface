@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import { Text } from 'rebass'
 import { NavLink } from 'react-router-dom'
 import { darken } from 'polished'
-import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import Logo from '../../assets/images/Union.svg'
 import { useActiveWeb3React } from '../../hooks'
@@ -298,7 +297,6 @@ const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
 
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
-  const { t } = useTranslation()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
   // const [darkMode, toggleDarkMode] = useDarkModeManager()
@@ -332,7 +330,7 @@ export default function Header() {
       <HeaderRow>
         <HeaderLinks>
           <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
-            {t('swap')}
+            Swap
           </StyledNavLink>
           <StyledNavLink id={`stake-nav-link`} to={'/margin-account'}>
             Margin Account
