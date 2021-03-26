@@ -7,6 +7,7 @@ const useStyles = makeStyles(() => ({
     background:
       'linear-gradient(138.53deg, rgba(230, 80, 255, 0.0925) -1.05%, rgba(74, 74, 74, 0.25) 28.45%, rgba(50, 50, 50, 0) 76.54%, rgba(146, 163, 180, 0) 76.54%)',
     backdropFilter: 'blur(10px)',
+    border: '1px solid #777777',
     borderRadius: '12px'
   }
 }))

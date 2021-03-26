@@ -17,10 +17,11 @@ export const useStyles = makeStyles(() => ({
   main: {
     width: '1040px',
     backdropFilter: 'blur(10px)',
-    background: '#212429',
+    background: 'inherit',
     boxShadow:
       '0px 0px 1px rgb(0 0 0 / 1%), 0px 4px 8px rgb(0 0 0 / 4%), 0px 16px 24px rgb(0 0 0 / 4%), 0px 24px 32px rgb(0 0 0 / 1%)',
     borderRadius: '10px',
+    border: '1px solid #777777',
     color: '#fff'
   },
   container: {

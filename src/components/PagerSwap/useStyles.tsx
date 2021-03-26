@@ -6,6 +6,7 @@ export const useStyles = makeStyles(() => ({
     background: 'rgba(50, 50, 50, 0.25)',
     backdropFilter: 'blur(10px)',
     borderRadius: 20,
+    border: '1px solid #777777',
     margin: 'auto',
     height: '660px',
     padding: '0 20px',
