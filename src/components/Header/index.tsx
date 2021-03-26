@@ -81,11 +81,6 @@ const HeaderElement = styled.div`
   `};
 `
 
-const HeaderElementWrap = styled.div`
-  display: flex;
-  align-items: center;
-`
-
 const HeaderRow = styled(RowFixed)`
   ${({ theme }) => theme.mediaWidth.upToMedium`
    width: 100%;
@@ -239,7 +234,6 @@ export default function Header() {
   const { account, chainId } = useActiveWeb3React()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
-  // const [darkMode, toggleDarkMode] = useDarkModeManager()
 
   const toggleClaimModal = useToggleSelfClaimModal()
 
@@ -338,15 +332,6 @@ export default function Header() {
             <Web3Status />
           </AccountElement>
         </HeaderElement>
-        <HeaderElementWrap>
-          {/* TODO: dark mode selector */}
-          {/*<StyledMenuButton onClick={() => toggleDarkMode()}>*/}
-          {/*  {darkMode ? <Moon size={20} /> : <Sun size={20} />}*/}
-          {/*</StyledMenuButton>*/}
-          {
-            //<Menu />
-          }
-        </HeaderElementWrap>
       </HeaderControls>
     </HeaderFrame>
   )
