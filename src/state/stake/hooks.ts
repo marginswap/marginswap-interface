@@ -1,16 +1,15 @@
-import { ChainId, CurrencyAmount, JSBI, Token, TokenAmount, WETH, Pair } from '@marginswap/sdk'
+import { ChainId, JSBI, Token, TokenAmount, WETH, Pair } from '@marginswap/sdk'
 import { useMemo } from 'react'
 import { DAI, UNI, USDC, USDT, WBTC } from '../../constants'
 import { STAKING_REWARDS_INTERFACE } from '../../constants/abis/staking-rewards'
 import { useActiveWeb3React } from '../../hooks'
 import { NEVER_RELOAD, useMultipleContractSingleData } from '../multicall/hooks'
-import { tryParseAmount } from '../swap/hooks'
 import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
 
 export const STAKING_GENESIS = 1600387200
 
 // TODO add staking rewards addresses here
-export const STAKING_REWARDS_INFO: {
+const STAKING_REWARDS_INFO: {
   [chainId in ChainId]?: {
     tokens: [Token, Token]
     stakingRewardAddress: string
@@ -36,7 +35,7 @@ export const STAKING_REWARDS_INFO: {
   ]
 }
 
-export interface StakingInfo {
+interface StakingInfo {
   // the address of the reward contract
   stakingRewardAddress: string
   // the tokens involved in this pair
@@ -65,7 +64,7 @@ export interface StakingInfo {
 }
 
 // gets the staking info from the network for the active chain id
-export function useStakingInfo(pairToFilterBy?: Pair | null): StakingInfo[] {
+function useStakingInfo(pairToFilterBy?: Pair | null): StakingInfo[] {
   const { chainId, account } = useActiveWeb3React()
 
   // detect if staking is ended
@@ -224,64 +223,4 @@ export function useTotalUniEarned(): TokenAmount | undefined {
       ) ?? new TokenAmount(uni, '0')
     )
   }, [stakingInfos, uni])
-}
-
-// based on typed value
-export function useDerivedStakeInfo(
-  typedValue: string,
-  stakingToken: Token,
-  userLiquidityUnstaked: TokenAmount | undefined
-): {
-  parsedAmount?: CurrencyAmount
-  error?: string
-} {
-  const { account } = useActiveWeb3React()
-
-  const parsedInput: CurrencyAmount | undefined = tryParseAmount(typedValue, stakingToken)
-
-  const parsedAmount =
-    parsedInput && userLiquidityUnstaked && JSBI.lessThanOrEqual(parsedInput.raw, userLiquidityUnstaked.raw)
-      ? parsedInput
-      : undefined
-
-  let error: string | undefined
-  if (!account) {
-    error = 'Connect Wallet'
-  }
-  if (!parsedAmount) {
-    error = error ?? 'Enter an amount'
-  }
-
-  return {
-    parsedAmount,
-    error
-  }
-}
-
-// based on typed value
-export function useDerivedUnstakeInfo(
-  typedValue: string,
-  stakingAmount: TokenAmount
-): {
-  parsedAmount?: CurrencyAmount
-  error?: string
-} {
-  const { account } = useActiveWeb3React()
-
-  const parsedInput: CurrencyAmount | undefined = tryParseAmount(typedValue, stakingAmount.token)
-
-  const parsedAmount = parsedInput && JSBI.lessThanOrEqual(parsedInput.raw, stakingAmount.raw) ? parsedInput : undefined
-
-  let error: string | undefined
-  if (!account) {
-    error = 'Connect Wallet'
-  }
-  if (!parsedAmount) {
-    error = error ?? 'Enter an amount'
-  }
-
-  return {
-    parsedAmount,
-    error
-  }
 }

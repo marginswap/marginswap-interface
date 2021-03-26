@@ -15011,17 +15011,17 @@ use-callback-ref@^1.2.1, use-callback-ref@^1.2.3:
   resolved "https://registry.yarnpkg.com/use-callback-ref/-/use-callback-ref-1.2.5.tgz#6115ed242cfbaed5915499c0a9842ca2912f38a5"
   integrity sha512-gN3vgMISAgacF7sqsLPByqoePooY3n2emTH59Ur5d/M8eg4WTWu1xp8i8DHjohftIyEx0S08RiYxbffr4j8Peg==
 
-use-count-up@^2.3.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/use-count-up/-/use-count-up-2.3.0.tgz#8e9a1972f62b580b8e78cb8645b7a45d81aeb695"
-  integrity sha512-lbOJKlaptDeUNp7dNWNDxBs389xkQmg2Z71aEV8aZhnP3UQjKod6q8DPhIfvqUo2g4cOdIa3nKIqrm2rJeBQPQ==
+use-count-up@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/use-count-up/-/use-count-up-2.3.1.tgz#e6045f07b47d99ebcc626dd0aa50d475f2e7f48e"
+  integrity sha512-nFXUiweeHDYovM0boDk0/CTa/VW7Gzh9G/l8NVNPleqmDJbDuDO3j8qSODTbyFQrKKHN7XJd2f9hy8FUgocIvw==
   dependencies:
-    use-elapsed-time "^2.1.4"
+    use-elapsed-time "^2.1.6"
 
-use-elapsed-time@^2.1.4:
-  version "2.1.6"
-  resolved "https://registry.yarnpkg.com/use-elapsed-time/-/use-elapsed-time-2.1.6.tgz#8ad0c0054a1ba7bf881540855b5eb2d60ff501be"
-  integrity sha512-6h6bY63oto1REUqcID3Goedgl5tVqWXsLzUSJ6EB9VprqZqnO5VDo1kkQqY/6V5Jc4Wu4XUgW3B8aDUHG2KRcA==
+use-elapsed-time@^2.1.6:
+  version "2.1.7"
+  resolved "https://registry.yarnpkg.com/use-elapsed-time/-/use-elapsed-time-2.1.7.tgz#65f2bd1b6f6cb7fd06f302eb820c22b96ff09311"
+  integrity sha512-Kz0lzfiCzL36Uro5vBfhW9FzCMJ6UWNleYFjKPQaZ/hvtYShTcKD7EFyGGgcIsuX9/KVe25fgTTlEaGWf6EzNA==
 
 use-sidecar@^1.0.1:
   version "1.0.5"
