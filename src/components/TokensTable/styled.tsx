@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Table, TableCell, TableRow, TableSortLabel } from '@material-ui/core'
+import { FormControlLabel, Table, TableCell, TableRow, TableSortLabel } from '@material-ui/core'
 
 export const StyledTableWrapper = styled('div')`
   border: 1px solid #777777;
@@ -50,4 +50,21 @@ export const StyledTableCell = styled(TableCell)`
   font-size: 13px !important;
   font-weight: 500 !important;
   border-bottom: ${({ style }) => style?.borderBottom ?? '1px solid #777777 !important'};
+`
+
+export const StyledFormControlLabel = styled(FormControlLabel)`
+  color: white;
+
+  .MuiSwitch-track {
+    background-color: #2dde9e;
+    opacity: 0.5;
+  }
+
+  .Mui-checked .MuiSwitch-thumb {
+    background-color: currentColor;
+  }
+
+  .MuiSwitch-thumb {
+    background-color: #2dde9e;
+  }
 `

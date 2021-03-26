@@ -11,7 +11,7 @@ import walletIcon from 'assets/svg/walletIcon.svg'
 import question from 'assets/svg/question.svg'
 import { TokenInfo } from '@uniswap/token-lists'
 import AppBody from 'pages/AppBody'
-import { CurrencyModal } from '../CurrencyModal/index'
+import { CurrencyModal } from '../CurrencyModal'
 import { useStyles, useInputStyles, useTooltipStyles } from './useStyles'
 import React, { FC, useEffect, useState } from 'react'
 

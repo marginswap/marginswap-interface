@@ -1,14 +1,12 @@
-import { StyledTable, StyledTableCell, StyledTableRow, StyledTableSortLabel, StyledTableWrapper } from './styled'
 import {
-  Box,
-  Collapse,
-  FormControlLabel,
-  Switch,
-  TableBody,
-  TableContainer,
-  TableHead,
-  TableRow
-} from '@material-ui/core'
+  StyledFormControlLabel,
+  StyledTable,
+  StyledTableCell,
+  StyledTableRow,
+  StyledTableSortLabel,
+  StyledTableWrapper
+} from './styled'
+import { Box, Collapse, Switch, TableBody, TableContainer, TableHead, TableRow } from '@material-ui/core'
 import React, { ChangeEvent, Fragment, useMemo, useState } from 'react'
 import { colors, StyledButton, StyledTextField } from '../../theme'
 
@@ -105,7 +103,7 @@ const TokensTable: <T extends { [key: string]: string | number }>(props: TablePr
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginRight: '24px' }}>
           <h3>{title}</h3>
           {deriveEmptyFrom && (
-            <FormControlLabel
+            <StyledFormControlLabel
               control={
                 <Switch
                   checked={hideEmpty}

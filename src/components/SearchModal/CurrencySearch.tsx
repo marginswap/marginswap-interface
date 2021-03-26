@@ -1,7 +1,6 @@
 import { Currency, ETHER, Token } from '@marginswap/sdk'
 import React, { KeyboardEvent, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ReactGA from 'react-ga'
-import { useTranslation } from 'react-i18next'
 import { FixedSizeList } from 'react-window'
 import { Text } from 'rebass'
 import { useActiveWeb3React } from '../../hooks'
@@ -63,7 +62,6 @@ export function CurrencySearch({
   showImportView,
   setImportToken
 }: CurrencySearchProps) {
-  const { t } = useTranslation()
   const { chainId } = useActiveWeb3React()
   const theme = useTheme()
 
@@ -203,7 +201,7 @@ export function CurrencySearch({
           <SearchInput
             type="text"
             id="token-search-input"
-            placeholder={t('tokenSearchPlaceholder')}
+            placeholder="Search name or paste address"
             autoComplete="off"
             value={searchQuery}
             ref={inputRef as RefObject<HTMLInputElement>}
