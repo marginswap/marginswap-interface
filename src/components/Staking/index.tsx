@@ -80,13 +80,9 @@ const StakeInput: FC<StakeInput> = ({ title, buttonStyle }: StakeInput) => {
     ['Balance :', 'MFI/USDC Uniswap LP'],
     ['Available to Claim :', 'MFI'],
     ['Deposited Amount :', 'MFI/USDC Uniswap LP']
-  ] 
-  
-  const placeholderText = [
-    'Enter Amount',
-    'Enter Claim Amount',
-    'Amount to Withdraw'
   ]
+
+  const placeholderText = ['Enter Amount', 'Enter Claim Amount', 'Amount to Withdraw']
 
   const [balance] = useState<number>(2.67831148)
   const [APR] = useState<number>(20)
@@ -125,7 +121,13 @@ const StakeInput: FC<StakeInput> = ({ title, buttonStyle }: StakeInput) => {
             </div>
           </Balance>
           <InputBox>
-            <input type="number" value={amount} onChange={handleChange} className="value" placeholder={placeholderText[currentTab]} />
+            <input
+              type="number"
+              value={amount}
+              onChange={handleChange}
+              className="value"
+              placeholder={placeholderText[currentTab]}
+            />
             <MaxButton onClick={() => setAmount(balance)}>MAX</MaxButton>
           </InputBox>
           <TabPanel value={currentTab} index={0}>
