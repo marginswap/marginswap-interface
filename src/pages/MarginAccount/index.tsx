@@ -1,4 +1,3 @@
-import { makeStyles } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 import { useAllLists } from 'state/lists/hooks'
 import { useFetchListCallback } from '../../hooks/useFetchListCallback'
@@ -8,6 +7,7 @@ import IconBanknotes from '../../icons/IconBanknotes'
 import IconScales from '../../icons/IconScales'
 import IconCoin from '../../icons/IconCoin'
 import RiskMeter from '../../components/Riskmeter'
+import styled from 'styled-components'
 
 export type AccountBalanceData = {
   img: string
@@ -18,19 +18,21 @@ export type AccountBalanceData = {
   ir: number
 }
 
-const useStyles = makeStyles(() => ({
-  wrapper: {
-    display: 'flex',
-    flexDirection: 'row',
-    paddingLeft: '20px'
-  },
-  section: {
-    display: 'flex',
-    flexDirection: 'column',
-    paddingRight: '20px',
-    gap: '20px'
+const MarginAccountWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  padding-left: 20px;
+`
+
+const MarginAccountSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding-right: 20px;
+  gap: 20px;
+  & h3 span td p {
+    color: ${({ theme }) => theme.text1};
   }
-}))
+`
 
 const ACCOUNT_COLUMNS = [
   {
@@ -101,8 +103,6 @@ export function createAccountBalanceData(
 }
 
 export const MarginAccount = () => {
-  const classes = useStyles()
-
   //mock stuff, should be removed
   const lists = useAllLists()
   const [rows, setRows] = useState([createAccountBalanceData('', '', 0, 0, 0, 0)])
@@ -133,8 +133,8 @@ export const MarginAccount = () => {
   const [risk] = useState(Math.round(Math.random() * 100) / 10)
 
   return (
-    <div className={classes.wrapper}>
-      <div className={classes.section}>
+    <MarginAccountWrapper>
+      <MarginAccountSection>
         <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px 0', alignItems: 'center' }}>
           <InfoCard title="Total Account Balance" amount={0.123456} withUnderlyingCard Icon={IconBanknotes} />
           <InfoCard title="Debt" amount={0.123456} small Icon={IconScales} />
@@ -149,7 +149,7 @@ export const MarginAccount = () => {
           deriveEmptyFrom="available"
           idCol="coin"
         />
-      </div>
-    </div>
+      </MarginAccountSection>
+    </MarginAccountWrapper>
   )
 }

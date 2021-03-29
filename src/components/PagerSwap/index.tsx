@@ -1,10 +1,8 @@
 import { Box, Button, IconButton } from '@material-ui/core'
 import AppBar from '@material-ui/core/AppBar'
-import FormControl from '@material-ui/core/FormControl'
 import Tooltip from '@material-ui/core/Tooltip'
 import { Select, MenuItem } from '@material-ui/core'
 import Tab from '@material-ui/core/Tab'
-import Tabs from '@material-ui/core/Tabs'
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined'
 import walletIcon from 'assets/svg/walletIcon.svg'
 import question from 'assets/svg/question.svg'
@@ -22,7 +20,9 @@ import {
   PagerSwapHeader,
   Input,
   MidleWrapper,
-  SwapArrow
+  SwapArrow,
+  StyledTabs,
+  StyledFormControl
 } from './useStyles'
 import React, { FC, useEffect, useState } from 'react'
 
@@ -88,7 +88,7 @@ const MultiplierInput: FC<MultiplierInput> = ({ deal }: MultiplierInput) => {
   const oneToNArray = Array.from({ length: 10 }, (_, i) => i + 1)
 
   return (
-    <FormControl className={classes.formControl}>
+    <StyledFormControl>
       <Select
         value={deal.multiplier}
         onChange={handleChangeMultiplier}
@@ -104,7 +104,7 @@ const MultiplierInput: FC<MultiplierInput> = ({ deal }: MultiplierInput) => {
           )
         })}
       </Select>
-    </FormControl>
+    </StyledFormControl>
   )
 }
 
@@ -230,17 +230,16 @@ export const PagerSwap = ({ tokens }: { tokens: TokenInfo[] }) => {
           </IconButton>
         </PagerSwapHeader>
         <AppBar position="static" className={classes.root}>
-          <Tabs
+          <StyledTabs
             variant="fullWidth"
             value={currentTab}
             onChange={handleChangeTab}
             aria-label="nav tabs example"
-            className={classes.tabs}
             TabIndicatorProps={{ color: 'transparent' }}
           >
             <LinkTab label="Spot" href="/#" {...applyTabProps(0)} />
             <LinkTab label="Margin" href="/#" {...applyTabProps(1)} />
-          </Tabs>
+          </StyledTabs>
           <TabPanel value={currentTab} index={0}>
             <div className={classes.tabPanel}>
               <StakeInput

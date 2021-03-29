@@ -45,17 +45,6 @@ export function colors(darkMode: boolean): Colors {
     text4: darkMode ? '#565A69' : '#C3C5CB',
     text5: darkMode ? '#2C2F36' : '#EDEEF2',
 
-    // headers
-    // marginSwap #FFFFFF - #000000 text1
-    // selected page #FFFFFF - #141414 text1
-    // page #D0D0D0 - #828282 text2
-    // component #FFFFFF - #141414 text1
-
-    // selected tab #D0D0D0 - #777777
-    // tab #D0D0D0 - #777777;
-    // stat span #D0D0D0 - #4F4F4F text3
-    // input #D8D8D8 - #828282
-
     // backgrounds / greys
     bg1: darkMode ? '#232424' : '#FFFFFF',
     bg2: darkMode ? '#2C2F36' : '#F4F4F4',

@@ -1,5 +1,7 @@
 import { makeStyles } from '@material-ui/core'
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
+import SwapVertIcon from '@material-ui/icons/SwapVert'
+import FormControl from '@material-ui/core/FormControl'
+import Tabs from '@material-ui/core/Tabs'
 import styled from 'styled-components'
 
 export const PagerSwapWrapper = styled.div`
@@ -11,6 +13,9 @@ export const PagerSwapWrapper = styled.div`
   padding: 0 20px;
   display: flex;
   flex-direction: column;
+  & .MuiSvgIcon-root {
+    fill: ${({ theme }) => theme.text2};
+  }
 `
 
 export const PagerSwapHeader = styled.div`
@@ -63,6 +68,7 @@ export const useStyles = makeStyles(() => ({
       textTransform: 'none',
       width: '100%',
       borderRadius: '30px',
+      border: '0',
       height: '51px',
       fontWeight: 700,
       fontSize: '16px',
@@ -91,20 +97,6 @@ export const useStyles = makeStyles(() => ({
     justifyContent: 'space-between',
     boxShadow: 'none'
   },
-  tabs: {
-    height: '48px',
-    background: 'rgba(49, 49, 49, 0.5)',
-    borderRadius: '7px',
-    '& a': {
-      padding: '0',
-      heigth: '48px',
-      '&[aria-selected=true]': {
-        background: '#4255FF',
-        borderRadius: '7px'
-      },
-      '&[aria-selected=false]': {}
-    }
-  },
   tabPanel: {
     display: 'flex',
     flexDirection: 'column',
@@ -112,6 +104,23 @@ export const useStyles = makeStyles(() => ({
     marginTop: '16px'
   }
 }))
+
+export const StyledTabs = styled(Tabs)`
+  height: 48px;
+  background: ${({ theme }) => theme.bg2};
+  border-radius: 7px;
+  & a {
+    padding: 0;
+    height: 48px;
+    &[aria-selected='true'] {
+      background: #4255ff;
+      border-radius: 7px;
+    }
+    &[aria-selected='false'] {
+      color: ${({ theme }) => theme.text2};
+    }
+  }
+`
 
 export const InputWrapper = styled(FullWidthPair)`
   border-radius: 10px;
@@ -161,18 +170,20 @@ export const MidleWrapper = styled.div`
   }
 `
 
+export const StyledFormControl = styled(FormControl)`
+  display: inline-block;
+  min-width: 70;
+  padding-left: 12px;
+  & .MuiInputBase-root {
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 18px;
+    text-align: center;
+    color: ${({ theme }) => theme.text1};
+  }
+`
+
 export const useInputStyles = makeStyles(() => ({
-  formControl: {
-    display: 'inline-block',
-    minWidth: 70,
-    paddingLeft: '12px',
-    '& .MuiInputBase-root': {
-      fontWeight: '500',
-      fontSize: '15px',
-      lineHeight: '18px',
-      textAlign: 'center'
-    }
-  },
   selectEmpty: {
     marginTop: 0,
     '& .MuiSelect-root': {
@@ -194,7 +205,7 @@ export const useInputStyles = makeStyles(() => ({
   }
 }))
 
-export const SwapArrow = styled(ArrowDownwardIcon)`
+export const SwapArrow = styled(SwapVertIcon)`
   margin: auto;
   color: ${({ theme }) => theme.text1};
   cursor: pointer;

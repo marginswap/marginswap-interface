@@ -1,13 +1,12 @@
 import { Divider } from '@material-ui/core'
 import SearchIcon from '@material-ui/icons/Search'
-import XIcon from '../../assets/images/x.svg'
 import Dropdown from '../../assets/images/dropdown.svg'
 import { TokenInfo } from '@uniswap/token-lists'
 import Modal from '@material-ui/core/Modal'
 import Backdrop from '@material-ui/core/Backdrop'
 import Fade from '@material-ui/core/Fade'
 import React, { FC, useEffect, useState } from 'react'
-import { useModalStyles, useCurrencyStyles } from './useModalStyles'
+import { useModalStyles, useCurrencyStyles, StyledPaper, Search, ModalButton, CloseButton } from './useModalStyles'
 
 export interface CurrencyInput {
   tokens: TokenInfo[]
@@ -53,7 +52,10 @@ export const CurrencyModal: FC<CurrencyInput> = ({ tokens, deal }: CurrencyInput
 
   const [open, setOpen] = React.useState(false)
   const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
+  const handleClose = () => {
+    setSearch('')
+    setOpen(false)
+  }
 
   const [newTokens, setNewTokens] = useState<TokenInfo[]>([])
   const [search, setSearch] = useState('')
@@ -73,7 +75,7 @@ export const CurrencyModal: FC<CurrencyInput> = ({ tokens, deal }: CurrencyInput
 
   return (
     <div>
-      <button type="button" onClick={handleOpen} className={classes.modalButton}>
+      <ModalButton type="button" onClick={handleOpen}>
         {deal.currency !== -1 && newTokens ? (
           <>
             <img
@@ -90,7 +92,7 @@ export const CurrencyModal: FC<CurrencyInput> = ({ tokens, deal }: CurrencyInput
             <img src={Dropdown} width="8px" height="14px" alt="_" id="dropdown" />
           </div>
         )}
-      </button>
+      </ModalButton>
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -104,15 +106,15 @@ export const CurrencyModal: FC<CurrencyInput> = ({ tokens, deal }: CurrencyInput
         }}
       >
         <Fade in={open}>
-          <div className={classes.paper}>
+          <StyledPaper>
             <div className={classes.modalHeader}>
               <h3>Select a token</h3>
-              <img src={XIcon} width="20px" height="20px" alt="X" onClick={handleClose} />
+              <CloseButton onClick={handleClose} />
             </div>
-            <div className={classes.search}>
+            <Search>
               <input type="text" placeholder="Search" onChange={e => setSearch(e.target.value)} autoFocus />
               <SearchIcon />
-            </div>
+            </Search>
             <Divider />
             <div className={classes.currencyList}>
               {newTokens
@@ -129,7 +131,7 @@ export const CurrencyModal: FC<CurrencyInput> = ({ tokens, deal }: CurrencyInput
             >
               Manage
             </button>
-          </div>
+          </StyledPaper>
         </Fade>
       </Modal>
     </div>

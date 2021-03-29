@@ -215,12 +215,12 @@ const StyledNavLink = styled(NavLink).attrs({
     color: ${({ theme }) => theme.text1};
     border-bottom-width: 4px;
     border-bottom-style: solid;
-    border-bottom-color: ${({ theme }) => theme.blue4};
+    border-bottom-color: #9906FE;
   }
 
   :hover,
   :focus {
-    color: ${({ theme }) => darken(0.1, theme.white)};
+    color: ${({ theme }) => darken(0.01, theme.white)};
   }
 `
 

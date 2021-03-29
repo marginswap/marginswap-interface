@@ -48,8 +48,8 @@ export const StyledButton = styled(Button)`
 `
 
 export const MaxButton = styled.button`
-  width: 53px;
-  height: 22px;
+  width: 54px;
+  height: 26px;
   background: #4255ff;
   border-radius: 4px;
   border: none;
