@@ -1991,18 +1991,23 @@
   dependencies:
     "@json-rpc-tools/types" "^1.6.1"
 
-"@marginswap/sdk@^4.0.3":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.0.3.tgz#d890c9e2932d5f769dacb2a30e9d20b2090f1ff9"
-  integrity sha512-+pDpQZ53lUy08VTu7JWiMSLVnqGZt28mdDd06c/mu4IyKORDXHf2sGq447vOnRS4dTCJ2jMOPltPB7U8eWuboQ==
+"@marginswap/core-abi@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@marginswap/core-abi/-/core-abi-1.0.1.tgz#515c69e97df6895c0373321c6f2114d8a589183e"
+  integrity sha512-P1hFPaL0KW696htTVbzcOrpHFKQl59ePRB2XzVH9iaV1/X+QU+OFfcpVXaEmOAhTSqI66Ps3GBkxG4GdYrbDEw==
+
+"@marginswap/sdk@^4.0.6":
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.0.6.tgz#de8ec0c961745d8994a3be4a4a12d673143fd8e1"
+  integrity sha512-NRHIXbCyyECFmt/hU+BXH3iux86q0nSi7YyhnQeNRNmdoWI76/r14vnUPxuTnaJMKyuDeLutkaGzm5VmmgQPDg==
   dependencies:
+    "@marginswap/core-abi" "1.0.1"
     "@uniswap/v2-core" "^1.0.0"
     big.js "^5.2.2"
     decimal.js-light "^2.5.0"
     jsbi "^3.1.1"
     lodash "^4.17.20"
     lodash-es "^4.17.21"
-    marginswap-abi "github:marginswap/abi"
     tiny-invariant "^1.1.0"
     tiny-warning "^1.0.3"
     toformat "^2.0.0"
@@ -10232,10 +10237,6 @@ map-visit@^1.0.0:
   integrity sha1-7Nyo8TFE5mDxtb1B8S80edmN+48=
   dependencies:
     object-visit "^1.0.0"
-
-"marginswap-abi@github:marginswap/abi":
-  version "1.0.0"
-  resolved "https://codeload.github.com/marginswap/abi/tar.gz/26d34db322b7dd620c9486ca0b57e2787cbc5bbe"
 
 md5.js@^1.3.4:
   version "1.3.5"
