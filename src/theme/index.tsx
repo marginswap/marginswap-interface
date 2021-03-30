@@ -5,6 +5,7 @@ import styled, {
   css,
   DefaultTheme
 } from 'styled-components'
+import { useIsDarkMode } from '../state/user/hooks'
 import { Text, TextProps } from 'rebass'
 import { Colors } from './styled'
 
@@ -116,7 +117,8 @@ export function theme(darkMode: boolean): DefaultTheme {
 }
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
-  return <StyledComponentsThemeProvider theme={theme(true)}>{children}</StyledComponentsThemeProvider>
+  const darkMode = useIsDarkMode()
+  return <StyledComponentsThemeProvider theme={theme(darkMode)}>{children}</StyledComponentsThemeProvider>
 }
 
 const TextWrapper = styled(Text)<{ color: keyof Colors }>`
