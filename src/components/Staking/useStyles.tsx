@@ -100,16 +100,16 @@ export const InputHeader = styled.div`
   }
   & .approximate {
     word-spacing: 8px;
-    color: ${({theme}) => theme.text3};
+    color: ${({ theme }) => theme.text3};
   }
 `
 
 export const InputTabs = styled(Tabs)`
   height: 48px;
-  background: ${({theme}) => theme.bg2};
+  background: ${({ theme }) => theme.bg2};
   border-radius: 7px;
   border: 1px solid;
-  border-image-source: linear-gradient(149.42deg, #FFFFFF 3.01%, rgba(147, 147, 147, 0) 100.86%);
+  border-image-source: linear-gradient(149.42deg, #ffffff 3.01%, rgba(147, 147, 147, 0) 100.86%);
   & a {
     padding: 0;
     height: 36px;

@@ -46,10 +46,10 @@ export function colors(darkMode: boolean): Colors {
     text5: darkMode ? '#2C2F36' : '#EDEEF2',
 
     // headers
-		// marginSwap #FFFFFF - #000000 text1
-		// selected page #FFFFFF - #141414 text1
-		// page #D0D0D0 - #828282 text2
-		// component #FFFFFF - #141414 text1
+    // marginSwap #FFFFFF - #000000 text1
+    // selected page #FFFFFF - #141414 text1
+    // page #D0D0D0 - #828282 text2
+    // component #FFFFFF - #141414 text1
 
     // selected tab #D0D0D0 - #777777
     // tab #D0D0D0 - #777777;

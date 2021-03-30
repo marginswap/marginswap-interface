@@ -58,11 +58,7 @@ const StakeInput: FC<StakeInput> = ({ title, balance, deal, tokens }: StakeInput
       </p>
       <Input>
         <input type="number" value={deal.quantity} min={0} onChange={event => handleChange(event)} className="value" />
-        {deal.setQuantity && (
-          <MaxButton onClick={handleSetMax}>
-            MAX
-          </MaxButton>
-        )}
+        {deal.setQuantity && <MaxButton onClick={handleSetMax}>MAX</MaxButton>}
         <div className={classes.currencyWrapper}>
           {tokens && (
             <>

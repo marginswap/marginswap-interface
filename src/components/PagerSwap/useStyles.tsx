@@ -196,7 +196,7 @@ export const useInputStyles = makeStyles(() => ({
 
 export const SwapArrow = styled(ArrowDownwardIcon)`
   margin: auto;
-  color: ${({theme}) => theme.text1};
+  color: ${({ theme }) => theme.text1};
   cursor: pointer;
 `
 
