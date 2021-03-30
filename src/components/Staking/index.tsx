@@ -76,6 +76,14 @@ const StakeInput: FC<StakeInput> = ({ title, buttonStyle }: StakeInput) => {
     setCurrentTab(newValue)
   }
 
+  const balanceText = [
+    ['Balance :', 'MFI/USDC Uniswap LP'],
+    ['Available to Claim :', 'MFI'],
+    ['Deposited Amount :', 'MFI/USDC Uniswap LP']
+  ]
+
+  const placeholderText = ['Enter Amount', 'Enter Claim Amount', 'Amount to Withdraw']
+
   const [balance] = useState<number>(2.67831148)
   const [APR] = useState<number>(20)
   const [amount, setAmount] = useState<number>()
@@ -105,15 +113,21 @@ const StakeInput: FC<StakeInput> = ({ title, buttonStyle }: StakeInput) => {
             <LinkTab label="Withdraw" href="/#" {...applyTabProps(2)} />
           </InputTabs>
           <Balance>
-            <span>Balance :</span>
+            <span>{balanceText[currentTab][0]}</span>
             <div>
               <img src={walletIcon} width={16} height={15} alt="wallet" />
               <span>{balance}</span>
-              <span>MFI/USDC Uniswap LP</span>
+              <span>{balanceText[currentTab][1]}</span>
             </div>
           </Balance>
           <InputBox>
-            <input type="number" value={amount} onChange={handleChange} className="value" placeholder="Enter Amount" />
+            <input
+              type="number"
+              value={amount}
+              onChange={handleChange}
+              className="value"
+              placeholder={placeholderText[currentTab]}
+            />
             <MaxButton onClick={() => setAmount(balance)}>MAX</MaxButton>
           </InputBox>
           <TabPanel value={currentTab} index={0}>
