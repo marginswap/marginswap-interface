@@ -47,6 +47,19 @@ export const StyledButton = styled(Button)`
   }
 `
 
+export const MaxButton = styled.button`
+  width: 53px;
+  height: 22px;
+  background: #4255ff;
+  border-radius: 4px;
+  border: none;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  color: #ffffff;
+  cursor: pointer;
+`
+
 export const ButtonText = styled.button`
   outline: none;
   border: none;

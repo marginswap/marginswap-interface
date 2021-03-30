@@ -25,7 +25,6 @@ export const useModalStyles = makeStyles((theme: Theme) => ({
     gap: '6px',
     height: '45px',
     background: 'initial',
-    color: 'inherit',
     border: 'none',
     padding: '0',
     cursor: 'pointer',

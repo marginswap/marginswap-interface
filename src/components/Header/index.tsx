@@ -20,6 +20,7 @@ import { useUserHasSubmittedClaim } from '../../state/transactions/hooks'
 import { Dots } from '../swap/styleds'
 import Modal from '../Modal'
 import UniBalanceContent from './UniBalanceContent'
+import { ModeSwitch } from './ModeSwitch'
 import usePrevious from '../../hooks/usePrevious'
 
 const HeaderFrame = styled.div`
@@ -331,6 +332,7 @@ export default function Header() {
             ) : null}
             <Web3Status />
           </AccountElement>
+          <ModeSwitch />
         </HeaderElement>
       </HeaderControls>
     </HeaderFrame>

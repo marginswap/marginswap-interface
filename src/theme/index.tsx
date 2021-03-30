@@ -39,15 +39,26 @@ export function colors(darkMode: boolean): Colors {
     black,
 
     // text
-    text1: darkMode ? '#FFFFFF' : '#000000',
-    text2: darkMode ? '#D0D0D0' : '#565A69',
-    text3: darkMode ? '#6C7284' : '#888D9B',
+    text1: darkMode ? '#FFFFFF' : '#141414',
+    text2: darkMode ? '#D0D0D0' : '#828282',
+    text3: darkMode ? '#D0D0D0' : '#4F4F4F',
     text4: darkMode ? '#565A69' : '#C3C5CB',
     text5: darkMode ? '#2C2F36' : '#EDEEF2',
 
+    // headers
+		// marginSwap #FFFFFF - #000000 text1
+		// selected page #FFFFFF - #141414 text1
+		// page #D0D0D0 - #828282 text2
+		// component #FFFFFF - #141414 text1
+
+    // selected tab #D0D0D0 - #777777
+    // tab #D0D0D0 - #777777;
+    // stat span #D0D0D0 - #4F4F4F text3
+    // input #D8D8D8 - #828282
+
     // backgrounds / greys
-    bg1: darkMode ? '#212429' : '#FFFFFF',
-    bg2: darkMode ? '#2C2F36' : '#F7F8FA',
+    bg1: darkMode ? '#232424' : '#FFFFFF',
+    bg2: darkMode ? '#2C2F36' : '#F4F4F4',
     bg3: darkMode ? '#40444F' : '#EDEEF2',
     bg4: darkMode ? '#565A69' : '#CED0D9',
     bg5: darkMode ? '#6C7284' : '#888D9B',
@@ -99,6 +110,7 @@ export function theme(darkMode: boolean): DefaultTheme {
 
     //shadows
     shadow1: darkMode ? '#000' : '#2F80ED',
+    background: darkMode ? '/images/dark_background.png' : '/images/light_background.png',
 
     // media queries
     mediaWidth: mediaWidthTemplates,
@@ -116,7 +128,7 @@ export function theme(darkMode: boolean): DefaultTheme {
 }
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
-  return <StyledComponentsThemeProvider theme={theme(true)}>{children}</StyledComponentsThemeProvider>
+  return <StyledComponentsThemeProvider theme={theme(false)}>{children}</StyledComponentsThemeProvider>
 }
 
 const TextWrapper = styled(Text)<{ color: keyof Colors }>`
@@ -220,6 +232,6 @@ body {
   min-height: 100vh;
 	background-repeat: no-repeat;
 	background-size: cover;
-  background-image: url("/images/bg.png");
+  background-image: url(${({ theme }) => theme.background});
 }
 `

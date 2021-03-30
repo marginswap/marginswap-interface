@@ -6,6 +6,7 @@ import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 import walletIcon from 'assets/svg/walletIcon.svg'
+import { MaxButton } from '../../theme/components'
 import {
   StakingWrapper,
   InputWrapper,
@@ -15,7 +16,6 @@ import {
   InputHeader,
   InputTabs,
   InputBox,
-  MaxButton,
   Balance
 } from './useStyles'
 
