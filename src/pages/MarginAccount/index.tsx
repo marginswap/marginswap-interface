@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/core'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useAllLists } from 'state/lists/hooks'
 import { useFetchListCallback } from '../../hooks/useFetchListCallback'
 import TokensTable from '../../components/TokensTable'
@@ -8,6 +8,10 @@ import IconBanknotes from '../../icons/IconBanknotes'
 import IconScales from '../../icons/IconScales'
 import IconCoin from '../../icons/IconCoin'
 import RiskMeter from '../../components/Riskmeter'
+import { useWeb3React } from '@web3-react/core'
+import { getAccountBalances, Balances, getAccountBorrowTotal, getAccountHoldingTotal } from '@marginswap/sdk'
+import { TokenInfo } from '@uniswap/token-lists'
+const { REACT_APP_CHAIN_ID } = process.env
 
 export type AccountBalanceData = {
   img: string
@@ -45,7 +49,7 @@ const ACCOUNT_COLUMNS = [
     )
   },
   { name: 'Total Balance', id: 'balance' },
-  { name: 'Available', id: 'available' },
+  // { name: 'Available', id: 'available' }, TODO
   { name: 'Borrowed', id: 'borrowed' },
   { name: 'Interest Rate', id: 'ir' }
 ] as const
@@ -81,72 +85,95 @@ const ACCOUNT_ACTIONS = [
   }
 ] as const
 
-// Mock stuff, probably should be removed
-export function createAccountBalanceData(
-  img: string,
-  coin: string,
-  balance: number,
-  available: number,
-  borrowed: number,
-  ir: number
-): AccountBalanceData {
-  return {
-    img,
-    coin,
-    balance,
-    available,
-    borrowed,
-    ir
-  }
-}
-
 export const MarginAccount = () => {
   const classes = useStyles()
+  const [error, setError] = useState<string | null>(null)
 
-  //mock stuff, should be removed
   const lists = useAllLists()
-  const [rows, setRows] = useState([createAccountBalanceData('', '', 0, 0, 0, 0)])
   const fetchList = useFetchListCallback()
+  const [tokens, setTokens] = useState<TokenInfo[]>([])
+  const [holdingAmounts, setHoldingAmounts] = useState<Balances>({})
+  const [borrowingAmounts, setBorrowingAmounts] = useState<Balances>({})
+  const [holdingTotal, setHoldingTotal] = useState(0)
+  const [debtTotal, setDebtTotal] = useState(0)
+
+  const getTokensList = async (url: string) => {
+    const tokensRes = await fetchList(url, false)
+    setTokens(tokensRes.tokens)
+  }
   useEffect(() => {
-    const url = Object.keys(lists)[0]
-    if (url) {
-      fetchList(url, false)
-        .then(({ tokens }) => {
-          const unique: string[] = []
-          const newTokens = tokens
-            .filter(({ symbol, logoURI }: any) => {
-              if (!unique.includes(symbol) && logoURI) {
-                unique.push(symbol)
-                return true
-              }
-              return false
-            })
-            .map(({ logoURI, symbol }: any) =>
-              createAccountBalanceData(logoURI, symbol, Math.random(), Math.random(), Math.random(), Math.random())
-            )
-          setRows(newTokens)
-        })
-        .catch(error => console.error('interval list fetching error', error))
+    getTokensList(Object.keys(lists)[0]).catch(e => {
+      console.error(e)
+      setError('Failed to get tokens list')
+    })
+  }, [lists])
+
+  const { account } = useWeb3React()
+  const getAccountData = async (_account: string) => {
+    const [balances, _holdingTotal, _debtTotal] = await Promise.all([
+      getAccountBalances(_account, Number(REACT_APP_CHAIN_ID)),
+      getAccountHoldingTotal(_account, Number(REACT_APP_CHAIN_ID)),
+      getAccountBorrowTotal(_account, Number(REACT_APP_CHAIN_ID))
+    ])
+    setHoldingAmounts(balances.holdingAmounts)
+    setBorrowingAmounts(balances.borrowingAmounts)
+    setHoldingTotal(_holdingTotal)
+    setDebtTotal(_debtTotal)
+  }
+  useEffect(() => {
+    if (account) {
+      getAccountData(account).catch(e => {
+        console.error(e)
+        setError('Failed to get account data')
+      })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-  const [risk] = useState(Math.round(Math.random() * 100) / 10)
+  }, [account])
+
+  const data = useMemo(
+    () =>
+      tokens.map(token => ({
+        img: token.logoURI ?? '',
+        coin: token.symbol,
+        balance: holdingAmounts[token.symbol] ?? 0,
+        borrowed: borrowingAmounts[token.symbol] ?? 0,
+        available: 0, // TODO
+        ir: 0 // TODO
+      })),
+    [tokens, holdingAmounts, borrowingAmounts]
+  )
+
+  const getRisk = (holding: number, debt: number): number => {
+    if (debt === 0) return 0
+    return Math.min(Math.max(((holding - debt) / debt - 1.1) * -41.6 + 10, 0), 10)
+  }
 
   return (
     <div className={classes.wrapper}>
       <div className={classes.section}>
+        {/* TODO: style account warning div */}
+        {!account && (
+          <div style={{ padding: '20px', color: 'orange', border: '1px solid yellow', borderRadius: '10px' }}>
+            Wallet not connected
+          </div>
+        )}
+        {/* TODO: style error div */}
+        {error && (
+          <div style={{ padding: '20px', color: 'indianred', border: '1px solid red', borderRadius: '10px' }}>
+            {error}
+          </div>
+        )}
         <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px 0', alignItems: 'center' }}>
-          <InfoCard title="Total Account Balance" amount={0.123456} withUnderlyingCard Icon={IconBanknotes} />
-          <InfoCard title="Debt" amount={0.123456} small Icon={IconScales} />
-          <InfoCard title="Equity" amount={0.123456} color="secondary" small Icon={IconCoin} />
-          <RiskMeter risk={risk} />
+          <InfoCard title="Total Account Balance" amount={holdingTotal} withUnderlyingCard Icon={IconBanknotes} />
+          <InfoCard title="Debt" amount={debtTotal} small Icon={IconScales} />
+          <InfoCard title="Equity" amount={holdingTotal - debtTotal} color="secondary" small Icon={IconCoin} />
+          <RiskMeter risk={getRisk(holdingTotal, debtTotal)} />
         </div>
         <TokensTable
           title="Account balance"
-          data={rows}
+          data={data}
           columns={ACCOUNT_COLUMNS}
           actions={ACCOUNT_ACTIONS}
-          deriveEmptyFrom="available"
+          deriveEmptyFrom="balance"
           idCol="coin"
         />
       </div>
