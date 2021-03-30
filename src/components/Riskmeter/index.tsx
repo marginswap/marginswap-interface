@@ -42,7 +42,7 @@ const RiskMeter: FunctionComponent<{
   <RiskMeterWrapper>
     <p>Your Margin Risk Level is</p>
     <p>
-      <span>{`${Math.floor(risk)}.${String(Math.round(risk * 10))[1]}`}</span>
+      <span>{`${Math.floor(risk)}.${String(Math.round(risk * 10)).padStart(2, '0')[1]}`}</span>
       {` ${risk < 3 ? 'Low' : risk <= 7 ? 'Medium' : 'High'} Risk`}
     </p>
     <RiskMeterContainer>

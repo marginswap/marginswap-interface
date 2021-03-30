@@ -1,5 +1,5 @@
 import { useAllLists } from 'state/lists/hooks'
-import { UNSUPPORTED_LIST_URLS } from './../../constants/lists'
+import { UNSUPPORTED_LIST_URLS } from '../../constants/lists'
 import { getVersionUpgrade, minVersionBump, VersionUpgrade } from '@uniswap/token-lists'
 import { useCallback, useEffect } from 'react'
 import { useDispatch } from 'react-redux'

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core'
 import { useAllLists } from 'state/lists/hooks'
 import { useFetchListCallback } from '../../hooks/useFetchListCallback'
-import { AccountBalanceData, createAccountBalanceData } from '../MarginAccount'
+import { AccountBalanceData } from '../MarginAccount'
 import TokensTable from '../../components/TokensTable'
 import InfoCard from '../../components/InfoCard'
 import IconMoneyStackLocked from '../../icons/IconMoneyStackLocked'
@@ -89,6 +89,25 @@ function createBondRateData(
     weekly,
     monthly,
     yearly
+  }
+}
+
+// Mock stuff, probably should be removed
+function createAccountBalanceData(
+  img: string,
+  coin: string,
+  balance: number,
+  available: number,
+  borrowed: number,
+  ir: number
+): AccountBalanceData {
+  return {
+    img,
+    coin,
+    balance,
+    available,
+    borrowed,
+    ir
   }
 }
 
