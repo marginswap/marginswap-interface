@@ -33,6 +33,18 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'column',
     paddingRight: '20px',
     gap: '20px'
+  },
+  warning: {
+    padding: '20px',
+    color: 'orange',
+    border: '1px solid yellow',
+    borderRadius: '10px'
+  },
+  error: {
+    padding: '20px',
+    color: 'indianred',
+    border: '1px solid red',
+    borderRadius: '10px'
   }
 }))
 
@@ -150,18 +162,8 @@ export const MarginAccount = () => {
   return (
     <div className={classes.wrapper}>
       <div className={classes.section}>
-        {/* TODO: style account warning div */}
-        {!account && (
-          <div style={{ padding: '20px', color: 'orange', border: '1px solid yellow', borderRadius: '10px' }}>
-            Wallet not connected
-          </div>
-        )}
-        {/* TODO: style error div */}
-        {error && (
-          <div style={{ padding: '20px', color: 'indianred', border: '1px solid red', borderRadius: '10px' }}>
-            {error}
-          </div>
-        )}
+        {!account && <div className={classes.warning}>Wallet not connected</div>}
+        {error && <div className={classes.error}>{error}</div>}
         <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px 0', alignItems: 'center' }}>
           <InfoCard title="Total Account Balance" amount={holdingTotal} withUnderlyingCard Icon={IconBanknotes} />
           <InfoCard title="Debt" amount={debtTotal} small Icon={IconScales} />

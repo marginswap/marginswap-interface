@@ -90,7 +90,7 @@ export const useStyles = makeStyles(() => ({
     height: '48px',
     background: 'rgba(49, 49, 49, 0.5)',
     borderRadius: '7px',
-    '& a': {
+    '& button': {
       padding: '0',
       heigth: '48px',
       '&[aria-selected=true]': {
@@ -116,12 +116,13 @@ export const useInputStyles = makeStyles(() => ({
     fontSize: 14,
     fontWeight: 600
   },
-  midleWrapper: {
+  middleWrapper: {
     height: 32,
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: '0 8px',
+    cursor: 'pointer',
     '& span': {
       fontWeight: '500',
       fontSize: '13px',
