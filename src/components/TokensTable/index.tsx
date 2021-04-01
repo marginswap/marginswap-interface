@@ -8,7 +8,7 @@ import {
 } from './styled'
 import { Box, Collapse, Switch, TableBody, TableContainer, TableHead, TableRow } from '@material-ui/core'
 import React, { ChangeEvent, Fragment, useMemo, useState } from 'react'
-import { colors, StyledButton, StyledTextField } from '../../theme'
+import { colors, StyledButton, StyledTextField, MaxButton } from '../../theme'
 
 type TableProps<T extends Record<string, string | number>> = {
   title: string
@@ -192,7 +192,7 @@ const TokensTable: <T extends { [key: string]: string | number }>(props: TablePr
                                   value={actionAmount}
                                 />
                                 {activeAction && actions[activeAction.actionIndex].deriveMaxFrom && (
-                                  <StyledButton
+                                  <MaxButton
                                     color="primary"
                                     style={{
                                       position: 'absolute',
@@ -212,7 +212,7 @@ const TokensTable: <T extends { [key: string]: string | number }>(props: TablePr
                                     }}
                                   >
                                     MAX
-                                  </StyledButton>
+                                  </MaxButton>
                                 )}
                               </div>
                               <StyledButton

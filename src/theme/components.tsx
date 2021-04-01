@@ -7,11 +7,11 @@ import { Button, TextField } from '@material-ui/core'
 
 export const StyledTextField = styled(TextField)`
   .MuiInput-input {
-    color: white !important;
+    color: ${({ theme }) => theme.text1} !important;
   }
 
   .MuiFormLabel-root {
-    color: white !important;
+    color: ${({ theme }) => theme.text1} !important;
   }
 
   .MuiInput-underline:before {
@@ -33,7 +33,7 @@ export const StyledButton = styled(Button)`
   border-radius: ${({ style }) => style?.borderRadius ?? '3px'} !important;
   border: ${({ color }) => (color === 'primary' ? 'none' : '1px solid #777777')} !important;
   padding: ${({ style }) => style?.padding ?? '10px'} !important;
-  color: white !important;
+  color: ${({ theme, color }) => ( color !== 'primary' ? theme.text1 : '#ffffff')} !important;
   text-transform: none !important;
   font-weight: 500 !important;
   font-size: 13px !important;
@@ -45,6 +45,19 @@ export const StyledButton = styled(Button)`
     background-color: #4255ff !important;
     border-color: #4255ff !important;
   }
+`
+
+export const MaxButton = styled.button`
+  width: 54px;
+  height: 26px;
+  background: #4255ff;
+  border-radius: 4px;
+  border: none;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  color: #ffffff;
+  cursor: pointer;
 `
 
 export const ButtonText = styled.button`

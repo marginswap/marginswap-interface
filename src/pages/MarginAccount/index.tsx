@@ -1,4 +1,3 @@
-import { makeStyles } from '@material-ui/core'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useAllLists } from 'state/lists/hooks'
 import { useFetchListCallback } from '../../hooks/useFetchListCallback'
@@ -12,6 +11,7 @@ import { useWeb3React } from '@web3-react/core'
 import { getAccountBalances, Balances, getAccountBorrowTotal, getAccountHoldingTotal } from '@marginswap/sdk'
 import { TokenInfo } from '@uniswap/token-lists'
 const { REACT_APP_CHAIN_ID } = process.env
+import styled from 'styled-components'
 
 export type AccountBalanceData = {
   img: string
@@ -22,19 +22,18 @@ export type AccountBalanceData = {
   ir: number
 }
 
-const useStyles = makeStyles(() => ({
-  wrapper: {
-    display: 'flex',
-    flexDirection: 'row',
-    paddingLeft: '20px'
-  },
-  section: {
-    display: 'flex',
-    flexDirection: 'column',
-    paddingRight: '20px',
-    gap: '20px'
-  }
-}))
+const MarginAccountWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  padding-left: 20px;
+`
+
+const MarginAccountSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding-right: 20px;
+  gap: 20px;
+`
 
 const ACCOUNT_COLUMNS = [
   {
@@ -86,9 +85,9 @@ const ACCOUNT_ACTIONS = [
 ] as const
 
 export const MarginAccount = () => {
-  const classes = useStyles()
   const [error, setError] = useState<string | null>(null)
 
+  //mock stuff, should be removed
   const lists = useAllLists()
   const fetchList = useFetchListCallback()
   const [tokens, setTokens] = useState<TokenInfo[]>([])
@@ -148,8 +147,8 @@ export const MarginAccount = () => {
   }
 
   return (
-    <div className={classes.wrapper}>
-      <div className={classes.section}>
+    <MarginAccountWrapper>
+      <MarginAccountSection>
         {/* TODO: style account warning div */}
         {!account && (
           <div style={{ padding: '20px', color: 'orange', border: '1px solid yellow', borderRadius: '10px' }}>
@@ -176,7 +175,7 @@ export const MarginAccount = () => {
           deriveEmptyFrom="balance"
           idCol="coin"
         />
-      </div>
-    </div>
+      </MarginAccountSection>
+    </MarginAccountWrapper>
   )
 }

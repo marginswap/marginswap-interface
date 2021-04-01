@@ -9,7 +9,7 @@ export const RiskMeterWrapper = styled.div`
   min-height: 230px;
 
   p {
-    color: white;
+    color: ${({ theme }) => theme.text1};
     font-size: 14px;
     font-weight: 500;
     margin: 0;
@@ -31,7 +31,7 @@ export const RiskLegendItem = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: white;
+  color: ${({ theme }) => theme.text1};
   font-size: 12px;
 `
 

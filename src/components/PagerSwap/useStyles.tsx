@@ -1,53 +1,63 @@
 import { makeStyles } from '@material-ui/core'
+import SwapVertIcon from '@material-ui/icons/SwapVert'
+import FormControl from '@material-ui/core/FormControl'
+import Tabs from '@material-ui/core/Tabs'
+import styled from 'styled-components'
+
+export const PagerSwapWrapper = styled.div`
+  backdrop-filter: blur(25px);
+  border-radius: 32px;
+  border: 1px solid #777777;
+  margin: auto;
+  height: 660px;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  & .MuiSvgIcon-root {
+    fill: ${({ theme }) => theme.text2};
+  }
+`
+
+export const PagerSwapHeader = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  & > h4 {
+    margin: 20px 5px;
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 27px;
+  }
+`
+
+export const FullWidthPair = styled.div`
+  & p > span:nth-child(odd) {
+    float: left;
+    & img {
+      margin: 0 0 -3px 11px;
+    }
+  }
+  & > p > span:nth-child(even) {
+    float: right;
+  }
+  & > p {
+    margin: 0;
+    font-size: 0.8em;
+    font-weight: 600;
+  }
+`
+
+export const ParametersSection = styled(FullWidthPair)`
+  height: 58px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px;
+  justify-content: space-evenly;
+  color: ${({ theme }) => theme.text3};
+`
 
 export const useStyles = makeStyles(() => ({
-  wrapper: {
-    backgroundColor: 'initial',
-    background: 'rgba(50, 50, 50, 0.25)',
-    backdropFilter: 'blur(10px)',
-    borderRadius: 20,
-    border: '1px solid #777777',
-    margin: 'auto',
-    height: '660px',
-    padding: '0 20px',
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  header: {
-    display: 'flex',
-    width: '100%',
-    justifyContent: 'space-between',
-    '& > h4': {
-      margin: '20px 5px',
-      fontHeight: '600',
-      fontSize: '22px',
-      lineHeight: '27px'
-    }
-  },
-  fullWidthPair: {
-    '& p > span:nth-child(odd)': {
-      float: 'left',
-      '& img': {
-        margin: '0 0 -3px 11px'
-      }
-    },
-    '& > p > span:nth-child(even)': {
-      float: 'right'
-    },
-    '& > p': {
-      margin: '0',
-      fontSize: '0.8em',
-      fontWeight: '600'
-    }
-  },
-  parameters: {
-    height: '58px',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '12px',
-    padding: '0 8px',
-    justifyContent: 'space-evenly'
-  },
   actions: {
     display: 'flex',
     width: '100%',
@@ -58,6 +68,7 @@ export const useStyles = makeStyles(() => ({
       textTransform: 'none',
       width: '100%',
       borderRadius: '30px',
+      border: '0',
       height: '51px',
       fontWeight: 700,
       fontSize: '16px',
@@ -86,20 +97,6 @@ export const useStyles = makeStyles(() => ({
     justifyContent: 'space-between',
     boxShadow: 'none'
   },
-  tabs: {
-    height: '48px',
-    background: 'rgba(49, 49, 49, 0.5)',
-    borderRadius: '7px',
-    '& a': {
-      padding: '0',
-      heigth: '48px',
-      '&[aria-selected=true]': {
-        background: '#4255FF',
-        borderRadius: '7px'
-      },
-      '&[aria-selected=false]': {}
-    }
-  },
   tabPanel: {
     display: 'flex',
     flexDirection: 'column',
@@ -108,63 +105,85 @@ export const useStyles = makeStyles(() => ({
   }
 }))
 
+export const StyledTabs = styled(Tabs)`
+  height: 48px;
+  background: ${({ theme }) => theme.bg2};
+  border-radius: 7px;
+  & a {
+    padding: 0;
+    height: 48px;
+    &[aria-selected='true'] {
+      background: #4255ff;
+      border-radius: 7px;
+    }
+    &[aria-selected='false'] {
+      color: ${({ theme }) => theme.text2};
+    }
+  }
+`
+
+export const InputWrapper = styled(FullWidthPair)`
+  border-radius: 10px;
+  border: 1px solid lightgray;
+  padding: 12px 18px;
+  font-size: 14;
+  font-weight: 600;
+  & p {
+    color: ${({ theme }) => theme.text2};
+  }
+`
+
+export const Input = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  & .value {
+    width: 40%;
+    font-weight: bold;
+    font-size: 18px;
+    color: ${({ theme }) => theme.text1};
+    border: 0;
+    font-family: sans-serif;
+    background-color: initial;
+    -moz-appearance: textfield;
+    &::placeholder {
+      font-size: 13px;
+      color: ${({ theme }) => theme.text2};
+    }
+  }
+`
+
+export const MidleWrapper = styled.div`
+  height: 32;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px;
+  gap: 8px;
+  & span {
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 16px;
+    color: ${({ theme }) => theme.text2};
+  }
+`
+
+export const StyledFormControl = styled(FormControl)`
+  display: inline-block;
+  min-width: 70;
+  padding-left: 12px;
+  & .MuiInputBase-root {
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 18px;
+    text-align: center;
+    color: ${({ theme }) => theme.text1};
+  }
+`
+
 export const useInputStyles = makeStyles(() => ({
-  wrapper: {
-    borderRadius: '10px',
-    border: '1px solid lightgray',
-    padding: '12px 18px',
-    fontSize: 14,
-    fontWeight: 600
-  },
-  midleWrapper: {
-    height: 32,
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '0 8px',
-    '& span': {
-      fontWeight: '500',
-      fontSize: '13px',
-      lineHeight: '16px'
-    }
-  },
-  input: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: '6px',
-    '& .value': {
-      width: '40%',
-      fontWeight: 'bold',
-      fontSize: 18,
-      color: '#fff',
-      border: '0',
-      fontFamily: 'sans-serif',
-      backgroundColor: 'initial',
-      MozAppearance: 'textfield'
-    }
-  },
-  maxButton: {
-    backgroundColor: '#4255FF',
-    color: '#fff',
-    maxHeight: 30,
-    fontWeight: 700,
-    letterSpacing: '0.085em',
-    borderRadius: '4px'
-  },
-  formControl: {
-    display: 'inline-block',
-    minWidth: 70,
-    paddingLeft: '12px',
-    '& .MuiInputBase-root': {
-      color: '#fff',
-      fontWeight: '500',
-      fontSize: '15px',
-      lineHeight: '18px',
-      textAlign: 'center'
-    }
-  },
   selectEmpty: {
     marginTop: 0,
     '& .MuiSelect-root': {
@@ -183,12 +202,14 @@ export const useInputStyles = makeStyles(() => ({
     '& .MuiInputBase-root': {
       color: '#fff'
     }
-  },
-  swapArrow: {
-    position: 'absolute',
-    left: '46.5%'
   }
 }))
+
+export const SwapArrow = styled(SwapVertIcon)`
+  margin: auto;
+  color: ${({ theme }) => theme.text1};
+  cursor: pointer;
+`
 
 export const useTooltipStyles = makeStyles(() => ({
   tooltip: {

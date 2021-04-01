@@ -14,6 +14,7 @@ import { useUserHasSubmittedClaim } from '../../state/transactions/hooks'
 import { Dots } from '../swap/styleds'
 import Modal from '../Modal'
 import UniBalanceContent from './UniBalanceContent'
+import { ModeSwitch } from './ModeSwitch'
 import usePrevious from '../../hooks/usePrevious'
 import { useDarkModeManager } from '../../state/user/hooks'
 import { Moon, Sun } from 'react-feather'
@@ -145,6 +146,7 @@ export default function Header() {
             ) : null}
             <Web3Status />
           </AccountElement>
+          <ModeSwitch />
         </HeaderElement>
         <HeaderElementWrap>
           <StyledMenuButton onClick={() => toggleDarkMode()}>

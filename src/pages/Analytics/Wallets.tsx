@@ -4,16 +4,42 @@ import { makeStyles, Paper } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 import IconButton from '@material-ui/core/IconButton'
+import styled from 'styled-components'
+
+const Container = styled.div`
+  display: flex;
+  margin: 12px 27px 0 60px;
+  flex-direction: column;
+  color: ${({ theme }) => theme.text1};
+`
+
+const Root = styled.div`
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 2px solid gray;
+  padding: 10px 0;
+  font-size: 13px;
+  line-height: 16px;
+  color: ${({ theme }) => theme.text2};
+`
+
+const StyledWallet = styled.li`
+  color: ${({ theme }) => theme.text1};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 3px solid #80808033;
+  padding: 10px 0 16px 0;
+  & span {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    line-height: 15px;
+  }
+`
 
 export const useStyles = makeStyles(() => ({
-  root: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    borderBottom: '2px solid gray',
-    padding: '10px 0',
-    fontSize: '13px',
-    lineHeight: '16px'
-  },
   main: {
     width: '1040px',
     backdropFilter: 'blur(10px)',
@@ -23,27 +49,6 @@ export const useStyles = makeStyles(() => ({
     borderRadius: '10px',
     border: '1px solid #777777',
     color: '#fff'
-  },
-  container: {
-    display: 'flex',
-    margin: '12px 27px 0 60px',
-    flexDirection: 'column'
-  },
-  walletsList: {
-    '& li': {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      borderBottom: '3px solid #80808033',
-      padding: '10px 0 16px 0',
-      '& span': {
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
-        fontSize: '12px',
-        lineHeight: '15px'
-      }
-    }
   },
   expand: {
     margin: 'auto',
@@ -72,10 +77,10 @@ const Wallet = ({ wallet }: { wallet: WalletData; index: number }) => {
   const { address, volume } = wallet
 
   return (
-    <li key={address}>
+    <StyledWallet key={address}>
       <span>{address}</span>
       <span>${numberFormat.format(volume)}</span>
-    </li>
+    </StyledWallet>
   )
 }
 
@@ -113,20 +118,20 @@ export const Wallets = ({ tokens }: any) => {
 
   return (
     <Paper className={classes.main}>
-      <div className={classes.container}>
+      <Container>
         <h3>Top Traders</h3>
-        <div className={classes.root}>
+        <Root>
           <span>Wallet</span>
           <span>Volume (24hrs)</span>
-        </div>
-        <div className={classes.walletsList}>{renderedWallets && renderedWallets.slice(0, 5)}</div>
+        </Root>
+        <div>{renderedWallets && renderedWallets.slice(0, 5)}</div>
         <Collapse in={checked}>
-          <div className={classes.walletsList}>{renderedWallets && renderedWallets.slice(5)}</div>
+          <div>{renderedWallets && renderedWallets.slice(5)}</div>
         </Collapse>
         <IconButton className={classes.expand} onClick={handleChange}>
           {checked ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </IconButton>
-      </div>
+      </Container>
     </Paper>
   )
 }

@@ -151,7 +151,7 @@ export const BondSupply = () => {
   return (
     <div className={classes.wrapper}>
       <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px 0' }}>
-        <InfoCard title="Bond Holding" amount={0.123456} Icon={IconMoneyStackLocked} />
+        <InfoCard title="Bond Holding" amount={0.123456} whiteText Icon={IconMoneyStackLocked} />
         <InfoCard title="Current Earnings" amount={0.123456} ghost Icon={IconMoneyStackLocked} />
         <InfoCard title="Total Earned" amount={0.123456} color="secondary" ghost Icon={IconMoneyStack} />
       </div>

@@ -40,15 +40,15 @@ export function colors(darkMode: boolean): Colors {
     black,
 
     // text
-    text1: darkMode ? '#FFFFFF' : '#000000',
-    text2: darkMode ? '#D0D0D0' : '#565A69',
-    text3: darkMode ? '#6C7284' : '#888D9B',
+    text1: darkMode ? '#FFFFFF' : '#141414',
+    text2: darkMode ? '#D0D0D0' : '#828282',
+    text3: darkMode ? '#D0D0D0' : '#4F4F4F',
     text4: darkMode ? '#565A69' : '#C3C5CB',
     text5: darkMode ? '#2C2F36' : '#EDEEF2',
 
     // backgrounds / greys
-    bg1: darkMode ? '#212429' : '#FFFFFF',
-    bg2: darkMode ? '#2C2F36' : '#F7F8FA',
+    bg1: darkMode ? '#232424' : '#FFFFFF',
+    bg2: darkMode ? '#2C2F36' : '#F4F4F4',
     bg3: darkMode ? '#40444F' : '#EDEEF2',
     bg4: darkMode ? '#565A69' : '#CED0D9',
     bg5: darkMode ? '#6C7284' : '#888D9B',
@@ -91,6 +91,7 @@ export function colors(darkMode: boolean): Colors {
 export function theme(darkMode: boolean): DefaultTheme {
   return {
     ...colors(darkMode),
+    isDark: darkMode,
 
     grids: {
       sm: 8,
@@ -100,6 +101,7 @@ export function theme(darkMode: boolean): DefaultTheme {
 
     //shadows
     shadow1: darkMode ? '#000' : '#2F80ED',
+    background: darkMode ? '/images/dark_background.png' : '/images/light_background.png',
 
     // media queries
     mediaWidth: mediaWidthTemplates,
@@ -222,6 +224,6 @@ body {
   min-height: 100vh;
 	background-repeat: no-repeat;
 	background-size: cover;
-  background-image: url("/images/bg.png");
+  background-image: url(${({ theme }) => theme.background});
 }
 `

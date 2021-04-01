@@ -1,18 +1,29 @@
 import { Box, Button, IconButton } from '@material-ui/core'
 import AppBar from '@material-ui/core/AppBar'
-import FormControl from '@material-ui/core/FormControl'
 import Tooltip from '@material-ui/core/Tooltip'
 import { Select, MenuItem } from '@material-ui/core'
 import Tab from '@material-ui/core/Tab'
-import Tabs from '@material-ui/core/Tabs'
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined'
 import walletIcon from 'assets/svg/walletIcon.svg'
 import question from 'assets/svg/question.svg'
 import { TokenInfo } from '@uniswap/token-lists'
 import AppBody from 'pages/AppBody'
 import { CurrencyModal } from '../CurrencyModal'
-import { useStyles, useInputStyles, useTooltipStyles } from './useStyles'
+import { MaxButton } from '../../theme/components'
+import {
+  useStyles,
+  useInputStyles,
+  useTooltipStyles,
+  PagerSwapWrapper,
+  InputWrapper,
+  ParametersSection,
+  PagerSwapHeader,
+  Input,
+  MidleWrapper,
+  SwapArrow,
+  StyledTabs,
+  StyledFormControl
+} from './useStyles'
 import React, { FC, useEffect, useState } from 'react'
 
 interface StakeInput {
@@ -21,14 +32,13 @@ interface StakeInput {
   deal: {
     quantity: number
     setQuantity?: React.Dispatch<React.SetStateAction<number>>
-    currency: number
-    setCurrency: React.Dispatch<React.SetStateAction<number>>
+    currency: TokenInfo | null
+    setCurrency: React.Dispatch<React.SetStateAction<TokenInfo | null>>
   }
   tokens: TokenInfo[]
 }
 const StakeInput: FC<StakeInput> = ({ title, balance, deal, tokens }: StakeInput) => {
   const classes = useInputStyles()
-  const styles = useStyles()
 
   const handleChange = (event: any) => {
     if (!deal.setQuantity) return
@@ -41,18 +51,14 @@ const StakeInput: FC<StakeInput> = ({ title, balance, deal, tokens }: StakeInput
   }
 
   return (
-    <div className={classes.wrapper + ' ' + styles.fullWidthPair}>
+    <InputWrapper>
       <p>
         <span>{title}</span>
         <span>Balance: {balance}</span>
       </p>
-      <div className={classes.input}>
+      <Input>
         <input type="number" value={deal.quantity} min={0} onChange={event => handleChange(event)} className="value" />
-        {deal.setQuantity && (
-          <Button variant="text" size="small" className={classes.maxButton} onClick={handleSetMax}>
-            MAX
-          </Button>
-        )}
+        {deal.setQuantity && <MaxButton onClick={handleSetMax}>MAX</MaxButton>}
         <div className={classes.currencyWrapper}>
           {tokens && (
             <>
@@ -60,8 +66,8 @@ const StakeInput: FC<StakeInput> = ({ title, balance, deal, tokens }: StakeInput
             </>
           )}
         </div>
-      </div>
-    </div>
+      </Input>
+    </InputWrapper>
   )
 }
 
@@ -82,7 +88,7 @@ const MultiplierInput: FC<MultiplierInput> = ({ deal }: MultiplierInput) => {
   const oneToNArray = Array.from({ length: 10 }, (_, i) => i + 1)
 
   return (
-    <FormControl className={classes.formControl}>
+    <StyledFormControl>
       <Select
         value={deal.multiplier}
         onChange={handleChangeMultiplier}
@@ -98,7 +104,7 @@ const MultiplierInput: FC<MultiplierInput> = ({ deal }: MultiplierInput) => {
           )
         })}
       </Select>
-    </FormControl>
+    </StyledFormControl>
   )
 }
 
@@ -162,19 +168,18 @@ function LinkTab(props: LinkTabProps) {
 }
 export const PagerSwap = ({ tokens }: { tokens: TokenInfo[] }) => {
   const classes = useStyles()
-  const styles = useInputStyles()
 
   const [currentTab, setCurrentTab] = useState(0)
 
   const [spotQuantityFrom, setSpotQuantityFrom] = useState(0)
-  const [spotCurrencyFrom, setSpotCurrencyFrom] = useState(-1)
+  const [spotCurrencyFrom, setSpotCurrencyFrom] = useState<TokenInfo | null>(null)
   const [spotQuantityTo, setSpotQuantityTo] = useState(0)
-  const [spotCurrencyTo, setSpotCurrencyTo] = useState(-1)
+  const [spotCurrencyTo, setSpotCurrencyTo] = useState<TokenInfo | null>(null)
 
   const [marginQuantityFrom, setMarginQuantityFrom] = useState(0)
-  const [marginCurrencyFrom, setMarginCurrencyFrom] = useState(-1)
+  const [marginCurrencyFrom, setMarginCurrencyFrom] = useState<TokenInfo | null>(null)
   const [marginQuantityTo, setMarginQuantityTo] = useState(0)
-  const [marginCurrencyTo, setMarginCurrencyTo] = useState(-1)
+  const [marginCurrencyTo, setMarginCurrencyTo] = useState<TokenInfo | null>(null)
   const [multiplier, setMultiplier] = useState(1)
 
   const parameters = {
@@ -191,19 +196,19 @@ export const PagerSwap = ({ tokens }: { tokens: TokenInfo[] }) => {
   }
 
   const middleParameters = (
-    <div className={classes.parameters + ' ' + classes.fullWidthPair}>
+    <ParametersSection>
       <Parameters parameters={parameters.price} />
       <Parameters parameters={parameters.slippageTolerance} />
-    </div>
+    </ParametersSection>
   )
 
   const bottomParameters = (
-    <div className={classes.parameters + ' ' + classes.fullWidthPair}>
+    <ParametersSection>
       <Parameters parameters={parameters.minimumReceived} />
       <Parameters parameters={parameters.priceImpact} />
       <Parameters parameters={parameters.transactionFee} />
       <Parameters parameters={parameters.route} />
-    </div>
+    </ParametersSection>
   )
 
   const handleChangeTab = (event: React.ChangeEvent<unknown>, newValue: number) => {
@@ -217,25 +222,24 @@ export const PagerSwap = ({ tokens }: { tokens: TokenInfo[] }) => {
 
   return (
     <AppBody>
-      <div className={classes.wrapper}>
-        <div className={classes.header}>
+      <PagerSwapWrapper>
+        <PagerSwapHeader>
           <h4>Swap</h4>
           <IconButton>
             <SettingsOutlinedIcon fontSize="small" style={{ color: 'white' }} />
           </IconButton>
-        </div>
+        </PagerSwapHeader>
         <AppBar position="static" className={classes.root}>
-          <Tabs
+          <StyledTabs
             variant="fullWidth"
             value={currentTab}
             onChange={handleChangeTab}
             aria-label="nav tabs example"
-            className={classes.tabs}
             TabIndicatorProps={{ color: 'transparent' }}
           >
             <LinkTab label="Spot" href="/#" {...applyTabProps(0)} />
             <LinkTab label="Margin" href="/#" {...applyTabProps(1)} />
-          </Tabs>
+          </StyledTabs>
           <TabPanel value={currentTab} index={0}>
             <div className={classes.tabPanel}>
               <StakeInput
@@ -249,16 +253,15 @@ export const PagerSwap = ({ tokens }: { tokens: TokenInfo[] }) => {
                 }}
                 tokens={tokens}
               />
-              <div className={styles.midleWrapper}>
-                <ArrowDownwardIcon
-                  className={styles.swapArrow}
+              <MidleWrapper>
+                <SwapArrow
                   onClick={() => {
                     const temp = spotCurrencyFrom
                     setSpotCurrencyFrom(spotCurrencyTo)
                     setSpotCurrencyTo(temp)
                   }}
                 />
-              </div>
+              </MidleWrapper>
               <StakeInput
                 title="To (estimated)"
                 balance={1.314269}
@@ -287,10 +290,10 @@ export const PagerSwap = ({ tokens }: { tokens: TokenInfo[] }) => {
                 }}
                 tokens={tokens}
               />
-              <div className={styles.midleWrapper}>
+              <MidleWrapper>
                 <span>Leverage</span>
                 <MultiplierInput deal={{ multiplier, setMultiplier }} />
-                <ArrowDownwardIcon
+                <SwapArrow
                   onClick={() => {
                     const temp = marginCurrencyFrom
                     setMarginCurrencyFrom(marginCurrencyTo)
@@ -299,7 +302,7 @@ export const PagerSwap = ({ tokens }: { tokens: TokenInfo[] }) => {
                 />
                 <img src={walletIcon} width={16} height={15} alt="wallet" />
                 <span>Borrowable: 200 USDC</span>
-              </div>
+              </MidleWrapper>
               <StakeInput
                 title="To (estimated)"
                 balance={1.314269}
@@ -316,7 +319,7 @@ export const PagerSwap = ({ tokens }: { tokens: TokenInfo[] }) => {
             </div>
           </TabPanel>
         </AppBar>
-      </div>
+      </PagerSwapWrapper>
     </AppBody>
   )
 }

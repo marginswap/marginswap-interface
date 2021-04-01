@@ -11,6 +11,9 @@ export const StakingWrapper = styled.div`
   box-shadow: 0px 0px 1px rgb(0 0 0 / 1%), 0px 4px 8px rgb(0 0 0 / 4%), 0px 16px 24px rgb(0 0 0 / 4%),
     0px 24px 32px rgb(0 0 0 / 1%);
   border: 1px solid #777777;
+  & .MuiSvgIcon-root {
+    fill: ${({ theme }) => theme.text2};
+  }
 `
 export const StakingHeader = styled.div`
   display: flex;
@@ -25,6 +28,7 @@ export const StakingHeader = styled.div`
     font-weight: normal;
     font-size: 22px;
     line-height: 27px;
+    color: ${({ theme }) => theme.text1};
   }
   & button {
     padding: 0;
@@ -84,6 +88,7 @@ export const InputWrapper = styled.div`
     box-shadow: none;
     background: none;
     padding-bottom: 22px;
+    color: inherit;
   }
 `
 export const InputHeader = styled.div`
@@ -98,34 +103,28 @@ export const InputHeader = styled.div`
   }
   & .approximate {
     word-spacing: 8px;
+    color: ${({ theme }) => theme.text3};
   }
 `
 
 export const InputTabs = styled(Tabs)`
   height: 48px;
-  background: rgba(49, 49, 49, 0.5);
+  background: ${({ theme }) => theme.bg2};
   border-radius: 7px;
+  border: 1px solid;
+  border-image-source: linear-gradient(149.42deg, #ffffff 3.01%, rgba(147, 147, 147, 0) 100.86%);
   & a {
     padding: 0;
     height: 36px;
+    color: ${({ theme }) => theme.text3};
     &[aria-selected='true'] {
+      color: #ffffff;
       background: #4255ff;
       border-radius: 7px;
     }
   }
 `
 
-export const MaxButton = styled.button`
-  width: 53px;
-  height: 22px;
-  background: #4255ff;
-  border-radius: 4px;
-  border: none;
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 15px;
-  color: inherit;
-`
 export const InputBox = styled.div`
   width: 100%;
   height: 52px;
@@ -136,13 +135,17 @@ export const InputBox = styled.div`
   background: hsl(0deg 0% 0% / 20%);
   border-radius: 10px;
   & .value {
+    font-size: 17px;
     font-weight: 500;
-    font-size: 13px;
     line-height: 16px;
     width: inherit;
     border: 0;
     background: 0;
-    color: inherit;
+    color: ${({ theme }) => theme.text1};
+    &::placeholder {
+      font-size: 13px;
+      color: ${({ theme }) => theme.text2};
+    }
   }
 `
 
@@ -163,5 +166,6 @@ export const Balance = styled.div`
     font-weight: 500;
     font-size: 13px;
     line-height: 16px;
+    color: ${({ theme }) => theme.text3};
   }
 `

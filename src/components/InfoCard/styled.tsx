@@ -2,6 +2,7 @@ import styled from 'styled-components'
 
 export const StyledCard = styled.div<{
   color: 'primary' | 'secondary'
+  whiteText: boolean
   ghost: boolean
   small: boolean
   withUnderlyingCard: boolean
@@ -16,7 +17,23 @@ export const StyledCard = styled.div<{
       : 'linear-gradient(270deg, #2DDE9E 0%, #4255FF 100%);'};
   width: ${({ small }) => (small ? 150 : 320)}px;
   height: 172px;
-  color: white;
+  color: ${({ theme, withUnderlyingCard }) => (withUnderlyingCard ? '#ffffff' : theme.text1.toString())};
+  ${({ ghost, theme }) =>
+    (ghost && !theme.isDark)
+      ? `
+        & svg {
+          filter: invert(0.8);
+        }
+      `
+      : ``}
+  ${({ whiteText }) =>
+    whiteText
+      ? `
+        & {
+          color: white;
+        }
+      `
+      : ``}
   display: flex;
   flex-direction: column;
   padding: 30px;

@@ -1,41 +1,40 @@
 import React, { FC, useEffect, useRef } from 'react'
-import { makeStyles } from '@material-ui/core'
 import { createChart } from 'lightweight-charts'
+import styled from 'styled-components'
 
-const useStyles = makeStyles(() => ({
-  stats: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    margin: '40px 0',
-    '& span': {
-      height: '90px',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '10px',
-      '& div': {
-        gap: '8px'
-      },
-      '& h3': {
-        margin: '0',
-        fontSize: '15px',
-        lineHeight: '18px'
-      },
-      '& p': {
-        margin: '0',
-        fontWeight: '300',
-        fontSize: '14px',
-        lineHeight: '17px',
-        color: '#D0D0D0'
-      },
-      '& h4': {
-        margin: '0',
-        fontWeight: 'normal',
-        fontSize: '22px',
-        lineHeight: '27px'
-      }
-    }
+const StyledStats = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 40px 0;
+`
+
+const TextSection = styled.div`
+  height: 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  & div {
+    gap: 8px;
   }
-}))
+  & h3 {
+    margin: 0;
+    font-size: 15px;
+    line-height: 18px;
+  }
+  & p {
+    margin: 0;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 17px;
+    color: ${({ theme }) => theme.text2};
+  }
+  & h4 {
+    margin: 0;
+    font-weight: normal;
+    font-size: 22px;
+    line-height: 27px;
+  }
+`
 
 interface StatsProps {
   title: string
@@ -45,7 +44,6 @@ interface StatsProps {
 }
 
 export const Stats: FC<StatsProps> = ({ title, time, value, chartColor }: StatsProps) => {
-  const classes = useStyles()
   const ref = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
     if (ref.current) {
@@ -184,15 +182,15 @@ export const Stats: FC<StatsProps> = ({ title, time, value, chartColor }: StatsP
   }, [])
 
   return (
-    <div className={classes.stats}>
-      <span>
+    <StyledStats>
+      <TextSection>
         <div>
           <h4>{title}</h4>
           {time && <p>{time}</p>}
         </div>
         <h3>{value}</h3>
-      </span>
+      </TextSection>
       {chartColor && <div id="chart" ref={ref} />}
-    </div>
+    </StyledStats>
   )
 }

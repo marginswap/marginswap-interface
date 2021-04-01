@@ -58,9 +58,11 @@ export interface Grids {
 declare module 'styled-components' {
   export interface DefaultTheme extends Colors {
     grids: Grids
+    isDark: boolean
 
     // shadows
     shadow1: string
+    background: string
 
     // media queries
     mediaWidth: {

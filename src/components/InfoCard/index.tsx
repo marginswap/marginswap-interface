@@ -3,15 +3,16 @@ import { StyledCard, StyledInfoCardAmount, StyledInfoCardIconContainer, StyledIn
 
 const InfoCard: FunctionComponent<{
   color?: 'primary' | 'secondary'
+  whiteText?: boolean
   ghost?: boolean
   small?: boolean
   withUnderlyingCard?: boolean
   Icon: FunctionComponent
   title: string
   amount: number
-}> = ({ color = 'primary', ghost = false, small = false, Icon, withUnderlyingCard = false, title, amount }) => {
+}> = ({ color = 'primary', whiteText = false, ghost = false, small = false, Icon, withUnderlyingCard = false, title, amount }) => {
   return (
-    <StyledCard color={color} ghost={ghost} small={small} withUnderlyingCard={withUnderlyingCard}>
+    <StyledCard color={color} whiteText={whiteText} ghost={ghost} small={small} withUnderlyingCard={withUnderlyingCard}>
       {small ? (
         <StyledInfoCardIconContainer color={color}>
           <Icon />
