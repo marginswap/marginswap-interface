@@ -1,6 +1,6 @@
 {
-  "name": "@uniswap/interface",
-  "description": "Uniswap Interface",
+  "name": "@marginswap/interface",
+  "description": "Marginswap Interface",
   "homepage": ".",
   "private": true,
   "devDependencies": {
