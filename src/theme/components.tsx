@@ -33,7 +33,7 @@ export const StyledButton = styled(Button)`
   border-radius: ${({ style }) => style?.borderRadius ?? '3px'} !important;
   border: ${({ color }) => (color === 'primary' ? 'none' : '1px solid #777777')} !important;
   padding: ${({ style }) => style?.padding ?? '10px'} !important;
-  color: ${({ theme, color }) => ( color !== 'primary' ? theme.text1 : '#ffffff')} !important;
+  color: ${({ theme, color }) => (color !== 'primary' ? theme.text1 : '#ffffff')} !important;
   text-transform: none !important;
   font-weight: 500 !important;
   font-size: 13px !important;

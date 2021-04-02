@@ -19,7 +19,7 @@ export const StyledCard = styled.div<{
   height: 172px;
   color: ${({ theme, withUnderlyingCard }) => (withUnderlyingCard ? '#ffffff' : theme.text1.toString())};
   ${({ ghost, theme }) =>
-    (ghost && !theme.isDark)
+    ghost && !theme.isDark
       ? `
         & svg {
           filter: invert(0.8);

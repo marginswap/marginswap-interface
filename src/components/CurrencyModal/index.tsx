@@ -78,11 +78,7 @@ export const CurrencyModal: FC<CurrencyInput> = ({ tokens, deal }: CurrencyInput
       <ModalButton type="button" onClick={handleOpen}>
         {deal.currency && newTokens ? (
           <>
-            <img
-              src={deal.currency?.logoURI}
-              alt={deal.currency?.chainId.toString()}
-              className={classes.currencyImg}
-            />
+            <img src={deal.currency?.logoURI} alt={deal.currency?.chainId.toString()} className={classes.currencyImg} />
             <span id="currencySymbol">{deal.currency?.symbol}</span>
             <img src={Dropdown} width="8px" height="14px" alt="_" id="dropdown" />
           </>

@@ -10,7 +10,16 @@ const InfoCard: FunctionComponent<{
   Icon: FunctionComponent
   title: string
   amount: number
-}> = ({ color = 'primary', whiteText = false, ghost = false, small = false, Icon, withUnderlyingCard = false, title, amount }) => {
+}> = ({
+  color = 'primary',
+  whiteText = false,
+  ghost = false,
+  small = false,
+  Icon,
+  withUnderlyingCard = false,
+  title,
+  amount
+}) => {
   return (
     <StyledCard color={color} whiteText={whiteText} ghost={ghost} small={small} withUnderlyingCard={withUnderlyingCard}>
       {small ? (
