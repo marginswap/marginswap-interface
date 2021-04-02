@@ -1,4 +1,4 @@
-import { makeStyles, Theme } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 import styled from 'styled-components'
 
@@ -80,7 +80,7 @@ export const CloseButton = styled(CloseIcon)`
   cursor: pointer;
 `
 
-export const useModalStyles = makeStyles((theme: Theme) => ({
+export const useModalStyles = makeStyles(() => ({
   modal: {
     display: 'flex',
     alignItems: 'center',
