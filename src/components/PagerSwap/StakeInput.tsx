@@ -9,10 +9,20 @@ const StakeInput: FunctionComponent<{
   quantity: string
   setQuantity: (quantity: string) => void
   selectedTokenIndex: number | null
+  hiddenTokenIndex: number | null
   selectToken: (token: number) => void
   tokens: (TokenInfo & { balance?: number })[]
   renderMax?: boolean
-}> = ({ title, quantity, setQuantity, selectedTokenIndex, selectToken, tokens, renderMax = false }) => {
+}> = ({
+  title,
+  quantity,
+  setQuantity,
+  selectedTokenIndex,
+  hiddenTokenIndex,
+  selectToken,
+  tokens,
+  renderMax = false
+}) => {
   const classes = useInputStyles()
   const styles = useStyles()
 
@@ -22,7 +32,12 @@ const StakeInput: FunctionComponent<{
   }
 
   const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (selectedTokenIndex !== null && tokens[selectedTokenIndex].balance !== undefined && e.target.value !== '') {
+    if (
+      selectedTokenIndex !== null &&
+      tokens[selectedTokenIndex].balance !== undefined &&
+      e.target.value !== '' &&
+      renderMax
+    ) {
       setQuantity(String(Math.min(Number(e.target.value), tokens[selectedTokenIndex].balance!)))
     } else {
       setQuantity(e.target.value)
@@ -46,7 +61,12 @@ const StakeInput: FunctionComponent<{
         )}
         <div className={classes.currencyWrapper}>
           <>
-            <CurrencyModal tokens={tokens} selectedTokenIndex={selectedTokenIndex} selectToken={selectToken} />
+            <CurrencyModal
+              tokens={tokens}
+              selectedTokenIndex={selectedTokenIndex}
+              hiddenTokenIndex={hiddenTokenIndex}
+              selectToken={selectToken}
+            />
           </>
         </div>
       </div>

@@ -12,8 +12,9 @@ import { useModalStyles, useCurrencyStyles } from './useModalStyles'
 export const CurrencyModal: FunctionComponent<{
   tokens: TokenInfo[]
   selectedTokenIndex: number | null
+  hiddenTokenIndex: number | null
   selectToken: (tokenIndex: number) => void
-}> = ({ tokens, selectedTokenIndex, selectToken }) => {
+}> = ({ tokens, selectedTokenIndex, hiddenTokenIndex, selectToken }) => {
   const classes = useModalStyles()
   const tokenClasses = useCurrencyStyles()
 
@@ -77,7 +78,7 @@ export const CurrencyModal: FunctionComponent<{
             <Divider />
             <div className={classes.currencyList}>
               {tokens?.map((token, index) =>
-                token.symbol.toLowerCase().startsWith(search.toLowerCase()) ? (
+                token.symbol.toLowerCase().startsWith(search.toLowerCase()) && index !== hiddenTokenIndex ? (
                   <div
                     key={token.symbol}
                     className={tokenClasses.currency}

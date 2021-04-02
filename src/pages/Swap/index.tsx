@@ -5,6 +5,7 @@ import { useFetchListCallback } from '../../hooks/useFetchListCallback'
 import { TokenInfo } from '@uniswap/token-lists'
 import { PagerSwap } from '../../components/PagerSwap'
 import { useWeb3React } from '@web3-react/core'
+import { ErrorBar, WarningBar } from '../../components/Placeholders'
 
 const useStyles = makeStyles(() => ({
   wrapper: {
@@ -17,20 +18,27 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'column',
     paddingRight: '20px',
     gap: '20px'
-  },
-  warning: {
-    padding: '20px',
-    color: 'orange',
-    border: '1px solid yellow',
-    borderRadius: '10px'
-  },
-  error: {
-    padding: '20px',
-    color: 'indianred',
-    border: '1px solid red',
-    borderRadius: '10px'
   }
 }))
+
+// mock stuff
+const exchangeRates = {
+  WBTC_DAI: 1,
+  WBTC_USDT: 2,
+  WBTC_USDC: 3,
+  WBTC_BOND: 4,
+  WBTH_WETH: 5,
+  DAI_USDT: 2,
+  DAI_USDC: 3,
+  DAI_BOND: 5,
+  DAI_WETH: 6,
+  USDT_USDC: 1.2,
+  USDT_BOND: 2.53,
+  USDT_WETH: 3.4,
+  USDC_BOND: 3,
+  USDC_WETH: 5,
+  BOND_WETH: 8
+}
 
 export default function Swap() {
   const classes = useStyles()
@@ -55,14 +63,20 @@ export default function Swap() {
   return (
     <div className={classes.wrapper}>
       <div className={classes.section}>
-        {!account && <div className={classes.warning}>Wallet not connected</div>}
-        {error && <div className={classes.error}>{error}</div>}
+        {!account && <WarningBar>Wallet not connected</WarningBar>}
+        {error && <ErrorBar>{error}</ErrorBar>}
         {/* TODO: add real balances */}
         <PagerSwap
           tokens={tokens.map(t => ({
             ...t,
-            ...(account ? { balance: Math.round(Math.random() * 1000000) / 1000000 } : {})
+            ...(account
+              ? {
+                  balance: Math.round(Math.random() * 1000000) / 1000000,
+                  borrowable: Math.round(Math.random() * 100)
+                }
+              : {})
           }))}
+          exchangeRates={exchangeRates}
           accountConnected={!!account}
         />
       </div>

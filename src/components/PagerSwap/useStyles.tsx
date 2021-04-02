@@ -65,11 +65,17 @@ export const useStyles = makeStyles(() => ({
       marginBottom: '12px',
       '&#spot': {
         background: 'linear-gradient(270deg, #2DDE9E 0%, #4255FF 100%)',
-        color: '#fff'
+        color: '#fff',
+        '&:disabled': {
+          background: 'grey'
+        }
       },
       '&#swap': {
         background: 'linear-gradient(270deg, #AD01FF 0%, #3122FB 100%)',
-        color: '#fff'
+        color: '#fff',
+        '&:disabled': {
+          background: 'grey'
+        }
       }
     }
   },
@@ -98,6 +104,9 @@ export const useStyles = makeStyles(() => ({
         borderRadius: '7px'
       },
       '&[aria-selected=false]': {}
+    },
+    '& .MuiTabs-indicator': {
+      display: 'none'
     }
   },
   tabPanel: {

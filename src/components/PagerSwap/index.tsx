@@ -8,10 +8,12 @@ import walletIcon from 'assets/svg/walletIcon.svg'
 import { TokenInfo } from '@uniswap/token-lists'
 import AppBody from 'pages/AppBody'
 import { useStyles, useInputStyles } from './useStyles'
-import React, { ChangeEvent, FunctionComponent, useState } from 'react'
+import React, { FunctionComponent } from 'react'
 import Parameters from './Parameters'
 import StakeInput from './StakeInput'
 import TabPanel from './TabPanel'
+import { ErrorBar } from '../Placeholders'
+import useSwap from './useSwap'
 
 // mock stuff, to be replaced
 const parameters = {
@@ -28,24 +30,32 @@ const parameters = {
 }
 
 export const PagerSwap: FunctionComponent<{
-  tokens: (TokenInfo & { balance?: number })[]
+  tokens: (TokenInfo & { balance?: number; borrowable?: number })[]
   accountConnected: boolean
-}> = ({ tokens, accountConnected }) => {
+  exchangeRates: Record<string, number>
+}> = ({ tokens, accountConnected, exchangeRates }) => {
   const classes = useStyles()
   const styles = useInputStyles()
 
-  const [currentTab, setCurrentTab] = useState(0)
+  const {
+    error,
+    currentTab,
+    handleChangeTab,
+    spotQuantityFrom,
+    spotQuantityTo,
+    spotCurrencyFrom,
+    spotCurrencyTo,
+    marginQuantityFrom,
+    marginQuantityTo,
+    marginCurrencyFrom,
+    marginCurrencyTo,
+    replaceCurrencies,
+    getButtonDisabledStatus,
+    handleAmountChange,
+    handleSelectToken
+  } = useSwap({ tokens, accountConnected, exchangeRates })
 
-  const [spotQuantityFrom, setSpotQuantityFrom] = useState('0')
-  const [spotCurrencyFrom, setSpotCurrencyFrom] = useState<number | null>(null)
-  const [spotQuantityTo, setSpotQuantityTo] = useState('0')
-  const [spotCurrencyTo, setSpotCurrencyTo] = useState<number | null>(null)
-
-  const [marginQuantityFrom, setMarginQuantityFrom] = useState('0')
-  const [marginCurrencyFrom, setMarginCurrencyFrom] = useState<number | null>(null)
-  const [marginQuantityTo, setMarginQuantityTo] = useState('0')
-  const [marginCurrencyTo, setMarginCurrencyTo] = useState<number | null>(null)
-
+  // mock stuff
   const middleParameters = (
     <div className={classes.parameters + ' ' + classes.fullWidthPair}>
       <Parameters parameters={parameters.price} />
@@ -62,30 +72,9 @@ export const PagerSwap: FunctionComponent<{
     </div>
   )
 
-  const handleChangeTab = (event: ChangeEvent<unknown>, newValue: number) => {
-    setCurrentTab(newValue)
-  }
-
-  const replaceCurrencies = () => {
-    if (currentTab === 0) {
-      const prevCurrencyFrom = spotCurrencyFrom
-      setSpotCurrencyFrom(spotCurrencyTo)
-      setSpotCurrencyTo(prevCurrencyFrom)
-      const prevQuantityFrom = spotQuantityFrom
-      setSpotQuantityFrom(spotQuantityTo)
-      setSpotQuantityTo(prevQuantityFrom)
-    } else {
-      const prevCurrencyFrom = marginCurrencyFrom
-      setMarginCurrencyFrom(marginCurrencyTo)
-      setMarginCurrencyTo(prevCurrencyFrom)
-      const prevQuantityFrom = marginQuantityFrom
-      setMarginQuantityFrom(marginQuantityTo)
-      setMarginQuantityTo(prevQuantityFrom)
-    }
-  }
-
   return (
     <AppBody>
+      {error && <ErrorBar>{error}</ErrorBar>}
       <div className={classes.wrapper}>
         <div className={classes.header}>
           <h4>Swap</h4>
@@ -100,7 +89,6 @@ export const PagerSwap: FunctionComponent<{
             onChange={handleChangeTab}
             aria-label="nav tabs example"
             className={classes.tabs}
-            TabIndicatorProps={{ color: 'transparent' }}
           >
             <Tab label="Spot" id="nav-tab-0" aria-controls="nav-tabpanel-0" />
             <Tab label="Margin" id="nav-tab-1" aria-controls="nav-tabpanel-1" />
@@ -110,9 +98,12 @@ export const PagerSwap: FunctionComponent<{
               <StakeInput
                 title="From"
                 quantity={spotQuantityFrom}
-                setQuantity={setSpotQuantityFrom}
+                setQuantity={amount => handleAmountChange(amount, true, true)}
                 selectedTokenIndex={spotCurrencyFrom}
-                selectToken={setSpotCurrencyFrom}
+                hiddenTokenIndex={spotCurrencyTo}
+                selectToken={tokenIndex => {
+                  handleSelectToken(tokenIndex, true, true)
+                }}
                 tokens={tokens}
                 renderMax={accountConnected}
               />
@@ -122,16 +113,19 @@ export const PagerSwap: FunctionComponent<{
               <StakeInput
                 title="To (estimated)"
                 quantity={spotQuantityTo}
-                setQuantity={setSpotQuantityTo}
+                setQuantity={amount => handleAmountChange(amount, false, true)}
                 selectedTokenIndex={spotCurrencyTo}
-                selectToken={setSpotCurrencyTo}
+                hiddenTokenIndex={spotCurrencyFrom}
+                selectToken={tokenIndex => {
+                  handleSelectToken(tokenIndex, false, true)
+                }}
                 tokens={tokens}
               />
               {middleParameters}
               <div className={classes.actions}>
-                <Button variant="outlined" size="large" id="spot">
+                <Button variant="outlined" size="large" id="spot" disabled={!!getButtonDisabledStatus()}>
                   {/* TODO: is approved? */}
-                  Swap
+                  {getButtonDisabledStatus() ?? 'Swap'}
                 </Button>
               </div>
               {bottomParameters}
@@ -142,9 +136,12 @@ export const PagerSwap: FunctionComponent<{
               <StakeInput
                 title="From"
                 quantity={marginQuantityFrom}
-                setQuantity={setMarginQuantityFrom}
+                setQuantity={amount => handleAmountChange(amount, true, false)}
                 selectedTokenIndex={marginCurrencyFrom}
-                selectToken={setMarginCurrencyFrom}
+                hiddenTokenIndex={marginCurrencyTo}
+                selectToken={tokenIndex => {
+                  handleSelectToken(tokenIndex, true, false)
+                }}
                 tokens={tokens}
                 renderMax={accountConnected}
               />
@@ -160,15 +157,18 @@ export const PagerSwap: FunctionComponent<{
               <StakeInput
                 title="To (estimated)"
                 quantity={marginQuantityTo}
-                setQuantity={setMarginQuantityTo}
+                setQuantity={amount => handleAmountChange(amount, false, false)}
                 selectedTokenIndex={marginCurrencyTo}
-                selectToken={setMarginCurrencyTo}
+                hiddenTokenIndex={marginCurrencyFrom}
+                selectToken={tokenIndex => {
+                  handleSelectToken(tokenIndex, false, false)
+                }}
                 tokens={tokens}
               />
               {middleParameters}
               <div className={classes.actions}>
-                <Button variant="outlined" size="large" id="swap">
-                  Swap
+                <Button variant="outlined" size="large" id="swap" disabled={!!getButtonDisabledStatus()}>
+                  {getButtonDisabledStatus() ?? 'Swap'}
                 </Button>
               </div>
               {bottomParameters}

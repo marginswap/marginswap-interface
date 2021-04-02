@@ -11,6 +11,7 @@ import RiskMeter from '../../components/Riskmeter'
 import { useWeb3React } from '@web3-react/core'
 import { getAccountBalances, Balances, getAccountBorrowTotal, getAccountHoldingTotal } from '@marginswap/sdk'
 import { TokenInfo } from '@uniswap/token-lists'
+import { ErrorBar, WarningBar } from '../../components/Placeholders'
 const { REACT_APP_CHAIN_ID } = process.env
 
 export type AccountBalanceData = {
@@ -33,18 +34,6 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'column',
     paddingRight: '20px',
     gap: '20px'
-  },
-  warning: {
-    padding: '20px',
-    color: 'orange',
-    border: '1px solid yellow',
-    borderRadius: '10px'
-  },
-  error: {
-    padding: '20px',
-    color: 'indianred',
-    border: '1px solid red',
-    borderRadius: '10px'
   }
 }))
 
@@ -162,8 +151,8 @@ export const MarginAccount = () => {
   return (
     <div className={classes.wrapper}>
       <div className={classes.section}>
-        {!account && <div className={classes.warning}>Wallet not connected</div>}
-        {error && <div className={classes.error}>{error}</div>}
+        {!account && <WarningBar>Wallet not connected</WarningBar>}
+        {error && <ErrorBar>{error}</ErrorBar>}
         <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px 0', alignItems: 'center' }}>
           <InfoCard title="Total Account Balance" amount={holdingTotal} withUnderlyingCard Icon={IconBanknotes} />
           <InfoCard title="Debt" amount={debtTotal} small Icon={IconScales} />
