@@ -11,6 +11,9 @@ import RiskMeter from '../../components/Riskmeter'
 import { useWeb3React } from '@web3-react/core'
 import { getAccountBalances, Balances, getAccountBorrowTotal, getAccountHoldingTotal } from '@marginswap/sdk'
 import { TokenInfo } from '@uniswap/token-lists'
+import { useActiveWeb3React } from '../../hooks'
+import { getProviderOrSigner } from '../../utils/index'
+import { BigNumber } from '@ethersproject/bignumber'
 const { REACT_APP_CHAIN_ID } = process.env
 
 export type AccountBalanceData = {
@@ -109,16 +112,22 @@ export const MarginAccount = () => {
   }, [lists])
 
   const { account } = useWeb3React()
+  const { library } = useActiveWeb3React()
+  let provider: any = null
+  if (library && account) {
+    provider = getProviderOrSigner(library, account)
+  }
+
   const getAccountData = async (_account: string) => {
     const [balances, _holdingTotal, _debtTotal] = await Promise.all([
-      getAccountBalances(_account, Number(REACT_APP_CHAIN_ID)),
-      getAccountHoldingTotal(_account, Number(REACT_APP_CHAIN_ID)),
-      getAccountBorrowTotal(_account, Number(REACT_APP_CHAIN_ID))
+      getAccountBalances(_account, Number(REACT_APP_CHAIN_ID), provider),
+      getAccountHoldingTotal(_account, Number(REACT_APP_CHAIN_ID), provider),
+      getAccountBorrowTotal(_account, Number(REACT_APP_CHAIN_ID), provider)
     ])
     setHoldingAmounts(balances.holdingAmounts)
     setBorrowingAmounts(balances.borrowingAmounts)
-    setHoldingTotal(_holdingTotal)
-    setDebtTotal(_debtTotal)
+    setHoldingTotal(BigNumber.from(_holdingTotal).toNumber())
+    setDebtTotal(BigNumber.from(_debtTotal).toNumber())
   }
   useEffect(() => {
     if (account) {
