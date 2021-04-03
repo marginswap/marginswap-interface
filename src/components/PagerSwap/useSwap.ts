@@ -61,10 +61,8 @@ const useSwap = ({
 
   const getExchangeRate = (from: string, to: string) => {
     if (exchangeRates[`${from}_${to}`]) {
-      setError(null)
       return exchangeRates[`${from}_${to}`]
     } else if (exchangeRates[`${to}_${from}`]) {
-      setError(null)
       return 1 / exchangeRates[`${to}_${from}`]
     } else {
       setError(`Cannot get exchange rate for ${to} and ${from}`)
@@ -76,7 +74,7 @@ const useSwap = ({
     if (spot) {
       if (from) {
         setSpotQuantityFrom(amount)
-        if (spotCurrencyFrom && spotCurrencyTo) {
+        if (spotCurrencyFrom !== null && spotCurrencyTo !== null) {
           setSpotQuantityTo(
             String(
               Math.round(
@@ -89,7 +87,7 @@ const useSwap = ({
         }
       } else {
         setSpotQuantityTo(amount)
-        if (spotCurrencyFrom && spotCurrencyTo) {
+        if (spotCurrencyFrom !== null && spotCurrencyTo !== null) {
           setSpotQuantityFrom(
             String(
               Math.round(
@@ -104,7 +102,7 @@ const useSwap = ({
     } else {
       if (from) {
         setMarginQuantityFrom(amount)
-        if (marginCurrencyFrom && marginCurrencyTo) {
+        if (marginCurrencyFrom !== null && marginCurrencyTo !== null) {
           setMarginQuantityTo(
             String(
               Math.round(
@@ -117,7 +115,7 @@ const useSwap = ({
         }
       } else {
         setMarginQuantityTo(amount)
-        if (marginCurrencyFrom && marginCurrencyTo) {
+        if (marginCurrencyFrom !== null && marginCurrencyTo !== null) {
           setMarginQuantityFrom(
             String(
               Math.round(
@@ -136,7 +134,7 @@ const useSwap = ({
     if (spot) {
       if (from) {
         setSpotCurrencyFrom(tokenIndex)
-        if (spotCurrencyTo) {
+        if (spotCurrencyTo !== null) {
           setSpotQuantityTo(
             String(
               Math.round(
@@ -149,7 +147,7 @@ const useSwap = ({
         }
       } else {
         setSpotCurrencyTo(tokenIndex)
-        if (spotCurrencyFrom) {
+        if (spotCurrencyFrom !== null) {
           setSpotQuantityTo(
             String(
               Math.round(
@@ -164,7 +162,7 @@ const useSwap = ({
     } else {
       if (from) {
         setMarginCurrencyFrom(tokenIndex)
-        if (marginCurrencyTo) {
+        if (marginCurrencyTo !== null) {
           setMarginQuantityTo(
             String(
               Math.round(
@@ -177,7 +175,7 @@ const useSwap = ({
         }
       } else {
         setMarginCurrencyTo(tokenIndex)
-        if (marginCurrencyFrom) {
+        if (marginCurrencyFrom !== null) {
           setMarginQuantityTo(
             String(
               Math.round(
@@ -195,13 +193,13 @@ const useSwap = ({
   const getButtonDisabledStatus = () => {
     if (currentTab === 0) {
       if (!Number(spotQuantityFrom)) return 'Enter amount'
-      if (!spotCurrencyFrom || !spotCurrencyTo) return 'Select token'
+      if (spotCurrencyFrom === null || spotCurrencyTo === null) return 'Select token'
       if (!accountConnected || !tokens[spotCurrencyFrom].balance) return 'Connect an account'
       if (tokens[spotCurrencyFrom].balance! < Number(spotQuantityFrom))
         return `Insufficient ${tokens[spotCurrencyFrom].symbol} balance`
     } else {
       if (!Number(marginQuantityFrom)) return 'Enter amount'
-      if (!marginCurrencyFrom || !marginCurrencyTo) return 'Select token'
+      if (marginCurrencyFrom === null || marginCurrencyTo === null) return 'Select token'
       if (!accountConnected || !tokens[marginCurrencyFrom].balance) return 'Connect an account'
       if (tokens[marginCurrencyFrom].balance! < Number(marginQuantityFrom))
         return `Insufficient ${tokens[marginCurrencyFrom].symbol} balance`
@@ -213,6 +211,7 @@ const useSwap = ({
     error,
     currentTab,
     handleChangeTab,
+    getExchangeRate,
     spotQuantityFrom,
     spotQuantityTo,
     spotCurrencyFrom,

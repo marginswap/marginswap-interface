@@ -1,9 +1,5 @@
-import { Button } from '@material-ui/core'
-import AppBar from '@material-ui/core/AppBar'
-import Tab from '@material-ui/core/Tab'
-import Tabs from '@material-ui/core/Tabs'
+import { Button, AppBar, Tab, Tabs } from '@material-ui/core'
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
-import walletIcon from 'assets/svg/walletIcon.svg'
 import { TokenInfo } from '@uniswap/token-lists'
 import AppBody from 'pages/AppBody'
 import { useStyles, useInputStyles } from './useStyles'
@@ -14,20 +10,16 @@ import TabPanel from './TabPanel'
 import { ErrorBar } from '../Placeholders'
 import useSwap from './useSwap'
 import SwapSettings from '../SwapSettings'
+const { REACT_APP_FEE_PERCENT } = process.env
+
+const calcMinReceived = (amount: number, slippageTolerance: number) =>
+  Math.round(amount * (1 - Number(REACT_APP_FEE_PERCENT) / 100) * (1 - slippageTolerance / 10000) * 1000000) / 1000000
+
+const calcTransactionFee = (amount: number) => Math.round(amount * Number(REACT_APP_FEE_PERCENT) * 10000) / 1000000
 
 // mock stuff, to be replaced
-const parameters = {
-  price: ['Price ', 0.135426798],
-  slippageTolerance: ['Slippage Tolerance', 8],
-  minimumReceived: [
-    'Minimum received',
-    '0.000004014 ETH',
-    'This is the text dummy data of help. text help arrives here'
-  ],
-  priceImpact: ['Price Impact', '0.01%', 'TODO This is the text dummy data of help. text help arrives here'],
-  transactionFee: ['Transaction Fee', '0.01%', 'This is the text dummy data of help. text help arrives here'],
-  route: ['Route ', 'MFI > USDC > ETH', 'This is the text dummy data of help. text help arrives here']
-}
+const calcPriceImpact = (amount: number) => Math.round(100 * Math.max(Math.log(amount) * 10, 0.01)) / 100
+const route = 'MFI > USDC > ETH'
 
 export const PagerSwap: FunctionComponent<{
   tokens: (TokenInfo & { balance?: number; borrowable?: number })[]
@@ -41,6 +33,7 @@ export const PagerSwap: FunctionComponent<{
     error,
     currentTab,
     handleChangeTab,
+    getExchangeRate,
     spotQuantityFrom,
     spotQuantityTo,
     spotCurrencyFrom,
@@ -65,22 +58,51 @@ export const PagerSwap: FunctionComponent<{
     setSingleHopOnly
   } = useSwap({ tokens, accountConnected, exchangeRates })
 
-  // mock stuff
   const middleParameters = (
     <div className={classes.parameters + ' ' + classes.fullWidthPair}>
-      <Parameters parameters={parameters.price} />
-      <Parameters parameters={parameters.slippageTolerance} />
+      {((currentTab === 0 && spotCurrencyFrom !== null && spotCurrencyTo !== null) ||
+        (currentTab === 1 && marginCurrencyFrom !== null && marginCurrencyTo !== null)) &&
+        !error && (
+          <Parameters
+            title="Price"
+            value={getExchangeRate(
+              currentTab === 0 ? tokens[spotCurrencyFrom!].symbol : tokens[marginCurrencyFrom!].symbol,
+              currentTab === 0 ? tokens[spotCurrencyTo!].symbol : tokens[marginCurrencyTo!].symbol
+            )}
+          />
+        )}
+      <Parameters title="Slippage tolerance" value={`${slippageTolerance / 100}%`} />
     </div>
   )
 
-  const bottomParameters = (
-    <div className={classes.parameters + ' ' + classes.fullWidthPair}>
-      <Parameters parameters={parameters.minimumReceived} />
-      <Parameters parameters={parameters.priceImpact} />
-      <Parameters parameters={parameters.transactionFee} />
-      <Parameters parameters={parameters.route} />
-    </div>
-  )
+  const bottomParameters =
+    ((currentTab === 0 && Number(spotQuantityTo) > 0 && spotCurrencyTo !== null && spotCurrencyFrom !== null) ||
+      (currentTab === 1 && Number(marginQuantityTo) > 0 && marginCurrencyTo !== null && marginCurrencyFrom !== null)) &&
+    !error ? (
+      <div className={classes.parameters + ' ' + classes.fullWidthPair}>
+        <Parameters
+          title="Minimum received"
+          value={`${calcMinReceived(
+            currentTab === 0 ? Number(spotQuantityTo) : Number(marginQuantityTo),
+            slippageTolerance
+          )} ${tokens[currentTab === 0 ? spotCurrencyTo! : marginCurrencyTo!].symbol}`}
+          hint="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed"
+        />
+        <Parameters
+          title="Price impact"
+          value={`${calcPriceImpact(currentTab === 0 ? Number(spotQuantityFrom) : Number(marginQuantityFrom))} %`}
+          hint="The difference between the market price and estimated price due to trade size"
+        />
+        <Parameters
+          title="Transaction Fee"
+          value={`${calcTransactionFee(currentTab === 0 ? Number(spotQuantityFrom) : Number(marginQuantityFrom))} ${
+            tokens[currentTab === 0 ? spotCurrencyFrom! : marginCurrencyFrom!].symbol
+          }`}
+          hint={`A portion of each trade (${REACT_APP_FEE_PERCENT}%) goes to liquidity providers as a protocol incentive`}
+        />
+        {!singleHopOnly && <Parameters title="Route" value={route} hint="Mock stuff!" />}
+      </div>
+    ) : null
 
   return (
     <AppBody>
@@ -163,15 +185,28 @@ export const PagerSwap: FunctionComponent<{
                 }}
                 tokens={tokens}
                 renderMax={accountConnected}
+                isMargin
               />
               <div className={styles.middleWrapper}>
-                <span>Leverage</span>
-                {/* TODO: multiplier */}
-                {/*<MultiplierInput deal={{ multiplier, setMultiplier }} />*/}
+                {marginCurrencyFrom !== null &&
+                  tokens[marginCurrencyFrom].balance !== undefined &&
+                  tokens[marginCurrencyFrom].borrowable !== undefined &&
+                  tokens[marginCurrencyFrom].borrowable! > 0 && (
+                    <span>
+                      Leverage:{' '}
+                      {Math.round(
+                        (Math.max(Number(marginQuantityFrom) - tokens[marginCurrencyFrom].balance!, 0) * 10000) /
+                          tokens[marginCurrencyFrom].borrowable!
+                      ) / 100}
+                      %
+                    </span>
+                  )}
                 <ArrowDownwardIcon onClick={replaceCurrencies} />
-                <img src={walletIcon} width={16} height={15} alt="wallet" />
-                {/* TODO */}
-                <span>Borrowable: 200 USDC</span>
+                {marginCurrencyFrom !== null && tokens[marginCurrencyFrom].borrowable !== undefined && (
+                  <span>
+                    Borrowable: {tokens[marginCurrencyFrom].borrowable} {tokens[marginCurrencyFrom].symbol}
+                  </span>
+                )}
               </div>
               <StakeInput
                 title="To (estimated)"

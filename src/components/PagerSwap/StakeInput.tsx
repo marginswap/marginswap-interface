@@ -11,8 +11,9 @@ const StakeInput: FunctionComponent<{
   selectedTokenIndex: number | null
   hiddenTokenIndex: number | null
   selectToken: (token: number) => void
-  tokens: (TokenInfo & { balance?: number })[]
+  tokens: (TokenInfo & { balance?: number; borrowable?: number })[]
   renderMax?: boolean
+  isMargin?: boolean
 }> = ({
   title,
   quantity,
@@ -21,14 +22,17 @@ const StakeInput: FunctionComponent<{
   hiddenTokenIndex,
   selectToken,
   tokens,
-  renderMax = false
+  renderMax = false,
+  isMargin = false
 }) => {
   const classes = useInputStyles()
   const styles = useStyles()
 
   const handleSetMax = () => {
-    if (!(selectedTokenIndex && renderMax)) return
-    setQuantity(String(tokens[selectedTokenIndex].balance))
+    if (!(selectedTokenIndex !== null && renderMax)) return
+    setQuantity(
+      String((tokens[selectedTokenIndex].balance ?? 0) + (isMargin ? tokens[selectedTokenIndex].borrowable ?? 0 : 0))
+    )
   }
 
   const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -38,7 +42,16 @@ const StakeInput: FunctionComponent<{
       e.target.value !== '' &&
       renderMax
     ) {
-      setQuantity(String(Math.min(Number(e.target.value), tokens[selectedTokenIndex].balance!)))
+      setQuantity(
+        String(
+          Math.min(
+            Number(e.target.value),
+            isMargin
+              ? tokens[selectedTokenIndex].balance! + (tokens[selectedTokenIndex].borrowable ?? 0)
+              : tokens[selectedTokenIndex].balance!
+          )
+        )
+      )
     } else {
       setQuantity(e.target.value)
     }

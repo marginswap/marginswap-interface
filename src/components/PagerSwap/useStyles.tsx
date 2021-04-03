@@ -8,7 +8,6 @@ export const useStyles = makeStyles(() => ({
     borderRadius: 20,
     border: '1px solid #777777',
     margin: 'auto',
-    height: '660px',
     padding: '0 20px',
     display: 'flex',
     flexDirection: 'column'
@@ -41,12 +40,12 @@ export const useStyles = makeStyles(() => ({
     }
   },
   parameters: {
-    height: '58px',
     display: 'flex',
     flexDirection: 'column',
     gap: '12px',
     padding: '0 8px',
-    justifyContent: 'space-evenly'
+    justifyContent: 'space-evenly',
+    marginBottom: '18px'
   },
   actions: {
     display: 'flex',
@@ -136,6 +135,9 @@ export const useInputStyles = makeStyles(() => ({
       fontWeight: '500',
       fontSize: '13px',
       lineHeight: '16px'
+    },
+    '& svg': {
+      margin: '0 auto'
     }
   },
   input: {

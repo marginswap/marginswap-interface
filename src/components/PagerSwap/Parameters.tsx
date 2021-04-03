@@ -4,21 +4,23 @@ import question from '../../assets/svg/question.svg'
 import React, { FunctionComponent } from 'react'
 
 const Parameters: FunctionComponent<{
-  parameters: (string | number)[]
-}> = ({ parameters }) => {
+  title: string
+  value: string | number
+  hint?: string
+}> = ({ title, value, hint }) => {
   const classes = useTooltipStyles()
 
   return (
     <p>
       <span>
-        {parameters[0]}
-        {parameters[2] && (
-          <Tooltip title={parameters[2]} placement="right" classes={{ tooltip: classes.tooltip }} arrow>
+        {title}
+        {hint && (
+          <Tooltip title={hint} placement="right" classes={{ tooltip: classes.tooltip }} arrow>
             <img src={question} width={16} height={16} alt="?" />
           </Tooltip>
         )}
       </span>
-      <span>{parameters[1]}</span>
+      <span>{value}</span>
     </p>
   )
 }

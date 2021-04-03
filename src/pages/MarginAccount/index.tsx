@@ -100,7 +100,7 @@ export const MarginAccount = () => {
 
   const getTokensList = async (url: string) => {
     const tokensRes = await fetchList(url, false)
-    setTokens(tokensRes.tokens)
+    setTokens(tokensRes.tokens.filter(t => t.chainId === Number(REACT_APP_CHAIN_ID)))
   }
   useEffect(() => {
     getTokensList(Object.keys(lists)[0]).catch(e => {

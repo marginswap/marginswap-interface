@@ -6,6 +6,7 @@ import { TokenInfo } from '@uniswap/token-lists'
 import { PagerSwap } from '../../components/PagerSwap'
 import { useWeb3React } from '@web3-react/core'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
+const { REACT_APP_CHAIN_ID } = process.env
 
 const useStyles = makeStyles(() => ({
   wrapper: {
@@ -37,7 +38,9 @@ const exchangeRates = {
   USDT_WETH: 3.4,
   USDC_BOND: 3,
   USDC_WETH: 5,
-  BOND_WETH: 8
+  BOND_WETH: 8,
+  UNI_DAI: 3.2,
+  UNI_WETH: 3.9
 }
 
 export default function Swap() {
@@ -51,7 +54,7 @@ export default function Swap() {
 
   const getTokensList = async (url: string) => {
     const tokensRes = await fetchList(url, false)
-    setTokens(tokensRes.tokens)
+    setTokens(tokensRes.tokens.filter(t => t.chainId === Number(REACT_APP_CHAIN_ID)))
   }
   useEffect(() => {
     getTokensList(Object.keys(lists)[0]).catch(e => {
@@ -71,7 +74,7 @@ export default function Swap() {
             ...t,
             ...(account
               ? {
-                  balance: Math.round(Math.random() * 1000000) / 1000000,
+                  balance: Math.round(Math.random() * 1000),
                   borrowable: Math.round(Math.random() * 100)
                 }
               : {})
