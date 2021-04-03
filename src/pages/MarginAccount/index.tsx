@@ -11,8 +11,9 @@ import RiskMeter from '../../components/Riskmeter'
 import { useWeb3React } from '@web3-react/core'
 import { getAccountBalances, Balances, getAccountBorrowTotal, getAccountHoldingTotal } from '@marginswap/sdk'
 import { TokenInfo } from '@uniswap/token-lists'
+import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { useActiveWeb3React } from '../../hooks'
-import { getProviderOrSigner } from '../../utils/index'
+import { getProviderOrSigner } from '../../utils'
 import { BigNumber } from '@ethersproject/bignumber'
 const { REACT_APP_CHAIN_ID } = process.env
 
@@ -102,7 +103,7 @@ export const MarginAccount = () => {
 
   const getTokensList = async (url: string) => {
     const tokensRes = await fetchList(url, false)
-    setTokens(tokensRes.tokens)
+    setTokens(tokensRes.tokens.filter(t => t.chainId === Number(REACT_APP_CHAIN_ID)))
   }
   useEffect(() => {
     getTokensList(Object.keys(lists)[0]).catch(e => {
@@ -159,18 +160,8 @@ export const MarginAccount = () => {
   return (
     <div className={classes.wrapper}>
       <div className={classes.section}>
-        {/* TODO: style account warning div */}
-        {!account && (
-          <div style={{ padding: '20px', color: 'orange', border: '1px solid yellow', borderRadius: '10px' }}>
-            Wallet not connected
-          </div>
-        )}
-        {/* TODO: style error div */}
-        {error && (
-          <div style={{ padding: '20px', color: 'indianred', border: '1px solid red', borderRadius: '10px' }}>
-            {error}
-          </div>
-        )}
+        {!account && <WarningBar>Wallet not connected</WarningBar>}
+        {error && <ErrorBar>{error}</ErrorBar>}
         <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px 0', alignItems: 'center' }}>
           <InfoCard title="Total Account Balance" amount={holdingTotal} withUnderlyingCard Icon={IconBanknotes} />
           <InfoCard title="Debt" amount={debtTotal} small Icon={IconScales} />

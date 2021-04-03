@@ -1,3 +1,4 @@
+import React, { FunctionComponent, useState } from 'react'
 import { Divider } from '@material-ui/core'
 import SearchIcon from '@material-ui/icons/Search'
 import XIcon from '../../assets/images/x.svg'
@@ -6,82 +7,43 @@ import { TokenInfo } from '@uniswap/token-lists'
 import Modal from '@material-ui/core/Modal'
 import Backdrop from '@material-ui/core/Backdrop'
 import Fade from '@material-ui/core/Fade'
-import React, { FC, useEffect, useState } from 'react'
 import { useModalStyles, useCurrencyStyles } from './useModalStyles'
 
-export interface CurrencyInput {
+export const CurrencyModal: FunctionComponent<{
   tokens: TokenInfo[]
-  deal: {
-    currency: number
-    setCurrency: React.Dispatch<React.SetStateAction<number>>
-  }
-}
-
-interface TokenInput {
-  token: TokenInfo
-  index: number
-  deal: {
-    currency: number
-    setCurrency: React.Dispatch<React.SetStateAction<number>>
-  }
-  handleClose: () => void
-}
-
-const Token = ({ token, index, deal, handleClose }: TokenInput) => {
-  const classes = useCurrencyStyles()
-
-  return (
-    <div
-      key={index}
-      className={classes.currency}
-      onClick={() => {
-        deal.setCurrency(index)
-        handleClose()
-      }}
-    >
-      <img src={token?.logoURI} alt={token?.chainId.toString()} className={classes.currencyImg} />
-      <div>
-        <h3>{token.symbol}</h3>
-        <span>{token.name}</span>
-      </div>
-    </div>
-  )
-}
-
-export const CurrencyModal: FC<CurrencyInput> = ({ tokens, deal }: CurrencyInput) => {
+  selectedTokenIndex: number | null
+  hiddenTokenIndex: number | null
+  selectToken: (tokenIndex: number) => void
+}> = ({ tokens, selectedTokenIndex, hiddenTokenIndex, selectToken }) => {
   const classes = useModalStyles()
+  const tokenClasses = useCurrencyStyles()
 
-  const [open, setOpen] = React.useState(false)
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
-
-  const [newTokens, setNewTokens] = useState<TokenInfo[]>([])
+  const [isOpened, setIsOpened] = useState(false)
   const [search, setSearch] = useState('')
 
-  useEffect(() => {
-    const unique: string[] = []
-    setNewTokens(
-      tokens.filter(({ symbol, logoURI }) => {
-        if (!unique.includes(symbol) && logoURI) {
-          unique.push(symbol)
-          return true
-        }
-        return false
-      })
-    )
-  }, [tokens])
+  const handleOpen = () => setIsOpened(true)
+
+  const handleClose = () => {
+    setIsOpened(false)
+    setSearch('')
+  }
+
+  const handleSelectToken = (index: number) => {
+    selectToken(index)
+    handleClose()
+  }
 
   return (
     <div>
       <button type="button" onClick={handleOpen} className={classes.modalButton}>
-        {deal.currency !== -1 && newTokens ? (
+        {selectedTokenIndex !== null ? (
           <>
             <img
-              src={newTokens[deal.currency]?.logoURI}
-              alt={newTokens[deal.currency]?.chainId.toString()}
+              src={tokens[selectedTokenIndex].logoURI}
+              alt={tokens[selectedTokenIndex].chainId.toString()}
               className={classes.currencyImg}
             />
-            <span id="currencySymbol">{newTokens[deal.currency]?.symbol}</span>
+            <span id="currencySymbol">{tokens[selectedTokenIndex].symbol}</span>
             <img src={Dropdown} width="8px" height="14px" alt="_" id="dropdown" />
           </>
         ) : (
@@ -95,7 +57,7 @@ export const CurrencyModal: FC<CurrencyInput> = ({ tokens, deal }: CurrencyInput
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         className={classes.modal}
-        open={open}
+        open={isOpened}
         onClose={handleClose}
         closeAfterTransition
         BackdropComponent={Backdrop}
@@ -103,7 +65,7 @@ export const CurrencyModal: FC<CurrencyInput> = ({ tokens, deal }: CurrencyInput
           timeout: 500
         }}
       >
-        <Fade in={open}>
+        <Fade in={isOpened}>
           <div className={classes.paper}>
             <div className={classes.modalHeader}>
               <h3>Select a token</h3>
@@ -115,15 +77,28 @@ export const CurrencyModal: FC<CurrencyInput> = ({ tokens, deal }: CurrencyInput
             </div>
             <Divider />
             <div className={classes.currencyList}>
-              {newTokens
-                ?.filter(token => (search ? token.symbol.toLowerCase().startsWith(search.toLowerCase()) : true))
-                .map((token, index) => (
-                  <Token key={token.symbol} token={token} index={index} deal={deal} handleClose={handleClose} />
-                ))}
+              {tokens?.map((token, index) =>
+                token.symbol.toLowerCase().startsWith(search.toLowerCase()) && index !== hiddenTokenIndex ? (
+                  <div
+                    key={token.symbol}
+                    className={tokenClasses.currency}
+                    onClick={() => {
+                      handleSelectToken(index)
+                    }}
+                  >
+                    <img src={token?.logoURI} alt={token?.chainId.toString()} className={classes.currencyImg} />
+                    <div>
+                      <h3>{token.symbol}</h3>
+                      <span>{token.name}</span>
+                    </div>
+                  </div>
+                ) : null
+              )}
             </div>
             <button
               className={classes.modalConfirm}
               onClick={() => {
+                // TODO: is it needed?
                 console.log('mock Manage')
               }}
             >

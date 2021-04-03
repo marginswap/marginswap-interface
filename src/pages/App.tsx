@@ -1,6 +1,6 @@
 import { GasFees } from 'components/GasFees'
 import React, { Suspense } from 'react'
-import { Route, Switch } from 'react-router-dom'
+import { Redirect, Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
 import GoogleAnalyticsReporter from '../components/analytics/GoogleAnalyticsReporter'
 import Header from '../components/Header'
@@ -10,7 +10,6 @@ import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
 import { MarginAccount } from './MarginAccount'
 import Swap from './Swap'
-import { RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
 import Vote from './Vote'
 import VotePage from './Vote/VotePage'
 import { BondSupply } from './BondSupply'
@@ -66,7 +65,6 @@ export default function App() {
           <Web3ReactManager>
             <Switch>
               <Route exact strict path="/swap" component={Swap} />
-              <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
               <Route exact strict path="/stake" component={Staking} />
               <Route exact strict path="/margin-account" component={MarginAccount} />
               <Route exact strict path="/bond-supply" component={BondSupply} />
@@ -74,7 +72,7 @@ export default function App() {
               <Route exact strict path="/gas-fees" component={GasFees} />
               <Route exact strict path="/vote" component={Vote} />
               <Route exact strict path="/vote/:id" component={VotePage} />
-              <Route component={RedirectPathToSwapOnly} />
+              <Route component={() => <Redirect to={{ pathname: '/swap' }} />} />
             </Switch>
           </Web3ReactManager>
           <Marginer />

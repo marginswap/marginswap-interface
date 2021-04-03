@@ -1,228 +1,127 @@
-import { Box, Button, IconButton } from '@material-ui/core'
-import AppBar from '@material-ui/core/AppBar'
-import FormControl from '@material-ui/core/FormControl'
-import Tooltip from '@material-ui/core/Tooltip'
-import { Select, MenuItem } from '@material-ui/core'
-import Tab from '@material-ui/core/Tab'
-import Tabs from '@material-ui/core/Tabs'
+import { Button, AppBar, Tab, Tabs } from '@material-ui/core'
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
-import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined'
-import walletIcon from 'assets/svg/walletIcon.svg'
-import question from 'assets/svg/question.svg'
 import { TokenInfo } from '@uniswap/token-lists'
 import AppBody from 'pages/AppBody'
-import { CurrencyModal } from '../CurrencyModal'
-import { useStyles, useInputStyles, useTooltipStyles } from './useStyles'
-import React, { FC, useEffect, useState } from 'react'
+import { useStyles, useInputStyles } from './useStyles'
+import React, { FunctionComponent } from 'react'
+import Parameters from './Parameters'
+import StakeInput from './StakeInput'
+import TabPanel from './TabPanel'
+import { ErrorBar } from '../Placeholders'
+import useSwap from './useSwap'
+import SwapSettings from '../SwapSettings'
+const { REACT_APP_FEE_PERCENT } = process.env
 
-interface StakeInput {
-  title: string
-  balance: number
-  deal: {
-    quantity: number
-    setQuantity?: React.Dispatch<React.SetStateAction<number>>
-    currency: number
-    setCurrency: React.Dispatch<React.SetStateAction<number>>
-  }
-  tokens: TokenInfo[]
-}
-const StakeInput: FC<StakeInput> = ({ title, balance, deal, tokens }: StakeInput) => {
-  const classes = useInputStyles()
-  const styles = useStyles()
+const calcMinReceived = (amount: number, slippageTolerance: number) =>
+  Math.round(amount * (1 - Number(REACT_APP_FEE_PERCENT) / 100) * (1 - slippageTolerance / 10000) * 1000000) / 1000000
 
-  const handleChange = (event: any) => {
-    if (!deal.setQuantity) return
-    deal.setQuantity(event.target.value)
-  }
+const calcTransactionFee = (amount: number) => Math.round(amount * Number(REACT_APP_FEE_PERCENT) * 10000) / 1000000
 
-  const handleSetMax = () => {
-    if (!deal.setQuantity) return
-    deal.setQuantity(balance)
-  }
+// mock stuff, to be replaced
+const calcPriceImpact = (amount: number) => Math.round(100 * Math.max(Math.log(amount) * 10, 0.01)) / 100
+const route = 'MFI > USDC > ETH'
 
-  return (
-    <div className={classes.wrapper + ' ' + styles.fullWidthPair}>
-      <p>
-        <span>{title}</span>
-        <span>Balance: {balance}</span>
-      </p>
-      <div className={classes.input}>
-        <input type="number" value={deal.quantity} min={0} onChange={event => handleChange(event)} className="value" />
-        {deal.setQuantity && (
-          <Button variant="text" size="small" className={classes.maxButton} onClick={handleSetMax}>
-            MAX
-          </Button>
-        )}
-        <div className={classes.currencyWrapper}>
-          {tokens && (
-            <>
-              <CurrencyModal tokens={tokens} deal={{ currency: deal.currency, setCurrency: deal.setCurrency }} />
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-interface MultiplierInput {
-  deal: {
-    multiplier: number
-    setMultiplier: React.Dispatch<React.SetStateAction<number>>
-  }
-}
-
-const MultiplierInput: FC<MultiplierInput> = ({ deal }: MultiplierInput) => {
-  const classes = useInputStyles()
-
-  const handleChangeMultiplier = (event: any) => {
-    deal.setMultiplier(event.target.value)
-  }
-
-  const oneToNArray = Array.from({ length: 10 }, (_, i) => i + 1)
-
-  return (
-    <FormControl className={classes.formControl}>
-      <Select
-        value={deal.multiplier}
-        onChange={handleChangeMultiplier}
-        name="age"
-        className={classes.selectEmpty}
-        inputProps={{ 'aria-label': 'age' }}
-      >
-        {oneToNArray.map(count => {
-          return (
-            <MenuItem key={count} value={count}>
-              {count} x
-            </MenuItem>
-          )
-        })}
-      </Select>
-    </FormControl>
-  )
-}
-
-const Parameters = ({ parameters }: { parameters: any }) => {
-  const classes = useTooltipStyles()
-
-  return (
-    <p>
-      <span>
-        {parameters[0]}
-        {parameters[2] && (
-          <Tooltip title={parameters[2]} placement="right" classes={{ tooltip: classes.tooltip }} arrow>
-            <img src={question} width={16} height={16} alt="?" />
-          </Tooltip>
-        )}
-      </span>
-      <span>{parameters[1]}</span>
-    </p>
-  )
-}
-
-interface TabPanelProps {
-  children?: React.ReactNode
-  index: any
-  value: any
-}
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`nav-tabpanel-${index}`}
-      aria-labelledby={`nav-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box p={1}>{children}</Box>}
-    </div>
-  )
-}
-function applyTabProps(index: any) {
-  return {
-    id: `nav-tab-${index}`,
-    'aria-controls': `nav-tabpanel-${index}`
-  }
-}
-interface LinkTabProps {
-  label?: string
-  href?: string
-}
-function LinkTab(props: LinkTabProps) {
-  return (
-    <Tab
-      component="a"
-      onClick={(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-        event.preventDefault()
-      }}
-      {...props}
-    />
-  )
-}
-export const PagerSwap = ({ tokens }: { tokens: TokenInfo[] }) => {
+export const PagerSwap: FunctionComponent<{
+  tokens: (TokenInfo & { balance?: number; borrowable?: number })[]
+  accountConnected: boolean
+  exchangeRates: Record<string, number>
+}> = ({ tokens, accountConnected, exchangeRates }) => {
   const classes = useStyles()
   const styles = useInputStyles()
 
-  const [currentTab, setCurrentTab] = useState(0)
-
-  const [spotQuantityFrom, setSpotQuantityFrom] = useState(0)
-  const [spotCurrencyFrom, setSpotCurrencyFrom] = useState(-1)
-  const [spotQuantityTo, setSpotQuantityTo] = useState(0)
-  const [spotCurrencyTo, setSpotCurrencyTo] = useState(-1)
-
-  const [marginQuantityFrom, setMarginQuantityFrom] = useState(0)
-  const [marginCurrencyFrom, setMarginCurrencyFrom] = useState(-1)
-  const [marginQuantityTo, setMarginQuantityTo] = useState(0)
-  const [marginCurrencyTo, setMarginCurrencyTo] = useState(-1)
-  const [multiplier, setMultiplier] = useState(1)
-
-  const parameters = {
-    price: ['Price ', 0.135426798],
-    slippageTolerance: ['Slippage Tolerance', 8],
-    minimumReceived: [
-      'Minimum received',
-      '0.000004014 ETH',
-      'This is the text dummy data of help. text help arrives here'
-    ],
-    priceImpact: ['Price Impact', '0.01%', 'TODO This is the text dummy data of help. text help arrives here'],
-    transactionFee: ['Transaction Fee', '0.01%', 'This is the text dummy data of help. text help arrives here'],
-    route: ['Route ', 'MFI > USDC > ETH', 'This is the text dummy data of help. text help arrives here']
-  }
+  const {
+    error,
+    currentTab,
+    handleChangeTab,
+    getExchangeRate,
+    spotQuantityFrom,
+    spotQuantityTo,
+    spotCurrencyFrom,
+    spotCurrencyTo,
+    marginQuantityFrom,
+    marginQuantityTo,
+    marginCurrencyFrom,
+    marginCurrencyTo,
+    replaceCurrencies,
+    getButtonDisabledStatus,
+    handleAmountChange,
+    handleSelectToken,
+    settingsOpened,
+    toggleSettings,
+    expertMode,
+    toggleExpertMode,
+    slippageTolerance,
+    setSlippageTolerance,
+    transactionDeadline,
+    setTransactionDeadline,
+    singleHopOnly,
+    setSingleHopOnly
+  } = useSwap({ tokens, accountConnected, exchangeRates })
 
   const middleParameters = (
     <div className={classes.parameters + ' ' + classes.fullWidthPair}>
-      <Parameters parameters={parameters.price} />
-      <Parameters parameters={parameters.slippageTolerance} />
+      {((currentTab === 0 && spotCurrencyFrom !== null && spotCurrencyTo !== null) ||
+        (currentTab === 1 && marginCurrencyFrom !== null && marginCurrencyTo !== null)) &&
+        !error && (
+          <Parameters
+            title="Price"
+            value={getExchangeRate(
+              currentTab === 0 ? tokens[spotCurrencyFrom!].symbol : tokens[marginCurrencyFrom!].symbol,
+              currentTab === 0 ? tokens[spotCurrencyTo!].symbol : tokens[marginCurrencyTo!].symbol
+            )}
+          />
+        )}
+      <Parameters title="Slippage tolerance" value={`${slippageTolerance / 100}%`} />
     </div>
   )
 
-  const bottomParameters = (
-    <div className={classes.parameters + ' ' + classes.fullWidthPair}>
-      <Parameters parameters={parameters.minimumReceived} />
-      <Parameters parameters={parameters.priceImpact} />
-      <Parameters parameters={parameters.transactionFee} />
-      <Parameters parameters={parameters.route} />
-    </div>
-  )
-
-  const handleChangeTab = (event: React.ChangeEvent<unknown>, newValue: number) => {
-    setCurrentTab(newValue)
-  }
-
-  useEffect(() => {
-    setSpotQuantityTo(spotQuantityFrom)
-    setMarginQuantityTo(marginQuantityFrom * multiplier)
-  }, [spotQuantityFrom, marginQuantityFrom, multiplier])
+  const bottomParameters =
+    ((currentTab === 0 && Number(spotQuantityTo) > 0 && spotCurrencyTo !== null && spotCurrencyFrom !== null) ||
+      (currentTab === 1 && Number(marginQuantityTo) > 0 && marginCurrencyTo !== null && marginCurrencyFrom !== null)) &&
+    !error ? (
+      <div className={classes.parameters + ' ' + classes.fullWidthPair}>
+        <Parameters
+          title="Minimum received"
+          value={`${calcMinReceived(
+            currentTab === 0 ? Number(spotQuantityTo) : Number(marginQuantityTo),
+            slippageTolerance
+          )} ${tokens[currentTab === 0 ? spotCurrencyTo! : marginCurrencyTo!].symbol}`}
+          hint="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed"
+        />
+        <Parameters
+          title="Price impact"
+          value={`${calcPriceImpact(currentTab === 0 ? Number(spotQuantityFrom) : Number(marginQuantityFrom))} %`}
+          hint="The difference between the market price and estimated price due to trade size"
+        />
+        <Parameters
+          title="Transaction Fee"
+          value={`${calcTransactionFee(currentTab === 0 ? Number(spotQuantityFrom) : Number(marginQuantityFrom))} ${
+            tokens[currentTab === 0 ? spotCurrencyFrom! : marginCurrencyFrom!].symbol
+          }`}
+          hint={`A portion of each trade (${REACT_APP_FEE_PERCENT}%) goes to liquidity providers as a protocol incentive`}
+        />
+        {!singleHopOnly && <Parameters title="Route" value={route} hint="Mock stuff!" />}
+      </div>
+    ) : null
 
   return (
     <AppBody>
+      {error && <ErrorBar>{error}</ErrorBar>}
       <div className={classes.wrapper}>
         <div className={classes.header}>
           <h4>Swap</h4>
-          <IconButton>
-            <SettingsOutlinedIcon fontSize="small" style={{ color: 'white' }} />
-          </IconButton>
+          <SwapSettings
+            isOpened={settingsOpened}
+            toggleOpened={toggleSettings}
+            slippageTolerance={slippageTolerance}
+            setSlippageTolerance={setSlippageTolerance}
+            deadline={transactionDeadline}
+            setDeadline={setTransactionDeadline}
+            singleHopOnly={singleHopOnly}
+            setSingleHopOnly={setSingleHopOnly}
+            expertMode={expertMode}
+            toggleExpertMode={toggleExpertMode}
+          />
         </div>
         <AppBar position="static" className={classes.root}>
           <Tabs
@@ -231,85 +130,99 @@ export const PagerSwap = ({ tokens }: { tokens: TokenInfo[] }) => {
             onChange={handleChangeTab}
             aria-label="nav tabs example"
             className={classes.tabs}
-            TabIndicatorProps={{ color: 'transparent' }}
           >
-            <LinkTab label="Spot" href="/#" {...applyTabProps(0)} />
-            <LinkTab label="Margin" href="/#" {...applyTabProps(1)} />
+            <Tab label="Spot" id="nav-tab-0" aria-controls="nav-tabpanel-0" />
+            <Tab label="Margin" id="nav-tab-1" aria-controls="nav-tabpanel-1" />
           </Tabs>
-          <TabPanel value={currentTab} index={0}>
+          <TabPanel activeIndex={currentTab} index={0}>
             <div className={classes.tabPanel}>
               <StakeInput
                 title="From"
-                balance={0.642379}
-                deal={{
-                  quantity: spotQuantityFrom,
-                  setQuantity: setSpotQuantityFrom,
-                  currency: spotCurrencyFrom,
-                  setCurrency: setSpotCurrencyFrom
+                quantity={spotQuantityFrom}
+                setQuantity={amount => handleAmountChange(amount, true, true)}
+                selectedTokenIndex={spotCurrencyFrom}
+                hiddenTokenIndex={spotCurrencyTo}
+                selectToken={tokenIndex => {
+                  handleSelectToken(tokenIndex, true, true)
                 }}
                 tokens={tokens}
+                renderMax={accountConnected}
               />
-              <div className={styles.midleWrapper}>
-                <ArrowDownwardIcon
-                  className={styles.swapArrow}
-                  onClick={() => {
-                    const temp = spotCurrencyFrom
-                    setSpotCurrencyFrom(spotCurrencyTo)
-                    setSpotCurrencyTo(temp)
-                  }}
-                />
+              <div className={styles.middleWrapper}>
+                <ArrowDownwardIcon className={styles.swapArrow} onClick={replaceCurrencies} />
               </div>
               <StakeInput
                 title="To (estimated)"
-                balance={1.314269}
-                deal={{ quantity: spotQuantityTo, currency: spotCurrencyTo, setCurrency: setSpotCurrencyTo }}
+                quantity={spotQuantityTo}
+                setQuantity={amount => handleAmountChange(amount, false, true)}
+                selectedTokenIndex={spotCurrencyTo}
+                hiddenTokenIndex={spotCurrencyFrom}
+                selectToken={tokenIndex => {
+                  handleSelectToken(tokenIndex, false, true)
+                }}
                 tokens={tokens}
               />
               {middleParameters}
               <div className={classes.actions}>
-                <Button variant="outlined" size="large" id="spot">
-                  Approve USDT
+                <Button variant="outlined" size="large" id="spot" disabled={!!getButtonDisabledStatus()}>
+                  {/* TODO: is approved? */}
+                  {getButtonDisabledStatus() ?? 'Swap'}
                 </Button>
               </div>
               {bottomParameters}
             </div>
           </TabPanel>
-          <TabPanel value={currentTab} index={1}>
+          <TabPanel activeIndex={currentTab} index={1}>
             <div className={classes.tabPanel}>
               <StakeInput
                 title="From"
-                balance={0.642379}
-                deal={{
-                  quantity: marginQuantityFrom,
-                  setQuantity: setMarginQuantityFrom,
-                  currency: marginCurrencyFrom,
-                  setCurrency: setMarginCurrencyFrom
+                quantity={marginQuantityFrom}
+                setQuantity={amount => handleAmountChange(amount, true, false)}
+                selectedTokenIndex={marginCurrencyFrom}
+                hiddenTokenIndex={marginCurrencyTo}
+                selectToken={tokenIndex => {
+                  handleSelectToken(tokenIndex, true, false)
                 }}
                 tokens={tokens}
+                renderMax={accountConnected}
+                isMargin
               />
-              <div className={styles.midleWrapper}>
-                <span>Leverage</span>
-                <MultiplierInput deal={{ multiplier, setMultiplier }} />
-                <ArrowDownwardIcon
-                  onClick={() => {
-                    const temp = marginCurrencyFrom
-                    setMarginCurrencyFrom(marginCurrencyTo)
-                    setMarginCurrencyTo(temp)
-                  }}
-                />
-                <img src={walletIcon} width={16} height={15} alt="wallet" />
-                <span>Borrowable: 200 USDC</span>
+              <div className={styles.middleWrapper}>
+                {marginCurrencyFrom !== null &&
+                  tokens[marginCurrencyFrom].balance !== undefined &&
+                  tokens[marginCurrencyFrom].borrowable !== undefined &&
+                  tokens[marginCurrencyFrom].borrowable! > 0 && (
+                    <span>
+                      Leverage:{' '}
+                      {Math.round(
+                        (Math.max(Number(marginQuantityFrom) - tokens[marginCurrencyFrom].balance!, 0) * 10000) /
+                          tokens[marginCurrencyFrom].borrowable!
+                      ) / 100}
+                      %
+                    </span>
+                  )}
+                <ArrowDownwardIcon onClick={replaceCurrencies} />
+                {marginCurrencyFrom !== null && tokens[marginCurrencyFrom].borrowable !== undefined && (
+                  <span>
+                    Borrowable: {tokens[marginCurrencyFrom].borrowable} {tokens[marginCurrencyFrom].symbol}
+                  </span>
+                )}
               </div>
               <StakeInput
                 title="To (estimated)"
-                balance={1.314269}
-                deal={{ quantity: marginQuantityTo, currency: marginCurrencyTo, setCurrency: setMarginCurrencyTo }}
+                quantity={marginQuantityTo}
+                setQuantity={amount => handleAmountChange(amount, false, false)}
+                selectedTokenIndex={marginCurrencyTo}
+                hiddenTokenIndex={marginCurrencyFrom}
+                selectToken={tokenIndex => {
+                  handleSelectToken(tokenIndex, false, false)
+                }}
                 tokens={tokens}
               />
               {middleParameters}
               <div className={classes.actions}>
-                <Button variant="outlined" size="large" id="swap">
-                  Swap
+                <Button variant="outlined" size="large" id="swap" disabled={!!getButtonDisabledStatus()}>
+                  {getButtonDisabledStatus() ?? 'Swap'}
                 </Button>
               </div>
               {bottomParameters}

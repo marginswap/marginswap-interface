@@ -8,7 +8,6 @@ export const useStyles = makeStyles(() => ({
     borderRadius: 20,
     border: '1px solid #777777',
     margin: 'auto',
-    height: '660px',
     padding: '0 20px',
     display: 'flex',
     flexDirection: 'column'
@@ -41,12 +40,12 @@ export const useStyles = makeStyles(() => ({
     }
   },
   parameters: {
-    height: '58px',
     display: 'flex',
     flexDirection: 'column',
     gap: '12px',
     padding: '0 8px',
-    justifyContent: 'space-evenly'
+    justifyContent: 'space-evenly',
+    marginBottom: '18px'
   },
   actions: {
     display: 'flex',
@@ -65,11 +64,17 @@ export const useStyles = makeStyles(() => ({
       marginBottom: '12px',
       '&#spot': {
         background: 'linear-gradient(270deg, #2DDE9E 0%, #4255FF 100%)',
-        color: '#fff'
+        color: '#fff',
+        '&:disabled': {
+          background: 'grey'
+        }
       },
       '&#swap': {
         background: 'linear-gradient(270deg, #AD01FF 0%, #3122FB 100%)',
-        color: '#fff'
+        color: '#fff',
+        '&:disabled': {
+          background: 'grey'
+        }
       }
     }
   },
@@ -90,7 +95,7 @@ export const useStyles = makeStyles(() => ({
     height: '48px',
     background: 'rgba(49, 49, 49, 0.5)',
     borderRadius: '7px',
-    '& a': {
+    '& button': {
       padding: '0',
       heigth: '48px',
       '&[aria-selected=true]': {
@@ -98,6 +103,9 @@ export const useStyles = makeStyles(() => ({
         borderRadius: '7px'
       },
       '&[aria-selected=false]': {}
+    },
+    '& .MuiTabs-indicator': {
+      display: 'none'
     }
   },
   tabPanel: {
@@ -116,16 +124,20 @@ export const useInputStyles = makeStyles(() => ({
     fontSize: 14,
     fontWeight: 600
   },
-  midleWrapper: {
+  middleWrapper: {
     height: 32,
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: '0 8px',
+    cursor: 'pointer',
     '& span': {
       fontWeight: '500',
       fontSize: '13px',
       lineHeight: '16px'
+    },
+    '& svg': {
+      margin: '0 auto'
     }
   },
   input: {
