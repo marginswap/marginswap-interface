@@ -13,7 +13,7 @@ import { getAccountBalances, Balances, getAccountBorrowTotal, getAccountHoldingT
 import { TokenInfo } from '@uniswap/token-lists'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { useActiveWeb3React } from '../../hooks'
-import { getProviderOrSigner } from '../../utils/index'
+import { getProviderOrSigner } from '../../utils'
 import { BigNumber } from '@ethersproject/bignumber'
 const { REACT_APP_CHAIN_ID } = process.env
 
