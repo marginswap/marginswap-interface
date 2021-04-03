@@ -1,9 +1,8 @@
-import { Button, IconButton } from '@material-ui/core'
+import { Button } from '@material-ui/core'
 import AppBar from '@material-ui/core/AppBar'
 import Tab from '@material-ui/core/Tab'
 import Tabs from '@material-ui/core/Tabs'
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
-import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined'
 import walletIcon from 'assets/svg/walletIcon.svg'
 import { TokenInfo } from '@uniswap/token-lists'
 import AppBody from 'pages/AppBody'
@@ -14,6 +13,7 @@ import StakeInput from './StakeInput'
 import TabPanel from './TabPanel'
 import { ErrorBar } from '../Placeholders'
 import useSwap from './useSwap'
+import SwapSettings from '../SwapSettings'
 
 // mock stuff, to be replaced
 const parameters = {
@@ -52,7 +52,17 @@ export const PagerSwap: FunctionComponent<{
     replaceCurrencies,
     getButtonDisabledStatus,
     handleAmountChange,
-    handleSelectToken
+    handleSelectToken,
+    settingsOpened,
+    toggleSettings,
+    expertMode,
+    toggleExpertMode,
+    slippageTolerance,
+    setSlippageTolerance,
+    transactionDeadline,
+    setTransactionDeadline,
+    singleHopOnly,
+    setSingleHopOnly
   } = useSwap({ tokens, accountConnected, exchangeRates })
 
   // mock stuff
@@ -78,9 +88,18 @@ export const PagerSwap: FunctionComponent<{
       <div className={classes.wrapper}>
         <div className={classes.header}>
           <h4>Swap</h4>
-          <IconButton>
-            <SettingsOutlinedIcon fontSize="small" style={{ color: 'white' }} />
-          </IconButton>
+          <SwapSettings
+            isOpened={settingsOpened}
+            toggleOpened={toggleSettings}
+            slippageTolerance={slippageTolerance}
+            setSlippageTolerance={setSlippageTolerance}
+            deadline={transactionDeadline}
+            setDeadline={setTransactionDeadline}
+            singleHopOnly={singleHopOnly}
+            setSingleHopOnly={setSingleHopOnly}
+            expertMode={expertMode}
+            toggleExpertMode={toggleExpertMode}
+          />
         </div>
         <AppBar position="static" className={classes.root}>
           <Tabs

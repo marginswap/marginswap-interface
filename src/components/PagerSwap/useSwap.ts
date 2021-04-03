@@ -23,6 +23,20 @@ const useSwap = ({
   const [marginQuantityTo, setMarginQuantityTo] = useState('0')
   const [marginCurrencyTo, setMarginCurrencyTo] = useState<number | null>(null)
 
+  const [settingsOpened, setSettingsOpened] = useState(false)
+  const [expertMode, setExpertMode] = useState(false)
+  const [slippageTolerance, setSlippageTolerance] = useState(50)
+  const [transactionDeadline, setTransactionDeadline] = useState(1200)
+  const [singleHopOnly, setSingleHopOnly] = useState(false)
+
+  const toggleExpertMode = () => {
+    setExpertMode(prevState => !prevState)
+  }
+
+  const toggleSettings = () => {
+    setSettingsOpened(prevState => !prevState)
+  }
+
   const handleChangeTab = (event: ChangeEvent<unknown>, newValue: number) => {
     setCurrentTab(newValue)
   }
@@ -210,7 +224,17 @@ const useSwap = ({
     replaceCurrencies,
     getButtonDisabledStatus,
     handleAmountChange,
-    handleSelectToken
+    handleSelectToken,
+    settingsOpened,
+    toggleSettings,
+    expertMode,
+    toggleExpertMode,
+    slippageTolerance,
+    setSlippageTolerance,
+    transactionDeadline,
+    setTransactionDeadline,
+    singleHopOnly,
+    setSingleHopOnly
   }
 }
 
