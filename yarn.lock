@@ -1999,17 +1999,17 @@
   dependencies:
     "@json-rpc-tools/types" "^1.6.1"
 
-"@marginswap/core-abi@1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@marginswap/core-abi/-/core-abi-1.0.4.tgz#96e32bd82984cf1e6d0439f1649096196e0e3cf7"
-  integrity sha512-wOoxCaJZLUxAA10vmV3GcycQJK6qTqCnULGeZlTID8DcYBzW2NZRTKUsZWJDDmfhTy/YmFzOwBT2REQm20Gi6g==
+"@marginswap/core-abi@1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@marginswap/core-abi/-/core-abi-1.0.5.tgz#196ab0ec85591225700617475ffe00b8d3ab049a"
+  integrity sha512-35jbL3pLvP8UgKSdfWsq9UGC2tLsq2SGaiP487BeuOnE6vQIwNgJ9dqavx5EuKwVYCuHxzFUrIN8PTEbQ0ZZuA==
 
-"@marginswap/sdk@^4.0.12":
-  version "4.0.12"
-  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.0.12.tgz#24c7ec93dcf8baf346081f670238ec5a98efaa41"
-  integrity sha512-dFhRGhzdhFv4IwmxDlLpJUQVb44bjCTvZ6a7zQO0R1+r2FXPlZU4DnOF0sHuMk1Qfebza4YI/JjDOuecf3X4kA==
+"@marginswap/sdk@^4.0.13":
+  version "4.0.13"
+  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.0.13.tgz#7c8ebbd1e980f85f8e06dbf8bcc9f829c0156a81"
+  integrity sha512-V5zNiU0K/V2FAX9FsY0wL1+9Rips/GHh8++uHTjR1oixmcIO/QE90/d3AEPifxg0i4J2wLLoH0HH8O6l9XCwnA==
   dependencies:
-    "@marginswap/core-abi" "1.0.4"
+    "@marginswap/core-abi" "1.0.5"
     "@uniswap/v2-core" "^1.0.0"
     big.js "^5.2.2"
     decimal.js-light "^2.5.0"
