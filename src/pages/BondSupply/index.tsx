@@ -161,9 +161,8 @@ export const BondSupply = () => {
         columns={BOND_HOLDINGS_COLUMNS}
         actions={BOND_HOLDINGS_ACTIONS}
         deriveEmptyFrom="available"
-        idCol="coin"
       />
-      <TokensTable title="Bond Rates" data={bondRatesRows} columns={BOND_RATES_COLUMNS} idCol="coin" />
+      <TokensTable title="Bond Rates" data={bondRatesRows} columns={BOND_RATES_COLUMNS} />
     </div>
   )
 }
