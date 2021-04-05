@@ -9,15 +9,16 @@ import IconScales from '../../icons/IconScales'
 import IconCoin from '../../icons/IconCoin'
 import RiskMeter from '../../components/Riskmeter'
 import { useWeb3React } from '@web3-react/core'
-import { getAccountBalances, Balances, getAccountBorrowTotal, getAccountHoldingTotal } from '@marginswap/sdk'
+import { getAccountBalances, getAccountBorrowTotal, getAccountHoldingTotal } from '@marginswap/sdk'
 import { TokenInfo } from '@uniswap/token-lists'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { useActiveWeb3React } from '../../hooks'
 import { getProviderOrSigner } from '../../utils'
 import { BigNumber } from '@ethersproject/bignumber'
+import { Web3Provider } from '@ethersproject/providers'
 const { REACT_APP_CHAIN_ID } = process.env
 
-export type AccountBalanceData = {
+type AccountBalanceData = {
   img: string
   coin: string
   balance: number
@@ -96,8 +97,8 @@ export const MarginAccount = () => {
   const lists = useAllLists()
   const fetchList = useFetchListCallback()
   const [tokens, setTokens] = useState<TokenInfo[]>([])
-  const [holdingAmounts, setHoldingAmounts] = useState<Balances>({})
-  const [borrowingAmounts, setBorrowingAmounts] = useState<Balances>({})
+  const [holdingAmounts, setHoldingAmounts] = useState<Record<string, number>>({})
+  const [borrowingAmounts, setBorrowingAmounts] = useState<Record<string, number>>({})
   const [holdingTotal, setHoldingTotal] = useState(0)
   const [debtTotal, setDebtTotal] = useState(0)
 
@@ -114,9 +115,9 @@ export const MarginAccount = () => {
 
   const { account } = useWeb3React()
   const { library } = useActiveWeb3React()
-  let provider: any = null
+  let provider: Web3Provider
   if (library && account) {
-    provider = getProviderOrSigner(library, account)
+    provider = getProviderOrSigner(library, account) as Web3Provider
   }
 
   const getAccountData = async (_account: string) => {
@@ -125,8 +126,18 @@ export const MarginAccount = () => {
       getAccountHoldingTotal(_account, Number(REACT_APP_CHAIN_ID), provider),
       getAccountBorrowTotal(_account, Number(REACT_APP_CHAIN_ID), provider)
     ])
-    setHoldingAmounts(balances.holdingAmounts)
-    setBorrowingAmounts(balances.borrowingAmounts)
+    setHoldingAmounts(
+      Object.keys(balances.holdingAmounts).reduce(
+        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.holdingAmounts[cur]).toNumber() }),
+        {}
+      )
+    )
+    setBorrowingAmounts(
+      Object.keys(balances.borrowingAmounts).reduce(
+        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.borrowingAmounts[cur]).toNumber() }),
+        {}
+      )
+    )
     setHoldingTotal(BigNumber.from(_holdingTotal).toNumber())
     setDebtTotal(BigNumber.from(_debtTotal).toNumber())
   }
