@@ -11,7 +11,7 @@ import { useWeb3React } from '@web3-react/core'
 import { useActiveWeb3React } from '../../hooks'
 import { Web3Provider } from '@ethersproject/providers'
 import { getProviderOrSigner } from '../../utils'
-import { getHourlyBondBalances } from '@marginswap/sdk'
+import { getHourlyBondBalances, getHourlyBondInterestRates } from '@marginswap/sdk'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { BigNumber } from '@ethersproject/bignumber'
 const { REACT_APP_CHAIN_ID } = process.env
@@ -19,10 +19,12 @@ const { REACT_APP_CHAIN_ID } = process.env
 type BondRateData = {
   img: string
   coin: string
-  daily: number
-  weekly: number
-  monthly: number
-  yearly: number
+  hourly: number
+  ir: number
+  // daily: number
+  // weekly: number
+  // monthly: number
+  // yearly: number
 }
 
 const BOND_RATES_COLUMNS = [
@@ -38,10 +40,11 @@ const BOND_RATES_COLUMNS = [
     )
   },
   { name: 'Hourly', id: 'hourly' },
-  { name: 'Daily', id: 'daily' },
-  { name: 'Weekly', id: 'weekly' },
-  { name: 'Mothnly', id: 'monthly' },
-  { name: 'Yearly', id: 'yearly' }
+  // { name: 'Daily', id: 'daily' },
+  // { name: 'Weekly', id: 'weekly' },
+  // { name: 'Mothnly', id: 'monthly' },
+  // { name: 'Yearly', id: 'yearly' },
+  { name: 'Interest Rate', id: 'ir' }
 ] as const
 
 const useStyles = makeStyles(() => ({
@@ -67,7 +70,8 @@ export const BondSupply = () => {
   const lists = useAllLists()
   const fetchList = useFetchListCallback()
   const [tokens, setTokens] = useState<TokenInfo[]>([])
-  const [bondRates, setBondRates] = useState<{ hourly: Record<string, number> }>({ hourly: {} })
+  const [bondHourlyBalances, setBondHourlyBalances] = useState<Record<string, number>>({})
+  const [bondInterestRates, setBondInterestRates] = useState<Record<string, number>>({})
 
   const getTokensList = async (url: string) => {
     const tokensRes = await fetchList(url, false)
@@ -88,16 +92,25 @@ export const BondSupply = () => {
   }
 
   const getBondBalances = async (address: string, tokens: string[]) => {
-    const hourlyRates = await getHourlyBondBalances(address, tokens, Number(REACT_APP_CHAIN_ID), provider)
-    setBondRates({
-      hourly: Object.keys(hourlyRates).reduce(
+    const [hourlyRates, interestRates] = await Promise.all([
+      getHourlyBondBalances(address, tokens, Number(REACT_APP_CHAIN_ID), provider),
+      getHourlyBondInterestRates(tokens, Number(REACT_APP_CHAIN_ID), provider)
+    ])
+    setBondHourlyBalances(
+      Object.keys(hourlyRates).reduce(
         (acc, cur) => ({ ...acc, [cur]: BigNumber.from(hourlyRates[cur]).toNumber() }),
         {}
       )
-    })
+    )
+    setBondInterestRates(
+      Object.keys(interestRates).reduce(
+        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(interestRates[cur]).toNumber() }),
+        {}
+      )
+    )
   }
   useEffect(() => {
-    if (account && tokens) {
+    if (account && tokens.length > 0) {
       getBondBalances(
         account,
         tokens.map(t => t.address)
@@ -113,13 +126,14 @@ export const BondSupply = () => {
       tokens.map(token => ({
         img: token.logoURI ?? '',
         coin: token.symbol,
-        hourly: bondRates.hourly[token.address] ?? 0,
-        daily: 0, // TODO
-        weekly: 0, // TODO
-        monthly: 0, // TODO
-        yearly: 0 // TODO
+        hourly: bondHourlyBalances[token.address] ?? 0,
+        ir: bondInterestRates[token.address] ?? 0
+        // daily: 0, // TODO
+        // weekly: 0, // TODO
+        // monthly: 0, // TODO
+        // yearly: 0 // TODO
       })),
-    [tokens, bondRates]
+    [tokens, bondHourlyBalances]
   )
 
   return (
