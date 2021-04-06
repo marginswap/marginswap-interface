@@ -15,7 +15,6 @@ import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { useActiveWeb3React } from '../../hooks'
 import { getProviderOrSigner } from '../../utils'
 import { BigNumber } from '@ethersproject/bignumber'
-import { Web3Provider } from '@ethersproject/providers'
 const { REACT_APP_CHAIN_ID } = process.env
 
 type AccountBalanceData = {
@@ -115,9 +114,9 @@ export const MarginAccount = () => {
 
   const { account } = useWeb3React()
   const { library } = useActiveWeb3React()
-  let provider: Web3Provider
+  let provider: any
   if (library && account) {
-    provider = getProviderOrSigner(library, account) as Web3Provider
+    provider = getProviderOrSigner(library, account)
   }
 
   const getAccountData = async (_account: string) => {

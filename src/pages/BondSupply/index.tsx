@@ -9,7 +9,6 @@ import IconMoneyStack from '../../icons/IconMoneyStack'
 import { TokenInfo } from '@uniswap/token-lists'
 import { useWeb3React } from '@web3-react/core'
 import { useActiveWeb3React } from '../../hooks'
-import { Web3Provider } from '@ethersproject/providers'
 import { getProviderOrSigner } from '../../utils'
 import { getHourlyBondBalances, getHourlyBondInterestRates } from '@marginswap/sdk'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
@@ -86,9 +85,9 @@ export const BondSupply = () => {
 
   const { account } = useWeb3React()
   const { library } = useActiveWeb3React()
-  let provider: Web3Provider
+  let provider: any
   if (library && account) {
-    provider = getProviderOrSigner(library, account) as Web3Provider
+    provider = getProviderOrSigner(library, account)
   }
 
   const getBondBalances = async (address: string, tokens: string[]) => {
