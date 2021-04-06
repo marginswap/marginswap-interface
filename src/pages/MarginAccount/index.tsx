@@ -30,6 +30,7 @@ import { MaxUint256 } from '@ethersproject/constants'
 import { TransactionResponse } from '@ethersproject/providers'
 import ERC20_ABI from '../../constants/abis/erc20.json'
 import { utils } from 'ethers'
+import { useTransactionAdder } from '../../state/transactions/hooks'
 const { REACT_APP_CHAIN_ID } = process.env
 
 export type AccountBalanceData = {
@@ -89,6 +90,8 @@ export const MarginAccount = () => {
   const { account } = useWeb3React()
   const { library } = useActiveWeb3React()
 
+  const addTransaction = useTransactionAdder()
+
   let provider: any = null
   if (library && account) {
     provider = getProviderOrSigner(library, account)
@@ -100,12 +103,15 @@ export const MarginAccount = () => {
       return
     }
     try {
-      const res = await crossDeposit(
+      const res: any = await crossDeposit(
         address,
         utils.parseEther(String(amount)).toHexString(),
         Number(REACT_APP_CHAIN_ID),
         provider
       )
+      addTransaction(res, {
+        summary: `Cross Deposit`
+      })
       console.log('res :>> ', res)
     } catch (error) {
       console.log('error :>> ', error)
@@ -125,6 +131,9 @@ export const MarginAccount = () => {
       .approve(FUND_ADDRESS, MaxUint256)
       .then((response: TransactionResponse) => {
         console.log('approve response :>> ', response)
+        addTransaction(response, {
+          summary: `Approve Fund`
+        })
       })
       .catch((error: Error) => {
         console.debug('Failed to approve token', error)
@@ -238,7 +247,6 @@ export const MarginAccount = () => {
       }),
     [tokens, holdingAmounts, borrowingAmounts, tokenBalances, allowances]
   )
-  console.log('data :>> ', data)
 
   const getRisk = (holding: number, debt: number): number => {
     if (debt === 0) return 0
