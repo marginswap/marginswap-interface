@@ -9,7 +9,14 @@ import IconScales from '../../icons/IconScales'
 import IconCoin from '../../icons/IconCoin'
 import RiskMeter from '../../components/Riskmeter'
 import { useWeb3React } from '@web3-react/core'
-import { getAccountBalances, Balances, getAccountBorrowTotal, getAccountHoldingTotal, Token, crossDeposit } from '@marginswap/sdk'
+import {
+  getAccountBalances,
+  Balances,
+  getAccountBorrowTotal,
+  getAccountHoldingTotal,
+  Token,
+  crossDeposit
+} from '@marginswap/sdk'
 import { TokenInfo } from '@uniswap/token-lists'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { useActiveWeb3React } from '../../hooks'
@@ -89,14 +96,19 @@ export const MarginAccount = () => {
 
   const handleDeposit = async (address: string, amount: number) => {
     if (!amount) {
-      console.log("not enough amount")
+      console.log('not enough amount')
       return
     }
     try {
-      const res = await crossDeposit(address, utils.parseEther(String(amount)).toHexString(), Number(REACT_APP_CHAIN_ID), provider)
+      const res = await crossDeposit(
+        address,
+        utils.parseEther(String(amount)).toHexString(),
+        Number(REACT_APP_CHAIN_ID),
+        provider
+      )
       console.log('res :>> ', res)
     } catch (error) {
-      console.log('error :>> ', error);
+      console.log('error :>> ', error)
     }
   }
 
@@ -118,7 +130,6 @@ export const MarginAccount = () => {
         console.debug('Failed to approve token', error)
         throw error
       })
-    
   }
 
   const ACCOUNT_ACTIONS = [
@@ -164,7 +175,9 @@ export const MarginAccount = () => {
 
   const formattedTokens = useMemo(
     () =>
-      tokens.length > 0 ? tokens.map(token => new Token(token.chainId, token.address, token.decimals, token.symbol, token.name)) : [],
+      tokens.length > 0
+        ? tokens.map(token => new Token(token.chainId, token.address, token.decimals, token.symbol, token.name))
+        : [],
     [tokens]
   )
 
@@ -172,7 +185,10 @@ export const MarginAccount = () => {
 
   const validatedTokenAddresses = useMemo(() => formattedTokens.map(vt => vt.address), [formattedTokens])
 
-  const allowances = useMultipleContractSingleData(validatedTokenAddresses, ERC20_INTERFACE, 'allowance', [account ?? undefined, FUND_ADDRESS])
+  const allowances = useMultipleContractSingleData(validatedTokenAddresses, ERC20_INTERFACE, 'allowance', [
+    account ?? undefined,
+    FUND_ADDRESS
+  ])
 
   const getTokensList = async (url: string) => {
     const tokensRes = await fetchList(url, false)

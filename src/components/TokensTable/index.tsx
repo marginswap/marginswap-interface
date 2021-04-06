@@ -31,7 +31,7 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
   data,
   columns,
   actions,
-  deriveEmptyFrom,
+  deriveEmptyFrom
 }) => {
   const [hideEmpty, setHideEmpty] = useState(false)
   const [order, setOrder] = useState<'asc' | 'desc'>('asc')
@@ -84,7 +84,11 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
 
   const handleActionSubmit = () => {
     if (!(actions && activeAction)) return
-    actions[activeAction.actionIndex].onClick(sortedData[activeAction.rowIndex], Number(actionAmount), activeAction.rowIndex)
+    actions[activeAction.actionIndex].onClick(
+      sortedData[activeAction.rowIndex],
+      Number(actionAmount),
+      activeAction.rowIndex
+    )
   }
 
   const handleSortChange = (column: typeof columns[number]['id']) => {
@@ -218,7 +222,7 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
                                 style={{ borderRadius: '16px', padding: '10px 16px', margin: '0 0 0 32px' }}
                                 onClick={handleActionSubmit}
                               >
-                                {row.isApproved ? "Confirm Transaction" : "Approve"}
+                                {row.isApproved ? 'Confirm Transaction' : 'Approve'}
                               </StyledButton>
                             </div>
                           </Box>
