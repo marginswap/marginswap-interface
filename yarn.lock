@@ -2256,11 +2256,13 @@
   resolved "https://registry.yarnpkg.com/@marginswap/core-abi/-/core-abi-1.0.8.tgz#96f39cf09fa2bc8cd56eb26071f86c1f64be2197"
   integrity sha512-x1oSy5miv4Q5BqY9Z6a4im8zQuEw1r/YCgwYdWxFlk9uIZEKaixgjCy6uOiyHqMZQ1bMjjCc/y4HQsMHvv+f2w==
 
-"@marginswap/sdk@^4.0.16":
-  version "4.0.16"
-  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.0.16.tgz#a018e1e1283e5fc65994afbbbc9bcf1b8ea0ba57"
-  integrity sha512-OCj9cBX8VT1mVBJ6DoydZYdKO4igV8mxASToUq8mfGp0E9kOkGCKei4hnh5z9eoeOwYLWIAXCs4CywJ8jE+grg==
+"@marginswap/sdk@^4.0.17":
+  version "4.0.17"
+  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.0.17.tgz#11b446f81366bd01638471be9d13665df8d84ed3"
+  integrity sha512-uyXEtv8TMZV24J5/q79WPezohUmTp3hqwizdFQr+ICCCCPzoEH5wcSxNaaEzPPLaP2Isb4hDz5mV1Y1d8DDAsQ==
   dependencies:
+    "@ethersproject/abstract-provider" "^5.1.0"
+    "@ethersproject/abstract-signer" "^5.1.0"
     "@ethersproject/address" "^5.1.0"
     "@ethersproject/bignumber" "^5.1.0"
     "@ethersproject/contracts" "^5.1.0"
