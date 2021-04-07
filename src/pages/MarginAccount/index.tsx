@@ -92,8 +92,7 @@ export const MarginAccount = () => {
 
   const handleDeposit = async (address: string, amount: number) => {
     if (!amount) {
-      // TODO: display something
-      console.error('not enough amount')
+      console.log('not enough amount')
       return
     }
     try {
@@ -210,8 +209,6 @@ export const MarginAccount = () => {
       getAccountHoldingTotal(_account, Number(REACT_APP_CHAIN_ID), provider),
       getAccountBorrowTotal(_account, Number(REACT_APP_CHAIN_ID), provider)
     ])
-    const holdingTotal = Number(utils.formatEther(BigNumber.from(_holdingTotal)))
-    const debtTotal = Number(utils.formatEther(BigNumber.from(_debtTotal)))
     setHoldingAmounts(
       Object.keys(balances.holdingAmounts).reduce(
         (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.holdingAmounts[cur]).toNumber() }),
@@ -224,8 +221,8 @@ export const MarginAccount = () => {
         {}
       )
     )
-    setHoldingTotal(Number(holdingTotal.toFixed(4)))
-    setDebtTotal(Number(debtTotal.toFixed(4)))
+    setHoldingTotal(BigNumber.from(_holdingTotal).toNumber())
+    setDebtTotal(BigNumber.from(_debtTotal).toNumber())
   }
   useEffect(() => {
     if (account) {
