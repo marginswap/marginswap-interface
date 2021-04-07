@@ -4,7 +4,7 @@
  */
 export const UNSUPPORTED_LIST_URLS: string[] = []
 
-const MARGINSWAP_LIST = 'https://raw.githubusercontent.com/marginswap/token-list/main/marginswap.tokenlist.json'
+const MARGINSWAP_LIST = process.env.REACT_APP_TOKEN_LIST_URL
 // const COMPOUND_LIST = 'https://raw.githubusercontent.com/compound-finance/token-list/master/compound.tokenlist.json'
 // const UMA_LIST = 'https://umaproject.org/uma.tokenlist.json'
 // const AAVE_LIST = 'tokenlist.aave.eth'
@@ -20,7 +20,7 @@ const MARGINSWAP_LIST = 'https://raw.githubusercontent.com/marginswap/token-list
 
 // lower index == higher priority for token import
 export const DEFAULT_LIST_OF_LISTS: string[] = [
-  MARGINSWAP_LIST,
+  MARGINSWAP_LIST!,
   ...UNSUPPORTED_LIST_URLS // need to load unsupported tokens as well
 ]
 

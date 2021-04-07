@@ -8,6 +8,9 @@ export default function uriToHttp(uri: string): string[] {
     case 'https':
       return [uri]
     case 'http':
+      if (process.env.NODE_ENV === 'development') {
+        return [uri]
+      }
       return ['https' + uri.substr(4), uri]
     case 'ipfs':
       const hash = uri.match(/^ipfs:(\/\/)?(.*)$/i)?.[2]

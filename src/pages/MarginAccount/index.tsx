@@ -33,7 +33,7 @@ import { utils } from 'ethers'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 const { REACT_APP_CHAIN_ID } = process.env
 
-export type AccountBalanceData = {
+type AccountBalanceData = {
   img: string
   coin: string
   balance: number
@@ -82,8 +82,8 @@ export const MarginAccount = () => {
   const lists = useAllLists()
   const fetchList = useFetchListCallback()
   const [tokens, setTokens] = useState<TokenInfo[]>([])
-  const [holdingAmounts, setHoldingAmounts] = useState<Balances>({})
-  const [borrowingAmounts, setBorrowingAmounts] = useState<Balances>({})
+  const [holdingAmounts, setHoldingAmounts] = useState<Record<string, number>>({})
+  const [borrowingAmounts, setBorrowingAmounts] = useState<Record<string, number>>({})
   const [holdingTotal, setHoldingTotal] = useState(0)
   const [debtTotal, setDebtTotal] = useState(0)
 
@@ -218,8 +218,18 @@ export const MarginAccount = () => {
     ])
     const holdingTotal = Number(utils.formatEther(BigNumber.from(_holdingTotal)))
     const debtTotal = Number(utils.formatEther(BigNumber.from(_debtTotal)))
-    setHoldingAmounts(balances.holdingAmounts)
-    setBorrowingAmounts(balances.borrowingAmounts)
+    setHoldingAmounts(
+      Object.keys(balances.holdingAmounts).reduce(
+        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.holdingAmounts[cur]).toNumber() }),
+        {}
+      )
+    )
+    setBorrowingAmounts(
+      Object.keys(balances.borrowingAmounts).reduce(
+        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.borrowingAmounts[cur]).toNumber() }),
+        {}
+      )
+    )
     setHoldingTotal(Number(holdingTotal.toFixed(4)))
     setDebtTotal(Number(debtTotal.toFixed(4)))
   }
