@@ -72,7 +72,7 @@ export function useTokenBalancesWithLoadingIndicator(
               const value = balances?.[i]?.result?.[0]
               const amount = value ? JSBI.BigInt(value.toString()) : undefined
               if (amount) {
-                memo[token.address] = new TokenAmount(token, amount)
+                memo[token.address.toLowerCase()] = new TokenAmount(token, amount)
               }
               return memo
             }, {})
