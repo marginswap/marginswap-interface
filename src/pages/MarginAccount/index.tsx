@@ -9,14 +9,7 @@ import IconScales from '../../icons/IconScales'
 import IconCoin from '../../icons/IconCoin'
 import RiskMeter from '../../components/Riskmeter'
 import { useWeb3React } from '@web3-react/core'
-import {
-  getAccountBalances,
-  Balances,
-  getAccountBorrowTotal,
-  getAccountHoldingTotal,
-  Token,
-  crossDeposit
-} from '@marginswap/sdk'
+import { getAccountBalances, getAccountBorrowTotal, getAccountHoldingTotal, Token, crossDeposit } from '@marginswap/sdk'
 import { TokenInfo } from '@uniswap/token-lists'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { useActiveWeb3React } from '../../hooks'
@@ -92,14 +85,15 @@ export const MarginAccount = () => {
 
   const addTransaction = useTransactionAdder()
 
-  let provider: any = null
+  let provider: any
   if (library && account) {
     provider = getProviderOrSigner(library, account)
   }
 
   const handleDeposit = async (address: string, amount: number) => {
     if (!amount) {
-      console.log('not enough amount')
+      // TODO: display something
+      console.error('not enough amount')
       return
     }
     try {
@@ -248,10 +242,10 @@ export const MarginAccount = () => {
         return {
           img: token.logoURI ?? '',
           coin: token.symbol,
-          balance: holdingAmounts[token.symbol] ?? 0,
-          borrowed: borrowingAmounts[token.symbol] ?? 0,
+          balance: holdingAmounts[token.address] ?? 0,
+          borrowed: borrowingAmounts[token.address] ?? 0,
           available: Number(tokenBalances[token.address]?.toSignificant(4)) ?? 0,
-          isApproved: !allowances[index]?.result?.[0].isZero() ? true : false,
+          isApproved: !allowances[index]?.result?.[0].isZero(),
           ir: 0 // TODO
         }
       }),
@@ -280,6 +274,7 @@ export const MarginAccount = () => {
           columns={ACCOUNT_COLUMNS}
           actions={ACCOUNT_ACTIONS}
           deriveEmptyFrom="balance"
+          idCol="coin"
         />
       </div>
     </div>

@@ -24,6 +24,7 @@ type TableProps<T extends Record<string, string | boolean | number>> = {
     deriveMaxFrom?: keyof T // which field defines max available value
   }[]
   deriveEmptyFrom?: keyof T // which field is used for hiding empty rows
+  idCol: keyof T
 }
 
 const TokensTable: <T extends { [key: string]: string | boolean | number }>(props: TableProps<T>) => JSX.Element = ({
@@ -31,7 +32,8 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
   data,
   columns,
   actions,
-  deriveEmptyFrom
+  deriveEmptyFrom,
+  idCol
 }) => {
   const [hideEmpty, setHideEmpty] = useState(false)
   const [order, setOrder] = useState<'asc' | 'desc'>('asc')
@@ -151,7 +153,7 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
             </TableHead>
             <TableBody>
               {sortedData.map((row, rowIndex) => (
-                <Fragment key={rowIndex}>
+                <Fragment key={row[idCol] as number}>
                   <StyledTableRow selected={activeAction?.actionIndex === rowIndex}>
                     <StyledTableCell width={52} style={{ borderBottom: 'none' }} />
                     {columns.map((column, colIndex) => (
