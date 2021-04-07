@@ -12,7 +12,7 @@ import { MarginAccount } from './MarginAccount'
 import Swap from './Swap'
 import Vote from './Vote'
 import VotePage from './Vote/VotePage'
-import { BondSupply } from './BondSupply'
+import BondSupply from './BondSupply'
 import { Staking } from '../components/Staking'
 import { Analytics } from './Analytics'
 

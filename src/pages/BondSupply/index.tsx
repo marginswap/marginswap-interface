@@ -18,12 +18,9 @@ const { REACT_APP_CHAIN_ID } = process.env
 type BondRateData = {
   img: string
   coin: string
-  hourly: number
-  ir: number
-  // daily: number
-  // weekly: number
-  // monthly: number
-  // yearly: number
+  totalSupplied: number
+  apy: number
+  maturity: number
 }
 
 const BOND_RATES_COLUMNS = [
@@ -38,12 +35,9 @@ const BOND_RATES_COLUMNS = [
       </div>
     )
   },
-  { name: 'Hourly', id: 'hourly' },
-  // { name: 'Daily', id: 'daily' },
-  // { name: 'Weekly', id: 'weekly' },
-  // { name: 'Mothnly', id: 'monthly' },
-  // { name: 'Yearly', id: 'yearly' },
-  { name: 'Interest Rate', id: 'ir' }
+  { name: 'Total Supplied', id: 'totalSupplied' },
+  { name: 'APY', id: 'apy' },
+  { name: 'Maturity', id: 'maturity' }
 ] as const
 
 const useStyles = makeStyles(() => ({
@@ -62,14 +56,17 @@ const useStyles = makeStyles(() => ({
   }
 }))
 
-export const BondSupply = () => {
+const apyFromApr = (apr: number, compounds: number): number =>
+  (Math.pow(1 + apr / (compounds * 100), compounds) - 1) * 100
+
+const BondSupply = () => {
   const classes = useStyles()
   const [error, setError] = useState<string | null>(null)
 
   const lists = useAllLists()
   const fetchList = useFetchListCallback()
   const [tokens, setTokens] = useState<TokenInfo[]>([])
-  const [bondHourlyBalances, setBondHourlyBalances] = useState<Record<string, number>>({})
+  const [bondBalances, setBondBalances] = useState<Record<string, number>>({})
   const [bondInterestRates, setBondInterestRates] = useState<Record<string, number>>({})
 
   const getTokensList = async (url: string) => {
@@ -95,7 +92,7 @@ export const BondSupply = () => {
       getHourlyBondBalances(address, tokens, Number(REACT_APP_CHAIN_ID), provider),
       getHourlyBondInterestRates(tokens, Number(REACT_APP_CHAIN_ID), provider)
     ])
-    setBondHourlyBalances(
+    setBondBalances(
       Object.keys(hourlyRates).reduce(
         (acc, cur) => ({ ...acc, [cur]: BigNumber.from(hourlyRates[cur]).toNumber() }),
         {}
@@ -103,7 +100,7 @@ export const BondSupply = () => {
     )
     setBondInterestRates(
       Object.keys(interestRates).reduce(
-        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(interestRates[cur]).toNumber() }),
+        (acc, cur) => ({ ...acc, [cur]: apyFromApr(BigNumber.from(interestRates[cur]).toNumber() / 100000, 365 * 24) }),
         {}
       )
     )
@@ -125,14 +122,11 @@ export const BondSupply = () => {
       tokens.map(token => ({
         img: token.logoURI ?? '',
         coin: token.symbol,
-        hourly: bondHourlyBalances[token.address] ?? 0,
-        ir: bondInterestRates[token.address] ?? 0
-        // daily: 0, // TODO
-        // weekly: 0, // TODO
-        // monthly: 0, // TODO
-        // yearly: 0 // TODO
+        totalSupplied: bondBalances[token.address] ?? 0,
+        apy: bondInterestRates[token.address] ?? 0,
+        maturity: 0
       })),
-    [tokens, bondHourlyBalances]
+    [tokens, bondBalances]
   )
 
   return (
@@ -150,3 +144,5 @@ export const BondSupply = () => {
     </div>
   )
 }
+
+export default BondSupply
