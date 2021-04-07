@@ -10,7 +10,7 @@ import { TokenInfo } from '@uniswap/token-lists'
 import { useWeb3React } from '@web3-react/core'
 import { useActiveWeb3React } from '../../hooks'
 import { getProviderOrSigner } from '../../utils'
-import { getHourlyBondBalances, getHourlyBondInterestRates } from '@marginswap/sdk'
+import { getHourlyBondBalances, getHourlyBondInterestRates, getHourlyBondMaturities } from '@marginswap/sdk'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { BigNumber } from '@ethersproject/bignumber'
 const { REACT_APP_CHAIN_ID } = process.env
@@ -68,6 +68,7 @@ const BondSupply = () => {
   const [tokens, setTokens] = useState<TokenInfo[]>([])
   const [bondBalances, setBondBalances] = useState<Record<string, number>>({})
   const [bondInterestRates, setBondInterestRates] = useState<Record<string, number>>({})
+  const [bondMaturities, setBondMaturities] = useState<Record<string, number>>({})
 
   const getTokensList = async (url: string) => {
     const tokensRes = await fetchList(url, false)
@@ -87,10 +88,11 @@ const BondSupply = () => {
     provider = getProviderOrSigner(library, account)
   }
 
-  const getBondBalances = async (address: string, tokens: string[]) => {
-    const [hourlyRates, interestRates] = await Promise.all([
+  const getBondsData = async (address: string, tokens: string[]) => {
+    const [hourlyRates, interestRates, maturities] = await Promise.all([
       getHourlyBondBalances(address, tokens, Number(REACT_APP_CHAIN_ID), provider),
-      getHourlyBondInterestRates(tokens, Number(REACT_APP_CHAIN_ID), provider)
+      getHourlyBondInterestRates(tokens, Number(REACT_APP_CHAIN_ID), provider),
+      getHourlyBondMaturities(address, tokens, Number(REACT_APP_CHAIN_ID), provider)
     ])
     setBondBalances(
       Object.keys(hourlyRates).reduce(
@@ -104,10 +106,13 @@ const BondSupply = () => {
         {}
       )
     )
+    setBondMaturities(
+      Object.keys(maturities).reduce((acc, cur) => ({ ...acc, [cur]: BigNumber.from(maturities[cur]).toNumber() }), {})
+    )
   }
   useEffect(() => {
     if (account && tokens.length > 0) {
-      getBondBalances(
+      getBondsData(
         account,
         tokens.map(t => t.address)
       ).catch(e => {
@@ -124,7 +129,7 @@ const BondSupply = () => {
         coin: token.symbol,
         totalSupplied: bondBalances[token.address] ?? 0,
         apy: bondInterestRates[token.address] ?? 0,
-        maturity: 0
+        maturity: bondMaturities[token.address] ?? 0
       })),
     [tokens, bondBalances]
   )
