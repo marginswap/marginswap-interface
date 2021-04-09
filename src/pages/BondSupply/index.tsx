@@ -99,17 +99,14 @@ const BondSupply = () => {
   }
 
   const getBondsData = async (address: string, tokens: string[]) => {
-    const [hourlyRates, interestRates, maturities, bondCosts] = await Promise.all([
+    const [balances, interestRates, maturities, bondCosts] = await Promise.all([
       getHourlyBondBalances(address, tokens, Number(REACT_APP_CHAIN_ID), provider),
       getHourlyBondInterestRates(tokens, Number(REACT_APP_CHAIN_ID), provider),
       getHourlyBondMaturities(address, tokens, Number(REACT_APP_CHAIN_ID), provider),
       getBondsCostInDollars(address, tokens, Number(REACT_APP_CHAIN_ID), provider)
     ])
     setBondBalances(
-      Object.keys(hourlyRates).reduce(
-        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(hourlyRates[cur]).toNumber() }),
-        {}
-      )
+      Object.keys(balances).reduce((acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances[cur]).toNumber() }), {})
     )
     setBondInterestRates(
       Object.keys(interestRates).reduce(
@@ -124,7 +121,8 @@ const BondSupply = () => {
       Object.keys(bondCosts).reduce((acc, cur) => ({ ...acc, [cur]: BigNumber.from(bondCosts[cur]).toNumber() }), {})
     )
   }
-  useEffect(() => {
+
+  const getData = () => {
     if (account && tokens.length > 0) {
       getBondsData(
         account,
@@ -134,20 +132,20 @@ const BondSupply = () => {
         setError('Failed to get account data')
       })
     }
-  }, [account, tokens])
+  }
+  useEffect(getData, [account, tokens])
 
   const actions = [
     {
       name: 'Deposit',
-      onClick: (token: BondRateData, amount: number) => {
+      onClick: async (token: BondRateData, amount: number) => {
         if (!amount) return
-        buyHourlyBondSubscription(token.address, amount, Number(REACT_APP_CHAIN_ID), provider)
-          .then(() => {
-            console.log('Good!')
-          })
-          .catch((e: Error) => {
-            console.error(e)
-          })
+        try {
+          await buyHourlyBondSubscription(token.address, amount, Number(REACT_APP_CHAIN_ID), provider)
+          getData()
+        } catch (e) {
+          console.error(e)
+        }
       },
       max: userEthBalance ? Number(userEthBalance.toSignificant()) : undefined
     },
