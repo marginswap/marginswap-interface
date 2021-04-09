@@ -102,8 +102,8 @@ export default function Swap() {
             ...(account
               ? {
                   balance: Number(tokenBalances[t.address]?.toSignificant(4)) ?? 0,
-                  isSpotApproved: spotRouterAllowances[index]?.result?.[0].isZero() ? true : false,
-                  isMarginApproved: marginRouterAllowances[index]?.result?.[0].isZero() ? true : false,
+                  isSpotApproved: spotRouterAllowances[index]?.result?.[0].isZero() ? false : true,
+                  isMarginApproved: marginRouterAllowances[index]?.result?.[0].isZero() ? false : true,
                   borrowable: Math.round(Math.random() * 100)
                 }
               : {})
