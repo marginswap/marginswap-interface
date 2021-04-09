@@ -5,6 +5,9 @@ import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
 import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER } from '@marginswap/sdk'
 import { TokenAddressMap } from '../state/lists/hooks'
+import { SPOT_ROUTER_ADDRESS, MARGIN_ROUTER_ADDRESS } from '../constants'
+import SPOT_ROUTER_ABI from '../constants/abis/spot-router.json'
+import MARGIN_ROUTER_ABI from '../constants/abis/margin-router.json'
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
@@ -103,4 +106,14 @@ export function escapeRegExp(string: string): string {
 export function isTokenOnList(defaultTokens: TokenAddressMap, currency?: Currency): boolean {
   if (currency === ETHER) return true
   return Boolean(currency instanceof Token && defaultTokens[currency.chainId]?.[currency.address])
+}
+
+// account is optional
+export function getSpotRouterContract(_: number, library: Web3Provider, account?: string): Contract {
+  return getContract(SPOT_ROUTER_ADDRESS, SPOT_ROUTER_ABI, library, account)
+}
+
+// account is optional
+export function getMarginRouterContract(_: number, library: Web3Provider, account?: string): Contract {
+  return getContract(MARGIN_ROUTER_ADDRESS, MARGIN_ROUTER_ABI, library, account)
 }
