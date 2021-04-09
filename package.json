@@ -72,7 +72,7 @@
     "@ethersproject/providers": "^5.0.24",
     "@ethersproject/strings": "^5.0.10",
     "@ethersproject/units": "^5.0.11",
-    "@marginswap/sdk": "^4.0.17",
+    "@marginswap/sdk": "^4.0.19",
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
     "@popperjs/core": "^2.9.1",
