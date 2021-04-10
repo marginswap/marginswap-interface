@@ -15,7 +15,15 @@ import { AutoRow, RowBetween } from '../../components/Row'
 import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetailsDropdown'
 
 import confirmPriceImpactWithoutFee from '../../components/swap/confirmPriceImpactWithoutFee'
-import { ArrowWrapper, BottomGrouping, SwapCallbackError, Wrapper } from '../../components/swap/styleds'
+import {
+  ArrowWrapper,
+  BottomGrouping,
+  SwapCallbackError,
+  Wrapper,
+  PaddedColumn,
+  ToggleWrapper,
+  ToggleOption
+} from '../../components/swap/styleds'
 import TradePrice from '../../components/swap/TradePrice'
 import TokenWarningModal from '../../components/TokenWarningModal'
 import ProgressSteps from '../../components/ProgressSteps'
@@ -47,6 +55,7 @@ import { ClickableText } from '../Pool/styleds'
 import Loader from '../../components/Loader'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
+import { LeverageType } from '@marginswap/sdk'
 //import { isTradeBetter } from 'utils/trades'
 
 export default function Swap() {
@@ -88,7 +97,7 @@ export default function Swap() {
   const [allowedSlippage] = useUserSlippageTolerance()
 
   // swap state
-  const { independentField, typedValue, recipient } = useSwapState()
+  const { independentField, typedValue, recipient, leverageType } = useSwapState()
   const { trade, currencyBalances, parsedAmount, currencies, inputError: swapInputError } = useDerivedSwapInfo()
   const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
     currencies[Field.INPUT],
@@ -112,7 +121,13 @@ export default function Swap() {
         [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount
       }
 
-  const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
+  const {
+    onSwitchTokens,
+    onCurrencySelection,
+    onUserInput,
+    onChangeRecipient,
+    onSwitchLeverageType
+  } = useSwapActionHandlers()
   const isValid = !swapInputError
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT
 
@@ -284,6 +299,22 @@ export default function Swap() {
       <SwapPoolTabs active={'swap'} />
       <AppBody>
         <SwapHeader />
+        <PaddedColumn>
+          <ToggleWrapper>
+            <ToggleOption
+              onClick={() => onSwitchLeverageType(LeverageType.SPOT)}
+              active={leverageType === LeverageType.SPOT}
+            >
+              SPOT
+            </ToggleOption>
+            <ToggleOption
+              onClick={() => onSwitchLeverageType(LeverageType.CROSS_MARGIN)}
+              active={leverageType === LeverageType.CROSS_MARGIN}
+            >
+              MARGIN
+            </ToggleOption>
+          </ToggleWrapper>
+        </PaddedColumn>
         {/* <Separator /> */}
         <Wrapper id="swap-page">
           <ConfirmSwapModal

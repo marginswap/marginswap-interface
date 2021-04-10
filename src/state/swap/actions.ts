@@ -6,7 +6,7 @@ export enum Field {
   OUTPUT = 'OUTPUT'
 }
 
-export const updateLeverageType = createAction<{leverageType: LeverageType}>('swap/updateLeverageType')
+export const updateLeverageType = createAction<{ leverageType: LeverageType }>('swap/updateLeverageType')
 export const selectCurrency = createAction<{ field: Field; currencyId: string }>('swap/selectCurrency')
 export const switchCurrencies = createAction<void>('swap/switchCurrencies')
 export const typeInput = createAction<{ field: Field; typedValue: string }>('swap/typeInput')
