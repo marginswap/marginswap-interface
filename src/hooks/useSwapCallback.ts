@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
-import { JSBI, Percent, Router, SwapParameters, Trade, TradeType } from '@marginswap/sdk'
+import { JSBI, Percent, Router, SwapParameters, Trade } from '@marginswap/sdk'
 import { useMemo } from 'react'
 import { BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE } from '../constants'
 import { useTransactionAdder } from '../state/transactions/hooks'
@@ -69,17 +69,6 @@ function useSwapCallArguments(
         deadline
       })
     )
-
-    if (trade.tradeType === TradeType.EXACT_INPUT) {
-      swapMethods.push(
-        Router.swapCallParameters(trade, {
-          marginTrade: true,
-          allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
-          recipient,
-          deadline
-        })
-      )
-    }
     return swapMethods.map(parameters => ({ parameters, contract }))
   }, [account, allowedSlippage, chainId, deadline, library, recipient, trade])
 }

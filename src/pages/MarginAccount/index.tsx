@@ -91,12 +91,18 @@ export const MarginAccount = () => {
   }
 
   const handleDeposit = async (address: string, amount: number) => {
+    // const { chainId } = useActiveWeb3React()
+    const chainId = Number(REACT_APP_CHAIN_ID)
     if (!amount) {
       console.log('not enough amount')
       return
     }
     try {
-      const res: any = await crossDeposit(address, utils.parseEther(String(amount)).toHexString(), provider)
+      if (!library || !account) {
+        throw `Library or account uninitialized: ${library}, ${account}`
+      }
+      provider = getProviderOrSigner(library!, account!)
+      const res: any = await crossDeposit(address, utils.parseEther(String(amount)).toHexString(), chainId, provider)
       addTransaction(res, {
         summary: `Cross Deposit`
       })
@@ -199,10 +205,15 @@ export const MarginAccount = () => {
   }, [lists])
 
   const getAccountData = async (_account: string) => {
+    if (!library) {
+      throw `Library uninitialized: ${library}, ${account}`
+    }
+    provider = getProviderOrSigner(library!, _account)
+    const chainId = Number(REACT_APP_CHAIN_ID)
     const [balances, _holdingTotal, _debtTotal] = await Promise.all([
-      getAccountBalances(_account, provider),
-      getAccountHoldingTotal(_account, provider),
-      getAccountBorrowTotal(_account, provider)
+      getAccountBalances(_account, chainId, provider),
+      getAccountHoldingTotal(_account, chainId, provider),
+      getAccountBorrowTotal(_account, chainId, provider)
     ])
     setHoldingAmounts(
       Object.keys(balances.holdingAmounts).reduce(
