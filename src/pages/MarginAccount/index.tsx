@@ -9,7 +9,14 @@ import IconScales from '../../icons/IconScales'
 import IconCoin from '../../icons/IconCoin'
 import RiskMeter from '../../components/Riskmeter'
 import { useWeb3React } from '@web3-react/core'
-import { getAccountBalances, getAccountBorrowTotal, getAccountHoldingTotal, Token, crossDeposit } from '@marginswap/sdk'
+import {
+  getAccountBalances,
+  getAccountBorrowTotal,
+  getAccountHoldingTotal,
+  Token,
+  crossDeposit,
+  crossWithdraw
+} from '@marginswap/sdk'
 import { TokenInfo } from '@uniswap/token-lists'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { useActiveWeb3React } from '../../hooks'
@@ -24,7 +31,8 @@ import { TransactionResponse } from '@ethersproject/providers'
 import ERC20_ABI from '../../constants/abis/erc20.json'
 import { utils } from 'ethers'
 import { useTransactionAdder } from '../../state/transactions/hooks'
-const { REACT_APP_CHAIN_ID } = process.env
+
+const chainId = Number(process.env.REACT_APP_CHAIN_ID)
 
 type AccountBalanceData = {
   img: string
@@ -91,8 +99,6 @@ export const MarginAccount = () => {
   }
 
   const handleDeposit = async (address: string, amount: number) => {
-    // const { chainId } = useActiveWeb3React()
-    const chainId = Number(REACT_APP_CHAIN_ID)
     if (!amount) {
       console.log('not enough amount')
       return
@@ -135,6 +141,26 @@ export const MarginAccount = () => {
       })
   }
 
+  const handleWithdraw = async (address: string, amount: number) => {
+    if (!amount) {
+      console.log('not enough amount')
+      return
+    }
+    try {
+      if (!library || !account) {
+        throw `Library or account uninitialized: ${library}, ${account}`
+      }
+      provider = getProviderOrSigner(library!, account!)
+      const res: any = await crossWithdraw(address, utils.parseEther(String(amount)).toHexString(), chainId, provider)
+      addTransaction(res, {
+        summary: `Cross Withdraw`
+      })
+      console.log('res :>> ', res)
+    } catch (error) {
+      console.log('withdraw error :>> ', error)
+    }
+  }
+
   const ACCOUNT_ACTIONS = [
     {
       name: 'Borrow',
@@ -154,11 +180,13 @@ export const MarginAccount = () => {
     },
     {
       name: 'Withdraw',
-      onClick: (token: AccountBalanceData, amount: number) => {
+      onClick: (tokenInfo: AccountBalanceData, amount: number) => {
+        const token = tokens.find(item => item.symbol === tokenInfo.coin)
         console.log('withdraw', token)
         console.log('amount :>> ', amount)
+        handleWithdraw(token?.address as string, amount)
       },
-      deriveMaxFrom: 'available'
+      deriveMaxFrom: 'balance'
     },
     {
       name: 'Deposit',
@@ -195,7 +223,7 @@ export const MarginAccount = () => {
 
   const getTokensList = async (url: string) => {
     const tokensRes = await fetchList(url, false)
-    setTokens(tokensRes.tokens.filter(t => t.chainId === Number(REACT_APP_CHAIN_ID)))
+    setTokens(tokensRes.tokens.filter(t => t.chainId === chainId))
   }
   useEffect(() => {
     getTokensList(Object.keys(lists)[0]).catch(e => {
@@ -209,7 +237,6 @@ export const MarginAccount = () => {
       throw `Library uninitialized: ${library}, ${account}`
     }
     provider = getProviderOrSigner(library!, _account)
-    const chainId = Number(REACT_APP_CHAIN_ID)
     const [balances, _holdingTotal, _debtTotal] = await Promise.all([
       getAccountBalances(_account, chainId, provider),
       getAccountHoldingTotal(_account, chainId, provider),

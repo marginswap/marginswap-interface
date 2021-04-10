@@ -231,7 +231,9 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
                                 style={{ borderRadius: '16px', padding: '10px 16px', margin: '0 0 0 32px' }}
                                 onClick={handleActionSubmit}
                               >
-                                {row.isApproved ? 'Confirm Transaction' : 'Approve'}
+                                {activeAction && actions[activeAction.actionIndex].name === 'Deposit' && !row.isApproved
+                                  ? 'Approve'
+                                  : 'Confirm Transaction'}
                               </StyledButton>
                             </div>
                           </Box>
