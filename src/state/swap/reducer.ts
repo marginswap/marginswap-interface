@@ -1,7 +1,9 @@
+import { LeverageType } from '@marginswap/sdk';
 import { createReducer } from '@reduxjs/toolkit'
-import { Field, replaceSwapState, selectCurrency, setRecipient, switchCurrencies, typeInput } from './actions'
+import { Field, replaceSwapState, selectCurrency, setRecipient, switchCurrencies, typeInput, updateLeverageType } from './actions'
 
 export interface SwapState {
+  readonly leverageType: LeverageType
   readonly independentField: Field
   readonly typedValue: string
   readonly [Field.INPUT]: {
@@ -15,6 +17,7 @@ export interface SwapState {
 }
 
 const initialState: SwapState = {
+  leverageType: LeverageType.CROSS_MARGIN,
   independentField: Field.INPUT,
   typedValue: '',
   [Field.INPUT]: {
@@ -30,7 +33,7 @@ export default createReducer<SwapState>(initialState, builder =>
   builder
     .addCase(
       replaceSwapState,
-      (state, { payload: { typedValue, recipient, field, inputCurrencyId, outputCurrencyId } }) => {
+      (state, { payload: { typedValue, recipient, field, inputCurrencyId, outputCurrencyId, leverageType } }) => {
         return {
           [Field.INPUT]: {
             currencyId: inputCurrencyId
@@ -40,8 +43,14 @@ export default createReducer<SwapState>(initialState, builder =>
           },
           independentField: field,
           typedValue: typedValue,
+          leverageType: leverageType,
           recipient
         }
+      }
+    )
+    .addCase(
+      updateLeverageType, (state, action) => {
+        state.leverageType = action.payload.leverageType
       }
     )
     .addCase(selectCurrency, (state, { payload: { currencyId, field } }) => {

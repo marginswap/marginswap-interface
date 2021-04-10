@@ -242,7 +242,8 @@ export function queryParametersToSwapState(parsedQs: ParsedQs): SwapState {
     },
     typedValue: parseTokenAmountURLParameter(parsedQs.exactAmount),
     independentField: parseIndependentFieldURLParameter(parsedQs.exactField),
-    recipient
+    recipient,
+    leverageType
   }
 }
 
@@ -267,7 +268,8 @@ export function useDefaultsFromURLSearch():
         field: parsed.independentField,
         inputCurrencyId: parsed[Field.INPUT].currencyId,
         outputCurrencyId: parsed[Field.OUTPUT].currencyId,
-        recipient: parsed.recipient
+        recipient: parsed.recipient,
+        leverageType
       })
     )
 
