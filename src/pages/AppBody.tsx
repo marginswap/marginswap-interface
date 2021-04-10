@@ -7,7 +7,7 @@ export const BodyWrapper = styled.div`
   width: 100%;
   background: initial;
   border-radius: 30px;
-	border: 1px solid #777777;
+  border: 1px solid #777777;
 `
 
 /**
