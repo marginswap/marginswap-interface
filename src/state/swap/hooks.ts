@@ -1,7 +1,7 @@
 import useENS from '../../hooks/useENS'
 import { parseUnits } from '@ethersproject/units'
 import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount, Trade } from '@marginswap/sdk'
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency } from '../../hooks/Tokens'
@@ -9,9 +9,12 @@ import { useTradeExactIn, useTradeExactOut } from '../../hooks/Trades'
 import { isAddress } from '../../utils'
 import { AppDispatch, AppState } from '../index'
 import { useCurrencyBalances } from '../wallet/hooks'
-import { Field, selectCurrency, setRecipient, switchCurrencies, typeInput } from './actions'
+import { Field, replaceSwapState, selectCurrency, setRecipient, switchCurrencies, typeInput } from './actions'
 import { useUserSlippageTolerance } from '../user/hooks'
 import { computeSlippageAdjustedAmounts } from '../../utils/prices'
+import { SwapState } from './reducer'
+import { ParsedQs } from 'qs'
+import useParsedQueryString from 'hooks/useParsedQueryString'
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap)
@@ -186,4 +189,91 @@ export function useDerivedSwapInfo(): {
     trade: trade ?? undefined,
     inputError
   }
+}
+
+function parseCurrencyFromURLParameter(urlParam: any): string {
+  if (typeof urlParam === 'string') {
+    const valid = isAddress(urlParam)
+    if (valid) return valid
+    if (urlParam.toUpperCase() === 'ETH') return 'ETH'
+    if (valid === false) return 'ETH'
+  }
+  return 'ETH' ?? ''
+}
+
+function parseTokenAmountURLParameter(urlParam: any): string {
+  return typeof urlParam === 'string' && !isNaN(parseFloat(urlParam)) ? urlParam : ''
+}
+
+function parseIndependentFieldURLParameter(urlParam: any): Field {
+  return typeof urlParam === 'string' && urlParam.toLowerCase() === 'output' ? Field.OUTPUT : Field.INPUT
+}
+
+const ENS_NAME_REGEX = /^[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)?$/
+const ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/
+function validatedRecipient(recipient: any): string | null {
+  if (typeof recipient !== 'string') return null
+  const address = isAddress(recipient)
+  if (address) return address
+  if (ENS_NAME_REGEX.test(recipient)) return recipient
+  if (ADDRESS_REGEX.test(recipient)) return recipient
+  return null
+}
+
+export function queryParametersToSwapState(parsedQs: ParsedQs): SwapState {
+  let inputCurrency = parseCurrencyFromURLParameter(parsedQs.inputCurrency)
+  let outputCurrency = parseCurrencyFromURLParameter(parsedQs.outputCurrency)
+  if (inputCurrency === outputCurrency) {
+    if (typeof parsedQs.outputCurrency === 'string') {
+      inputCurrency = ''
+    } else {
+      outputCurrency = ''
+    }
+  }
+
+  const recipient = validatedRecipient(parsedQs.recipient)
+
+  return {
+    [Field.INPUT]: {
+      currencyId: inputCurrency
+    },
+    [Field.OUTPUT]: {
+      currencyId: outputCurrency
+    },
+    typedValue: parseTokenAmountURLParameter(parsedQs.exactAmount),
+    independentField: parseIndependentFieldURLParameter(parsedQs.exactField),
+    recipient
+  }
+}
+
+// updates the swap state to use the defaults for a given network
+export function useDefaultsFromURLSearch():
+  | { inputCurrencyId: string | undefined; outputCurrencyId: string | undefined }
+  | undefined {
+  const { chainId } = useActiveWeb3React()
+  const dispatch = useDispatch<AppDispatch>()
+  const parsedQs = useParsedQueryString()
+  const [result, setResult] = useState<
+    { inputCurrencyId: string | undefined; outputCurrencyId: string | undefined } | undefined
+  >()
+
+  useEffect(() => {
+    if (!chainId) return
+    const parsed = queryParametersToSwapState(parsedQs)
+
+    dispatch(
+      replaceSwapState({
+        typedValue: parsed.typedValue,
+        field: parsed.independentField,
+        inputCurrencyId: parsed[Field.INPUT].currencyId,
+        outputCurrencyId: parsed[Field.OUTPUT].currencyId,
+        recipient: parsed.recipient
+      })
+    )
+
+    setResult({ inputCurrencyId: parsed[Field.INPUT].currencyId, outputCurrencyId: parsed[Field.OUTPUT].currencyId })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, chainId])
+
+  return result
 }

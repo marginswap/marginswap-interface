@@ -127,8 +127,9 @@ export const PagerSwap: FunctionComponent<{
   const { trade } = useDerivedSwapInfo()
   // swap state
   const { recipient } = useSwapState()
+
   // the callback to execute the swap
-  const { callback: swapCallback } = useSwapCallback(trade, slippageTolerance, recipient, transactionDeadline)
+  const { callback: swapCallback } = useSwapCallback(trade, slippageTolerance, recipient)
 
   const handleSwap = useCallback(() => {
     if (!swapCallback) {

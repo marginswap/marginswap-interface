@@ -7,6 +7,7 @@ import { useTransactionAdder } from '../state/transactions/hooks'
 import { calculateGasMargin, getSpotRouterContract, isAddress, shortenAddress } from '../utils'
 import isZero from '../utils/isZero'
 import { useActiveWeb3React } from './index'
+import useTransactionDeadline from './useTransactionDeadline'
 import useENS from './useENS'
 
 export enum SwapCallbackState {
@@ -41,13 +42,13 @@ type EstimatedSwapCall = SuccessfulCall | FailedCall
 function useSwapCallArguments(
   trade: Trade | undefined,
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE,
-  recipientAddressOrName: string | null,
-  deadline: number
+  recipientAddressOrName: string | null
 ): SwapCall[] {
   const { account, chainId, library } = useActiveWeb3React()
 
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
+  const deadline = useTransactionDeadline()?.toNumber()
 
   return useMemo(() => {
     if (!trade || !recipient || !library || !account || !chainId || !deadline) return []
@@ -57,6 +58,8 @@ function useSwapCallArguments(
       return []
     }
 
+    // TODO actually figure out whether we're margin or spot
+    // and remove that feeOnTransfer holdover
     const swapMethods = []
     swapMethods.push(
       Router.swapCallParameters(trade, {
@@ -86,12 +89,11 @@ function useSwapCallArguments(
 export function useSwapCallback(
   trade: Trade | undefined, // trade to execute, required
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
-  recipientAddressOrName: string | null,
-  transactionDeadline: number
+  recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
   const { account, chainId, library } = useActiveWeb3React()
 
-  const swapCalls = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName, transactionDeadline)
+  const swapCalls = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName)
 
   const addTransaction = useTransactionAdder()
 

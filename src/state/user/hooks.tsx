@@ -15,6 +15,8 @@ import {
   SerializedPair,
   SerializedToken,
   updateUserDarkMode,
+  updateUserDeadline,
+  updateUserExpertMode,
   updateUserSlippageTolerance,
   toggleURLWarning,
   updateUserSingleHopOnly
@@ -66,6 +68,21 @@ export function useDarkModeManager(): [boolean, () => void] {
   return [darkMode, toggleSetDarkMode]
 }
 
+export function useIsExpertMode(): boolean {
+  return useSelector<AppState, AppState['user']['userExpertMode']>(state => state.user.userExpertMode)
+}
+
+export function useExpertModeManager(): [boolean, () => void] {
+  const dispatch = useDispatch<AppDispatch>()
+  const expertMode = useIsExpertMode()
+
+  const toggleSetExpertMode = useCallback(() => {
+    dispatch(updateUserExpertMode({ userExpertMode: !expertMode }))
+  }, [expertMode, dispatch])
+
+  return [expertMode, toggleSetExpertMode]
+}
+
 export function useUserSingleHopOnly(): [boolean, (newSingleHopOnly: boolean) => void] {
   const dispatch = useDispatch<AppDispatch>()
 
@@ -101,6 +118,22 @@ export function useUserSlippageTolerance(): [number, (slippage: number) => void]
   )
 
   return [userSlippageTolerance, setUserSlippageTolerance]
+}
+
+export function useUserTransactionTTL(): [number, (slippage: number) => void] {
+  const dispatch = useDispatch<AppDispatch>()
+  const userDeadline = useSelector<AppState, AppState['user']['userDeadline']>(state => {
+    return state.user.userDeadline
+  })
+
+  const setUserDeadline = useCallback(
+    (userDeadline: number) => {
+      dispatch(updateUserDeadline({ userDeadline }))
+    },
+    [dispatch]
+  )
+
+  return [userDeadline, setUserDeadline]
 }
 
 export function useAddUserToken(): (token: Token) => void {
