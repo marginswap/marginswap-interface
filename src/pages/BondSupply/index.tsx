@@ -90,9 +90,9 @@ const BondSupply = () => {
 
   const getBondsData = async (address: string, tokens: string[]) => {
     const [hourlyRates, interestRates, maturities] = await Promise.all([
-      getHourlyBondBalances(address, tokens, Number(REACT_APP_CHAIN_ID), provider),
-      getHourlyBondInterestRates(tokens, Number(REACT_APP_CHAIN_ID), provider),
-      getHourlyBondMaturities(address, tokens, Number(REACT_APP_CHAIN_ID), provider)
+      getHourlyBondBalances(address, tokens, provider),
+      getHourlyBondInterestRates(tokens, provider),
+      getHourlyBondMaturities(address, tokens, provider)
     ])
     setBondBalances(
       Object.keys(hourlyRates).reduce(

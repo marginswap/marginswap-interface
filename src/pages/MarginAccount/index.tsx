@@ -96,12 +96,7 @@ export const MarginAccount = () => {
       return
     }
     try {
-      const res: any = await crossDeposit(
-        address,
-        utils.parseEther(String(amount)).toHexString(),
-        Number(REACT_APP_CHAIN_ID),
-        provider
-      )
+      const res: any = await crossDeposit(address, utils.parseEther(String(amount)).toHexString(), provider)
       addTransaction(res, {
         summary: `Cross Deposit`
       })
@@ -205,9 +200,9 @@ export const MarginAccount = () => {
 
   const getAccountData = async (_account: string) => {
     const [balances, _holdingTotal, _debtTotal] = await Promise.all([
-      getAccountBalances(_account, Number(REACT_APP_CHAIN_ID), provider),
-      getAccountHoldingTotal(_account, Number(REACT_APP_CHAIN_ID), provider),
-      getAccountBorrowTotal(_account, Number(REACT_APP_CHAIN_ID), provider)
+      getAccountBalances(_account, provider),
+      getAccountHoldingTotal(_account, provider),
+      getAccountBorrowTotal(_account, provider)
     ])
     setHoldingAmounts(
       Object.keys(balances.holdingAmounts).reduce(

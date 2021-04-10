@@ -60,7 +60,7 @@ function useSwapCallArguments(
     const swapMethods = []
     swapMethods.push(
       Router.swapCallParameters(trade, {
-        feeOnTransfer: false,
+        marginTrade: false,
         allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
         recipient,
         deadline
@@ -70,7 +70,7 @@ function useSwapCallArguments(
     if (trade.tradeType === TradeType.EXACT_INPUT) {
       swapMethods.push(
         Router.swapCallParameters(trade, {
-          feeOnTransfer: true,
+          marginTrade: true,
           allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
           recipient,
           deadline
