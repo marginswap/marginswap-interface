@@ -22,6 +22,7 @@ type TableProps<T extends Record<string, string | boolean | number>> = {
     name: string
     onClick: (row: T, amount: number, rowIndex: number) => void
     deriveMaxFrom?: keyof T // which field defines max available value
+    max?: number // or set max from external source
   }[]
   deriveEmptyFrom?: keyof T // which field is used for hiding empty rows
   idCol: keyof T
@@ -68,7 +69,10 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
 
   const handleActionValueChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!(actions && activeAction)) return
-    if (!e.target.value || !actions[activeAction.actionIndex].deriveMaxFrom) {
+    if (
+      !e.target.value ||
+      !(actions[activeAction.actionIndex].deriveMaxFrom || actions[activeAction.actionIndex].max !== undefined)
+    ) {
       setActionAmount(e.target.value)
     } else {
       setActionAmount(
@@ -76,7 +80,10 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
           Math.round(
             Math.min(
               Number(e.target.value),
-              Number(sortedData[activeAction.rowIndex][actions[activeAction.actionIndex].deriveMaxFrom!])
+              Number(
+                actions[activeAction.actionIndex].max ??
+                  sortedData[activeAction.rowIndex][actions[activeAction.actionIndex].deriveMaxFrom!]
+              )
             ) * 1000000
           ) / 1000000
         )
