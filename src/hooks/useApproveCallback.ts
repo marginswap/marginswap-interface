@@ -97,22 +97,18 @@ export function useApproveCallback(
 }
 
 // wraps useApproveCallback in the context of a swap
-export function useApproveCallbackFromTrade(
-  trade?: Trade,
-  allowedSlippage = 0,
-  leverageType: LeverageType = LeverageType.SPOT
-) {
+export function useApproveCallbackFromTrade(trade?: Trade, allowedSlippage = 0, leverageType?: LeverageType) {
   const amountToApprove = useMemo(
     () => (trade ? computeSlippageAdjustedAmounts(trade, allowedSlippage)[Field.INPUT] : undefined),
     [trade, allowedSlippage]
   )
 
-  let routerAddress: string | undefined
+  let approveAddress: string | undefined
   const { chainId } = useActiveWeb3React()
   if (trade) {
-    const marginRouter = getAddresses(chainId!).MarginRouter
+    const fund = getAddresses(chainId!).Fund
     const spotRouter = getAddresses(chainId!).SpotRouter
-    routerAddress = leverageType === LeverageType.CROSS_MARGIN ? marginRouter : spotRouter
+    approveAddress = leverageType === LeverageType.CROSS_MARGIN ? fund : spotRouter
   }
-  return useApproveCallback(amountToApprove, routerAddress)
+  return useApproveCallback(amountToApprove, approveAddress)
 }
