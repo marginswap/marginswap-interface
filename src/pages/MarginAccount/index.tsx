@@ -27,6 +27,7 @@ import { StyledSectionDiv } from './styled'
 
 import { utils } from 'ethers'
 import { toast } from 'react-toastify'
+import { useTransactionAdder } from '../../state/transactions/hooks'
 
 const chainId = Number(process.env.REACT_APP_CHAIN_ID)
 
@@ -72,6 +73,8 @@ export const MarginAccount = () => {
   const { account } = useWeb3React()
   const { library } = useActiveWeb3React()
 
+  const addTransaction = useTransactionAdder()
+
   let provider: any
   if (library && account) {
     provider = getProviderOrSigner(library, account)
@@ -96,13 +99,15 @@ export const MarginAccount = () => {
       name: 'Withdraw',
       onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
         try {
-          await crossWithdraw(
+          const response: any = await crossWithdraw(
             tokenInfo.address,
             utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
             chainId,
             provider
           )
-          toast.success('Withdrawal success', { position: 'bottom-right' })
+          addTransaction(response, {
+            summary: `Cross Withdraw`
+          })
         } catch (error) {
           toast.error('Withdrawal error', { position: 'bottom-right' })
           console.error(error)
@@ -114,13 +119,15 @@ export const MarginAccount = () => {
       name: 'Deposit',
       onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
         try {
-          await crossDeposit(
+          const response: any = await crossDeposit(
             tokenInfo.address,
             utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
             chainId,
             provider
           )
-          toast.success('Deposit success', { position: 'bottom-right' })
+          addTransaction(response, {
+            summary: `Cross Deposit`
+          })
         } catch (error) {
           toast.error('Deposit error', { position: 'bottom-right' })
           console.error(error)
