@@ -20,12 +20,14 @@ import {
 } from '@marginswap/sdk'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { BigNumber } from '@ethersproject/bignumber'
+import { utils } from 'ethers'
 const { REACT_APP_CHAIN_ID } = process.env
 
 type BondRateData = {
   img: string
   coin: string
   address: string
+  decimals: number
   totalSupplied: number
   apy: number
   maturity: number
@@ -141,7 +143,12 @@ const BondSupply = () => {
       onClick: async (token: BondRateData, amount: number) => {
         if (!amount) return
         try {
-          await buyHourlyBondSubscription(token.address, amount, Number(REACT_APP_CHAIN_ID), provider)
+          await buyHourlyBondSubscription(
+            token.address,
+            utils.parseUnits(String(amount), token.decimals).toHexString(),
+            Number(REACT_APP_CHAIN_ID),
+            provider
+          )
         } catch (e) {
           console.error(e)
         }
@@ -153,7 +160,12 @@ const BondSupply = () => {
       onClick: async (token: BondRateData, amount: number) => {
         if (!amount) return
         try {
-          await withdrawHourlyBond(token.address, amount, Number(REACT_APP_CHAIN_ID), provider)
+          await withdrawHourlyBond(
+            token.address,
+            utils.parseUnits(String(amount), token.decimals).toHexString(),
+            Number(REACT_APP_CHAIN_ID),
+            provider
+          )
         } catch (e) {
           console.error(e)
         }
@@ -167,6 +179,7 @@ const BondSupply = () => {
       tokens.map(token => ({
         img: token.logoURI ?? '',
         address: token.address,
+        decimals: token.decimals,
         coin: token.symbol,
         totalSupplied: Number(bondBalances[token.address] ?? 0) / Math.pow(10, token.decimals),
         apy: apyFromApr(bondAPRs[token.address] ?? 0, 365 * 24),

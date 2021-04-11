@@ -28,6 +28,7 @@ const chainId = Number(process.env.REACT_APP_CHAIN_ID)
 type AccountBalanceData = {
   img: string
   coin: string
+  decimals: number
   address: string
   balance: number
   borrowed: number
@@ -105,7 +106,12 @@ export const MarginAccount = () => {
       name: 'Withdraw',
       onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
         try {
-          await crossWithdraw(tokenInfo.address, utils.parseEther(String(amount)).toHexString(), chainId, provider)
+          await crossWithdraw(
+            tokenInfo.address,
+            utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
+            chainId,
+            provider
+          )
         } catch (error) {
           console.error(error)
         }
@@ -116,7 +122,12 @@ export const MarginAccount = () => {
       name: 'Deposit',
       onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
         try {
-          await crossDeposit(tokenInfo.address, utils.parseEther(String(amount)).toHexString(), chainId, provider)
+          await crossDeposit(
+            tokenInfo.address,
+            utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
+            chainId,
+            provider
+          )
         } catch (error) {
           console.error(error)
         }
@@ -178,6 +189,7 @@ export const MarginAccount = () => {
           img: token.logoURI ?? '',
           coin: token.symbol,
           address: token.address,
+          decimals: token.decimals,
           balance: Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
           borrowed: Number(borrowingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
           ir: 0 // TODO
