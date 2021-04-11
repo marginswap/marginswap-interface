@@ -20,7 +20,6 @@ import {
 } from '@marginswap/sdk'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { BigNumber } from '@ethersproject/bignumber'
-import { useETHBalances } from '../../state/wallet/hooks'
 const { REACT_APP_CHAIN_ID } = process.env
 
 type BondRateData = {
@@ -75,7 +74,7 @@ const BondSupply = () => {
   const lists = useAllLists()
   const fetchList = useFetchListCallback()
   const [tokens, setTokens] = useState<TokenInfo[]>([])
-  const [bondBalances, setBondBalances] = useState<Record<string, number>>({})
+  const [bondBalances, setBondBalances] = useState<Record<string, string>>({})
   const [bondAPRs, setBondAPRs] = useState<Record<string, number>>({})
   const [bondMaturities, setBondMaturities] = useState<Record<string, number>>({})
   const [bondUSDCosts, setBondUSDCosts] = useState<Record<string, number>>({})
@@ -92,7 +91,6 @@ const BondSupply = () => {
   }, [lists])
 
   const { account } = useWeb3React()
-  const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
   const { library } = useActiveWeb3React()
   let provider: any
   if (library && account) {
@@ -108,7 +106,7 @@ const BondSupply = () => {
       getBondsCostInDollars(address, tokens, Number(REACT_APP_CHAIN_ID), provider)
     ])
     setBondBalances(
-      Object.keys(balances).reduce((acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances[cur]).toNumber() }), {})
+      Object.keys(balances).reduce((acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances[cur]).toString() }), {})
     )
     setBondAPRs(
       Object.keys(interestRates).reduce(
@@ -144,12 +142,11 @@ const BondSupply = () => {
         if (!amount) return
         try {
           await buyHourlyBondSubscription(token.address, amount, Number(REACT_APP_CHAIN_ID), provider)
-          getData()
         } catch (e) {
           console.error(e)
         }
-      },
-      max: userEthBalance ? Number(userEthBalance.toSignificant()) : undefined
+      }
+      // TODO: max
     },
     {
       name: 'Withdraw',
@@ -157,7 +154,6 @@ const BondSupply = () => {
         if (!amount) return
         try {
           await withdrawHourlyBond(token.address, amount, Number(REACT_APP_CHAIN_ID), provider)
-          getData()
         } catch (e) {
           console.error(e)
         }
@@ -172,7 +168,7 @@ const BondSupply = () => {
         img: token.logoURI ?? '',
         address: token.address,
         coin: token.symbol,
-        totalSupplied: bondBalances[token.address] ?? 0,
+        totalSupplied: Number(bondBalances[token.address] ?? 0) / Math.pow(10, token.decimals),
         apy: apyFromApr(bondAPRs[token.address] ?? 0, 365 * 24),
         maturity: bondMaturities[token.address] ?? 0
       })),

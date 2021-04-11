@@ -13,14 +13,12 @@ import {
   getAccountBalances,
   getAccountBorrowTotal,
   getAccountHoldingTotal,
-  Token,
   crossDeposit,
   crossWithdraw
 } from '@marginswap/sdk'
 import { TokenInfo } from '@uniswap/token-lists'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { useActiveWeb3React } from '../../hooks'
-import { useTokenBalances } from '../../state/wallet/hooks'
 import { getProviderOrSigner } from '../../utils'
 import { BigNumber } from '@ethersproject/bignumber'
 import { utils } from 'ethers'
@@ -32,7 +30,6 @@ type AccountBalanceData = {
   coin: string
   address: string
   balance: number
-  available: number
   borrowed: number
   ir: number
 }
@@ -95,23 +92,20 @@ export const MarginAccount = () => {
       onClick: (token: AccountBalanceData, amount: number) => {
         console.log('borrow', token)
         console.log('amount :>> ', amount)
-      },
-      deriveMaxFrom: 'available'
+      }
     },
     {
       name: 'Repay',
       onClick: (token: AccountBalanceData, amount: number) => {
         console.log('repay', token)
         console.log('amount :>> ', amount)
-      },
-      deriveMaxFrom: 'available'
+      }
     },
     {
       name: 'Withdraw',
       onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
         try {
           await crossWithdraw(tokenInfo.address, utils.parseEther(String(amount)).toHexString(), chainId, provider)
-          getData()
         } catch (error) {
           console.error(error)
         }
@@ -123,24 +117,13 @@ export const MarginAccount = () => {
       onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
         try {
           await crossDeposit(tokenInfo.address, utils.parseEther(String(amount)).toHexString(), chainId, provider)
-          getData()
         } catch (error) {
           console.error(error)
         }
-      },
-      deriveMaxFrom: 'available'
+      }
+      // TODO: max
     }
   ] as const
-
-  const formattedTokens = useMemo(
-    () =>
-      tokens.length > 0
-        ? tokens.map(token => new Token(token.chainId, token.address, token.decimals, token.symbol, token.name))
-        : [],
-    [tokens]
-  )
-
-  const tokenBalances = useTokenBalances(account ?? undefined, formattedTokens)
 
   const getTokensList = async (url: string) => {
     const tokensRes = await fetchList(url, false)
@@ -165,13 +148,13 @@ export const MarginAccount = () => {
     ])
     setHoldingAmounts(
       Object.keys(balances.holdingAmounts).reduce(
-        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.holdingAmounts[cur]).toNumber() }),
+        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.holdingAmounts[cur]).toString() }),
         {}
       )
     )
     setBorrowingAmounts(
       Object.keys(balances.borrowingAmounts).reduce(
-        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.borrowingAmounts[cur]).toNumber() }),
+        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.borrowingAmounts[cur]).toString() }),
         {}
       )
     )
@@ -195,13 +178,12 @@ export const MarginAccount = () => {
           img: token.logoURI ?? '',
           coin: token.symbol,
           address: token.address,
-          balance: holdingAmounts[token.address] ?? 0,
-          borrowed: borrowingAmounts[token.address] ?? 0,
-          available: Number(tokenBalances[token.address]?.toSignificant(4)) ?? 0,
+          balance: Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
+          borrowed: Number(borrowingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
           ir: 0 // TODO
         }
       }),
-    [tokens, holdingAmounts, borrowingAmounts, tokenBalances]
+    [tokens, holdingAmounts, borrowingAmounts]
   )
 
   const getRisk = (holding: number, debt: number): number => {
