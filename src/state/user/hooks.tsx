@@ -14,7 +14,6 @@ import {
   removeSerializedToken,
   SerializedPair,
   SerializedToken,
-  updateUserDarkMode,
   updateUserDeadline,
   updateUserExpertMode,
   updateUserSlippageTolerance,
@@ -57,16 +56,17 @@ export function useIsDarkMode(): boolean {
   return userDarkMode === null ? matchesDarkMode : userDarkMode
 }
 
-export function useDarkModeManager(): [boolean, () => void] {
-  const dispatch = useDispatch<AppDispatch>()
-  const darkMode = useIsDarkMode()
+// export function useDarkModeManager(): [boolean, () => void] {
+//   const dispatch = useDispatch<AppDispatch>()
+//   const darkMode = useIsDarkMode()
 
-  const toggleSetDarkMode = useCallback(() => {
-    dispatch(updateUserDarkMode({ userDarkMode: !darkMode }))
-  }, [darkMode, dispatch])
+//   const toggleSetDarkMode = useCallback(() => {
+//     // TODO re-enable
+//     //dispatch(updateUserDarkMode({ userDarkMode: !darkMode }))
+//   }, [darkMode, dispatch])
 
-  return [darkMode, toggleSetDarkMode]
-}
+//   return [darkMode, toggleSetDarkMode]
+// }
 
 export function useIsExpertMode(): boolean {
   return useSelector<AppState, AppState['user']['userExpertMode']>(state => state.user.userExpertMode)

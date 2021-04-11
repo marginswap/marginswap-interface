@@ -4,7 +4,7 @@ import { JSBI, Percent, Router, SwapParameters, Trade } from '@marginswap/sdk'
 import { useMemo } from 'react'
 import { BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE } from '../constants'
 import { useTransactionAdder } from '../state/transactions/hooks'
-import { calculateGasMargin, getSpotRouterContract, isAddress, shortenAddress } from '../utils'
+import { calculateGasMargin, getMarginRouterContract, getSpotRouterContract, isAddress, shortenAddress } from '../utils'
 import isZero from '../utils/isZero'
 import { useActiveWeb3React } from './index'
 import useTransactionDeadline from './useTransactionDeadline'
@@ -41,6 +41,7 @@ type EstimatedSwapCall = SuccessfulCall | FailedCall
  */
 function useSwapCallArguments(
   trade: Trade | undefined,
+  marginTrade: boolean,
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE,
   recipientAddressOrName: string | null
 ): SwapCall[] {
@@ -53,7 +54,10 @@ function useSwapCallArguments(
   return useMemo(() => {
     if (!trade || !recipient || !library || !account || !chainId || !deadline) return []
 
-    const contract: Contract | null = getSpotRouterContract(chainId, library, account)
+    const contract: Contract | null = marginTrade
+      ? getSpotRouterContract(chainId, library, account)
+      : getMarginRouterContract(chainId, library, account)
+
     if (!contract) {
       return []
     }
@@ -63,7 +67,7 @@ function useSwapCallArguments(
     const swapMethods = []
     swapMethods.push(
       Router.swapCallParameters(trade, {
-        marginTrade: false,
+        marginTrade,
         allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
         recipient,
         deadline
@@ -77,12 +81,13 @@ function useSwapCallArguments(
 // and the user has approved the slippage adjusted input amount for the trade
 export function useSwapCallback(
   trade: Trade | undefined, // trade to execute, required
+  marginTrade: boolean,
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
   recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
   const { account, chainId, library } = useActiveWeb3React()
 
-  const swapCalls = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName)
+  const swapCalls = useSwapCallArguments(trade, marginTrade, allowedSlippage, recipientAddressOrName)
 
   const addTransaction = useTransactionAdder()
 

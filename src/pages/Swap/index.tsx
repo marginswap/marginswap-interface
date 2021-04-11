@@ -188,8 +188,14 @@ export default function Swap() {
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
   const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
 
+  const marginTrade = leverageType === LeverageType.CROSS_MARGIN
   // the callback to execute the swap
-  const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(trade, allowedSlippage, recipient)
+  const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(
+    trade,
+    marginTrade,
+    allowedSlippage,
+    recipient
+  )
 
   const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade)
 
