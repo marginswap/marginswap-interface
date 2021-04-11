@@ -171,7 +171,7 @@ export const ToggleOption = styled.div<{ active?: boolean }>`
   justify-content: center;
   border-radius: 12px;
   font-weight: 600;
-  background-color: ${({ theme, active }) => (active ? theme.bg1 : theme.bg3)};
+  background-color: ${({ theme, active }) => (active ? '#2172E5' : theme.bg3)};
   color: ${({ theme, active }) => (active ? theme.text1 : theme.text2)};
   user-select: none;
 

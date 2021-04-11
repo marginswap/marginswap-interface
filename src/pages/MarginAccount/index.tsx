@@ -22,6 +22,7 @@ import { useActiveWeb3React } from '../../hooks'
 import { getProviderOrSigner } from '../../utils'
 import { BigNumber } from '@ethersproject/bignumber'
 import { utils } from 'ethers'
+import { toast } from 'react-toastify'
 
 const chainId = Number(process.env.REACT_APP_CHAIN_ID)
 
@@ -112,7 +113,9 @@ export const MarginAccount = () => {
             chainId,
             provider
           )
+          toast.success('Withdrawal success', { position: 'bottom-right' })
         } catch (error) {
+          toast.error('Withdrawal error', { position: 'bottom-right' })
           console.error(error)
         }
       },
@@ -128,7 +131,9 @@ export const MarginAccount = () => {
             chainId,
             provider
           )
+          toast.success('Deposit success', { position: 'bottom-right' })
         } catch (error) {
+          toast.error('Deposit error', { position: 'bottom-right' })
           console.error(error)
         }
       }

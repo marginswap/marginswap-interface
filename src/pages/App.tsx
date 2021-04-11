@@ -15,6 +15,8 @@ import VotePage from './Vote/VotePage'
 import BondSupply from './BondSupply'
 import { Staking } from '../components/Staking'
 import { Analytics } from './Analytics'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -76,6 +78,7 @@ export default function App() {
             </Switch>
           </Web3ReactManager>
           <Marginer />
+          <ToastContainer />
         </BodyWrapper>
       </AppWrapper>
     </Suspense>

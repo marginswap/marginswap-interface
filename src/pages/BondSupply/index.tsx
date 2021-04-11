@@ -21,6 +21,7 @@ import {
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { BigNumber } from '@ethersproject/bignumber'
 import { utils } from 'ethers'
+import { toast } from 'react-toastify'
 const { REACT_APP_CHAIN_ID } = process.env
 
 type BondRateData = {
@@ -149,7 +150,9 @@ const BondSupply = () => {
             Number(REACT_APP_CHAIN_ID),
             provider
           )
+          toast.success('Deposit success', { position: 'bottom-right' })
         } catch (e) {
+          toast.error('Deposit error', { position: 'bottom-right' })
           console.error(e)
         }
       }
@@ -166,7 +169,9 @@ const BondSupply = () => {
             Number(REACT_APP_CHAIN_ID),
             provider
           )
+          toast.success('Withdrawal success', { position: 'bottom-right' })
         } catch (e) {
+          toast.error('Withdrawal error', { position: 'bottom-right' })
           console.error(e)
         }
       },
