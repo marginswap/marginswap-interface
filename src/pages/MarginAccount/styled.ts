@@ -6,7 +6,7 @@ export const StyledWrapperDiv = styled.div`
     padding-left: 20px;
     @media (max-width: 768px) {
         padding-left: 0px;
-        max-width: 360px;
+        max-width: 80vw;
     }
 `
 
@@ -16,7 +16,7 @@ export const StyledSectionDiv = styled.div`
     padding-right: 20px;
     @media (max-width: 768px) {
         padding-right: 0px;
-        max-width: 340px;
+        max-width: 80vw;
     }
     gap: 20px;
 `
