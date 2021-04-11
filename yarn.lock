@@ -2251,23 +2251,25 @@
   dependencies:
     "@json-rpc-tools/types" "^1.6.1"
 
-"@marginswap/core-abi@1.0.8":
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/@marginswap/core-abi/-/core-abi-1.0.8.tgz#96f39cf09fa2bc8cd56eb26071f86c1f64be2197"
-  integrity sha512-x1oSy5miv4Q5BqY9Z6a4im8zQuEw1r/YCgwYdWxFlk9uIZEKaixgjCy6uOiyHqMZQ1bMjjCc/y4HQsMHvv+f2w==
+"@marginswap/core-abi@1.0.11", "@marginswap/core-abi@^1.0.11":
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/@marginswap/core-abi/-/core-abi-1.0.11.tgz#8a6a1a5e8cc86660e0d90dc49c457b28192c3f0e"
+  integrity sha512-Z5J9Ankmp+JR6iKvJOEpZWg+MFMm6p9Ie5E/LEO+aSz0W2Q91IdEiZ8qeDbBBbZ8tG8IHWubtIKTqxKRXUAEMA==
 
-"@marginswap/sdk@^4.0.16":
-  version "4.0.16"
-  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.0.16.tgz#a018e1e1283e5fc65994afbbbc9bcf1b8ea0ba57"
-  integrity sha512-OCj9cBX8VT1mVBJ6DoydZYdKO4igV8mxASToUq8mfGp0E9kOkGCKei4hnh5z9eoeOwYLWIAXCs4CywJ8jE+grg==
+"@marginswap/sdk@^4.0.21":
+  version "4.0.21"
+  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.0.21.tgz#939ae4ca0f26498314121a7590c05cdb7ecfb684"
+  integrity sha512-oo2jHaUsiPuHAuDcnDm0fLQ1b5uBAWJq87G3Pj+jCvcG4my6G9RwExquo31JUXPffer93jxCcx+xvARXt3CLcA==
   dependencies:
+    "@ethersproject/abstract-provider" "^5.1.0"
+    "@ethersproject/abstract-signer" "^5.1.0"
     "@ethersproject/address" "^5.1.0"
     "@ethersproject/bignumber" "^5.1.0"
     "@ethersproject/contracts" "^5.1.0"
     "@ethersproject/networks" "^5.1.0"
     "@ethersproject/providers" "^5.1.0"
     "@ethersproject/solidity" "^5.1.0"
-    "@marginswap/core-abi" "1.0.8"
+    "@marginswap/core-abi" "1.0.11"
     "@uniswap/v2-core" "^1.0.0"
     big.js "^5.2.2"
     decimal.js-light "^2.5.0"
@@ -5561,7 +5563,7 @@ clone@^2.0.0, clone@^2.1.1:
   resolved "https://registry.yarnpkg.com/clone/-/clone-2.1.2.tgz#1b7f4b9f591f1e8f83670401600345a02887435f"
   integrity sha1-G39Ln1kfHo+DZwQBYANFoCiHQ18=
 
-clsx@^1.0.4, clsx@^1.1.0:
+clsx@^1.0.4, clsx@^1.1.0, clsx@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.1.1.tgz#98b3134f9abbdf23b2663491ace13c5c03a73188"
   integrity sha512-6/bPho624p3S2pMyvP5kKBPXnI3ufHLObBFCfgx+LkeR5lg2XYy2hqZqUf45ypD8COn2bhgGJSUE+l5dhNBieA==
@@ -13059,6 +13061,13 @@ react-style-singleton@^2.1.0:
     get-nonce "^1.0.0"
     invariant "^2.2.4"
     tslib "^1.0.0"
+
+react-toastify@^7.0.3:
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/react-toastify/-/react-toastify-7.0.3.tgz#93804c777ecf918872ba3b5be9c654db14547f85"
+  integrity sha512-cxZ5rfurC8LzcZQMTYc8RHIkQTs+BFur18Pzk6Loz6uS8OXUWm6nXVlH/wqglz4Z7UAE8xxcF5mRjfE13487uQ==
+  dependencies:
+    clsx "^1.1.1"
 
 react-transition-group@^4.4.0:
   version "4.4.1"

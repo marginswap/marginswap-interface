@@ -8,7 +8,13 @@ import IconScales from '../../icons/IconScales'
 import IconCoin from '../../icons/IconCoin'
 import RiskMeter from '../../components/Riskmeter'
 import { useWeb3React } from '@web3-react/core'
-import { getAccountBalances, getAccountBorrowTotal, getAccountHoldingTotal } from '@marginswap/sdk'
+import {
+  getAccountBalances,
+  getAccountBorrowTotal,
+  getAccountHoldingTotal,
+  crossDeposit,
+  crossWithdraw
+} from '@marginswap/sdk'
 import { TokenInfo } from '@uniswap/token-lists'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { useActiveWeb3React } from '../../hooks'
@@ -20,12 +26,17 @@ import { StyledWrapperDiv } from './styled'
 import { StyledSectionDiv } from './styled'
 
 const { REACT_APP_CHAIN_ID } = process.env
+import { utils } from 'ethers'
+import { toast } from 'react-toastify'
+
+const chainId = Number(process.env.REACT_APP_CHAIN_ID)
 
 type AccountBalanceData = {
   img: string
   coin: string
+  decimals: number
+  address: string
   balance: number
-  available: number
   borrowed: number
   ir: number
 }
@@ -48,37 +59,6 @@ const ACCOUNT_COLUMNS = [
   { name: 'Interest Rate', id: 'ir' }
 ] as const
 
-const ACCOUNT_ACTIONS = [
-  {
-    name: 'Borrow',
-    onClick: (token: AccountBalanceData) => {
-      console.log('borrow', token)
-    },
-    deriveMaxFrom: 'available'
-  },
-  {
-    name: 'Repay',
-    onClick: (token: AccountBalanceData) => {
-      console.log('repay', token)
-    },
-    deriveMaxFrom: 'available'
-  },
-  {
-    name: 'Withdraw',
-    onClick: (token: AccountBalanceData) => {
-      console.log('withdraw', token)
-    },
-    deriveMaxFrom: 'available'
-  },
-  {
-    name: 'Deposit',
-    onClick: (token: AccountBalanceData) => {
-      console.log('deposit', token)
-    },
-    deriveMaxFrom: 'available'
-  }
-] as const
-
 export const MarginAccount = () => {
   const [error, setError] = useState<string | null>(null)
 
@@ -90,9 +70,70 @@ export const MarginAccount = () => {
   const [holdingTotal, setHoldingTotal] = useState(0)
   const [debtTotal, setDebtTotal] = useState(0)
 
+  const { account } = useWeb3React()
+  const { library } = useActiveWeb3React()
+
+  let provider: any
+  if (library && account) {
+    provider = getProviderOrSigner(library, account)
+  }
+
+  const ACCOUNT_ACTIONS = [
+    {
+      name: 'Borrow',
+      onClick: (token: AccountBalanceData, amount: number) => {
+        console.log('borrow', token)
+        console.log('amount :>> ', amount)
+      }
+    },
+    {
+      name: 'Repay',
+      onClick: (token: AccountBalanceData, amount: number) => {
+        console.log('repay', token)
+        console.log('amount :>> ', amount)
+      }
+    },
+    {
+      name: 'Withdraw',
+      onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
+        try {
+          await crossWithdraw(
+            tokenInfo.address,
+            utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
+            chainId,
+            provider
+          )
+          toast.success('Withdrawal success', { position: 'bottom-right' })
+        } catch (error) {
+          toast.error('Withdrawal error', { position: 'bottom-right' })
+          console.error(error)
+        }
+      },
+      deriveMaxFrom: 'balance'
+    },
+    {
+      name: 'Deposit',
+      onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
+        try {
+          await crossDeposit(
+            tokenInfo.address,
+            utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
+            chainId,
+            provider
+          )
+          toast.success('Deposit success', { position: 'bottom-right' })
+        } catch (error) {
+          toast.error('Deposit error', { position: 'bottom-right' })
+          console.error(error)
+        }
+      }
+      // TODO: max
+    }
+  ] as const
+
   const getTokensList = async (url: string) => {
     const tokensRes = await fetchList(url, false)
-    setTokens(tokensRes.tokens.filter(t => t.chainId === Number(REACT_APP_CHAIN_ID)))
+    setTokens(tokensRes.tokens.filter(t => t.chainId === chainId))
   }
   useEffect(() => {
     getTokensList(Object.keys(lists)[0]).catch(e => {
@@ -101,53 +142,54 @@ export const MarginAccount = () => {
     })
   }, [lists])
 
-  const { account } = useWeb3React()
-  const { library } = useActiveWeb3React()
-  let provider: any
-  if (library && account) {
-    provider = getProviderOrSigner(library, account)
-  }
-
   const getAccountData = async (_account: string) => {
+    if (!library) {
+      throw `Library uninitialized: ${library}, ${account}`
+    }
+    provider = getProviderOrSigner(library!, _account)
     const [balances, _holdingTotal, _debtTotal] = await Promise.all([
-      getAccountBalances(_account, Number(REACT_APP_CHAIN_ID), provider),
-      getAccountHoldingTotal(_account, Number(REACT_APP_CHAIN_ID), provider),
-      getAccountBorrowTotal(_account, Number(REACT_APP_CHAIN_ID), provider)
+      getAccountBalances(_account, chainId, provider),
+      getAccountHoldingTotal(_account, chainId, provider),
+      getAccountBorrowTotal(_account, chainId, provider)
     ])
     setHoldingAmounts(
       Object.keys(balances.holdingAmounts).reduce(
-        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.holdingAmounts[cur]).toNumber() }),
+        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.holdingAmounts[cur]).toString() }),
         {}
       )
     )
     setBorrowingAmounts(
       Object.keys(balances.borrowingAmounts).reduce(
-        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.borrowingAmounts[cur]).toNumber() }),
+        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.borrowingAmounts[cur]).toString() }),
         {}
       )
     )
     setHoldingTotal(BigNumber.from(_holdingTotal).toNumber())
     setDebtTotal(BigNumber.from(_debtTotal).toNumber())
   }
-  useEffect(() => {
+  const getData = () => {
     if (account) {
       getAccountData(account).catch(e => {
         console.error(e)
         setError('Failed to get account data')
       })
     }
-  }, [account])
+  }
+  useEffect(getData, [account])
 
   const data = useMemo(
     () =>
-      tokens.map(token => ({
-        img: token.logoURI ?? '',
-        coin: token.symbol,
-        balance: holdingAmounts[token.symbol] ?? 0,
-        borrowed: borrowingAmounts[token.symbol] ?? 0,
-        available: 0, // TODO
-        ir: 0 // TODO
-      })),
+      tokens.map(token => {
+        return {
+          img: token.logoURI ?? '',
+          coin: token.symbol,
+          address: token.address,
+          decimals: token.decimals,
+          balance: Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
+          borrowed: Number(borrowingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
+          ir: 0 // TODO
+        }
+      }),
     [tokens, holdingAmounts, borrowingAmounts]
   )
 

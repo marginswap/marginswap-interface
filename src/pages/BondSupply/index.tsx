@@ -9,24 +9,32 @@ import { TokenInfo } from '@uniswap/token-lists'
 import { useWeb3React } from '@web3-react/core'
 import { useActiveWeb3React } from '../../hooks'
 import { getProviderOrSigner } from '../../utils'
-import { getHourlyBondBalances, getHourlyBondInterestRates } from '@marginswap/sdk'
+import {
+  getHourlyBondBalances,
+  getHourlyBondInterestRates,
+  getHourlyBondMaturities,
+  buyHourlyBondSubscription,
+  getBondsCostInDollars,
+  withdrawHourlyBond
+} from '@marginswap/sdk'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { BigNumber } from '@ethersproject/bignumber'
 import { StyledTableContainer } from './styled'
 import { StyledWrapperDiv } from './styled'
 import { StyledSectionDiv } from './styled'
-
+import { makeStyles } from '@material-ui/core';
+import { utils } from 'ethers';
+import { toast } from 'react-toastify'
 const { REACT_APP_CHAIN_ID } = process.env
 
 type BondRateData = {
   img: string
   coin: string
-  hourly: number
-  ir: number
-  // daily: number
-  // weekly: number
-  // monthly: number
-  // yearly: number
+  address: string
+  decimals: number
+  totalSupplied: number
+  apy: number
+  maturity: number
 }
 
 const BOND_RATES_COLUMNS = [
@@ -41,22 +49,41 @@ const BOND_RATES_COLUMNS = [
       </div>
     )
   },
-  { name: 'Hourly', id: 'hourly' },
-  // { name: 'Daily', id: 'daily' },
-  // { name: 'Weekly', id: 'weekly' },
-  // { name: 'Mothnly', id: 'monthly' },
-  // { name: 'Yearly', id: 'yearly' },
-  { name: 'Interest Rate', id: 'ir' }
+  { name: 'Total Supplied', id: 'totalSupplied' },
+  { name: 'APY', id: 'apy' },
+  { name: 'Maturity', id: 'maturity' }
 ] as const
 
+const useStyles = makeStyles(() => ({
+  wrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '75%',
+    paddingRight: '20px',
+    gap: '20px'
+  },
+  section: {
+    display: 'flex',
+    flexDirection: 'column',
+    paddingRight: '20px',
+    gap: '20px'
+  }
+}))
+
+const apyFromApr = (apr: number, compounds: number): number =>
+  (Math.pow(1 + apr / (compounds * 100), compounds) - 1) * 100
+
 export const BondSupply = () => {
+  const classes = useStyles()
   const [error, setError] = useState<string | null>(null)
 
   const lists = useAllLists()
   const fetchList = useFetchListCallback()
   const [tokens, setTokens] = useState<TokenInfo[]>([])
-  const [bondHourlyBalances, setBondHourlyBalances] = useState<Record<string, number>>({})
-  const [bondInterestRates, setBondInterestRates] = useState<Record<string, number>>({})
+  const [bondBalances, setBondBalances] = useState<Record<string, string>>({})
+  const [bondAPRs, setBondAPRs] = useState<Record<string, number>>({})
+  const [bondMaturities, setBondMaturities] = useState<Record<string, number>>({})
+  const [bondUSDCosts, setBondUSDCosts] = useState<Record<string, number>>({})
 
   const getTokensList = async (url: string) => {
     const tokensRes = await fetchList(url, false)
@@ -76,27 +103,34 @@ export const BondSupply = () => {
     provider = getProviderOrSigner(library, account)
   }
 
-  const getBondBalances = async (address: string, tokens: string[]) => {
-    const [hourlyRates, interestRates] = await Promise.all([
+  const getBondsData = async (address: string, tokens: string[]) => {
+    // TODO get chain id from somewhere other than the env variable. Perhaps the wallet/provider?
+    const [balances, interestRates, maturities, bondCosts] = await Promise.all([
       getHourlyBondBalances(address, tokens, Number(REACT_APP_CHAIN_ID), provider),
-      getHourlyBondInterestRates(tokens, Number(REACT_APP_CHAIN_ID), provider)
+      getHourlyBondInterestRates(tokens, Number(REACT_APP_CHAIN_ID), provider),
+      getHourlyBondMaturities(address, tokens, Number(REACT_APP_CHAIN_ID), provider),
+      getBondsCostInDollars(address, tokens, Number(REACT_APP_CHAIN_ID), provider)
     ])
-    setBondHourlyBalances(
-      Object.keys(hourlyRates).reduce(
-        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(hourlyRates[cur]).toNumber() }),
+    setBondBalances(
+      Object.keys(balances).reduce((acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances[cur]).toString() }), {})
+    )
+    setBondAPRs(
+      Object.keys(interestRates).reduce(
+        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(interestRates[cur]).toNumber() / 100000 }),
         {}
       )
     )
-    setBondInterestRates(
-      Object.keys(interestRates).reduce(
-        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(interestRates[cur]).toNumber() }),
-        {}
-      )
+    setBondMaturities(
+      Object.keys(maturities).reduce((acc, cur) => ({ ...acc, [cur]: BigNumber.from(maturities[cur]).toNumber() }), {})
+    )
+    setBondUSDCosts(
+      Object.keys(bondCosts).reduce((acc, cur) => ({ ...acc, [cur]: BigNumber.from(bondCosts[cur]).toNumber() }), {})
     )
   }
-  useEffect(() => {
+
+  const getData = () => {
     if (account && tokens.length > 0) {
-      getBondBalances(
+      getBondsData(
         account,
         tokens.map(t => t.address)
       ).catch(e => {
@@ -104,22 +138,72 @@ export const BondSupply = () => {
         setError('Failed to get account data')
       })
     }
-  }, [account, tokens])
+  }
+  useEffect(getData, [account, tokens])
+
+  const actions = [
+    {
+      name: 'Deposit',
+      onClick: async (token: BondRateData, amount: number) => {
+        if (!amount) return
+        try {
+          await buyHourlyBondSubscription(
+            token.address,
+            utils.parseUnits(String(amount), token.decimals).toHexString(),
+            Number(REACT_APP_CHAIN_ID),
+            provider
+          )
+          toast.success('Deposit success', { position: 'bottom-right' })
+        } catch (e) {
+          toast.error('Deposit error', { position: 'bottom-right' })
+          console.error(e)
+        }
+      }
+      // TODO: max
+    },
+    {
+      name: 'Withdraw',
+      onClick: async (token: BondRateData, amount: number) => {
+        if (!amount) return
+        try {
+          await withdrawHourlyBond(
+            token.address,
+            utils.parseUnits(String(amount), token.decimals).toHexString(),
+            Number(REACT_APP_CHAIN_ID),
+            provider
+          )
+          toast.success('Withdrawal success', { position: 'bottom-right' })
+        } catch (e) {
+          toast.error('Withdrawal error', { position: 'bottom-right' })
+          console.error(e)
+        }
+      },
+      deriveMaxFrom: 'totalSupplied'
+    }
+  ] as const
 
   const data = useMemo(
     () =>
       tokens.map(token => ({
         img: token.logoURI ?? '',
+        address: token.address,
+        decimals: token.decimals,
         coin: token.symbol,
-        hourly: bondHourlyBalances[token.address] ?? 0,
-        ir: bondInterestRates[token.address] ?? 0
-        // daily: 0, // TODO
-        // weekly: 0, // TODO
-        // monthly: 0, // TODO
-        // yearly: 0 // TODO
+        totalSupplied: Number(bondBalances[token.address] ?? 0) / Math.pow(10, token.decimals),
+        apy: apyFromApr(bondAPRs[token.address] ?? 0, 365 * 24),
+        maturity: bondMaturities[token.address] ?? 0
       })),
-    [tokens, bondHourlyBalances]
+    [tokens, bondBalances]
   )
+
+  const averageYield = useMemo(() => {
+    const bondCosts = apyFromApr(
+      tokens.reduce((acc, cur) => acc + (bondUSDCosts[cur.address] ?? 0), 0),
+      265 * 24
+    )
+    if (bondCosts === 0) return 0
+    return tokens.reduce((acc, cur) => acc + bondAPRs[cur.address] * bondUSDCosts[cur.address], 0) / bondCosts
+  }, [tokens, bondAPRs, bondUSDCosts])
 
   return (
     <StyledWrapperDiv >
@@ -127,12 +211,24 @@ export const BondSupply = () => {
         {!account && <WarningBar>Wallet not connected</WarningBar>}
         {error && <ErrorBar>{error}</ErrorBar>}
         <StyledTableContainer >
-          <InfoCard title="Bond Holding" amount={0.123456} Icon={IconMoneyStackLocked} />
-          <InfoCard title="Current Earnings" amount={0.123456} ghost Icon={IconMoneyStackLocked} />
-          <InfoCard title="Total Earned" amount={0.123456} color="secondary" ghost Icon={IconMoneyStack} />
+          <InfoCard
+            title="Total Bond"
+            amount={Object.keys(bondUSDCosts).reduce((acc, cur) => acc + bondUSDCosts[cur], 0)}
+            Icon={IconMoneyStackLocked}
+          />
+          <InfoCard title="Average Yield" amount={averageYield} ghost Icon={IconMoneyStackLocked} />
+          <InfoCard
+            title="Earnings per day"
+            amount={tokens.reduce((acc, cur) => acc + (bondUSDCosts[cur.address] ?? 0), 0) / 365}
+            color="secondary"
+            ghost
+            Icon={IconMoneyStack}
+          />
         </StyledTableContainer>
-        <TokensTable title="Bond Rates" data={data} columns={BOND_RATES_COLUMNS} idCol="coin" />
+        <TokensTable title="Bond Rates" data={data} columns={BOND_RATES_COLUMNS} idCol="coin" actions={actions} />
       </StyledSectionDiv>
     </StyledWrapperDiv>
   )
 }
+
+export default BondSupply

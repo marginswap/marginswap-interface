@@ -6,11 +6,20 @@ import {
   StyledTableSortLabel,
   StyledTableWrapper
 } from './styled'
-import { Box, Collapse, Switch, TableBody, TableContainer, TableHead, TableRow } from '@material-ui/core'
+import {
+  Box,
+  CircularProgress,
+  Collapse,
+  Switch,
+  TableBody,
+  TableContainer,
+  TableHead,
+  TableRow
+} from '@material-ui/core'
 import React, { ChangeEvent, Fragment, useMemo, useState } from 'react'
 import { colors, StyledButton, StyledTextField } from '../../theme'
 
-type TableProps<T extends Record<string, string | number>> = {
+type TableProps<T extends Record<string, string | boolean | number>> = {
   title: string
   data: T[]
   columns: readonly {
@@ -20,14 +29,15 @@ type TableProps<T extends Record<string, string | number>> = {
   }[]
   actions?: readonly {
     name: string
-    onClick: (row: T, amount: number, rowIndex: number) => void
+    onClick: (row: T, amount: number, rowIndex: number) => void | Promise<void>
     deriveMaxFrom?: keyof T // which field defines max available value
+    max?: number // or set max from external source
   }[]
   deriveEmptyFrom?: keyof T // which field is used for hiding empty rows
   idCol: keyof T
 }
 
-const TokensTable: <T extends { [key: string]: string | number }>(props: TableProps<T>) => JSX.Element = ({
+const TokensTable: <T extends { [key: string]: string | boolean | number }>(props: TableProps<T>) => JSX.Element = ({
   title,
   data,
   columns,
@@ -40,42 +50,7 @@ const TokensTable: <T extends { [key: string]: string | number }>(props: TablePr
   const [orderBy, setOrderBy] = useState(columns[0].id)
   const [activeAction, setActiveAction] = useState<{ actionIndex: number; rowIndex: number } | null>(null)
   const [actionAmount, setActionAmount] = useState('')
-
-  const handleActionOpen = (actionIndex: number, rowIndex: number) => {
-    setActionAmount('')
-    setActiveAction({ actionIndex, rowIndex })
-  }
-
-  const handleActionValueChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!(actions && activeAction)) return
-    if (!e.target.value || !actions[activeAction.actionIndex].deriveMaxFrom) {
-      setActionAmount(e.target.value)
-    } else {
-      setActionAmount(
-        String(
-          Math.round(
-            Math.min(
-              Number(e.target.value),
-              Number(data[activeAction.rowIndex][actions[activeAction.actionIndex].deriveMaxFrom!])
-            ) * 1000000
-          ) / 1000000
-        )
-      )
-    }
-  }
-
-  const handleActionSubmit = () => {
-    if (!(actions && activeAction)) return
-    actions[activeAction.actionIndex].onClick(data[activeAction.rowIndex], Number(actionAmount), activeAction.rowIndex)
-  }
-
-  const handleSortChange = (column: typeof columns[number]['id']) => {
-    const isAsc = orderBy === column && order === 'asc'
-    setActiveAction(null)
-    setActionAmount('')
-    setOrder(isAsc ? 'desc' : 'asc')
-    setOrderBy(column)
-  }
+  const [actionLoading, setActionLoading] = useState(false)
 
   const sortedData = useMemo(
     () =>
@@ -96,6 +71,64 @@ const TokensTable: <T extends { [key: string]: string | number }>(props: TablePr
         ),
     [data, order, orderBy, hideEmpty, deriveEmptyFrom]
   )
+
+  const handleActionOpen = (actionIndex: number, rowIndex: number) => {
+    setActionAmount('')
+    setActiveAction({ actionIndex, rowIndex })
+  }
+
+  const handleActionValueChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!(actions && activeAction)) return
+    if (
+      !e.target.value ||
+      !(actions[activeAction.actionIndex].deriveMaxFrom || actions[activeAction.actionIndex].max !== undefined)
+    ) {
+      setActionAmount(e.target.value)
+    } else {
+      setActionAmount(
+        String(
+          Math.round(
+            Math.min(
+              Number(e.target.value),
+              Number(
+                actions[activeAction.actionIndex].max ??
+                  sortedData[activeAction.rowIndex][actions[activeAction.actionIndex].deriveMaxFrom!]
+              )
+            ) * 1000000
+          ) / 1000000
+        )
+      )
+    }
+  }
+
+  const handleActionSubmit = async () => {
+    if (!(actions && activeAction)) return
+    setActionLoading(true)
+    const res = actions[activeAction.actionIndex].onClick(
+      sortedData[activeAction.rowIndex],
+      Number(actionAmount),
+      activeAction.rowIndex
+    )
+    if (res instanceof Promise) {
+      res
+        .then(() => {
+          setActionLoading(false)
+        })
+        .catch(() => {
+          setActionLoading(false)
+        })
+    } else {
+      setActionLoading(false)
+    }
+  }
+
+  const handleSortChange = (column: typeof columns[number]['id']) => {
+    const isAsc = orderBy === column && order === 'asc'
+    setActiveAction(null)
+    setActionAmount('')
+    setOrder(isAsc ? 'desc' : 'asc')
+    setOrderBy(column)
+  }
 
   return (
     <div>
@@ -149,7 +182,7 @@ const TokensTable: <T extends { [key: string]: string | number }>(props: TablePr
             </TableHead>
             <TableBody>
               {sortedData.map((row, rowIndex) => (
-                <Fragment key={row[idCol]}>
+                <Fragment key={row[idCol] as number}>
                   <StyledTableRow selected={activeAction?.actionIndex === rowIndex}>
                     <StyledTableCell width={52} style={{ borderBottom: 'none' }} />
                     {columns.map((column, colIndex) => (
@@ -191,36 +224,43 @@ const TokensTable: <T extends { [key: string]: string | number }>(props: TablePr
                                   onChange={handleActionValueChange}
                                   value={actionAmount}
                                 />
-                                {activeAction && actions[activeAction.actionIndex].deriveMaxFrom && (
-                                  <StyledButton
-                                    color="primary"
-                                    style={{
-                                      position: 'absolute',
-                                      right: 0,
-                                      top: '50%',
-                                      padding: '4px 10px',
-                                      margin: '-10px 0 0 0'
-                                    }}
-                                    onClick={() => {
-                                      setActionAmount(
-                                        String(
-                                          Math.round(
-                                            Number(row[actions[activeAction.actionIndex].deriveMaxFrom!]) * 1000000
-                                          ) / 1000000
+                                {activeAction &&
+                                  (actions[activeAction.actionIndex].deriveMaxFrom ||
+                                    actions[activeAction.actionIndex].max !== undefined) && (
+                                    <StyledButton
+                                      color="primary"
+                                      style={{
+                                        position: 'absolute',
+                                        right: 0,
+                                        top: '50%',
+                                        padding: '4px 10px',
+                                        margin: '-10px 0 0 0'
+                                      }}
+                                      onClick={() => {
+                                        setActionAmount(
+                                          String(
+                                            Math.round(
+                                              Number(
+                                                actions[activeAction.actionIndex].max ??
+                                                  row[actions[activeAction.actionIndex].deriveMaxFrom!]
+                                              ) * 1000000
+                                            ) / 1000000
+                                          )
                                         )
-                                      )
-                                    }}
-                                  >
-                                    MAX
-                                  </StyledButton>
-                                )}
+                                      }}
+                                    >
+                                      MAX
+                                    </StyledButton>
+                                  )}
                               </div>
                               <StyledButton
                                 color="primary"
                                 style={{ borderRadius: '16px', padding: '10px 16px', margin: '0 0 0 32px' }}
                                 onClick={handleActionSubmit}
+                                disabled={actionLoading}
                               >
                                 Confirm Transaction
+                                {actionLoading && <CircularProgress size={20} color={'white' as any} />}
                               </StyledButton>
                             </div>
                           </Box>

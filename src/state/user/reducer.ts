@@ -9,7 +9,6 @@ import {
   SerializedPair,
   SerializedToken,
   updateMatchesDarkMode,
-  updateUserDarkMode,
   updateUserExpertMode,
   updateUserSlippageTolerance,
   updateUserDeadline,
@@ -58,8 +57,8 @@ function pairKey(token0Address: string, token1Address: string) {
 }
 
 export const initialState: UserState = {
-  userDarkMode: null,
-  matchesDarkMode: false,
+  userDarkMode: true,
+  matchesDarkMode: true,
   userExpertMode: false,
   userSingleHopOnly: false,
   userSlippageTolerance: INITIAL_ALLOWED_SLIPPAGE,
@@ -87,10 +86,10 @@ export default createReducer(initialState, builder =>
 
       state.lastUpdateVersionTimestamp = currentTimestamp()
     })
-    .addCase(updateUserDarkMode, (state, action) => {
-      state.userDarkMode = action.payload.userDarkMode
-      state.timestamp = currentTimestamp()
-    })
+    //    .addCase(updateUserDarkMode, (state, action) => {
+    //      state.userDarkMode = action.payload.userDarkMode
+    //      state.timestamp = currentTimestamp()
+    //    })
     .addCase(updateMatchesDarkMode, (state, action) => {
       state.matchesDarkMode = action.payload.matchesDarkMode
       state.timestamp = currentTimestamp()
