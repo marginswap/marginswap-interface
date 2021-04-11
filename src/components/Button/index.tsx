@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { darken } from 'polished'
+import { darken, lighten } from 'polished'
 import { Button as RebassButton, ButtonProps } from 'rebass/styled-components'
 
 const Base = styled(RebassButton)<{
@@ -203,6 +203,17 @@ export const ButtonWhite = styled(Base)`
   }
 `
 
+const ButtonConfirmedStyle = styled(Base)`
+  background-color: ${({ theme }) => lighten(0.5, theme.green1)};
+  color: ${({ theme }) => theme.green1};
+  border: 1px solid ${({ theme }) => theme.green1};
+
+  &:disabled {
+    opacity: 50%;
+    cursor: auto;
+  }
+`
+
 const ButtonErrorStyle = styled(Base)`
   background-color: ${({ theme }) => theme.red1};
   border: 1px solid ${({ theme }) => theme.red1};
@@ -226,6 +237,18 @@ const ButtonErrorStyle = styled(Base)`
     border: 1px solid ${({ theme }) => theme.red1};
   }
 `
+
+export function ButtonConfirmed({
+  confirmed,
+  altDisabledStyle,
+  ...rest
+}: { confirmed?: boolean; altDisabledStyle?: boolean } & ButtonProps) {
+  if (confirmed) {
+    return <ButtonConfirmedStyle {...rest} />
+  } else {
+    return <ButtonPrimary {...rest} altDisabledStyle={altDisabledStyle} />
+  }
+}
 
 export function ButtonError({ error, ...rest }: { error?: boolean } & ButtonProps) {
   if (error) {

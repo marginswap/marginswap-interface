@@ -45,6 +45,14 @@ export const StyledButton = styled(Button)`
     background-color: #4255ff !important;
     border-color: #4255ff !important;
   }
+
+  &:disabled {
+    background-color: grey !important;
+  }
+
+  & .MuiCircularProgress-root {
+    margin-left: 5px;
+  }
 `
 
 export const ButtonText = styled.button`

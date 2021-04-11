@@ -62,6 +62,28 @@ export function isTransactionRecent(tx: TransactionDetails): boolean {
   return new Date().getTime() - tx.addedTime < 86_400_000
 }
 
+// returns whether a token has a pending approval transaction
+export function useHasPendingApproval(tokenAddress: string | undefined, spender: string | undefined): boolean {
+  const allTransactions = useAllTransactions()
+  return useMemo(
+    () =>
+      typeof tokenAddress === 'string' &&
+      typeof spender === 'string' &&
+      Object.keys(allTransactions).some(hash => {
+        const tx = allTransactions[hash]
+        if (!tx) return false
+        if (tx.receipt) {
+          return false
+        } else {
+          const approval = tx.approval
+          if (!approval) return false
+          return approval.spender === spender && approval.tokenAddress === tokenAddress && isTransactionRecent(tx)
+        }
+      }),
+    [allTransactions, spender, tokenAddress]
+  )
+}
+
 // watch for submissions to claim
 // return null if not done loading, return undefined if not found
 export function useUserHasSubmittedClaim(

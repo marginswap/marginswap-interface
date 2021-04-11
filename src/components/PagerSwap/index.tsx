@@ -3,13 +3,23 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
 import { TokenInfo } from '@uniswap/token-lists'
 import AppBody from 'pages/AppBody'
 import { useStyles, useInputStyles } from './useStyles'
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, useCallback } from 'react'
 import Parameters from './Parameters'
 import StakeInput from './StakeInput'
 import TabPanel from './TabPanel'
 import { ErrorBar } from '../Placeholders'
 import useSwap from './useSwap'
 import SwapSettings from '../SwapSettings'
+import { useSwapCallback } from '../../hooks/useSwapCallback'
+import { useDerivedSwapInfo, useSwapState } from '../../state/swap/hooks'
+import { MaxUint256 } from '@ethersproject/constants'
+import { getContract } from '../../utils'
+import ERC20_ABI from '../../constants/abis/erc20.json'
+import { useWeb3React } from '@web3-react/core'
+import { useActiveWeb3React } from '../../hooks'
+import { TransactionResponse } from '@ethersproject/providers'
+import { useTransactionAdder } from '../../state/transactions/hooks'
+import { getAddresses } from '@marginswap/sdk'
 const { REACT_APP_FEE_PERCENT } = process.env
 
 const calcMinReceived = (amount: number, slippageTolerance: number) =>
@@ -22,7 +32,12 @@ const calcPriceImpact = (amount: number) => Math.round(100 * Math.max(Math.log(a
 const route = 'MFI > USDC > ETH'
 
 export const PagerSwap: FunctionComponent<{
-  tokens: (TokenInfo & { balance?: number; borrowable?: number })[]
+  tokens: (TokenInfo & {
+    balance?: number
+    isSpotApproved?: boolean
+    isMarginApproved?: boolean
+    borrowable?: number
+  })[]
   accountConnected: boolean
   exchangeRates: Record<string, number>
 }> = ({ tokens, accountConnected, exchangeRates }) => {
@@ -104,6 +119,60 @@ export const PagerSwap: FunctionComponent<{
       </div>
     ) : null
 
+  const { account, chainId } = useWeb3React()
+  const { library } = useActiveWeb3React()
+
+  const addTransaction = useTransactionAdder()
+
+  const { trade } = useDerivedSwapInfo()
+  // swap state
+  const { recipient } = useSwapState()
+
+  // the callback to execute the swap
+  // TODO the following is incorrect, to just set it (marginTrade) to true
+  const { callback: swapCallback } = useSwapCallback(trade, true, slippageTolerance, recipient)
+
+  const handleSwap = useCallback(() => {
+    if (!swapCallback) {
+      return
+    }
+    console.log('swap start')
+    swapCallback()
+      .then(hash => {
+        console.log('swap hash :>> ', hash)
+        console.log('swap end')
+      })
+      .catch(error => {
+        console.log('swap error :>> ', error)
+        console.log('swap end')
+      })
+  }, [swapCallback, singleHopOnly])
+
+  const handleApprove = (address: string, isSpot: boolean) => {
+    if (!address || !library || !account) return
+    const tokenContract = getContract(address, ERC20_ABI, library, account)
+
+    if (!tokenContract) {
+      console.error('tokenContract is null')
+      return
+    }
+
+    if (chainId) {
+      const addressToApprove = isSpot ? getAddresses(chainId).SpotRouter : getAddresses(chainId).Fund
+      tokenContract
+        .approve(addressToApprove, MaxUint256)
+        .then((response: TransactionResponse) => {
+          addTransaction(response, {
+            summary: `Approve Success`
+          })
+        })
+        .catch((error: Error) => {
+          console.debug('Failed to approve', error)
+          throw error
+        })
+    }
+  }
+
   return (
     <AppBody>
       {error && <ErrorBar>{error}</ErrorBar>}
@@ -164,10 +233,27 @@ export const PagerSwap: FunctionComponent<{
               />
               {middleParameters}
               <div className={classes.actions}>
-                <Button variant="outlined" size="large" id="spot" disabled={!!getButtonDisabledStatus()}>
-                  {/* TODO: is approved? */}
-                  {getButtonDisabledStatus() ?? 'Swap'}
-                </Button>
+                {spotCurrencyFrom !== null && !tokens[spotCurrencyFrom].isSpotApproved ? (
+                  <Button
+                    variant="outlined"
+                    size="large"
+                    id="spot"
+                    onClick={() => handleApprove(tokens[spotCurrencyFrom].address, true)}
+                  >
+                    {`Approve ${tokens[spotCurrencyFrom].symbol}`}
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outlined"
+                    size="large"
+                    id="spot"
+                    disabled={!!getButtonDisabledStatus()}
+                    onClick={handleSwap}
+                  >
+                    {/* TODO: is approved? */}
+                    {getButtonDisabledStatus() ?? 'Swap'}
+                  </Button>
+                )}
               </div>
               {bottomParameters}
             </div>
@@ -221,9 +307,20 @@ export const PagerSwap: FunctionComponent<{
               />
               {middleParameters}
               <div className={classes.actions}>
-                <Button variant="outlined" size="large" id="swap" disabled={!!getButtonDisabledStatus()}>
-                  {getButtonDisabledStatus() ?? 'Swap'}
-                </Button>
+                {spotCurrencyFrom !== null && !tokens[spotCurrencyFrom].isMarginApproved ? (
+                  <Button
+                    variant="outlined"
+                    size="large"
+                    id="spot"
+                    onClick={() => handleApprove(tokens[spotCurrencyFrom].address, false)}
+                  >
+                    {`Approve ${tokens[spotCurrencyFrom].symbol}`}
+                  </Button>
+                ) : (
+                  <Button variant="outlined" size="large" id="swap" disabled={!!getButtonDisabledStatus()}>
+                    {getButtonDisabledStatus() ?? 'Swap'}
+                  </Button>
+                )}
               </div>
               {bottomParameters}
             </div>

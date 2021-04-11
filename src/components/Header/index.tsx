@@ -15,20 +15,16 @@ import { Dots } from '../swap/styleds'
 import Modal from '../Modal'
 import UniBalanceContent from './UniBalanceContent'
 import usePrevious from '../../hooks/usePrevious'
-import { useDarkModeManager } from '../../state/user/hooks'
-import { Moon, Sun } from 'react-feather'
 import {
   AccountElement,
   BalanceText,
   HeaderControls,
   HeaderElement,
-  HeaderElementWrap,
   HeaderFrame,
   HeaderLinks,
   HeaderRow,
   HideSmall,
   NetworkCard,
-  StyledMenuButton,
   StyledNavLink,
   Title,
   UNIAmount,
@@ -47,7 +43,7 @@ export default function Header() {
   const { account, chainId } = useActiveWeb3React()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
-  const [darkMode, toggleDarkMode] = useDarkModeManager()
+  // const [darkMode, toggleDarkMode] = useDarkModeManager()
 
   const toggleClaimModal = useToggleSelfClaimModal()
 
@@ -146,11 +142,11 @@ export default function Header() {
             <Web3Status />
           </AccountElement>
         </HeaderElement>
-        <HeaderElementWrap>
-          <StyledMenuButton onClick={() => toggleDarkMode()}>
-            {darkMode ? <Moon size={20} /> : <Sun size={20} />}
-          </StyledMenuButton>
-        </HeaderElementWrap>
+        {/*<HeaderElementWrap>*/}
+        {/*  <StyledMenuButton onClick={() => toggleDarkMode()}>*/}
+        {/*    {darkMode ? <Moon size={20} /> : <Sun size={20} />}*/}
+        {/*  </StyledMenuButton>*/}
+        {/*</HeaderElementWrap>*/}
       </HeaderControls>
     </HeaderFrame>
   )

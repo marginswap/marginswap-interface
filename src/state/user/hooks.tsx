@@ -14,7 +14,8 @@ import {
   removeSerializedToken,
   SerializedPair,
   SerializedToken,
-  updateUserDarkMode,
+  updateUserDeadline,
+  updateUserExpertMode,
   updateUserSlippageTolerance,
   toggleURLWarning,
   updateUserSingleHopOnly
@@ -55,15 +56,31 @@ export function useIsDarkMode(): boolean {
   return userDarkMode === null ? matchesDarkMode : userDarkMode
 }
 
-export function useDarkModeManager(): [boolean, () => void] {
+// export function useDarkModeManager(): [boolean, () => void] {
+//   const dispatch = useDispatch<AppDispatch>()
+//   const darkMode = useIsDarkMode()
+
+//   const toggleSetDarkMode = useCallback(() => {
+//     // TODO re-enable
+//     //dispatch(updateUserDarkMode({ userDarkMode: !darkMode }))
+//   }, [darkMode, dispatch])
+
+//   return [darkMode, toggleSetDarkMode]
+// }
+
+export function useIsExpertMode(): boolean {
+  return useSelector<AppState, AppState['user']['userExpertMode']>(state => state.user.userExpertMode)
+}
+
+export function useExpertModeManager(): [boolean, () => void] {
   const dispatch = useDispatch<AppDispatch>()
-  const darkMode = useIsDarkMode()
+  const expertMode = useIsExpertMode()
 
-  const toggleSetDarkMode = useCallback(() => {
-    dispatch(updateUserDarkMode({ userDarkMode: !darkMode }))
-  }, [darkMode, dispatch])
+  const toggleSetExpertMode = useCallback(() => {
+    dispatch(updateUserExpertMode({ userExpertMode: !expertMode }))
+  }, [expertMode, dispatch])
 
-  return [darkMode, toggleSetDarkMode]
+  return [expertMode, toggleSetExpertMode]
 }
 
 export function useUserSingleHopOnly(): [boolean, (newSingleHopOnly: boolean) => void] {
@@ -101,6 +118,22 @@ export function useUserSlippageTolerance(): [number, (slippage: number) => void]
   )
 
   return [userSlippageTolerance, setUserSlippageTolerance]
+}
+
+export function useUserTransactionTTL(): [number, (slippage: number) => void] {
+  const dispatch = useDispatch<AppDispatch>()
+  const userDeadline = useSelector<AppState, AppState['user']['userDeadline']>(state => {
+    return state.user.userDeadline
+  })
+
+  const setUserDeadline = useCallback(
+    (userDeadline: number) => {
+      dispatch(updateUserDeadline({ userDeadline }))
+    },
+    [dispatch]
+  )
+
+  return [userDeadline, setUserDeadline]
 }
 
 export function useAddUserToken(): (token: Token) => void {
