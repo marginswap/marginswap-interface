@@ -6,7 +6,16 @@ import {
   StyledTableSortLabel,
   StyledTableWrapper
 } from './styled'
-import { Box, Collapse, Switch, TableBody, TableContainer, TableHead, TableRow } from '@material-ui/core'
+import {
+  Box,
+  CircularProgress,
+  Collapse,
+  Switch,
+  TableBody,
+  TableContainer,
+  TableHead,
+  TableRow
+} from '@material-ui/core'
 import React, { ChangeEvent, Fragment, useMemo, useState } from 'react'
 import { colors, StyledButton, StyledTextField } from '../../theme'
 
@@ -20,7 +29,7 @@ type TableProps<T extends Record<string, string | boolean | number>> = {
   }[]
   actions?: readonly {
     name: string
-    onClick: (row: T, amount: number, rowIndex: number) => void
+    onClick: (row: T, amount: number, rowIndex: number) => void | Promise<void>
     deriveMaxFrom?: keyof T // which field defines max available value
     max?: number // or set max from external source
   }[]
@@ -41,6 +50,7 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
   const [orderBy, setOrderBy] = useState(columns[0].id)
   const [activeAction, setActiveAction] = useState<{ actionIndex: number; rowIndex: number } | null>(null)
   const [actionAmount, setActionAmount] = useState('')
+  const [actionLoading, setActionLoading] = useState(false)
 
   const sortedData = useMemo(
     () =>
@@ -91,13 +101,25 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
     }
   }
 
-  const handleActionSubmit = () => {
+  const handleActionSubmit = async () => {
     if (!(actions && activeAction)) return
-    actions[activeAction.actionIndex].onClick(
+    setActionLoading(true)
+    const res = actions[activeAction.actionIndex].onClick(
       sortedData[activeAction.rowIndex],
       Number(actionAmount),
       activeAction.rowIndex
     )
+    if (res instanceof Promise) {
+      res
+        .then(() => {
+          setActionLoading(false)
+        })
+        .catch(() => {
+          setActionLoading(false)
+        })
+    } else {
+      setActionLoading(false)
+    }
   }
 
   const handleSortChange = (column: typeof columns[number]['id']) => {
@@ -230,10 +252,10 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
                                 color="primary"
                                 style={{ borderRadius: '16px', padding: '10px 16px', margin: '0 0 0 32px' }}
                                 onClick={handleActionSubmit}
+                                disabled={actionLoading}
                               >
-                                {activeAction && actions[activeAction.actionIndex].name === 'Deposit' && !row.isApproved
-                                  ? 'Approve'
-                                  : 'Confirm Transaction'}
+                                {row.isApproved ? 'Confirm Transaction' : 'Approve'}
+                                {actionLoading && <CircularProgress size={20} color={'white' as any} />}
                               </StyledButton>
                             </div>
                           </Box>
