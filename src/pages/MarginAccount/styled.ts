@@ -16,7 +16,7 @@ export const StyledSectionDiv = styled.div`
     padding-right: 20px;
     @media (max-width: 768px) {
         padding-right: 0px;
-        max-width: 360px;
+        max-width: 340px;
     }
     gap: 20px;
 `
