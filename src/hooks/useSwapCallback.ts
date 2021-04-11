@@ -55,8 +55,8 @@ function useSwapCallArguments(
     if (!trade || !recipient || !library || !account || !chainId || !deadline) return []
 
     const contract: Contract | null = marginTrade
-      ? getSpotRouterContract(chainId, library, account)
-      : getMarginRouterContract(chainId, library, account)
+      ? getMarginRouterContract(chainId, library, account)
+      : getSpotRouterContract(chainId, library, account)
 
     if (!contract) {
       return []

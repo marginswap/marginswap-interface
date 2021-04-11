@@ -1,4 +1,4 @@
-import { ChainId, JSBI, Percent, Token, WETH, getAddresses } from '@marginswap/sdk'
+import { ChainId, JSBI, Percent, Token, WETH } from '@marginswap/sdk'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 
 import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
@@ -26,10 +26,6 @@ export const AVERAGE_BLOCK_TIME_IN_SECS = 13
 export const GOVERNANCE_ADDRESS = '0x5e4be8Bc9637f0EAA1A755019e06A68ce081D58F'
 
 export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
-
-export const FUND_ADDRESS = getAddresses(Number(process.env.REACT_APP_CHAIN_ID)).Fund
-export const SPOT_ROUTER_ADDRESS = getAddresses(Number(process.env.REACT_APP_CHAIN_ID)).SpotRouter
-export const MARGIN_ROUTER_ADDRESS = getAddresses(Number(process.env.REACT_APP_CHAIN_ID)).MarginRouter
 
 const UNI_ADDRESS = '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984'
 export const UNI: { [chainId in ChainId]: Token } = {

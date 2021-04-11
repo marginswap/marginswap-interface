@@ -12,7 +12,6 @@ import useSwap from './useSwap'
 import SwapSettings from '../SwapSettings'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
 import { useDerivedSwapInfo, useSwapState } from '../../state/swap/hooks'
-import { MARGIN_ROUTER_ADDRESS, SPOT_ROUTER_ADDRESS } from '../../constants'
 import { MaxUint256 } from '@ethersproject/constants'
 import { getContract } from '../../utils'
 import ERC20_ABI from '../../constants/abis/erc20.json'
@@ -20,6 +19,7 @@ import { useWeb3React } from '@web3-react/core'
 import { useActiveWeb3React } from '../../hooks'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from '../../state/transactions/hooks'
+import { getAddresses } from '@marginswap/sdk'
 const { REACT_APP_FEE_PERCENT } = process.env
 
 const calcMinReceived = (amount: number, slippageTolerance: number) =>
@@ -119,7 +119,7 @@ export const PagerSwap: FunctionComponent<{
       </div>
     ) : null
 
-  const { account } = useWeb3React()
+  const { account, chainId } = useWeb3React()
   const { library } = useActiveWeb3React()
 
   const addTransaction = useTransactionAdder()
@@ -157,18 +157,20 @@ export const PagerSwap: FunctionComponent<{
       return
     }
 
-    const addressToApprove = isSpot ? SPOT_ROUTER_ADDRESS : MARGIN_ROUTER_ADDRESS
-    tokenContract
-      .approve(addressToApprove, MaxUint256)
-      .then((response: TransactionResponse) => {
-        addTransaction(response, {
-          summary: `Approve Success`
+    if (chainId) {
+      const addressToApprove = isSpot ? getAddresses(chainId).SpotRouter : getAddresses(chainId).Fund
+      tokenContract
+        .approve(addressToApprove, MaxUint256)
+        .then((response: TransactionResponse) => {
+          addTransaction(response, {
+            summary: `Approve Success`
+          })
         })
-      })
-      .catch((error: Error) => {
-        console.debug('Failed to approve', error)
-        throw error
-      })
+        .catch((error: Error) => {
+          console.debug('Failed to approve', error)
+          throw error
+        })
+    }
   }
 
   return (

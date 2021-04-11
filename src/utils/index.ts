@@ -3,11 +3,11 @@ import { getAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
-import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER } from '@marginswap/sdk'
+import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER, getAddresses } from '@marginswap/sdk'
+import MarginRouter from '@marginswap/core-abi/artifacts/contracts/MarginRouter.sol/MarginRouter.json'
+import SpotRouter from '@marginswap/core-abi/artifacts/contracts/SpotRouter.sol/SpotRouter.json'
+
 import { TokenAddressMap } from '../state/lists/hooks'
-import { SPOT_ROUTER_ADDRESS, MARGIN_ROUTER_ADDRESS } from '../constants'
-import SPOT_ROUTER_ABI from '../constants/abis/spot-router.json'
-import MARGIN_ROUTER_ABI from '../constants/abis/margin-router.json'
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
@@ -109,11 +109,11 @@ export function isTokenOnList(defaultTokens: TokenAddressMap, currency?: Currenc
 }
 
 // account is optional
-export function getSpotRouterContract(_: number, library: Web3Provider, account?: string): Contract {
-  return getContract(SPOT_ROUTER_ADDRESS, SPOT_ROUTER_ABI, library, account)
+export function getSpotRouterContract(chainId: ChainId, library: Web3Provider, account?: string): Contract {
+  return getContract(getAddresses(chainId).SpotRouter, SpotRouter.abi, library, account)
 }
 
 // account is optional
-export function getMarginRouterContract(_: number, library: Web3Provider, account?: string): Contract {
-  return getContract(MARGIN_ROUTER_ADDRESS, MARGIN_ROUTER_ABI, library, account)
+export function getMarginRouterContract(chainId: ChainId, library: Web3Provider, account?: string): Contract {
+  return getContract(getAddresses(chainId).MarginRouter, MarginRouter.abi, library, account)
 }
