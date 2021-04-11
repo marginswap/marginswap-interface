@@ -21,26 +21,19 @@ import { TokenInfo } from '@uniswap/token-lists'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { useActiveWeb3React } from '../../hooks'
 import { useTokenBalances } from '../../state/wallet/hooks'
-import { getProviderOrSigner, getContract } from '../../utils'
+import { getProviderOrSigner } from '../../utils'
 import { BigNumber } from '@ethersproject/bignumber'
-import { FUND_ADDRESS } from '../../constants'
-import ERC20_INTERFACE from '../../constants/abis/erc20'
-import { useMultipleContractSingleData } from '../../state/multicall/hooks'
-import { MaxUint256 } from '@ethersproject/constants'
-import { TransactionResponse } from '@ethersproject/providers'
-import ERC20_ABI from '../../constants/abis/erc20.json'
 import { utils } from 'ethers'
-import { useTransactionAdder } from '../../state/transactions/hooks'
 
 const chainId = Number(process.env.REACT_APP_CHAIN_ID)
 
 type AccountBalanceData = {
   img: string
   coin: string
+  address: string
   balance: number
   available: number
   borrowed: number
-  isApproved?: boolean
   ir: number
 }
 
@@ -91,74 +84,9 @@ export const MarginAccount = () => {
   const { account } = useWeb3React()
   const { library } = useActiveWeb3React()
 
-  const addTransaction = useTransactionAdder()
-
   let provider: any
   if (library && account) {
     provider = getProviderOrSigner(library, account)
-  }
-
-  const handleDeposit = async (address: string, amount: number) => {
-    if (!amount) {
-      console.log('not enough amount')
-      return
-    }
-    try {
-      if (!library || !account) {
-        throw `Library or account uninitialized: ${library}, ${account}`
-      }
-      provider = getProviderOrSigner(library!, account!)
-      const res: any = await crossDeposit(address, utils.parseEther(String(amount)).toHexString(), chainId, provider)
-      addTransaction(res, {
-        summary: `Cross Deposit`
-      })
-      console.log('res :>> ', res)
-    } catch (error) {
-      console.log('error :>> ', error)
-    }
-  }
-
-  const handleApprove = (address: string) => {
-    if (!address || !library || !account) return
-    const tokenContract = getContract(address, ERC20_ABI, library, account)
-
-    if (!tokenContract) {
-      console.error('tokenContract is null')
-      return
-    }
-
-    tokenContract
-      .approve(FUND_ADDRESS, MaxUint256)
-      .then((response: TransactionResponse) => {
-        console.log('approve response :>> ', response)
-        addTransaction(response, {
-          summary: `Approve Fund`
-        })
-      })
-      .catch((error: Error) => {
-        console.debug('Failed to approve token', error)
-        throw error
-      })
-  }
-
-  const handleWithdraw = async (address: string, amount: number) => {
-    if (!amount) {
-      console.log('not enough amount')
-      return
-    }
-    try {
-      if (!library || !account) {
-        throw `Library or account uninitialized: ${library}, ${account}`
-      }
-      provider = getProviderOrSigner(library!, account!)
-      const res: any = await crossWithdraw(address, utils.parseEther(String(amount)).toHexString(), chainId, provider)
-      addTransaction(res, {
-        summary: `Cross Withdraw`
-      })
-      console.log('res :>> ', res)
-    } catch (error) {
-      console.log('withdraw error :>> ', error)
-    }
   }
 
   const ACCOUNT_ACTIONS = [
@@ -180,24 +108,24 @@ export const MarginAccount = () => {
     },
     {
       name: 'Withdraw',
-      onClick: (tokenInfo: AccountBalanceData, amount: number) => {
-        const token = tokens.find(item => item.symbol === tokenInfo.coin)
-        console.log('withdraw', token)
-        console.log('amount :>> ', amount)
-        handleWithdraw(token?.address as string, amount)
+      onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
+        try {
+          await crossWithdraw(tokenInfo.address, utils.parseEther(String(amount)).toHexString(), chainId, provider)
+          getData()
+        } catch (error) {
+          console.error(error)
+        }
       },
       deriveMaxFrom: 'balance'
     },
     {
       name: 'Deposit',
-      onClick: (tokenInfo: AccountBalanceData, amount: number) => {
-        const token = tokens.find(item => item.symbol === tokenInfo.coin)
-        console.log('token :>> ', token)
-        console.log('amount :>> ', amount)
-        if (tokenInfo.isApproved) {
-          handleDeposit(token?.address as string, amount)
-        } else {
-          handleApprove(token?.address as string)
+      onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
+        try {
+          await crossDeposit(tokenInfo.address, utils.parseEther(String(amount)).toHexString(), chainId, provider)
+          getData()
+        } catch (error) {
+          console.error(error)
         }
       },
       deriveMaxFrom: 'available'
@@ -213,13 +141,6 @@ export const MarginAccount = () => {
   )
 
   const tokenBalances = useTokenBalances(account ?? undefined, formattedTokens)
-
-  const validatedTokenAddresses = useMemo(() => formattedTokens.map(vt => vt.address), [formattedTokens])
-
-  const allowances = useMultipleContractSingleData(validatedTokenAddresses, ERC20_INTERFACE, 'allowance', [
-    account ?? undefined,
-    FUND_ADDRESS
-  ])
 
   const getTokensList = async (url: string) => {
     const tokensRes = await fetchList(url, false)
@@ -257,29 +178,30 @@ export const MarginAccount = () => {
     setHoldingTotal(BigNumber.from(_holdingTotal).toNumber())
     setDebtTotal(BigNumber.from(_debtTotal).toNumber())
   }
-  useEffect(() => {
+  const getData = () => {
     if (account) {
       getAccountData(account).catch(e => {
         console.error(e)
         setError('Failed to get account data')
       })
     }
-  }, [account])
+  }
+  useEffect(getData, [account])
 
   const data = useMemo(
     () =>
-      tokens.map((token, index) => {
+      tokens.map(token => {
         return {
           img: token.logoURI ?? '',
           coin: token.symbol,
+          address: token.address,
           balance: holdingAmounts[token.address] ?? 0,
           borrowed: borrowingAmounts[token.address] ?? 0,
           available: Number(tokenBalances[token.address]?.toSignificant(4)) ?? 0,
-          isApproved: !allowances[index]?.result?.[0].isZero(),
           ir: 0 // TODO
         }
       }),
-    [tokens, holdingAmounts, borrowingAmounts, tokenBalances, allowances]
+    [tokens, holdingAmounts, borrowingAmounts, tokenBalances]
   )
 
   const getRisk = (holding: number, debt: number): number => {

@@ -259,7 +259,7 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
                                 onClick={handleActionSubmit}
                                 disabled={actionLoading}
                               >
-                                {row.isApproved ? 'Confirm Transaction' : 'Approve'}
+                                Confirm Transaction
                                 {actionLoading && <CircularProgress size={20} color={'white' as any} />}
                               </StyledButton>
                             </div>
