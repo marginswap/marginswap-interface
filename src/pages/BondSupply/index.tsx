@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { makeStyles } from '@material-ui/core'
 import { useAllLists } from 'state/lists/hooks'
 import { useFetchListCallback } from '../../hooks/useFetchListCallback'
 import TokensTable from '../../components/TokensTable'
@@ -20,6 +19,10 @@ import {
 } from '@marginswap/sdk'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { BigNumber } from '@ethersproject/bignumber'
+import { StyledTableContainer } from './styled'
+import { StyledWrapperDiv } from './styled'
+import { StyledSectionDiv } from './styled'
+import { makeStyles } from '@material-ui/core'
 import { utils } from 'ethers'
 import { toast } from 'react-toastify'
 const { REACT_APP_CHAIN_ID } = process.env
@@ -70,8 +73,8 @@ const useStyles = makeStyles(() => ({
 const apyFromApr = (apr: number, compounds: number): number =>
   (Math.pow(1 + apr / (compounds * 100), compounds) - 1) * 100
 
-const BondSupply = () => {
-  const classes = useStyles()
+export const BondSupply = () => {
+  useStyles()
   const [error, setError] = useState<string | null>(null)
 
   const lists = useAllLists()
@@ -203,11 +206,11 @@ const BondSupply = () => {
   }, [tokens, bondAPRs, bondUSDCosts])
 
   return (
-    <div className={classes.wrapper}>
-      <div className={classes.section}>
+    <StyledWrapperDiv>
+      <StyledSectionDiv>
         {!account && <WarningBar>Wallet not connected</WarningBar>}
         {error && <ErrorBar>{error}</ErrorBar>}
-        <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px 0' }}>
+        <StyledTableContainer>
           <InfoCard
             title="Total Bond"
             amount={Object.keys(bondUSDCosts).reduce((acc, cur) => acc + bondUSDCosts[cur], 0)}
@@ -221,10 +224,10 @@ const BondSupply = () => {
             ghost
             Icon={IconMoneyStack}
           />
-        </div>
+        </StyledTableContainer>
         <TokensTable title="Bond Rates" data={data} columns={BOND_RATES_COLUMNS} idCol="coin" actions={actions} />
-      </div>
-    </div>
+      </StyledSectionDiv>
+    </StyledWrapperDiv>
   )
 }
 

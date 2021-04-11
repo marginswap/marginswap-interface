@@ -22,10 +22,11 @@ export const HeaderFrame = styled.div`
     padding: 0 1rem;
     width: calc(100%);
     position: relative;
+    margin-top: 16px;
   `};
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-        padding: 0.5rem 1rem;
+      padding: 0.5rem 1rem;
   `}
 `
 
@@ -41,7 +42,7 @@ export const HeaderControls = styled.div`
     justify-self: center;
     width: 100%;
     max-width: 960px;
-    padding: 1rem;
+    padding: 2rem;
     position: fixed;
     bottom: 0px;
     left: 0px;
@@ -72,12 +73,15 @@ export const HeaderElementWrap = styled.div`
 export const HeaderRow = styled(RowFixed)`
   ${({ theme }) => theme.mediaWidth.upToMedium`
    width: 100%;
+   position: relative;
   `};
 `
 
 export const HeaderLinks = styled(Row)`
   justify-content: center;
+
   ${({ theme }) => theme.mediaWidth.upToMedium`
+    display: none;
     padding: 1rem 0 1rem 1rem;
     justify-content: flex-end;
 `};
@@ -239,3 +243,64 @@ export const StyledMenuButton = styled.button`
     stroke: ${({ theme }) => theme.text1};
   }
 `
+
+export const StyledBurger = styled.div<{ open: boolean }>`
+  width: 2rem;
+  height: 2rem;
+  position: fixed;
+  top: 15px;
+  right: 20px;
+  z-index: 20;
+  display: none;
+  @media (max-width: 768px) {
+    display: flex;
+    justify-content: space-around;
+    flex-flow: column nowrap;
+  }
+  div {
+    width: 2rem;
+    height: 0.25rem;
+    background-color: ${({ open }) => (open ? '#ccc' : '#ffffff')};
+    border-radius: 10px;
+    transform-origin: 1px;
+    transition: all 0.3s linear;
+    &:nth-child(1) {
+      transform: ${({ open }) => (open ? 'rotate(45deg)' : 'rotate(0)')};
+    }
+    &:nth-child(2) {
+      transform: ${({ open }) => (open ? 'translateX(100%)' : 'translateX(0)')};
+      opacity: ${({ open }) => (open ? 0 : 1)};
+    }
+    &:nth-child(3) {
+      transform: ${({ open }) => (open ? 'rotate(-45deg)' : 'rotate(0)')};
+    }
+  }
+`
+
+export const MobileMenuList = styled.ul<{ open: boolean }>`
+  list-style: none;
+  display: flex;
+  flex-flow: row nowrap;
+  li {
+    padding: 18px 10px;
+  }
+  flex-flow: column nowrap;
+  background-color: rgb(64, 68, 79);
+  position: fixed;
+  top: 10px;
+  border-radius: 8px;
+  right: 36px;
+  width: 160px;
+  padding: 0.5rem;
+  transition: transform 0.3s ease-in-out;
+  li {
+    color: #ffffff;
+  }
+
+  > a {
+    color: white;
+    text-decoration: none;
+  }
+`
+
+export const StyledMenuItem = styled.li``

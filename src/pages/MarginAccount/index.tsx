@@ -1,4 +1,3 @@
-import { makeStyles } from '@material-ui/core'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useAllLists } from 'state/lists/hooks'
 import { useFetchListCallback } from '../../hooks/useFetchListCallback'
@@ -21,6 +20,11 @@ import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { useActiveWeb3React } from '../../hooks'
 import { getProviderOrSigner } from '../../utils'
 import { BigNumber } from '@ethersproject/bignumber'
+import { StyledTableContainer } from './styled'
+import { StyledMobileOnlyRow } from './styled'
+import { StyledWrapperDiv } from './styled'
+import { StyledSectionDiv } from './styled'
+
 import { utils } from 'ethers'
 import { toast } from 'react-toastify'
 
@@ -35,20 +39,6 @@ type AccountBalanceData = {
   borrowed: number
   ir: number
 }
-
-const useStyles = makeStyles(() => ({
-  wrapper: {
-    display: 'flex',
-    flexDirection: 'row',
-    paddingLeft: '20px'
-  },
-  section: {
-    display: 'flex',
-    flexDirection: 'column',
-    paddingRight: '20px',
-    gap: '20px'
-  }
-}))
 
 const ACCOUNT_COLUMNS = [
   {
@@ -69,7 +59,6 @@ const ACCOUNT_COLUMNS = [
 ] as const
 
 export const MarginAccount = () => {
-  const classes = useStyles()
   const [error, setError] = useState<string | null>(null)
 
   const lists = useAllLists()
@@ -209,16 +198,18 @@ export const MarginAccount = () => {
   }
 
   return (
-    <div className={classes.wrapper}>
-      <div className={classes.section}>
+    <StyledWrapperDiv>
+      <StyledSectionDiv>
         {!account && <WarningBar>Wallet not connected</WarningBar>}
         {error && <ErrorBar>{error}</ErrorBar>}
-        <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px 0', alignItems: 'center' }}>
+        <StyledTableContainer>
           <InfoCard title="Total Account Balance" amount={holdingTotal} withUnderlyingCard Icon={IconBanknotes} />
-          <InfoCard title="Debt" amount={debtTotal} small Icon={IconScales} />
-          <InfoCard title="Equity" amount={holdingTotal - debtTotal} color="secondary" small Icon={IconCoin} />
+          <StyledMobileOnlyRow>
+            <InfoCard title="Debt" amount={debtTotal} small Icon={IconScales} />
+            <InfoCard title="Equity" amount={holdingTotal - debtTotal} color="secondary" small Icon={IconCoin} />
+          </StyledMobileOnlyRow>
           <RiskMeter risk={getRisk(holdingTotal, debtTotal)} />
-        </div>
+        </StyledTableContainer>
         <TokensTable
           title="Account balance"
           data={data}
@@ -227,7 +218,7 @@ export const MarginAccount = () => {
           deriveEmptyFrom="balance"
           idCol="coin"
         />
-      </div>
-    </div>
+      </StyledSectionDiv>
+    </StyledWrapperDiv>
   )
 }
