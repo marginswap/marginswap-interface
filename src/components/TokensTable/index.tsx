@@ -224,29 +224,34 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
                                   onChange={handleActionValueChange}
                                   value={actionAmount}
                                 />
-                                {activeAction && actions[activeAction.actionIndex].deriveMaxFrom && (
-                                  <StyledButton
-                                    color="primary"
-                                    style={{
-                                      position: 'absolute',
-                                      right: 0,
-                                      top: '50%',
-                                      padding: '4px 10px',
-                                      margin: '-10px 0 0 0'
-                                    }}
-                                    onClick={() => {
-                                      setActionAmount(
-                                        String(
-                                          Math.round(
-                                            Number(row[actions[activeAction.actionIndex].deriveMaxFrom!]) * 1000000
-                                          ) / 1000000
+                                {activeAction &&
+                                  (actions[activeAction.actionIndex].deriveMaxFrom ||
+                                    actions[activeAction.actionIndex].max !== undefined) && (
+                                    <StyledButton
+                                      color="primary"
+                                      style={{
+                                        position: 'absolute',
+                                        right: 0,
+                                        top: '50%',
+                                        padding: '4px 10px',
+                                        margin: '-10px 0 0 0'
+                                      }}
+                                      onClick={() => {
+                                        setActionAmount(
+                                          String(
+                                            Math.round(
+                                              Number(
+                                                actions[activeAction.actionIndex].max ??
+                                                  row[actions[activeAction.actionIndex].deriveMaxFrom!]
+                                              ) * 1000000
+                                            ) / 1000000
+                                          )
                                         )
-                                      )
-                                    }}
-                                  >
-                                    MAX
-                                  </StyledButton>
-                                )}
+                                      }}
+                                    >
+                                      MAX
+                                    </StyledButton>
+                                  )}
                               </div>
                               <StyledButton
                                 color="primary"

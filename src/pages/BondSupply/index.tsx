@@ -15,7 +15,8 @@ import {
   getHourlyBondInterestRates,
   getHourlyBondMaturities,
   buyHourlyBondSubscription,
-  getBondsCostInDollars
+  getBondsCostInDollars,
+  withdrawHourlyBond
 } from '@marginswap/sdk'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { BigNumber } from '@ethersproject/bignumber'
@@ -75,7 +76,7 @@ const BondSupply = () => {
   const fetchList = useFetchListCallback()
   const [tokens, setTokens] = useState<TokenInfo[]>([])
   const [bondBalances, setBondBalances] = useState<Record<string, number>>({})
-  const [bondInterestRates, setBondInterestRates] = useState<Record<string, number>>({})
+  const [bondAPRs, setBondAPRs] = useState<Record<string, number>>({})
   const [bondMaturities, setBondMaturities] = useState<Record<string, number>>({})
   const [bondUSDCosts, setBondUSDCosts] = useState<Record<string, number>>({})
 
@@ -109,9 +110,9 @@ const BondSupply = () => {
     setBondBalances(
       Object.keys(balances).reduce((acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances[cur]).toNumber() }), {})
     )
-    setBondInterestRates(
+    setBondAPRs(
       Object.keys(interestRates).reduce(
-        (acc, cur) => ({ ...acc, [cur]: apyFromApr(BigNumber.from(interestRates[cur]).toNumber() / 100000, 365 * 24) }),
+        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(interestRates[cur]).toNumber() / 100000 }),
         {}
       )
     )
@@ -152,9 +153,14 @@ const BondSupply = () => {
     },
     {
       name: 'Withdraw',
-      onClick: (token: BondRateData, amount: number) => {
-        console.log('withdraw', token)
-        console.log('amount :>> ', amount)
+      onClick: async (token: BondRateData, amount: number) => {
+        if (!amount) return
+        try {
+          await withdrawHourlyBond(token.address, amount, Number(REACT_APP_CHAIN_ID), provider)
+          getData()
+        } catch (e) {
+          console.error(e)
+        }
       },
       deriveMaxFrom: 'totalSupplied'
     }
@@ -167,11 +173,20 @@ const BondSupply = () => {
         address: token.address,
         coin: token.symbol,
         totalSupplied: bondBalances[token.address] ?? 0,
-        apy: bondInterestRates[token.address] ?? 0,
+        apy: apyFromApr(bondAPRs[token.address] ?? 0, 365 * 24),
         maturity: bondMaturities[token.address] ?? 0
       })),
     [tokens, bondBalances]
   )
+
+  const averageYield = useMemo(() => {
+    const bondCosts = apyFromApr(
+      tokens.reduce((acc, cur) => acc + (bondUSDCosts[cur.address] ?? 0), 0),
+      265 * 24
+    )
+    if (bondCosts === 0) return 0
+    return tokens.reduce((acc, cur) => acc + bondAPRs[cur.address] * bondUSDCosts[cur.address], 0) / bondCosts
+  }, [tokens, bondAPRs, bondUSDCosts])
 
   return (
     <div className={classes.wrapper}>
@@ -184,8 +199,14 @@ const BondSupply = () => {
             amount={Object.keys(bondUSDCosts).reduce((acc, cur) => acc + bondUSDCosts[cur], 0)}
             Icon={IconMoneyStackLocked}
           />
-          <InfoCard title="Average Yield" amount={0.123456} ghost Icon={IconMoneyStackLocked} />
-          <InfoCard title="Earnings per day" amount={0.123456} color="secondary" ghost Icon={IconMoneyStack} />
+          <InfoCard title="Average Yield" amount={averageYield} ghost Icon={IconMoneyStackLocked} />
+          <InfoCard
+            title="Earnings per day"
+            amount={tokens.reduce((acc, cur) => acc + (bondUSDCosts[cur.address] ?? 0), 0) / 365}
+            color="secondary"
+            ghost
+            Icon={IconMoneyStack}
+          />
         </div>
         <TokensTable title="Bond Rates" data={data} columns={BOND_RATES_COLUMNS} idCol="coin" actions={actions} />
       </div>
