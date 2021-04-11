@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { makeStyles } from '@material-ui/core'
 import { useAllLists } from 'state/lists/hooks'
 import { useFetchListCallback } from '../../hooks/useFetchListCallback'
 import TokensTable from '../../components/TokensTable'
@@ -13,6 +12,10 @@ import { getProviderOrSigner } from '../../utils'
 import { getHourlyBondBalances, getHourlyBondInterestRates } from '@marginswap/sdk'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { BigNumber } from '@ethersproject/bignumber'
+import { StyledTableContainer } from './styled'
+import { StyledWrapperDiv } from './styled'
+import { StyledSectionDiv } from './styled'
+
 const { REACT_APP_CHAIN_ID } = process.env
 
 type BondRateData = {
@@ -46,24 +49,7 @@ const BOND_RATES_COLUMNS = [
   { name: 'Interest Rate', id: 'ir' }
 ] as const
 
-const useStyles = makeStyles(() => ({
-  wrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    width: '75%',
-    paddingRight: '20px',
-    gap: '20px'
-  },
-  section: {
-    display: 'flex',
-    flexDirection: 'column',
-    paddingRight: '20px',
-    gap: '20px'
-  }
-}))
-
 export const BondSupply = () => {
-  const classes = useStyles()
   const [error, setError] = useState<string | null>(null)
 
   const lists = useAllLists()
@@ -136,17 +122,17 @@ export const BondSupply = () => {
   )
 
   return (
-    <div className={classes.wrapper}>
-      <div className={classes.section}>
+    <StyledWrapperDiv >
+      <StyledSectionDiv >
         {!account && <WarningBar>Wallet not connected</WarningBar>}
         {error && <ErrorBar>{error}</ErrorBar>}
-        <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px 0' }}>
+        <StyledTableContainer >
           <InfoCard title="Bond Holding" amount={0.123456} Icon={IconMoneyStackLocked} />
           <InfoCard title="Current Earnings" amount={0.123456} ghost Icon={IconMoneyStackLocked} />
           <InfoCard title="Total Earned" amount={0.123456} color="secondary" ghost Icon={IconMoneyStack} />
-        </div>
+        </StyledTableContainer>
         <TokensTable title="Bond Rates" data={data} columns={BOND_RATES_COLUMNS} idCol="coin" />
-      </div>
-    </div>
+      </StyledSectionDiv>
+    </StyledWrapperDiv>
   )
 }

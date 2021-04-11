@@ -32,15 +32,50 @@ import {
   StyledNavLink,
   Title,
   UNIAmount,
+  MobileMenuList,
+  StyledBurger,
   UniIcon,
-  UNIWrapper
+  UNIWrapper,
+  StyledMenuItem
 } from './styled'
+import { Link } from 'react-router-dom'
+
+const headerLinks = [
+  { path: '/swap', name: 'Swap' },
+  { path: '/margin-account', name: 'Margin Account' },
+  { path: '/bond-supply', name: 'Bond Lending' },
+  { path: '/stake', name: 'Stake' },
+  { path: '/Analytics', name: 'Analytics' }
+]
 
 const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
   [ChainId.ROPSTEN]: 'Ropsten',
   [ChainId.GÖRLI]: 'Görli',
   [ChainId.KOVAN]: 'Kovan'
+}
+
+const MobileMenu = () => {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <StyledBurger open={open} onClick={() => setOpen(!open)} id="burger">
+        <div />
+        <div />
+        <div />
+      </StyledBurger>
+      {open && (
+        <MobileMenuList id="mob" open={open}>
+          {headerLinks.map(link => (
+            <Link to={link.path} key={link.path}>
+              <StyledMenuItem>{link.name}</StyledMenuItem>
+            </Link>
+          ))}
+        </MobileMenuList>
+      )}
+    </>
+  )
 }
 
 export default function Header() {
@@ -64,7 +99,7 @@ export default function Header() {
   const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
 
   return (
-    <HeaderFrame>
+    <HeaderFrame id="HeaderFrame">
       <ClaimModal />
       <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
         <UniBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
@@ -76,23 +111,14 @@ export default function Header() {
         <span>Marginswap</span>
       </Title>
       <HeaderRow>
-        <HeaderLinks>
-          <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
-            Swap
-          </StyledNavLink>
-          <StyledNavLink id={`stake-nav-link`} to={'/margin-account'}>
-            Margin Account
-          </StyledNavLink>
-          <StyledNavLink id={`stake-nav-link`} to={'/bond-supply'}>
-            Bond Lending
-          </StyledNavLink>
-          <StyledNavLink id={`stake-nav-link`} to={'/stake'}>
-            Stake
-          </StyledNavLink>
-          <StyledNavLink id={`stake-nav-link`} to={'/analytics'}>
-            Analytics
-          </StyledNavLink>
+        <HeaderLinks id="desk">
+          {headerLinks.map(link => (
+            <StyledNavLink key={link.path} id={`swap-nav-link`} to={link.path}>
+              {link.name}
+            </StyledNavLink>
+          ))}
         </HeaderLinks>
+        {<MobileMenu />}
       </HeaderRow>
       <HeaderControls>
         <HeaderElement>
