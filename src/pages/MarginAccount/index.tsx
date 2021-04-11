@@ -21,11 +21,10 @@ import { useActiveWeb3React } from '../../hooks'
 import { getProviderOrSigner } from '../../utils'
 import { BigNumber } from '@ethersproject/bignumber'
 import { StyledTableContainer } from './styled'
-import { StyledMobileOnlyRow} from './styled'
+import { StyledMobileOnlyRow } from './styled'
 import { StyledWrapperDiv } from './styled'
 import { StyledSectionDiv } from './styled'
 
-const { REACT_APP_CHAIN_ID } = process.env
 import { utils } from 'ethers'
 import { toast } from 'react-toastify'
 
@@ -199,26 +198,26 @@ export const MarginAccount = () => {
   }
 
   return (
-    <StyledWrapperDiv >
-      <StyledSectionDiv >
+    <StyledWrapperDiv>
+      <StyledSectionDiv>
         {!account && <WarningBar>Wallet not connected</WarningBar>}
         {error && <ErrorBar>{error}</ErrorBar>}
         <StyledTableContainer>
           <InfoCard title="Total Account Balance" amount={holdingTotal} withUnderlyingCard Icon={IconBanknotes} />
-          <StyledMobileOnlyRow >
+          <StyledMobileOnlyRow>
             <InfoCard title="Debt" amount={debtTotal} small Icon={IconScales} />
             <InfoCard title="Equity" amount={holdingTotal - debtTotal} color="secondary" small Icon={IconCoin} />
           </StyledMobileOnlyRow>
           <RiskMeter risk={getRisk(holdingTotal, debtTotal)} />
         </StyledTableContainer>
-      <TokensTable
-        title="Account balance"
-        data={data}
-        columns={ACCOUNT_COLUMNS}
-        actions={ACCOUNT_ACTIONS}
-        deriveEmptyFrom="balance"
-        idCol="coin"
-      />
+        <TokensTable
+          title="Account balance"
+          data={data}
+          columns={ACCOUNT_COLUMNS}
+          actions={ACCOUNT_ACTIONS}
+          deriveEmptyFrom="balance"
+          idCol="coin"
+        />
       </StyledSectionDiv>
     </StyledWrapperDiv>
   )

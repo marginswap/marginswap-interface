@@ -22,8 +22,8 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { StyledTableContainer } from './styled'
 import { StyledWrapperDiv } from './styled'
 import { StyledSectionDiv } from './styled'
-import { makeStyles } from '@material-ui/core';
-import { utils } from 'ethers';
+import { makeStyles } from '@material-ui/core'
+import { utils } from 'ethers'
 import { toast } from 'react-toastify'
 const { REACT_APP_CHAIN_ID } = process.env
 
@@ -74,7 +74,7 @@ const apyFromApr = (apr: number, compounds: number): number =>
   (Math.pow(1 + apr / (compounds * 100), compounds) - 1) * 100
 
 export const BondSupply = () => {
-  const classes = useStyles()
+  useStyles()
   const [error, setError] = useState<string | null>(null)
 
   const lists = useAllLists()
@@ -206,11 +206,11 @@ export const BondSupply = () => {
   }, [tokens, bondAPRs, bondUSDCosts])
 
   return (
-    <StyledWrapperDiv >
-      <StyledSectionDiv >
+    <StyledWrapperDiv>
+      <StyledSectionDiv>
         {!account && <WarningBar>Wallet not connected</WarningBar>}
         {error && <ErrorBar>{error}</ErrorBar>}
-        <StyledTableContainer >
+        <StyledTableContainer>
           <InfoCard
             title="Total Bond"
             amount={Object.keys(bondUSDCosts).reduce((acc, cur) => acc + bondUSDCosts[cur], 0)}
