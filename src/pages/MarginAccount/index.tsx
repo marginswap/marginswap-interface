@@ -81,20 +81,20 @@ export const MarginAccount = () => {
   }
 
   const ACCOUNT_ACTIONS = [
-    {
-      name: 'Borrow',
-      onClick: (token: AccountBalanceData, amount: number) => {
-        console.log('borrow', token)
-        console.log('amount :>> ', amount)
-      }
-    },
-    {
-      name: 'Repay',
-      onClick: (token: AccountBalanceData, amount: number) => {
-        console.log('repay', token)
-        console.log('amount :>> ', amount)
-      }
-    },
+    // {
+    //   name: 'Borrow',
+    //   onClick: (token: AccountBalanceData, amount: number) => {
+    //     console.log('borrow', token)
+    //     console.log('amount :>> ', amount)
+    //   }
+    // },
+    // {
+    //   name: 'Repay',
+    //   onClick: (token: AccountBalanceData, amount: number) => {
+    //     console.log('repay', token)
+    //     console.log('amount :>> ', amount)
+    //   }
+    // },
     {
       name: 'Withdraw',
       onClick: async (tokenInfo: AccountBalanceData, amount: number) => {

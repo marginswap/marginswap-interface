@@ -40,8 +40,8 @@ const headerLinks = [
   { path: '/swap', name: 'Swap' },
   { path: '/margin-account', name: 'Margin Account' },
   { path: '/bond-supply', name: 'Bond Lending' },
-  { path: '/stake', name: 'Stake' },
-  { path: '/Analytics', name: 'Analytics' }
+  { path: '/stake', name: 'Stake' }
+  // { path: '/Analytics', name: 'Analytics' }
 ]
 
 const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
@@ -133,7 +133,7 @@ export default function Header() {
               <CardNoise />
             </UNIWrapper>
           )}
-          {!availableClaim && aggregateBalance && (
+          {/* {!availableClaim && aggregateBalance && (
             <UNIWrapper onClick={() => setShowUniBalanceModal(true)}>
               <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
                 {account && (
@@ -158,7 +158,7 @@ export default function Header() {
               </UNIAmount>
               <CardNoise />
             </UNIWrapper>
-          )}
+          )} */}
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
             {account && userEthBalance ? (
               <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
