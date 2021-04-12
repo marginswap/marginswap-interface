@@ -1,0 +1,65 @@
+{
+  "name": "Marginswap List",
+  "timestamp": "2020-03-26T12:00:00+00:00",
+  "logoURI": "https://github.com/marginswap/token-list/raw/main/marginswap-logo.png",
+  "version": {
+    "major": 2,
+    "minor": 0,
+    "patch": 3
+  },
+  "keywords": [
+    "marginswap",
+    "defi",
+    "crossmargin"
+  ],
+  "tokens": [
+        {
+          "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+          "chainId": 31337,
+          "name": "Dai Stablecoin",
+          "symbol": "DAI",
+          "decimals": 18,
+          "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/multi-collateral-dai.png"
+        },
+        {
+          "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+          "chainId": 31337,
+          "name": "Tether USD",
+          "symbol": "USDT",
+          "decimals": 6,
+          "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/tether.png"
+        },
+        {
+          "address": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
+          "chainId": 5,
+          "name": "Wrapped Ether",
+          "symbol": "WETH",
+          "decimals": 18,
+          "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/ethereum.png"
+        },
+          {
+          "address": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+          "chainId": 42,
+          "name": "Uniswap",
+          "symbol": "UNI",
+          "decimals": 18,
+          "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/uniswap-uni-logo.png"
+        },
+        {
+          "address": "0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa",
+          "chainId": 42,
+          "name": "Dai Stablecoin",
+          "symbol": "DAI",
+          "decimals": 18,
+          "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/multi-collateral-dai.png"
+        },
+        {
+          "address": "0xd0a1e359811322d97991e03f863a0c30c2cf029c",
+          "chainId": 42,
+          "name": "Wrapped Ether",
+          "symbol": "WETH",
+          "decimals": 18,
+          "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/ethereum.png"
+        }
+  ]
+}

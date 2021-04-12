@@ -35,4 +35,4 @@ cypress/videos
 cypress/screenshots
 cypress/fixtures/example.json
 
-/public/local_list.json
+#/public/local_list.json
