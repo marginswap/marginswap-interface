@@ -1,10 +1,10 @@
-import { ChainId, TokenAmount } from '@marginswap/sdk'
+import { ChainId } from '@marginswap/sdk'
 import React, { useState } from 'react'
 import Logo from '../../assets/images/Union.svg'
 import { useActiveWeb3React } from '../../hooks'
-import { useETHBalances, useAggregateUniBalance } from '../../state/wallet/hooks'
+import { useETHBalances } from '../../state/wallet/hooks'
 import { CardNoise } from '../earn/styled'
-import { CountUp } from 'use-count-up'
+//import { CountUp } from 'use-count-up'
 import { TYPE } from '../../theme'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
@@ -14,7 +14,7 @@ import { useUserHasSubmittedClaim } from '../../state/transactions/hooks'
 import { Dots } from '../swap/styleds'
 import Modal from '../Modal'
 import UniBalanceContent from './UniBalanceContent'
-import usePrevious from '../../hooks/usePrevious'
+//import usePrevious from '../../hooks/usePrevious'
 import {
   AccountElement,
   BalanceText,
@@ -86,13 +86,13 @@ export default function Header() {
 
   const { claimTxn } = useUserHasSubmittedClaim(account ?? undefined)
 
-  const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
+  //const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
 
   const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
   const showClaimPopup = useShowClaimPopup()
 
-  const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
-  const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
+  //const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
+  //const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
 
   return (
     <HeaderFrame id="HeaderFrame">
