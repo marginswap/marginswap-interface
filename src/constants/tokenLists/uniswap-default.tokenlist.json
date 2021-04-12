@@ -11,6 +11,30 @@
   "keywords": ["uniswap", "default"],
   "tokens": [
     {
+      "address": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+      "chainId": 42,
+      "name": "Uniswap",
+      "symbol": "UNI",
+      "decimals": 18,
+      "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/uniswap-uni-logo.png"
+    },
+    {
+      "address": "0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa",
+      "chainId": 42,
+      "name": "Dai Stablecoin",
+      "symbol": "DAI",
+      "decimals": 18,
+      "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/multi-collateral-dai.png"
+    },
+    {
+      "address": "0xd0a1e359811322d97991e03f863a0c30c2cf029c",
+      "chainId": 42,
+      "name": "Wrapped Ether",
+      "symbol": "WETH",
+      "decimals": 18,
+      "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/ethereum.png"
+    },
+    {
       "chainId": 1,
       "address": "0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9",
       "name": "Aave",
