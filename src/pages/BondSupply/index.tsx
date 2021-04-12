@@ -15,7 +15,8 @@ import {
   getHourlyBondMaturities,
   buyHourlyBondSubscription,
   getBondsCostInDollars,
-  withdrawHourlyBond
+  withdrawHourlyBond,
+  approveToFund
 } from '@marginswap/sdk'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { BigNumber } from '@ethersproject/bignumber'
@@ -150,6 +151,15 @@ export const BondSupply = () => {
       onClick: async (token: BondRateData, amount: number) => {
         if (!amount) return
         try {
+          const approveRes: any = await approveToFund(
+            token.address,
+            utils.parseUnits(String(amount), token.decimals).toHexString(),
+            Number(REACT_APP_CHAIN_ID),
+            provider
+          )
+          addTransaction(approveRes, {
+            summary: `Approve`
+          })
           const response: any = await buyHourlyBondSubscription(
             token.address,
             utils.parseUnits(String(amount), token.decimals).toHexString(),

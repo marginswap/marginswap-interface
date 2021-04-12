@@ -13,7 +13,8 @@ import {
   getAccountBorrowTotal,
   getAccountHoldingTotal,
   crossDeposit,
-  crossWithdraw
+  crossWithdraw,
+  approveToFund
 } from '@marginswap/sdk'
 import { TokenInfo } from '@uniswap/token-lists'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
@@ -119,13 +120,22 @@ export const MarginAccount = () => {
       name: 'Deposit',
       onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
         try {
-          const response: any = await crossDeposit(
+          const approveRes: any = await approveToFund(
             tokenInfo.address,
             utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
             chainId,
             provider
           )
-          addTransaction(response, {
+          addTransaction(approveRes, {
+            summary: `Approve`
+          })
+          const depositRes: any = await crossDeposit(
+            tokenInfo.address,
+            utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
+            chainId,
+            provider
+          )
+          addTransaction(depositRes, {
             summary: `Cross Deposit`
           })
         } catch (error) {
