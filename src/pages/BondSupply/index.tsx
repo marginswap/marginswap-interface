@@ -25,6 +25,7 @@ import { StyledSectionDiv } from './styled'
 import { makeStyles } from '@material-ui/core'
 import { utils } from 'ethers'
 import { toast } from 'react-toastify'
+import { useTransactionAdder } from '../../state/transactions/hooks'
 const { REACT_APP_CHAIN_ID } = process.env
 
 type BondRateData = {
@@ -98,6 +99,8 @@ export const BondSupply = () => {
 
   const { account } = useWeb3React()
   const { library } = useActiveWeb3React()
+
+  const addTransaction = useTransactionAdder()
   let provider: any
   if (library && account) {
     provider = getProviderOrSigner(library, account)
@@ -147,13 +150,15 @@ export const BondSupply = () => {
       onClick: async (token: BondRateData, amount: number) => {
         if (!amount) return
         try {
-          await buyHourlyBondSubscription(
+          const response: any = await buyHourlyBondSubscription(
             token.address,
             utils.parseUnits(String(amount), token.decimals).toHexString(),
             Number(REACT_APP_CHAIN_ID),
             provider
           )
-          toast.success('Deposit success', { position: 'bottom-right' })
+          addTransaction(response, {
+            summary: `Buy HourlyBond Subscription`
+          })
         } catch (e) {
           toast.error('Deposit error', { position: 'bottom-right' })
           console.error(e)
@@ -166,13 +171,15 @@ export const BondSupply = () => {
       onClick: async (token: BondRateData, amount: number) => {
         if (!amount) return
         try {
-          await withdrawHourlyBond(
+          const response: any = await withdrawHourlyBond(
             token.address,
             utils.parseUnits(String(amount), token.decimals).toHexString(),
             Number(REACT_APP_CHAIN_ID),
             provider
           )
-          toast.success('Withdrawal success', { position: 'bottom-right' })
+          addTransaction(response, {
+            summary: `Withdraw HourlyBond`
+          })
         } catch (e) {
           toast.error('Withdrawal error', { position: 'bottom-right' })
           console.error(e)
