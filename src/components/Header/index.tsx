@@ -1,10 +1,10 @@
-import { ChainId, TokenAmount } from '@marginswap/sdk'
+import { ChainId } from '@marginswap/sdk'
 import React, { useState } from 'react'
 import Logo from '../../assets/images/Union.svg'
 import { useActiveWeb3React } from '../../hooks'
-import { useETHBalances, useAggregateUniBalance } from '../../state/wallet/hooks'
+import { useETHBalances } from '../../state/wallet/hooks'
 import { CardNoise } from '../earn/styled'
-import { CountUp } from 'use-count-up'
+//import { CountUp } from 'use-count-up'
 import { TYPE } from '../../theme'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
@@ -14,7 +14,7 @@ import { useUserHasSubmittedClaim } from '../../state/transactions/hooks'
 import { Dots } from '../swap/styleds'
 import Modal from '../Modal'
 import UniBalanceContent from './UniBalanceContent'
-import usePrevious from '../../hooks/usePrevious'
+//import usePrevious from '../../hooks/usePrevious'
 import {
   AccountElement,
   BalanceText,
@@ -40,8 +40,8 @@ const headerLinks = [
   { path: '/swap', name: 'Swap' },
   { path: '/margin-account', name: 'Margin Account' },
   { path: '/bond-supply', name: 'Bond Lending' },
-  { path: '/stake', name: 'Stake' },
-  { path: '/Analytics', name: 'Analytics' }
+  { path: '/stake', name: 'Stake' }
+  // { path: '/Analytics', name: 'Analytics' }
 ]
 
 const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
@@ -86,13 +86,13 @@ export default function Header() {
 
   const { claimTxn } = useUserHasSubmittedClaim(account ?? undefined)
 
-  const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
+  //const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
 
   const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
   const showClaimPopup = useShowClaimPopup()
 
-  const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
-  const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
+  //const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
+  //const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
 
   return (
     <HeaderFrame id="HeaderFrame">
@@ -133,7 +133,7 @@ export default function Header() {
               <CardNoise />
             </UNIWrapper>
           )}
-          {!availableClaim && aggregateBalance && (
+          {/* {!availableClaim && aggregateBalance && (
             <UNIWrapper onClick={() => setShowUniBalanceModal(true)}>
               <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
                 {account && (
@@ -158,7 +158,7 @@ export default function Header() {
               </UNIAmount>
               <CardNoise />
             </UNIWrapper>
-          )}
+          )} */}
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
             {account && userEthBalance ? (
               <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
