@@ -53,7 +53,7 @@ const BOND_RATES_COLUMNS = [
   },
   { name: 'Total Supplied', id: 'totalSupplied' },
   { name: 'APY', id: 'apy' },
-  { name: 'Maturity', id: 'maturity' }
+  { name: 'Maturity (minutes remaining)', id: 'maturity' }
 ] as const
 
 const useStyles = makeStyles(() => ({
@@ -125,7 +125,10 @@ export const BondSupply = () => {
       )
     )
     setBondMaturities(
-      Object.keys(maturities).reduce((acc, cur) => ({ ...acc, [cur]: BigNumber.from(maturities[cur]).toNumber() }), {})
+      Object.keys(maturities).reduce(
+        (acc, cur) => ({ ...acc, [cur]: Math.ceil(BigNumber.from(maturities[cur]).toNumber() / 60) }),
+        {}
+      )
     )
     setBondUSDCosts(
       Object.keys(bondCosts).reduce((acc, cur) => ({ ...acc, [cur]: BigNumber.from(bondCosts[cur]).toNumber() }), {})
@@ -210,7 +213,7 @@ export const BondSupply = () => {
         apy: apyFromApr(bondAPRs[token.address] ?? 0, 365 * 24),
         maturity: bondMaturities[token.address] ?? 0
       })),
-    [tokens, bondBalances]
+    [tokens, bondBalances, bondMaturities]
   )
 
   const averageYield = useMemo(() => {
