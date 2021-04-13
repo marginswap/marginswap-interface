@@ -30,7 +30,7 @@ import { toast } from 'react-toastify'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { USDT } from '../../constants'
 
-const { REACT_APP_CHAIN_ID } = process.env
+const chainId = Number(process.env.REACT_APP_CHAIN_ID)
 
 type BondRateData = {
   img: string
@@ -76,7 +76,7 @@ export const BondSupply = () => {
 
   const getTokensList = async (url: string) => {
     const tokensRes = await fetchList(url, false)
-    setTokens(tokensRes.tokens.filter(t => t.chainId === Number(REACT_APP_CHAIN_ID)))
+    setTokens(tokensRes.tokens.filter(t => t.chainId === chainId))
   }
   useEffect(() => {
     getTokensList(Object.keys(lists)[0]).catch(e => {
@@ -97,11 +97,11 @@ export const BondSupply = () => {
   const getBondsData = async (address: string, tokens: string[]) => {
     // TODO get chain id from somewhere other than the env variable. Perhaps the wallet/provider?
     const [balances, interestRates, maturities, bondCosts, _allowances] = await Promise.all([
-      getHourlyBondBalances(address, tokens, Number(REACT_APP_CHAIN_ID), provider),
-      getHourlyBondInterestRates(tokens, Number(REACT_APP_CHAIN_ID), provider),
-      getHourlyBondMaturities(address, tokens, Number(REACT_APP_CHAIN_ID), provider),
-      getBondsCostInDollars(address, tokens, Number(REACT_APP_CHAIN_ID), provider),
-      getTokenAllowances(address, tokens, Number(REACT_APP_CHAIN_ID), provider)
+      getHourlyBondBalances(address, tokens, chainId, provider),
+      getHourlyBondInterestRates(tokens, chainId, provider),
+      getHourlyBondMaturities(address, tokens, chainId, provider),
+      getBondsCostInDollars(address, tokens, chainId, provider),
+      getTokenAllowances(address, tokens, chainId, provider)
     ])
     setBondBalances(
       Object.keys(balances).reduce((acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances[cur]).toString() }), {})
@@ -152,7 +152,7 @@ export const BondSupply = () => {
             const approveRes: any = await approveToFund(
               token.address,
               utils.parseUnits(String(Number.MAX_SAFE_INTEGER), token.decimals).toHexString(),
-              Number(REACT_APP_CHAIN_ID),
+              chainId,
               provider
             )
             addTransaction(approveRes, {
@@ -168,7 +168,7 @@ export const BondSupply = () => {
             const response: any = await buyHourlyBondSubscription(
               token.address,
               utils.parseUnits(String(amount), token.decimals).toHexString(),
-              Number(REACT_APP_CHAIN_ID),
+              chainId,
               provider
             )
             addTransaction(response, {
@@ -190,7 +190,7 @@ export const BondSupply = () => {
           const response: any = await withdrawHourlyBond(
             token.address,
             utils.parseUnits(String(amount), token.decimals).toHexString(),
-            Number(REACT_APP_CHAIN_ID),
+            chainId,
             provider
           )
           addTransaction(response, {
