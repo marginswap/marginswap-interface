@@ -24,7 +24,6 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { StyledTableContainer } from './styled'
 import { StyledWrapperDiv } from './styled'
 import { StyledSectionDiv } from './styled'
-import { makeStyles } from '@material-ui/core'
 import { utils } from 'ethers'
 import { toast } from 'react-toastify'
 import { useTransactionAdder } from '../../state/transactions/hooks'
@@ -59,27 +58,10 @@ const BOND_RATES_COLUMNS = [
   { name: 'Maturity (minutes remaining)', id: 'maturity' }
 ] as const
 
-const useStyles = makeStyles(() => ({
-  wrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    width: '75%',
-    paddingRight: '20px',
-    gap: '20px'
-  },
-  section: {
-    display: 'flex',
-    flexDirection: 'column',
-    paddingRight: '20px',
-    gap: '20px'
-  }
-}))
-
 const apyFromApr = (apr: number, compounds: number): number =>
   (Math.pow(1 + apr / (compounds * 100), compounds) - 1) * 100
 
 export const BondSupply = () => {
-  useStyles()
   const [error, setError] = useState<string | null>(null)
 
   const lists = useAllLists()

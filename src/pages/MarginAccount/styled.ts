@@ -2,6 +2,7 @@ import styled from 'styled-components'
 
 export const StyledWrapperDiv = styled.div`
   display: flex;
+  width: 75%;
   flex-direction: row;
   padding-left: 20px;
   @media (max-width: 768px) {
@@ -12,6 +13,7 @@ export const StyledWrapperDiv = styled.div`
 
 export const StyledSectionDiv = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   padding-right: 20px;
   @media (max-width: 768px) {
@@ -35,6 +37,8 @@ export const StyledTableContainer = styled.div`
 export const StyledMobileOnlyRow = styled.div`
   display: flex;
   flex-direction: row;
+  flex: 1;
+  justify-content: space-around;
   @media (max-width: 768px) {
     gap: 15px;
   }
