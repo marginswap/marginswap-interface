@@ -57,7 +57,7 @@ export function useMarginBalance({ address, validatedTokens }: any) {
 
   const updateMarginBalances = useCallback(async () => {
     if (address && validatedTokens.length > 0) {
-      let memo: { [tokenAddress: string]: TokenAmount | undefined } = {}
+      const memo: { [tokenAddress: string]: TokenAmount | undefined } = {}
       for (let index = 0; index < validatedTokens.length; index++) {
         const token = validatedTokens[index]
         const value = await borrowable(address, token.address, Number(process.env.REACT_APP_CHAIN_ID), provider as any)

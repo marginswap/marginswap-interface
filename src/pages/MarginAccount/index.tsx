@@ -243,10 +243,10 @@ export const MarginAccount = () => {
             Icon={IconBanknotes}
           />
           <StyledMobileOnlyRow>
-            <InfoCard title="Debt" amount={debtTotal.toSignificant()} small Icon={IconScales} />
+            <InfoCard title="Debt" amount={Number(debtTotal.toSignificant()) * 10 ** 18} small Icon={IconScales} />
             <InfoCard
               title="Equity"
-              amount={holdingTotal.subtract(debtTotal).toSignificant()}
+              amount={Number(holdingTotal.subtract(debtTotal).toSignificant()) * 10 ** 18}
               color="secondary"
               small
               Icon={IconCoin}

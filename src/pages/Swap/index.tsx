@@ -355,7 +355,7 @@ export default function Swap() {
                 justify={isExpertMode || leverageType === LeverageType.CROSS_MARGIN ? 'space-between' : 'center'}
                 style={{ padding: '0 1rem' }}
               >
-                {leverageType === LeverageType.CROSS_MARGIN && <span>Leverage: 50%</span>}
+                {/*leverageType === LeverageType.CROSS_MARGIN && <span>Leverage: 50%</span>*/}
                 <ArrowWrapper clickable>
                   <ArrowDown
                     size="16"
