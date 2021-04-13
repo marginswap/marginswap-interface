@@ -65,6 +65,7 @@ export const MarginAccount = () => {
 
   const lists = useAllLists()
   const fetchList = useFetchListCallback()
+
   const [tokens, setTokens] = useState<TokenInfo[]>([])
   const [holdingAmounts, setHoldingAmounts] = useState<Record<string, number>>({})
   const [borrowingAmounts, setBorrowingAmounts] = useState<Record<string, number>>({})

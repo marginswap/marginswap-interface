@@ -1,3 +1,4 @@
+import { TokenAmount } from '@marginswap/sdk';
 import React, { FunctionComponent } from 'react'
 import { StyledCard, StyledInfoCardAmount, StyledInfoCardIconContainer, StyledInfoCardTitle } from './styled'
 
@@ -8,7 +9,7 @@ const InfoCard: FunctionComponent<{
   withUnderlyingCard?: boolean
   Icon: FunctionComponent
   title: string
-  amount: number
+  amount: number | string
 }> = ({ color = 'primary', ghost = false, small = false, Icon, withUnderlyingCard = false, title, amount }) => {
   return (
     <StyledCard color={color} ghost={ghost} small={small} withUnderlyingCard={withUnderlyingCard}>
