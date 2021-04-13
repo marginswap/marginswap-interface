@@ -17,7 +17,8 @@ import {
   getBondsCostInDollars,
   withdrawHourlyBond,
   approveToFund,
-  TokenAmount
+  TokenAmount,
+  getTokenAllowances
 } from '@marginswap/sdk'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { BigNumber } from '@ethersproject/bignumber'
@@ -71,6 +72,7 @@ export const BondSupply = () => {
   const [bondAPRs, setBondAPRs] = useState<Record<string, number>>({})
   const [bondMaturities, setBondMaturities] = useState<Record<string, number>>({})
   const [bondUSDCosts, setBondUSDCosts] = useState<Record<string, TokenAmount>>({})
+  const [allowances, setAllowances] = useState<Record<string, number>>({})
 
   const getTokensList = async (url: string) => {
     const tokensRes = await fetchList(url, false)
@@ -94,11 +96,12 @@ export const BondSupply = () => {
 
   const getBondsData = async (address: string, tokens: string[]) => {
     // TODO get chain id from somewhere other than the env variable. Perhaps the wallet/provider?
-    const [balances, interestRates, maturities, bondCosts] = await Promise.all([
+    const [balances, interestRates, maturities, bondCosts, _allowances] = await Promise.all([
       getHourlyBondBalances(address, tokens, Number(REACT_APP_CHAIN_ID), provider),
       getHourlyBondInterestRates(tokens, Number(REACT_APP_CHAIN_ID), provider),
       getHourlyBondMaturities(address, tokens, Number(REACT_APP_CHAIN_ID), provider),
-      getBondsCostInDollars(address, tokens, Number(REACT_APP_CHAIN_ID), provider)
+      getBondsCostInDollars(address, tokens, Number(REACT_APP_CHAIN_ID), provider),
+      getTokenAllowances(address, tokens, Number(REACT_APP_CHAIN_ID), provider)
     ])
     setBondBalances(
       Object.keys(balances).reduce((acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances[cur]).toString() }), {})
@@ -121,6 +124,9 @@ export const BondSupply = () => {
         {}
       )
     )
+    setAllowances(
+      _allowances.reduce((acc, cur, index) => ({ ...acc, [tokens[index]]: Number(BigNumber.from(cur).toString()) }), {})
+    )
   }
 
   const getData = () => {
@@ -141,28 +147,37 @@ export const BondSupply = () => {
       name: 'Deposit',
       onClick: async (token: BondRateData, amount: number) => {
         if (!amount) return
-        try {
-          const approveRes: any = await approveToFund(
-            token.address,
-            utils.parseUnits(String(amount), token.decimals).toHexString(),
-            Number(REACT_APP_CHAIN_ID),
-            provider
-          )
-          addTransaction(approveRes, {
-            summary: `Approve`
-          })
-          const response: any = await buyHourlyBondSubscription(
-            token.address,
-            utils.parseUnits(String(amount), token.decimals).toHexString(),
-            Number(REACT_APP_CHAIN_ID),
-            provider
-          )
-          addTransaction(response, {
-            summary: `Buy HourlyBond Subscription`
-          })
-        } catch (e) {
-          toast.error('Deposit error', { position: 'bottom-right' })
-          console.error(e)
+        if (allowances[token.address] < amount) {
+          try {
+            const approveRes: any = await approveToFund(
+              token.address,
+              utils.parseUnits(String(Number.MAX_SAFE_INTEGER), token.decimals).toHexString(),
+              Number(REACT_APP_CHAIN_ID),
+              provider
+            )
+            addTransaction(approveRes, {
+              summary: `Approve`
+            })
+            getData()
+          } catch (e) {
+            toast.error('Approve error', { position: 'bottom-right' })
+            console.error(e)
+          }
+        } else {
+          try {
+            const response: any = await buyHourlyBondSubscription(
+              token.address,
+              utils.parseUnits(String(amount), token.decimals).toHexString(),
+              Number(REACT_APP_CHAIN_ID),
+              provider
+            )
+            addTransaction(response, {
+              summary: `Buy HourlyBond Subscription`
+            })
+          } catch (e) {
+            toast.error('Deposit error', { position: 'bottom-right' })
+            console.error(e)
+          }
         }
       }
       // TODO: max
@@ -199,9 +214,12 @@ export const BondSupply = () => {
         coin: token.symbol,
         totalSupplied: Number(bondBalances[token.address] ?? 0) / Math.pow(10, token.decimals),
         apy: apyFromApr(bondAPRs[token.address] ?? 0, 365 * 24),
-        maturity: bondMaturities[token.address] ?? 0
+        maturity: bondMaturities[token.address] ?? 0,
+        getActionNameFromAmount: {
+          Deposit: (amount: number) => (allowances[token.address] >= amount ? 'Confirm Transaction' : 'Approve')
+        }
       })),
-    [tokens, bondBalances, bondMaturities]
+    [tokens, bondBalances, bondMaturities, allowances]
   )
   const ZERO_DAI = new TokenAmount(USDT, '0')
 
