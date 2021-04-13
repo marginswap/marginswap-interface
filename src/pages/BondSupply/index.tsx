@@ -16,7 +16,8 @@ import {
   buyHourlyBondSubscription,
   getBondsCostInDollars,
   withdrawHourlyBond,
-  approveToFund
+  approveToFund,
+  TokenAmount
 } from '@marginswap/sdk'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { BigNumber } from '@ethersproject/bignumber'
@@ -27,6 +28,8 @@ import { makeStyles } from '@material-ui/core'
 import { utils } from 'ethers'
 import { toast } from 'react-toastify'
 import { useTransactionAdder } from '../../state/transactions/hooks'
+import { DAI } from '../../constants'
+
 const { REACT_APP_CHAIN_ID } = process.env
 
 type BondRateData = {
@@ -53,7 +56,7 @@ const BOND_RATES_COLUMNS = [
   },
   { name: 'Total Supplied', id: 'totalSupplied' },
   { name: 'APY', id: 'apy' },
-  { name: 'Maturity', id: 'maturity' }
+  { name: 'Maturity (minutes remaining)', id: 'maturity' }
 ] as const
 
 const useStyles = makeStyles(() => ({
@@ -85,7 +88,7 @@ export const BondSupply = () => {
   const [bondBalances, setBondBalances] = useState<Record<string, string>>({})
   const [bondAPRs, setBondAPRs] = useState<Record<string, number>>({})
   const [bondMaturities, setBondMaturities] = useState<Record<string, number>>({})
-  const [bondUSDCosts, setBondUSDCosts] = useState<Record<string, number>>({})
+  const [bondUSDCosts, setBondUSDCosts] = useState<Record<string, TokenAmount>>({})
 
   const getTokensList = async (url: string) => {
     const tokensRes = await fetchList(url, false)
@@ -125,10 +128,16 @@ export const BondSupply = () => {
       )
     )
     setBondMaturities(
-      Object.keys(maturities).reduce((acc, cur) => ({ ...acc, [cur]: BigNumber.from(maturities[cur]).toNumber() }), {})
+      Object.keys(maturities).reduce(
+        (acc, cur) => ({ ...acc, [cur]: Math.ceil(BigNumber.from(maturities[cur]).toNumber() / 60) }),
+        {}
+      )
     )
     setBondUSDCosts(
-      Object.keys(bondCosts).reduce((acc, cur) => ({ ...acc, [cur]: BigNumber.from(bondCosts[cur]).toNumber() }), {})
+      Object.keys(bondCosts).reduce(
+        (acc, cur) => ({ ...acc, [cur]: new TokenAmount(DAI, bondCosts[cur].toString()) }),
+        {}
+      )
     )
   }
 
@@ -210,16 +219,20 @@ export const BondSupply = () => {
         apy: apyFromApr(bondAPRs[token.address] ?? 0, 365 * 24),
         maturity: bondMaturities[token.address] ?? 0
       })),
-    [tokens, bondBalances]
+    [tokens, bondBalances, bondMaturities]
   )
+  const ZERO_DAI = new TokenAmount(DAI, '0')
 
   const averageYield = useMemo(() => {
-    const bondCosts = apyFromApr(
-      tokens.reduce((acc, cur) => acc + (bondUSDCosts[cur.address] ?? 0), 0),
-      265 * 24
+    const bondCosts = tokens.reduce(
+      (acc, cur) => acc + Number((bondUSDCosts[cur.address] ?? ZERO_DAI).toSignificant()),
+      0
     )
     if (bondCosts === 0) return 0
-    return tokens.reduce((acc, cur) => acc + bondAPRs[cur.address] * bondUSDCosts[cur.address], 0) / bondCosts
+    return tokens.reduce((acc, cur) => {
+      const apy = apyFromApr(bondAPRs[cur.address], 365 * 24)
+      return acc + (apy * Number(bondUSDCosts[cur.address].toSignificant(4))) / bondCosts
+    }, 0)
   }, [tokens, bondAPRs, bondUSDCosts])
 
   return (
@@ -230,13 +243,18 @@ export const BondSupply = () => {
         <StyledTableContainer>
           <InfoCard
             title="Total Bond"
-            amount={Object.keys(bondUSDCosts).reduce((acc, cur) => acc + bondUSDCosts[cur], 0)}
+            amount={Object.keys(bondUSDCosts)
+              .reduce((acc, cur) => acc.add(bondUSDCosts[cur]), ZERO_DAI)
+              .toSignificant()}
             Icon={IconMoneyStackLocked}
           />
           <InfoCard title="Average Yield" amount={averageYield} ghost Icon={IconMoneyStackLocked} />
           <InfoCard
             title="Earnings per day"
-            amount={tokens.reduce((acc, cur) => acc + (bondUSDCosts[cur.address] ?? 0), 0) / 365}
+            amount={tokens
+              .reduce((acc, cur) => acc.add(bondUSDCosts[cur.address] ?? ZERO_DAI), ZERO_DAI)
+              .divide('365')
+              .toSignificant(4)}
             color="secondary"
             ghost
             Icon={IconMoneyStack}
