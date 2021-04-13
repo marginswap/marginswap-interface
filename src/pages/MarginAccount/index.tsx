@@ -164,10 +164,6 @@ export const MarginAccount = () => {
   }, [lists])
 
   const getAccountData = async (_account: string) => {
-    if (!library) {
-      throw `Library uninitialized: ${library}, ${account}`
-    }
-    provider = getProviderOrSigner(library!, _account)
     const [balances, _holdingTotal, _debtTotal, interestRates] = await Promise.all([
       getAccountBalances(_account, chainId, provider),
       new TokenAmount(USDT, (await getAccountHoldingTotal(_account, chainId, provider)).toString()),
@@ -200,29 +196,27 @@ export const MarginAccount = () => {
     setDebtTotal(_debtTotal)
   }
   const getData = () => {
-    if (account) {
+    if (account && library && tokens.length > 0) {
       getAccountData(account).catch(e => {
         console.error(e)
         setError('Failed to get account data')
       })
     }
   }
-  useEffect(getData, [account])
+  useEffect(getData, [account, library, tokens])
 
   const data = useMemo(
     () =>
-      tokens.map(token => {
-        return {
-          img: token.logoURI ?? '',
-          coin: token.symbol,
-          address: token.address,
-          decimals: token.decimals,
-          balance: Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
-          borrowed: Number(borrowingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
-          ir: borrowAPRs[token.address]
-        }
-      }),
-    [tokens, holdingAmounts, borrowingAmounts]
+      tokens.map(token => ({
+        img: token.logoURI ?? '',
+        coin: token.symbol,
+        address: token.address,
+        decimals: token.decimals,
+        balance: Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
+        borrowed: Number(borrowingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
+        ir: borrowAPRs[token.address]
+      })),
+    [tokens, holdingAmounts, borrowingAmounts, borrowAPRs]
   )
 
   const getRisk = (holding: number, debt: number): number => {

@@ -142,7 +142,7 @@ export const BondSupply = () => {
   }
 
   const getData = () => {
-    if (account && tokens.length > 0) {
+    if (account && library && tokens.length > 0) {
       getBondsData(
         account,
         tokens.map(t => t.address)
@@ -152,7 +152,7 @@ export const BondSupply = () => {
       })
     }
   }
-  useEffect(getData, [account, tokens])
+  useEffect(getData, [account, tokens, library])
 
   const actions = [
     {
