@@ -14,7 +14,9 @@ import {
   getAccountHoldingTotal,
   crossDeposit,
   crossWithdraw,
-  approveToFund
+  approveToFund,
+  TokenAmount,
+  getHourlyBondInterestRates
 } from '@marginswap/sdk'
 import { TokenInfo } from '@uniswap/token-lists'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
@@ -29,6 +31,7 @@ import { StyledSectionDiv } from './styled'
 import { utils } from 'ethers'
 import { toast } from 'react-toastify'
 import { useTransactionAdder } from '../../state/transactions/hooks'
+import { DAI } from '../../constants'
 
 const chainId = Number(process.env.REACT_APP_CHAIN_ID)
 
@@ -69,8 +72,9 @@ export const MarginAccount = () => {
   const [tokens, setTokens] = useState<TokenInfo[]>([])
   const [holdingAmounts, setHoldingAmounts] = useState<Record<string, number>>({})
   const [borrowingAmounts, setBorrowingAmounts] = useState<Record<string, number>>({})
-  const [holdingTotal, setHoldingTotal] = useState(0)
-  const [debtTotal, setDebtTotal] = useState(0)
+  const [holdingTotal, setHoldingTotal] = useState(new TokenAmount(DAI, '0'))
+  const [debtTotal, setDebtTotal] = useState(new TokenAmount(DAI, '0'))
+  const [borrowAPRs, setBorrowAPRs] = useState<Record<string, number>>({})
 
   const { account } = useWeb3React()
   const { library } = useActiveWeb3React()
@@ -97,26 +101,6 @@ export const MarginAccount = () => {
     //     console.log('amount :>> ', amount)
     //   }
     // },
-    {
-      name: 'Withdraw',
-      onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
-        try {
-          const response: any = await crossWithdraw(
-            tokenInfo.address,
-            utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
-            chainId,
-            provider
-          )
-          addTransaction(response, {
-            summary: `Cross Withdraw`
-          })
-        } catch (error) {
-          toast.error('Withdrawal error', { position: 'bottom-right' })
-          console.error(error)
-        }
-      },
-      deriveMaxFrom: 'balance'
-    },
     {
       name: 'Deposit',
       onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
@@ -145,6 +129,26 @@ export const MarginAccount = () => {
         }
       }
       // TODO: max
+    },
+    {
+      name: 'Withdraw',
+      onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
+        try {
+          const response: any = await crossWithdraw(
+            tokenInfo.address,
+            utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
+            chainId,
+            provider
+          )
+          addTransaction(response, {
+            summary: `Cross Withdraw`
+          })
+        } catch (error) {
+          toast.error('Withdrawal error', { position: 'bottom-right' })
+          console.error(error)
+        }
+      },
+      deriveMaxFrom: 'balance'
     }
   ] as const
 
@@ -164,10 +168,15 @@ export const MarginAccount = () => {
       throw `Library uninitialized: ${library}, ${account}`
     }
     provider = getProviderOrSigner(library!, _account)
-    const [balances, _holdingTotal, _debtTotal] = await Promise.all([
+    const [balances, _holdingTotal, _debtTotal, interestRates] = await Promise.all([
       getAccountBalances(_account, chainId, provider),
-      getAccountHoldingTotal(_account, chainId, provider),
-      getAccountBorrowTotal(_account, chainId, provider)
+      new TokenAmount(DAI, (await getAccountHoldingTotal(_account, chainId, provider)).toString()),
+      new TokenAmount(DAI, (await getAccountBorrowTotal(_account, chainId, provider)).toString()),
+      getHourlyBondInterestRates(
+        tokens.map(token => token.address),
+        chainId,
+        provider
+      )
     ])
     setHoldingAmounts(
       Object.keys(balances.holdingAmounts).reduce(
@@ -181,8 +190,14 @@ export const MarginAccount = () => {
         {}
       )
     )
-    setHoldingTotal(BigNumber.from(_holdingTotal).toNumber())
-    setDebtTotal(BigNumber.from(_debtTotal).toNumber())
+    setBorrowAPRs(
+      Object.keys(interestRates).reduce(
+        (acc, cur) => ({ ...acc, [cur]: (2 * BigNumber.from(interestRates[cur]).toNumber()) / 100000 }),
+        {}
+      )
+    )
+    setHoldingTotal(_holdingTotal)
+    setDebtTotal(_debtTotal)
   }
   const getData = () => {
     if (account) {
@@ -204,7 +219,7 @@ export const MarginAccount = () => {
           decimals: token.decimals,
           balance: Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
           borrowed: Number(borrowingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
-          ir: 0 // TODO
+          ir: borrowAPRs[token.address]
         }
       }),
     [tokens, holdingAmounts, borrowingAmounts]
@@ -221,12 +236,23 @@ export const MarginAccount = () => {
         {!account && <WarningBar>Wallet not connected</WarningBar>}
         {error && <ErrorBar>{error}</ErrorBar>}
         <StyledTableContainer>
-          <InfoCard title="Total Account Balance" amount={holdingTotal} withUnderlyingCard Icon={IconBanknotes} />
+          <InfoCard
+            title="Total Account Balance"
+            amount={holdingTotal.toSignificant()}
+            withUnderlyingCard
+            Icon={IconBanknotes}
+          />
           <StyledMobileOnlyRow>
-            <InfoCard title="Debt" amount={debtTotal} small Icon={IconScales} />
-            <InfoCard title="Equity" amount={holdingTotal - debtTotal} color="secondary" small Icon={IconCoin} />
+            <InfoCard title="Debt" amount={debtTotal.toSignificant()} small Icon={IconScales} />
+            <InfoCard
+              title="Equity"
+              amount={holdingTotal.subtract(debtTotal).toSignificant()}
+              color="secondary"
+              small
+              Icon={IconCoin}
+            />
           </StyledMobileOnlyRow>
-          <RiskMeter risk={getRisk(holdingTotal, debtTotal)} />
+          <RiskMeter risk={getRisk(Number(holdingTotal.toSignificant()), Number(debtTotal.toSignificant()))} />
         </StyledTableContainer>
         <TokensTable
           title="Account balance"

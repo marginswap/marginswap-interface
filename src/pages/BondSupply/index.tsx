@@ -28,7 +28,7 @@ import { makeStyles } from '@material-ui/core'
 import { utils } from 'ethers'
 import { toast } from 'react-toastify'
 import { useTransactionAdder } from '../../state/transactions/hooks'
-import { DAI } from '../../constants';
+import { DAI } from '../../constants'
 
 const { REACT_APP_CHAIN_ID } = process.env
 
@@ -134,7 +134,10 @@ export const BondSupply = () => {
       )
     )
     setBondUSDCosts(
-      Object.keys(bondCosts).reduce((acc, cur) => ({ ...acc, [cur]: new TokenAmount(DAI,  bondCosts[cur].toString()) }), {})
+      Object.keys(bondCosts).reduce(
+        (acc, cur) => ({ ...acc, [cur]: new TokenAmount(DAI, bondCosts[cur].toString()) }),
+        {}
+      )
     )
   }
 
@@ -218,17 +221,20 @@ export const BondSupply = () => {
       })),
     [tokens, bondBalances, bondMaturities]
   )
+  const ZERO_DAI = new TokenAmount(DAI, '0')
 
   const averageYield = useMemo(() => {
-    const bondCosts = tokens.reduce((acc, cur) => acc + Number((bondUSDCosts[cur.address] ?? 0).toSignificant()), 0)
+    const bondCosts = tokens.reduce(
+      (acc, cur) => acc + Number((bondUSDCosts[cur.address] ?? ZERO_DAI).toSignificant()),
+      0
+    )
     if (bondCosts === 0) return 0
     return tokens.reduce((acc, cur) => {
       const apy = apyFromApr(bondAPRs[cur.address], 365 * 24)
-      return acc + apy * Number(bondUSDCosts[cur.address].toSignificant(4)) / bondCosts
+      return acc + (apy * Number(bondUSDCosts[cur.address].toSignificant(4))) / bondCosts
     }, 0)
   }, [tokens, bondAPRs, bondUSDCosts])
 
-  const ZERO_DAI = new TokenAmount(DAI, '0');
   return (
     <StyledWrapperDiv>
       <StyledSectionDiv>
@@ -237,13 +243,18 @@ export const BondSupply = () => {
         <StyledTableContainer>
           <InfoCard
             title="Total Bond"
-            amount={Object.keys(bondUSDCosts).reduce((acc, cur) => acc.add(bondUSDCosts[cur]), ZERO_DAI).toSignificant()}
+            amount={Object.keys(bondUSDCosts)
+              .reduce((acc, cur) => acc.add(bondUSDCosts[cur]), ZERO_DAI)
+              .toSignificant()}
             Icon={IconMoneyStackLocked}
           />
           <InfoCard title="Average Yield" amount={averageYield} ghost Icon={IconMoneyStackLocked} />
           <InfoCard
             title="Earnings per day"
-            amount={tokens.reduce((acc, cur) => acc.add(bondUSDCosts[cur.address] ?? ZERO_DAI), ZERO_DAI).divide("365").toSignificant(4)}
+            amount={tokens
+              .reduce((acc, cur) => acc.add(bondUSDCosts[cur.address] ?? ZERO_DAI), ZERO_DAI)
+              .divide('365')
+              .toSignificant(4)}
             color="secondary"
             ghost
             Icon={IconMoneyStack}

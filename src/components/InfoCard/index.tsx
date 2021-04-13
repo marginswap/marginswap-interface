@@ -1,4 +1,3 @@
-import { TokenAmount } from '@marginswap/sdk';
 import React, { FunctionComponent } from 'react'
 import { StyledCard, StyledInfoCardAmount, StyledInfoCardIconContainer, StyledInfoCardTitle } from './styled'
 
