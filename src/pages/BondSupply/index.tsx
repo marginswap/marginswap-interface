@@ -28,7 +28,7 @@ import { makeStyles } from '@material-ui/core'
 import { utils } from 'ethers'
 import { toast } from 'react-toastify'
 import { useTransactionAdder } from '../../state/transactions/hooks'
-import { DAI } from '../../constants'
+import { USDT } from '../../constants'
 
 const { REACT_APP_CHAIN_ID } = process.env
 
@@ -135,7 +135,7 @@ export const BondSupply = () => {
     )
     setBondUSDCosts(
       Object.keys(bondCosts).reduce(
-        (acc, cur) => ({ ...acc, [cur]: new TokenAmount(DAI, bondCosts[cur].toString()) }),
+        (acc, cur) => ({ ...acc, [cur]: new TokenAmount(USDT, bondCosts[cur].toString()) }),
         {}
       )
     )
@@ -221,7 +221,7 @@ export const BondSupply = () => {
       })),
     [tokens, bondBalances, bondMaturities]
   )
-  const ZERO_DAI = new TokenAmount(DAI, '0')
+  const ZERO_DAI = new TokenAmount(USDT, '0')
 
   const averageYield = useMemo(() => {
     const bondCosts = tokens.reduce(

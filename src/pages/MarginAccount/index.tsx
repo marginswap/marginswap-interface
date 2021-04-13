@@ -31,7 +31,7 @@ import { StyledSectionDiv } from './styled'
 import { utils } from 'ethers'
 import { toast } from 'react-toastify'
 import { useTransactionAdder } from '../../state/transactions/hooks'
-import { DAI } from '../../constants'
+import { USDT } from '../../constants'
 
 const chainId = Number(process.env.REACT_APP_CHAIN_ID)
 
@@ -72,8 +72,8 @@ export const MarginAccount = () => {
   const [tokens, setTokens] = useState<TokenInfo[]>([])
   const [holdingAmounts, setHoldingAmounts] = useState<Record<string, number>>({})
   const [borrowingAmounts, setBorrowingAmounts] = useState<Record<string, number>>({})
-  const [holdingTotal, setHoldingTotal] = useState(new TokenAmount(DAI, '0'))
-  const [debtTotal, setDebtTotal] = useState(new TokenAmount(DAI, '0'))
+  const [holdingTotal, setHoldingTotal] = useState(new TokenAmount(USDT, '0'))
+  const [debtTotal, setDebtTotal] = useState(new TokenAmount(USDT, '0'))
   const [borrowAPRs, setBorrowAPRs] = useState<Record<string, number>>({})
 
   const { account } = useWeb3React()
@@ -170,8 +170,8 @@ export const MarginAccount = () => {
     provider = getProviderOrSigner(library!, _account)
     const [balances, _holdingTotal, _debtTotal, interestRates] = await Promise.all([
       getAccountBalances(_account, chainId, provider),
-      new TokenAmount(DAI, (await getAccountHoldingTotal(_account, chainId, provider)).toString()),
-      new TokenAmount(DAI, (await getAccountBorrowTotal(_account, chainId, provider)).toString()),
+      new TokenAmount(USDT, (await getAccountHoldingTotal(_account, chainId, provider)).toString()),
+      new TokenAmount(USDT, (await getAccountBorrowTotal(_account, chainId, provider)).toString()),
       getHourlyBondInterestRates(
         tokens.map(token => token.address),
         chainId,
@@ -243,10 +243,10 @@ export const MarginAccount = () => {
             Icon={IconBanknotes}
           />
           <StyledMobileOnlyRow>
-            <InfoCard title="Debt" amount={Number(debtTotal.toSignificant()) * 10 ** 18} small Icon={IconScales} />
+            <InfoCard title="Debt" amount={debtTotal.toSignificant()} small Icon={IconScales} />
             <InfoCard
               title="Equity"
-              amount={Number(holdingTotal.subtract(debtTotal).toSignificant()) * 10 ** 18}
+              amount={holdingTotal.subtract(debtTotal).toSignificant()}
               color="secondary"
               small
               Icon={IconCoin}
