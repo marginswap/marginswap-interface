@@ -1,6 +1,6 @@
 import { UNI } from '../../constants/index'
-import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount } from '@marginswap/sdk'
-import { useMemo } from 'react'
+import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount, borrowable, LeverageType } from '@marginswap/sdk'
+import { useMemo, useState, useEffect, useCallback } from 'react'
 import ERC20_INTERFACE from '../../constants/abis/erc20'
 import { useAllTokens } from '../../hooks/Tokens'
 import { useActiveWeb3React } from '../../hooks'
@@ -9,6 +9,9 @@ import { isAddress } from '../../utils'
 import { useSingleContractMultipleData, useMultipleContractSingleData } from '../multicall/hooks'
 import { useUserUnclaimedAmount } from '../claim/hooks'
 import { useTotalUniEarned } from '../stake/hooks'
+import { useSwapState } from '../swap/hooks'
+import { getProviderOrSigner } from '../../utils'
+import usePrevious from '../../hooks/usePrevious'
 
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.
@@ -46,6 +49,35 @@ export function useETHBalances(
   )
 }
 
+export function useMarginBalance({ address, validatedTokens }: any) {
+  const [balances, setBalances] = useState({})
+  const { library } = useActiveWeb3React()
+  const previousValidatedTokens = usePrevious(validatedTokens)
+  const provider = getProviderOrSigner(library!, address)
+
+  const updateMarginBalances = useCallback(async () => {
+    if (address && validatedTokens.length > 0) {
+      let memo: { [tokenAddress: string]: TokenAmount | undefined } = {}
+      for (let index = 0; index < validatedTokens.length; index++) {
+        const token = validatedTokens[index]
+        const value = await borrowable(address, token.address, Number(process.env.REACT_APP_CHAIN_ID), provider as any)
+        const amount = value ? JSBI.BigInt(value.toString()) : undefined
+        if (amount) {
+          memo[token.address] = new TokenAmount(token, amount)
+        }
+      }
+      setBalances(memo)
+    }
+  }, [address, validatedTokens, balances, setBalances])
+
+  useEffect(() => {
+    if (JSON.stringify(validatedTokens) !== JSON.stringify(previousValidatedTokens)) {
+      updateMarginBalances()
+    }
+  }, [address, library, validatedTokens, balances, setBalances, updateMarginBalances])
+  return balances
+}
+
 /**
  * Returns a map of token addresses to their eventually consistent token balances for a single account.
  */
@@ -57,27 +89,28 @@ export function useTokenBalancesWithLoadingIndicator(
     () => tokens?.filter((t?: Token): t is Token => isAddress(t?.address) !== false) ?? [],
     [tokens]
   )
-
   const validatedTokenAddresses = useMemo(() => validatedTokens.map(vt => vt.address), [validatedTokens])
-
   const balances = useMultipleContractSingleData(validatedTokenAddresses, ERC20_INTERFACE, 'balanceOf', [address])
-
   const anyLoading: boolean = useMemo(() => balances.some(callState => callState.loading), [balances])
+  const marginBalances = useMarginBalance({ address, validatedTokens })
+  const { leverageType } = useSwapState()
 
   return [
     useMemo(
       () =>
         address && validatedTokens.length > 0
-          ? validatedTokens.reduce<{ [tokenAddress: string]: TokenAmount | undefined }>((memo, token, i) => {
-              const value = balances?.[i]?.result?.[0]
-              const amount = value ? JSBI.BigInt(value.toString()) : undefined
-              if (amount) {
-                memo[token.address] = new TokenAmount(token, amount)
-              }
-              return memo
-            }, {})
+          ? leverageType === LeverageType.CROSS_MARGIN
+            ? marginBalances
+            : validatedTokens.reduce<{ [tokenAddress: string]: TokenAmount | undefined }>((memo, token, i) => {
+                const value = balances?.[i]?.result?.[0]
+                const amount = value ? JSBI.BigInt(value.toString()) : undefined
+                if (amount) {
+                  memo[token.address] = new TokenAmount(token, amount)
+                }
+                return memo
+              }, {})
           : {},
-      [address, validatedTokens, balances]
+      [address, validatedTokens, balances, marginBalances, leverageType]
     ),
     anyLoading
   ]
