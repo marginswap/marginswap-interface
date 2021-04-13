@@ -243,18 +243,28 @@ export const BondSupply = () => {
         <StyledTableContainer>
           <InfoCard
             title="Total Bond"
-            amount={Object.keys(bondUSDCosts)
-              .reduce((acc, cur) => acc.add(bondUSDCosts[cur]), ZERO_DAI)
-              .toSignificant()}
+            amount={
+              Number(
+                Object.keys(bondUSDCosts)
+                  .reduce((acc, cur) => acc.add(bondUSDCosts[cur]), ZERO_DAI)
+                  .toSignificant()
+              ) *
+              10 ** 18
+            }
             Icon={IconMoneyStackLocked}
           />
           <InfoCard title="Average Yield" amount={averageYield} ghost Icon={IconMoneyStackLocked} />
           <InfoCard
             title="Earnings per day"
-            amount={tokens
-              .reduce((acc, cur) => acc.add(bondUSDCosts[cur.address] ?? ZERO_DAI), ZERO_DAI)
-              .divide('365')
-              .toSignificant(4)}
+            amount={
+              Number(
+                tokens
+                  .reduce((acc, cur) => acc.add(bondUSDCosts[cur.address] ?? ZERO_DAI), ZERO_DAI)
+                  .divide('365')
+                  .toSignificant(4)
+              ) *
+              10 ** 18
+            }
             color="secondary"
             ghost
             Icon={IconMoneyStack}

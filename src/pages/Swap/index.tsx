@@ -56,6 +56,7 @@ import Loader from '../../components/Loader'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import { LeverageType } from '@marginswap/sdk'
+import { useCurrencyBalance } from '../../state/wallet/hooks'
 
 export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -293,6 +294,7 @@ export default function Swap() {
   ])
 
   const swapIsUnsupported = useIsTransactionUnsupported(currencies?.INPUT, currencies?.OUTPUT)
+  const inputCurrencyBalance = useCurrencyBalance(account ?? undefined, currencies[Field.INPUT] ?? undefined)
 
   return (
     <>
@@ -350,10 +352,10 @@ export default function Swap() {
             />
             <AutoColumn justify="space-between">
               <AutoRow
-                justify={isExpertMode /* || leverageType === LeverageType.CROSS_MARGIN */ ? 'space-between' : 'center'}
+                justify={isExpertMode || leverageType === LeverageType.CROSS_MARGIN ? 'space-between' : 'center'}
                 style={{ padding: '0 1rem' }}
               >
-                {/* {leverageType === LeverageType.CROSS_MARGIN && <span>Leverage: 50%</span>} */}
+                {/*leverageType === LeverageType.CROSS_MARGIN && <span>Leverage: 50%</span>*/}
                 <ArrowWrapper clickable>
                   <ArrowDown
                     size="16"
@@ -364,7 +366,12 @@ export default function Swap() {
                     color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? theme.primary1 : theme.text2}
                   />
                 </ArrowWrapper>
-                {/* {leverageType === LeverageType.CROSS_MARGIN && <span>Borrowable: 100</span>} */}
+                {leverageType === LeverageType.CROSS_MARGIN && (
+                  <span>
+                    Borrowable:
+                    {` ${inputCurrencyBalance ? inputCurrencyBalance?.toSignificant(6) : '-'}`}
+                  </span>
+                )}
                 {recipient === null && !showWrap && isExpertMode ? (
                   <LinkStyledButton id="add-recipient-button" onClick={() => onChangeRecipient('')}>
                     + Add a send (optional)
