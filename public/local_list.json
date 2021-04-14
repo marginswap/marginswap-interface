@@ -60,6 +60,38 @@
           "symbol": "WETH",
           "decimals": 18,
           "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/ethereum.png"
+        },
+        {
+          "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+          "chainId": 1,
+          "name": "Wrapped ETH",
+          "symbol": "WETH",
+          "decimals": 18,
+          "logoURI": "https://raw.githubusercontent.com/marginswap/token-list/main/logo/ethereum.png"
+        },
+        {
+          "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+          "chainId": 1,
+          "name": "Dai Stablecoin",
+          "symbol": "DAI",
+          "decimals": 18,
+          "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/multi-collateral-dai.png"
+        },
+        {
+          "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+          "chainId": 1,
+          "name": "Tether USD",
+          "symbol": "USDT",
+          "decimals": 6,
+          "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/tether.png"
+        },
+        {
+          "address": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+          "chainId": 1,
+          "name": "Uniswap",
+          "symbol": "UNI",
+          "decimals": 18,
+          "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/uniswap-uni-logo.png"
         }
   ]
 }
