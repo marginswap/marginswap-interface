@@ -61,7 +61,7 @@ export function useMarginBalance({ address, validatedTokens }: any) {
       for (let index = 0; index < validatedTokens.length; index++) {
         const token = validatedTokens[index]
         const value = await borrowable(address, token.address, Number(process.env.REACT_APP_CHAIN_ID), provider as any)
-        const amount = value ? JSBI.BigInt(value.toString()) : undefined
+        const amount = value ? JSBI.BigInt(value.dp(0).toString(10)) : undefined
         if (amount) {
           memo[token.address] = new TokenAmount(token, amount)
         }
