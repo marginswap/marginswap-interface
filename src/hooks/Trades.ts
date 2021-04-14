@@ -28,7 +28,7 @@ function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
     [bases]
   )
 
-  const allPairCombinations: [Token, Token, AMMs][] = useMemo(
+  const allPairCombinations: [AMMs, Token, Token][] = useMemo(
     () =>
       tokenA && tokenB
         ? [
@@ -59,8 +59,8 @@ function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
             return true
           })
           .flatMap(tokens => [
-            [...tokens, AMMs.UNI],
-            [...tokens, AMMs.SUSHI]
+            [AMMs.UNI, ...tokens],
+            [AMMs.SUSHI, ...tokens]
           ])
         : [],
     [tokenA, tokenB, bases, basePairs, chainId]

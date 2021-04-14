@@ -16,12 +16,13 @@ export enum PairState {
   INVALID
 }
 
-export function usePairs(currencies: [Currency | undefined, Currency | undefined][]): [PairState, Pair | null][] {
+export function usePairs(currencies: [AMMs, Currency | undefined, Currency | undefined][]): [PairState, Pair | null][] {
   const { chainId } = useActiveWeb3React()
 
   const tokens = useMemo(
     () =>
-      currencies.map(([currencyA, currencyB]) => [
+      currencies.map(([amm, currencyA, currencyB]): [AMMs, any, any] => [
+        amm,
         wrappedCurrency(currencyA, chainId),
         wrappedCurrency(currencyB, chainId)
       ]),
@@ -30,10 +31,8 @@ export function usePairs(currencies: [Currency | undefined, Currency | undefined
 
   const pairAddresses = useMemo(
     () =>
-      tokens.flatMap(([tokenA, tokenB]) => {
-        return tokenA && tokenB && !tokenA.equals(tokenB)
-          ? [Pair.getAddress(tokenA, tokenB, AMMs.UNI), Pair.getAddress(tokenA, tokenB, AMMs.SUSHI)]
-          : [undefined, undefined]
+      tokens.map(([amm, tokenA, tokenB]) => {
+        return tokenA && tokenB && !tokenA.equals(tokenB) ? Pair.getAddress(tokenA, tokenB, amm) : undefined
       }),
     [tokens]
   )
@@ -43,8 +42,8 @@ export function usePairs(currencies: [Currency | undefined, Currency | undefined
   return useMemo(() => {
     return results.flatMap((result, i): [PairState, Pair | null][] => {
       const { result: reserves, loading } = result
-      const tokenA = tokens[i][0]
-      const tokenB = tokens[i][1]
+      const tokenA = tokens[i][1]
+      const tokenB = tokens[i][2]
       let pairState: PairState
       let pairs: (Pair | null)[] = [null, null]
 
@@ -82,6 +81,6 @@ export function usePairs(currencies: [Currency | undefined, Currency | undefined
   }, [results, tokens])
 }
 
-export function usePair(tokenA?: Currency, tokenB?: Currency): [PairState, Pair | null][] {
-  return usePairs([tokenA, tokenB])
+export function usePair(amm: AMMs, tokenA?: Currency, tokenB?: Currency): [PairState, Pair | null][] {
+  return usePairs([[amm, tokenA, tokenB]])
 }
