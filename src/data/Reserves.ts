@@ -1,4 +1,4 @@
-import { TokenAmount, Pair, Currency } from '@marginswap/sdk'
+import { TokenAmount, Pair, Currency, AMMs } from '@marginswap/sdk'
 import { useMemo } from 'react'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { Interface } from '@ethersproject/abi'
@@ -16,7 +16,7 @@ export enum PairState {
   INVALID
 }
 
-export function usePairs(currencies: [Currency | undefined, Currency | undefined][]): [PairState, Pair | null][] {
+export function usePairs(currencies: [Currency | undefined, Currency | undefined, AMMs][]): [PairState, Pair | null][] {
   const { chainId } = useActiveWeb3React()
 
   const tokens = useMemo(
@@ -30,8 +30,10 @@ export function usePairs(currencies: [Currency | undefined, Currency | undefined
 
   const pairAddresses = useMemo(
     () =>
-      tokens.map(([tokenA, tokenB]) => {
-        return tokenA && tokenB && !tokenA.equals(tokenB) ? Pair.getAddress(tokenA, tokenB) : undefined
+      tokens.flatMap(([tokenA, tokenB]) => {
+        return tokenA && tokenB && !tokenA.equals(tokenB)
+          ? [Pair.getAddress(tokenA, tokenB, AMMs.UNI), Pair.getAddress(tokenA, tokenB, AMMs.SUSHI)]
+          : undefined
       }),
     [tokens]
   )
@@ -39,7 +41,7 @@ export function usePairs(currencies: [Currency | undefined, Currency | undefined
   const results = useMultipleContractSingleData(pairAddresses, PAIR_INTERFACE, 'getReserves')
 
   return useMemo(() => {
-    return results.map((result, i) => {
+    return results.flatMap((result, i) => {
       const { result: reserves, loading } = result
       const tokenA = tokens[i][0]
       const tokenB = tokens[i][1]
@@ -50,13 +52,26 @@ export function usePairs(currencies: [Currency | undefined, Currency | undefined
       const { reserve0, reserve1 } = reserves
       const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
       return [
-        PairState.EXISTS,
-        new Pair(new TokenAmount(token0, reserve0.toString()), new TokenAmount(token1, reserve1.toString()))
+        [
+          PairState.EXISTS,
+          new Pair(new TokenAmount(token0, reserve0.toString()), new TokenAmount(token1, reserve1.toString()), AMMs.UNI)
+        ],
+        [
+          PairState.EXISTS,
+          new Pair(
+            new TokenAmount(token0, reserve0.toString()),
+            new TokenAmount(token1, reserve1.toString()),
+            AMMs.SUSHI
+          )
+        ]
       ]
     })
   }, [results, tokens])
 }
 
 export function usePair(tokenA?: Currency, tokenB?: Currency): [PairState, Pair | null] {
-  return usePairs([[tokenA, tokenB]])[0]
+  return usePairs([
+    [tokenA, tokenB, AMMs.UNI],
+    [tokenA, tokenB, AMMs.SUSHI]
+  ])[0]
 }
