@@ -29,54 +29,43 @@ export function usePairs(currencies: [AMMs, Currency | undefined, Currency | und
     [chainId, currencies]
   )
 
-  const pairAddresses = useMemo(
+  const pairAddressesWithAmm = useMemo(
     () =>
-      tokens.map(([amm, tokenA, tokenB]) => {
-        return tokenA && tokenB && !tokenA.equals(tokenB) ? Pair.getAddress(tokenA, tokenB, amm) : undefined
+      tokens.map(([amm, tokenA, tokenB]): [AMMs, string | undefined] => {
+        return tokenA && tokenB && !tokenA.equals(tokenB)
+          ? [amm, Pair.getAddress(tokenA, tokenB, amm)]
+          : [amm, undefined]
       }),
     [tokens]
   )
 
+  const pairAddresses = pairAddressesWithAmm.map(pair => pair[1])
+
   const results = useMultipleContractSingleData(pairAddresses, PAIR_INTERFACE, 'getReserves')
 
   return useMemo(() => {
-    return results.flatMap((result, i): [PairState, Pair | null][] => {
+    return results.map((result, i): [PairState, Pair | null] => {
       const { result: reserves, loading } = result
+      const amm = pairAddressesWithAmm[i][0]
       const tokenA = tokens[i][1]
       const tokenB = tokens[i][2]
       let pairState: PairState
-      let pairs: (Pair | null)[] = [null, null]
+      let pair: Pair | null = null
 
       if (loading) {
         pairState = PairState.LOADING
-      }
-      if (!tokenA || !tokenB || tokenA.equals(tokenB)) {
+      } else if (!tokenA || !tokenB || tokenA.equals(tokenB)) {
         pairState = PairState.INVALID
-      }
-      if (!reserves) {
+      } else if (!reserves) {
         pairState = PairState.NOT_EXISTS
       } else {
         const { reserve0, reserve1 } = reserves
         const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
         pairState = PairState.EXISTS
-        pairs = [
-          new Pair(
-            new TokenAmount(token0, reserve0.toString()),
-            new TokenAmount(token1, reserve1.toString()),
-            AMMs.UNI
-          ),
-          new Pair(
-            new TokenAmount(token0, reserve0.toString()),
-            new TokenAmount(token1, reserve1.toString()),
-            AMMs.SUSHI
-          )
-        ]
+        pair = new Pair(new TokenAmount(token0, reserve0.toString()), new TokenAmount(token1, reserve1.toString()), amm)
       }
 
-      return [
-        [pairState, pairs[0]],
-        [pairState, pairs[1]]
-      ]
+      return [pairState, pair]
     })
   }, [results, tokens])
 }
