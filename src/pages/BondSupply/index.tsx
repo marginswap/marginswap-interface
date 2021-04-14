@@ -147,6 +147,7 @@ export const BondSupply = () => {
       name: 'Deposit',
       onClick: async (token: BondRateData, amount: number) => {
         if (!amount) return
+        getData()
         if (allowances[token.address] < amount) {
           try {
             const approveRes: any = await approveToFund(
@@ -243,28 +244,18 @@ export const BondSupply = () => {
         <StyledTableContainer>
           <InfoCard
             title="Total Bond"
-            amount={
-              Number(
-                Object.keys(bondUSDCosts)
-                  .reduce((acc, cur) => acc.add(bondUSDCosts[cur]), ZERO_DAI)
-                  .toSignificant()
-              ) *
-              10 ** 18
-            }
+            amount={Object.keys(bondUSDCosts)
+              .reduce((acc, cur) => acc.add(bondUSDCosts[cur]), ZERO_DAI)
+              .toSignificant()}
             Icon={IconMoneyStackLocked}
           />
           <InfoCard title="Average Yield" amount={averageYield} ghost Icon={IconMoneyStackLocked} />
           <InfoCard
             title="Earnings per day"
-            amount={
-              Number(
-                tokens
-                  .reduce((acc, cur) => acc.add(bondUSDCosts[cur.address] ?? ZERO_DAI), ZERO_DAI)
-                  .divide('365')
-                  .toSignificant(4)
-              ) *
-              10 ** 18
-            }
+            amount={tokens
+              .reduce((acc, cur) => acc.add(bondUSDCosts[cur.address] ?? ZERO_DAI), ZERO_DAI)
+              .divide('365')
+              .toSignificant(4)}
             color="secondary"
             ghost
             Icon={IconMoneyStack}
