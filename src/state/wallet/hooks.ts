@@ -1,5 +1,15 @@
 import { UNI } from '../../constants/index'
-import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount, borrowable, LeverageType } from '@marginswap/sdk'
+import {
+  Currency,
+  CurrencyAmount,
+  ETHER,
+  JSBI,
+  Token,
+  TokenAmount,
+  borrowable,
+  LeverageType,
+  getHoldingAmounts
+} from '@marginswap/sdk'
 import { useMemo, useState, useEffect, useCallback } from 'react'
 import ERC20_INTERFACE from '../../constants/abis/erc20'
 import { useAllTokens } from '../../hooks/Tokens'
@@ -57,13 +67,21 @@ export function useMarginBalance({ address, validatedTokens }: any) {
 
   const updateMarginBalances = useCallback(async () => {
     if (address && validatedTokens.length > 0) {
-      const memo: { [tokenAddress: string]: TokenAmount | undefined } = {}
+      const memo: { [tokenAddress: string]: TokenAmount } = {}
+      const holdingAmounts = await getHoldingAmounts(address, Number(process.env.REACT_APP_CHAIN_ID), provider as any)
+      validatedTokens.forEach((token: Token) => {
+        const value = JSBI.BigInt(holdingAmounts[token.address] ?? 0)
+        memo[token.address] = new TokenAmount(token, value)
+      })
+
       for (let index = 0; index < validatedTokens.length; index++) {
         const token = validatedTokens[index]
         const value = await borrowable(address, token.address, Number(process.env.REACT_APP_CHAIN_ID), provider as any)
         const amount = value ? JSBI.BigInt(value.dp(0).toString(10)) : undefined
         if (amount) {
-          memo[token.address] = new TokenAmount(token, amount)
+          memo[token.address] = memo
+            ? memo[token.address].add(new TokenAmount(token, amount))
+            : new TokenAmount(token, amount)
         }
       }
       setBalances(memo)
