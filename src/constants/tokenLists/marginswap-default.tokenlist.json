@@ -10,6 +10,22 @@
   "keywords": ["marginswap", "defi", "crossmargin"],
   "tokens": [
     {
+      "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+      "chainId": 31337,
+      "name": "Dai Stablecoin",
+      "symbol": "DAI",
+      "decimals": 18,
+      "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/multi-collateral-dai.png"
+    },
+    {
+      "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+      "chainId": 31337,
+      "name": "Tether USD",
+      "symbol": "USDT",
+      "decimals": 6,
+      "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/tether.png"
+    },
+    {
       "address": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
       "chainId": 1,
       "name": "Wrapped BTC",

@@ -107,6 +107,7 @@ export const MarginAccount = () => {
       name: 'Deposit',
       onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
         if (!amount) return
+        getData()
         if (allowances[tokenInfo.address] < amount) {
           try {
             const approveRes: any = await approveToFund(
