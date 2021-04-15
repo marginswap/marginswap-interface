@@ -65,7 +65,6 @@ const ACCOUNT_COLUMNS = [
     )
   },
   { name: 'Total Balance', id: 'balance' },
-  // { name: 'Available', id: 'available' }, TODO
   { name: 'Borrowed', id: 'borrowed' },
   { name: 'Interest Rate', id: 'ir' }
 ] as const
@@ -143,6 +142,7 @@ export const MarginAccount = () => {
               chainId,
               provider
             )
+            localStorage.setItem(`${tokenInfo.coin}_LAST_DEPOSIT`, new Date().toISOString())
             addTransaction(approveRes, {
               summary: `Approve`
             })
@@ -188,7 +188,11 @@ export const MarginAccount = () => {
           console.error(error)
         }
       },
-      deriveMaxFrom: 'balance'
+      deriveMaxFrom: 'balance',
+      disabled: (token: AccountBalanceData) => {
+        const date = localStorage.getItem(`${token.coin}_LAST_DEPOSIT`)
+        return !!date && new Date().getTime() - new Date(date).getTime() < 300000
+      }
     }
   ] as const
 
