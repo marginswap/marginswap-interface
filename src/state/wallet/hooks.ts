@@ -73,12 +73,22 @@ export function useBorrowable(address: string | undefined, currency: Currency | 
       const borrowable = new TokenAmount(USDT, bip)
 
       const wrapped = wrappedCurrency(currency, chainId)
-      if (wrapped) {
-        const one = `1${'0'.repeat(currency.decimals)}`
-        const curPrice = await viewCurrentPriceInPeg(wrapped.address, one, chainId, provider)
-        const borrowableValue = borrowable.multiply(curPrice.toString()).divide(one)
 
-        setBalance(new TokenAmount(wrapped, borrowableValue.toSignificant(6)))
+      if (wrapped) {
+        const hundred = `100${'0'.repeat(wrapped.decimals)}`
+        const curPrice = await viewCurrentPriceInPeg(wrapped.address, hundred, chainId, provider)
+        if (curPrice.gt(0)) {
+          const borrowableValue = borrowable.multiply(hundred).divide(curPrice.toString())
+
+          const result =
+            currency.name == 'Ether'
+              ? CurrencyAmount.ether(borrowableValue.remainder.toFixed(0))
+              : new TokenAmount(wrapped, borrowableValue.remainder.toFixed(0))
+
+          setBalance(result)
+        } else {
+          setBalance(undefined)
+        }
       } else {
         setBalance(undefined)
       }
