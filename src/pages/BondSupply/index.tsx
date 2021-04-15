@@ -30,6 +30,7 @@ import { utils } from 'ethers'
 import { toast } from 'react-toastify'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { USDT } from '../../constants'
+import { setInterval } from 'timers'
 
 const chainId = Number(process.env.REACT_APP_CHAIN_ID)
 
@@ -179,14 +180,19 @@ export const BondSupply = () => {
       })
     }
   }
-  useEffect(getData, [account, tokens, library])
+  useEffect(() => {
+    getData()
+    const interval = setInterval(getData, 10000)
+    return () => {
+      clearInterval(interval)
+    }
+  }, [account, tokens, library])
 
   const actions = [
     {
       name: 'Deposit',
       onClick: async (token: BondRateData, amount: number) => {
         if (!amount) return
-        getData()
         if (allowances[token.address] < amount) {
           try {
             const approveRes: any = await approveToFund(

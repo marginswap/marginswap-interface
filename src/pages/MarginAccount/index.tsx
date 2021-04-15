@@ -36,6 +36,7 @@ import { utils } from 'ethers'
 import { toast } from 'react-toastify'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { USDT } from '../../constants'
+import { setInterval } from 'timers'
 
 const chainId = Number(process.env.REACT_APP_CHAIN_ID)
 
@@ -281,7 +282,13 @@ export const MarginAccount = () => {
       })
     }
   }
-  useEffect(getData, [account, library, tokens])
+  useEffect(() => {
+    getData()
+    const interval = setInterval(getData, 10000)
+    return () => {
+      clearInterval(interval)
+    }
+  }, [account, library, tokens])
 
   const data = useMemo(
     () =>
