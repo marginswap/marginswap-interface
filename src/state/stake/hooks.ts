@@ -1,4 +1,4 @@
-import { ChainId, JSBI, Token, TokenAmount, WETH, Pair } from '@marginswap/sdk'
+import { ChainId, JSBI, Token, TokenAmount, WETH, Pair, AMMs } from '@marginswap/sdk'
 import { useMemo } from 'react'
 import { DAI, UNI, USDC, USDT, WBTC } from '../../constants'
 import { STAKING_REWARDS_INTERFACE } from '../../constants/abis/staking-rewards'
@@ -150,7 +150,7 @@ function useStakingInfo(pairToFilterBy?: Pair | null): StakingInfo[] {
 
         // get the LP token
         const tokens = info[index].tokens
-        const dummyPair = new Pair(new TokenAmount(tokens[0], '0'), new TokenAmount(tokens[1], '0'))
+        const dummyPair = new Pair(new TokenAmount(tokens[0], '0'), new TokenAmount(tokens[1], '0'), AMMs.UNI)
 
         // check for account, if no account set to 0
 

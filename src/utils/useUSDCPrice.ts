@@ -1,4 +1,4 @@
-import { ChainId, Currency, currencyEquals, JSBI, Price, WETH } from '@marginswap/sdk'
+import { ChainId, Currency, currencyEquals, JSBI, Price, WETH, AMMs } from '@marginswap/sdk'
 import { useMemo } from 'react'
 import { USDC } from '../constants'
 import { PairState, usePairs } from '../data/Reserves'
@@ -12,14 +12,15 @@ import { wrappedCurrency } from './wrappedCurrency'
 export default function useUSDCPrice(currency?: Currency): Price | undefined {
   const { chainId } = useActiveWeb3React()
   const wrapped = wrappedCurrency(currency, chainId)
-  const tokenPairs: [Currency | undefined, Currency | undefined][] = useMemo(
+  const tokenPairs: [AMMs, Currency | undefined, Currency | undefined][] = useMemo(
     () => [
       [
+        AMMs.UNI,
         chainId && wrapped && currencyEquals(WETH[chainId], wrapped) ? undefined : currency,
         chainId ? WETH[chainId] : undefined
       ],
-      [wrapped?.equals(USDC) ? undefined : wrapped, chainId === ChainId.MAINNET ? USDC : undefined],
-      [chainId ? WETH[chainId] : undefined, chainId === ChainId.MAINNET ? USDC : undefined]
+      [AMMs.UNI, wrapped?.equals(USDC) ? undefined : wrapped, chainId === ChainId.MAINNET ? USDC : undefined],
+      [AMMs.UNI, chainId ? WETH[chainId] : undefined, chainId === ChainId.MAINNET ? USDC : undefined]
     ],
     [chainId, currency, wrapped]
   )
