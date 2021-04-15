@@ -5,6 +5,7 @@ export const StyledWrapperDiv = styled.div`
   flex-direction: column;
   width: 75%;
   padding-right: 20px;
+  max-width: 1040px;
   @media (max-width: 768px) {
     width: 95%;
     justify-content: center;
