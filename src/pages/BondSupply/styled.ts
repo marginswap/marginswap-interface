@@ -10,6 +10,7 @@ export const StyledWrapperDiv = styled.div`
     width: 95%;
     justify-content: center;
     padding-right: 0px;
+    margin-left: 5vw;
   }
   gap: 20px;
 `
