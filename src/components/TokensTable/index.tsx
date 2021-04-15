@@ -32,6 +32,7 @@ type TableProps<T extends Record<string, string | boolean | number>> = {
     onClick: (row: T, amount: number, rowIndex: number) => void | Promise<void>
     deriveMaxFrom?: keyof T // which field defines max available value
     max?: number // or set max from external source
+    disabled?: boolean | ((row: T) => boolean)
   }[]
   deriveEmptyFrom?: keyof T // which field is used for hiding empty rows
   idCol: keyof T
@@ -202,6 +203,7 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
                             onClick={() => {
                               handleActionOpen(actionIndex, rowIndex)
                             }}
+                            disabled={typeof action.disabled === 'function' ? action.disabled(row) : action.disabled}
                           >
                             {action.name}
                           </StyledButton>
