@@ -1,4 +1,4 @@
-import { UNI } from '../../constants/index'
+import { UNI, USDT } from '../../constants/index'
 import {
   Currency,
   CurrencyAmount,
@@ -6,9 +6,10 @@ import {
   JSBI,
   Token,
   TokenAmount,
-  borrowable,
+  borrowableInPeg,
   LeverageType,
-  getHoldingAmounts
+  getHoldingAmounts,
+  viewCurrentPriceInPeg
 } from '@marginswap/sdk'
 import { useMemo, useState, useEffect, useCallback } from 'react'
 import ERC20_INTERFACE from '../../constants/abis/erc20'
@@ -22,6 +23,7 @@ import { useTotalUniEarned } from '../stake/hooks'
 import { useSwapState } from '../swap/hooks'
 import { getProviderOrSigner } from '../../utils'
 import usePrevious from '../../hooks/usePrevious'
+import { wrappedCurrency } from 'utils/wrappedCurrency'
 
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.
@@ -59,6 +61,46 @@ export function useETHBalances(
   )
 }
 
+export function useBorrowable(address: string | undefined, currency: Currency | undefined): CurrencyAmount | undefined {
+  const { library, chainId } = useActiveWeb3React()
+  const provider: any = getProviderOrSigner(library!, address)
+
+  const [balance, setBalance] = useState<CurrencyAmount | undefined>(undefined)
+  const updateBorrowableBalance = useCallback(async () => {
+    if (address && currency && chainId) {
+      const bip = await borrowableInPeg(address, Number(process.env.REACT_APP_CHAIN_ID), provider)
+
+      const borrowable = new TokenAmount(USDT, bip)
+
+      const wrapped = wrappedCurrency(currency, chainId)
+
+      if (wrapped) {
+        const hundred = `100${'0'.repeat(wrapped.decimals)}`
+        const curPrice = await viewCurrentPriceInPeg(wrapped.address, hundred, chainId, provider)
+        if (curPrice.gt(0)) {
+          const borrowableValue = borrowable.multiply(hundred).divide(curPrice.toString())
+
+          const result =
+            currency.name == 'Ether'
+              ? CurrencyAmount.ether(borrowableValue.remainder.toFixed(0))
+              : new TokenAmount(wrapped, borrowableValue.remainder.toFixed(0))
+
+          setBalance(result)
+        } else {
+          setBalance(undefined)
+        }
+      } else {
+        setBalance(undefined)
+      }
+    }
+  }, [address, currency, setBalance])
+
+  useEffect(() => {
+    updateBorrowableBalance()
+  }, [address, library, chainId, balance, setBalance, updateBorrowableBalance])
+  return balance
+}
+
 export function useMarginBalance({ address, validatedTokens }: any) {
   const [balances, setBalances] = useState({})
   const { library } = useActiveWeb3React()
@@ -70,20 +112,10 @@ export function useMarginBalance({ address, validatedTokens }: any) {
       const memo: { [tokenAddress: string]: TokenAmount } = {}
       const holdingAmounts = await getHoldingAmounts(address, Number(process.env.REACT_APP_CHAIN_ID), provider as any)
       validatedTokens.forEach((token: Token) => {
-        const value = JSBI.BigInt(holdingAmounts[token.address] ?? 0)
-        memo[token.address] = new TokenAmount(token, value)
-      })
+        const balanceValue = JSBI.BigInt(holdingAmounts[token.address] ?? 0)
 
-      for (let index = 0; index < validatedTokens.length; index++) {
-        const token = validatedTokens[index]
-        const value = await borrowable(address, token.address, Number(process.env.REACT_APP_CHAIN_ID), provider as any)
-        const amount = value ? JSBI.BigInt(value.dp(0).toString(10)) : undefined
-        if (amount) {
-          memo[token.address] = memo
-            ? memo[token.address].add(new TokenAmount(token, amount))
-            : new TokenAmount(token, amount)
-        }
-      }
+        memo[token.address] = new TokenAmount(token, balanceValue)
+      })
       setBalances(memo)
     }
   }, [address, validatedTokens, balances, setBalances])
