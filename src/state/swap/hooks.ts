@@ -8,7 +8,7 @@ import { useCurrency } from '../../hooks/Tokens'
 import { useTradeExactIn, useTradeExactOut } from '../../hooks/Trades'
 import { isAddress } from '../../utils'
 import { AppDispatch, AppState } from '../index'
-import { useCurrencyBalances } from '../wallet/hooks'
+import { useBorrowable, useCurrencyBalances } from '../wallet/hooks'
 import {
   Field,
   replaceSwapState,
@@ -151,8 +151,16 @@ export function useDerivedSwapInfo(): {
 
   const trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
 
+  const { leverageType } = useSwapState()
+  const borrowBalance = useBorrowable(account ?? undefined, inputCurrency ?? undefined)
+
+  const relevantInput =
+    borrowBalance && leverageType === LeverageType.CROSS_MARGIN
+      ? relevantTokenBalances[0]?.add(borrowBalance)
+      : relevantTokenBalances[0]
+
   const currencyBalances = {
-    [Field.INPUT]: relevantTokenBalances[0],
+    [Field.INPUT]: relevantInput,
     [Field.OUTPUT]: relevantTokenBalances[1]
   }
 
