@@ -7,6 +7,7 @@ export const StyledWrapperDiv = styled.div`
   padding-left: 20px;
   @media (max-width: 768px) {
     padding-left: 0px;
+    margin-right: 10vw;
     max-width: 80vw;
   }
 `
