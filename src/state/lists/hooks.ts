@@ -1,12 +1,14 @@
 import { UNSUPPORTED_LIST_URLS } from '../../constants/lists'
-import DEFAULT_TOKEN_LIST from 'constants/tokenLists/uniswap-default.tokenlist.json'
-import { ChainId, Token } from '@marginswap/sdk'
+import UNISWAP_TOKEN_LIST from 'constants/tokenLists/uniswap-default.tokenlist.json'
+import MARGIN_SWAP_TOKEN_LIST from 'constants/tokenLists/marginswap-default.tokenlist.json'
+import { ChainId, Token, LeverageType } from '@marginswap/sdk'
 import { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { AppState } from '../index'
 import sortByListPriority from 'utils/listSort'
 import UNSUPPORTED_TOKEN_LIST from '../../constants/tokenLists/uniswap-v2-unsupported.tokenlist.json'
+import { useSwapState } from '../swap/hooks'
 
 type TagDetails = Tags[keyof Tags]
 export interface TagInfo extends TagDetails {
@@ -146,7 +148,11 @@ export function useInactiveListUrls(): string[] {
 export function useCombinedActiveList(): TokenAddressMap {
   const activeListUrls = useActiveListUrls()
   const activeTokens = useCombinedTokenMapFromUrls(activeListUrls)
-  const defaultTokenMap = listToTokenMap(DEFAULT_TOKEN_LIST)
+  const { leverageType } = useSwapState()
+
+  const defaultTokenMap = listToTokenMap(
+    leverageType === LeverageType.CROSS_MARGIN ? MARGIN_SWAP_TOKEN_LIST : UNISWAP_TOKEN_LIST
+  )
   return combineMaps(activeTokens, defaultTokenMap)
 }
 
@@ -158,7 +164,8 @@ export function useCombinedInactiveList(): TokenAddressMap {
 
 // used to hide warnings on import for default tokens
 export function useDefaultTokenList(): TokenAddressMap {
-  return listToTokenMap(DEFAULT_TOKEN_LIST)
+  const { leverageType } = useSwapState()
+  return listToTokenMap(leverageType === LeverageType.CROSS_MARGIN ? MARGIN_SWAP_TOKEN_LIST : UNISWAP_TOKEN_LIST)
 }
 
 // list of tokens not supported on interface, used to show warnings and prevent swaps and adds

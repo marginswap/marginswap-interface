@@ -16,7 +16,8 @@ import {
   crossWithdraw,
   approveToFund,
   TokenAmount,
-  getHourlyBondInterestRates
+  getHourlyBondInterestRates,
+  getTokenAllowances
 } from '@marginswap/sdk'
 import { TokenInfo } from '@uniswap/token-lists'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
@@ -75,6 +76,7 @@ export const MarginAccount = () => {
   const [holdingTotal, setHoldingTotal] = useState(new TokenAmount(USDT, '0'))
   const [debtTotal, setDebtTotal] = useState(new TokenAmount(USDT, '0'))
   const [borrowAPRs, setBorrowAPRs] = useState<Record<string, number>>({})
+  const [allowances, setAllowances] = useState<Record<string, number>>({})
 
   const { account } = useWeb3React()
   const { library } = useActiveWeb3React()
@@ -104,28 +106,39 @@ export const MarginAccount = () => {
     {
       name: 'Deposit',
       onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
-        try {
-          const approveRes: any = await approveToFund(
-            tokenInfo.address,
-            utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
-            chainId,
-            provider
-          )
-          addTransaction(approveRes, {
-            summary: `Approve`
-          })
-          const depositRes: any = await crossDeposit(
-            tokenInfo.address,
-            utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
-            chainId,
-            provider
-          )
-          addTransaction(depositRes, {
-            summary: `Cross Deposit`
-          })
-        } catch (error) {
-          toast.error('Deposit error', { position: 'bottom-right' })
-          console.error(error)
+        if (!amount) return
+        getData()
+        if (allowances[tokenInfo.address] < amount) {
+          try {
+            const approveRes: any = await approveToFund(
+              tokenInfo.address,
+              utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
+              chainId,
+              provider
+            )
+            addTransaction(approveRes, {
+              summary: `Approve`
+            })
+            getData()
+          } catch (e) {
+            toast.error('Approve error', { position: 'bottom-right' })
+            console.error(error)
+          }
+        } else {
+          try {
+            const depositRes: any = await crossDeposit(
+              tokenInfo.address,
+              utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
+              chainId,
+              provider
+            )
+            addTransaction(depositRes, {
+              summary: `Cross Deposit`
+            })
+          } catch (error) {
+            toast.error('Deposit error', { position: 'bottom-right' })
+            console.error(error)
+          }
         }
       }
       // TODO: max
@@ -164,11 +177,17 @@ export const MarginAccount = () => {
   }, [lists])
 
   const getAccountData = async (_account: string) => {
-    const [balances, _holdingTotal, _debtTotal, interestRates] = await Promise.all([
+    const [balances, _holdingTotal, _debtTotal, interestRates, _allowances] = await Promise.all([
       getAccountBalances(_account, chainId, provider),
       new TokenAmount(USDT, (await getAccountHoldingTotal(_account, chainId, provider)).toString()),
       new TokenAmount(USDT, (await getAccountBorrowTotal(_account, chainId, provider)).toString()),
       getHourlyBondInterestRates(
+        tokens.map(token => token.address),
+        chainId,
+        provider
+      ),
+      getTokenAllowances(
+        _account,
         tokens.map(token => token.address),
         chainId,
         provider
@@ -194,6 +213,12 @@ export const MarginAccount = () => {
     )
     setHoldingTotal(_holdingTotal)
     setDebtTotal(_debtTotal)
+    setAllowances(
+      _allowances.reduce(
+        (acc, cur, index) => ({ ...acc, [tokens[index].address]: Number(BigNumber.from(cur).toString()) }),
+        {}
+      )
+    )
   }
   const getData = () => {
     if (account && library && tokens.length > 0) {
@@ -214,9 +239,12 @@ export const MarginAccount = () => {
         decimals: token.decimals,
         balance: Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
         borrowed: Number(borrowingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
-        ir: borrowAPRs[token.address]
+        ir: borrowAPRs[token.address],
+        getActionNameFromAmount: {
+          Deposit: (amount: number) => (allowances[token.address] >= amount ? 'Confirm Transaction' : 'Approve')
+        }
       })),
-    [tokens, holdingAmounts, borrowingAmounts, borrowAPRs]
+    [tokens, holdingAmounts, borrowingAmounts, borrowAPRs, allowances]
   )
 
   const getRisk = (holding: number, debt: number): number => {

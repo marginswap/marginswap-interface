@@ -21,7 +21,7 @@ import { colors, StyledButton, StyledTextField } from '../../theme'
 
 type TableProps<T extends Record<string, string | boolean | number>> = {
   title: string
-  data: T[]
+  data: (T & { getActionNameFromAmount?: { [key: string]: (amount: number) => string } })[]
   columns: readonly {
     id: keyof T
     name: string
@@ -259,7 +259,13 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
                                 onClick={handleActionSubmit}
                                 disabled={actionLoading}
                               >
-                                Confirm Transaction
+                                {activeAction &&
+                                row.getActionNameFromAmount &&
+                                row.getActionNameFromAmount[actions[activeAction.actionIndex].name]
+                                  ? row.getActionNameFromAmount[actions[activeAction.actionIndex].name](
+                                      Number(actionAmount)
+                                    )
+                                  : 'Confirm Transaction'}
                                 {actionLoading && <CircularProgress size={20} color={'white' as any} />}
                               </StyledButton>
                             </div>
