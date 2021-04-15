@@ -56,7 +56,7 @@ import Loader from '../../components/Loader'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import { LeverageType } from '@marginswap/sdk'
-import { useBorrowable } from '../../state/wallet/hooks'
+import { useCurrencyBalance } from '../../state/wallet/hooks'
 
 export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -294,7 +294,7 @@ export default function Swap() {
   ])
 
   const swapIsUnsupported = useIsTransactionUnsupported(currencies?.INPUT, currencies?.OUTPUT)
-  const borrowableBalance = useBorrowable(account ?? undefined, currencies[Field.INPUT] ?? undefined)
+  const inputCurrencyBalance = useCurrencyBalance(account ?? undefined, currencies[Field.INPUT] ?? undefined)
 
   return (
     <>
@@ -369,7 +369,7 @@ export default function Swap() {
                 {leverageType === LeverageType.CROSS_MARGIN && (
                   <span>
                     Borrowable:
-                    {` ${borrowableBalance ? borrowableBalance?.toSignificant(6) : '-'}`}
+                    {` ${inputCurrencyBalance ? inputCurrencyBalance?.toSignificant(6) : '-'}`}
                   </span>
                 )}
                 {recipient === null && !showWrap && isExpertMode ? (
