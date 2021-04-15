@@ -19,7 +19,8 @@ import {
   getHourlyBondInterestRates,
   getTokenAllowances,
   crossBorrow,
-  borrowable
+  borrowable,
+  getTokenBalance
 } from '@marginswap/sdk'
 import { TokenInfo } from '@uniswap/token-lists'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
@@ -46,6 +47,7 @@ type AccountBalanceData = {
   balance: number
   borrowed: number
   borrowable: number
+  available: number
   ir: number
 }
 
@@ -86,6 +88,7 @@ export const MarginAccount = () => {
   const [borrowAPRs, setBorrowAPRs] = useState<Record<string, number>>({})
   const [allowances, setAllowances] = useState<Record<string, number>>({})
   const [borrowableAmounts, setBorrowableAmounts] = useState<Record<string, number>>({})
+  const [tokenBalances, setTokenBalances] = useState<Record<string, number>>({})
 
   const { account } = useWeb3React()
   const { library } = useActiveWeb3React()
@@ -163,8 +166,8 @@ export const MarginAccount = () => {
             console.error(error)
           }
         }
-      }
-      // TODO: max
+      },
+      deriveMaxFrom: 'available'
     },
     {
       name: 'Withdraw',
@@ -200,7 +203,15 @@ export const MarginAccount = () => {
   }, [lists])
 
   const getAccountData = async (_account: string) => {
-    const [balances, _holdingTotal, _debtTotal, interestRates, _allowances, _borrowableAmounts] = await Promise.all([
+    const [
+      balances,
+      _holdingTotal,
+      _debtTotal,
+      interestRates,
+      _allowances,
+      _borrowableAmounts,
+      _tokenBalances
+    ] = await Promise.all([
       getAccountBalances(_account, chainId, provider),
       new TokenAmount(USDT, (await getAccountHoldingTotal(_account, chainId, provider)).toString()),
       new TokenAmount(USDT, (await getAccountBorrowTotal(_account, chainId, provider)).toString()),
@@ -215,8 +226,20 @@ export const MarginAccount = () => {
         chainId,
         provider
       ),
-      Promise.all(tokens.map(token => borrowable(_account, token.address, chainId, provider)))
+      Promise.all(tokens.map(token => borrowable(_account, token.address, chainId, provider))),
+      Promise.all(tokens.map(token => getTokenBalance(_account, token.address, provider)))
     ])
+    setTokenBalances(
+      _tokenBalances.reduce(
+        (acc, cur, index) => ({
+          ...acc,
+          [tokens[index].address]: Number(
+            BigNumber.from(cur).div(BigNumber.from(10).pow(tokens[index].decimals)).toString()
+          )
+        }),
+        {}
+      )
+    )
     setBorrowableAmounts(
       _borrowableAmounts.reduce(
         (acc, cur, index) => ({ ...acc, [tokens[index].address]: Number(BigNumber.from(cur).toString()) }),
@@ -271,6 +294,7 @@ export const MarginAccount = () => {
         borrowed: Number(borrowingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
         borrowable: Number(borrowableAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
         ir: borrowAPRs[token.address],
+        available: tokenBalances[token.address],
         getActionNameFromAmount: {
           Deposit: (amount: number) => (allowances[token.address] >= amount ? 'Confirm Transaction' : 'Approve')
         }

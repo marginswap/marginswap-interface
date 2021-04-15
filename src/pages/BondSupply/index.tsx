@@ -18,7 +18,8 @@ import {
   withdrawHourlyBond,
   approveToFund,
   TokenAmount,
-  getTokenAllowances
+  getTokenAllowances,
+  getTokenBalance
 } from '@marginswap/sdk'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { BigNumber } from '@ethersproject/bignumber'
@@ -40,6 +41,7 @@ type BondRateData = {
   totalSupplied: number
   apy: number
   maturity: number
+  available: number
 }
 
 const BOND_RATES_COLUMNS = [
@@ -73,6 +75,7 @@ export const BondSupply = () => {
   const [bondMaturities, setBondMaturities] = useState<Record<string, number>>({})
   const [bondUSDCosts, setBondUSDCosts] = useState<Record<string, TokenAmount>>({})
   const [allowances, setAllowances] = useState<Record<string, number>>({})
+  const [tokenBalances, setTokenBalances] = useState<Record<string, number>>({})
 
   const getTokensList = async (url: string) => {
     const tokensRes = await fetchList(url, false)
@@ -94,15 +97,51 @@ export const BondSupply = () => {
     provider = getProviderOrSigner(library, account)
   }
 
-  const getBondsData = async (address: string, tokens: string[]) => {
+  const getBondsData = async (address: string, tokens: TokenInfo[]) => {
     // TODO get chain id from somewhere other than the env variable. Perhaps the wallet/provider?
-    const [balances, interestRates, maturities, bondCosts, _allowances] = await Promise.all([
-      getHourlyBondBalances(address, tokens, chainId, provider),
-      getHourlyBondInterestRates(tokens, chainId, provider),
-      getHourlyBondMaturities(address, tokens, chainId, provider),
-      getBondsCostInDollars(address, tokens, chainId, provider),
-      getTokenAllowances(address, tokens, chainId, provider)
+    const [balances, interestRates, maturities, bondCosts, _allowances, _tokenBalances] = await Promise.all([
+      getHourlyBondBalances(
+        address,
+        tokens.map(t => t.address),
+        chainId,
+        provider
+      ),
+      getHourlyBondInterestRates(
+        tokens.map(t => t.address),
+        chainId,
+        provider
+      ),
+      getHourlyBondMaturities(
+        address,
+        tokens.map(t => t.address),
+        chainId,
+        provider
+      ),
+      getBondsCostInDollars(
+        address,
+        tokens.map(t => t.address),
+        chainId,
+        provider
+      ),
+      getTokenAllowances(
+        address,
+        tokens.map(t => t.address),
+        chainId,
+        provider
+      ),
+      Promise.all(tokens.map(token => getTokenBalance(address, token.address, provider)))
     ])
+    setTokenBalances(
+      _tokenBalances.reduce(
+        (acc, cur, index) => ({
+          ...acc,
+          [tokens[index].address]: Number(
+            BigNumber.from(cur).div(BigNumber.from(10).pow(tokens[index].decimals)).toString()
+          )
+        }),
+        {}
+      )
+    )
     setBondBalances(
       Object.keys(balances).reduce((acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances[cur]).toString() }), {})
     )
@@ -125,16 +164,16 @@ export const BondSupply = () => {
       )
     )
     setAllowances(
-      _allowances.reduce((acc, cur, index) => ({ ...acc, [tokens[index]]: Number(BigNumber.from(cur).toString()) }), {})
+      _allowances.reduce(
+        (acc, cur, index) => ({ ...acc, [tokens[index].address]: Number(BigNumber.from(cur).toString()) }),
+        {}
+      )
     )
   }
 
   const getData = () => {
     if (account && library && tokens.length > 0) {
-      getBondsData(
-        account,
-        tokens.map(t => t.address)
-      ).catch(e => {
+      getBondsData(account, tokens).catch(e => {
         console.error(e)
         setError('Failed to get account data')
       })
@@ -180,8 +219,8 @@ export const BondSupply = () => {
             console.error(e)
           }
         }
-      }
-      // TODO: max
+      },
+      deriveMaxFrom: 'available'
     },
     {
       name: 'Withdraw',
@@ -216,6 +255,7 @@ export const BondSupply = () => {
         totalSupplied: Number(bondBalances[token.address] ?? 0) / Math.pow(10, token.decimals),
         apy: apyFromApr(bondAPRs[token.address] ?? 0, 365 * 24),
         maturity: bondMaturities[token.address] ?? 0,
+        available: tokenBalances[token.address],
         getActionNameFromAmount: {
           Deposit: (amount: number) => (allowances[token.address] >= amount ? 'Confirm Transaction' : 'Approve')
         }
