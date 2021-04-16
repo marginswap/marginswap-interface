@@ -1,4 +1,4 @@
-import { UNI } from '../../constants/index'
+import { UNI, USDT } from '../../constants/index'
 import {
   Currency,
   CurrencyAmount,
@@ -6,9 +6,10 @@ import {
   JSBI,
   Token,
   TokenAmount,
-  borrowable,
+  borrowableInPeg,
   LeverageType,
-  getHoldingAmounts
+  getHoldingAmounts,
+  viewCurrentPriceInPeg
 } from '@marginswap/sdk'
 import { useMemo, useState, useEffect, useCallback } from 'react'
 import ERC20_INTERFACE from '../../constants/abis/erc20'
@@ -22,6 +23,7 @@ import { useTotalUniEarned } from '../stake/hooks'
 import { useSwapState } from '../swap/hooks'
 import { getProviderOrSigner } from '../../utils'
 import usePrevious from '../../hooks/usePrevious'
+import { wrappedCurrency } from 'utils/wrappedCurrency'
 
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.
@@ -59,6 +61,64 @@ export function useETHBalances(
   )
 }
 
+export function useBorrowableInPeg(address: string | undefined): string | undefined {
+  const [value, setValue] = useState<string | undefined>(undefined)
+  const { library, chainId } = useActiveWeb3React()
+  const provider: any = getProviderOrSigner(library!, address)
+  const updateBorrowableInPeg = useCallback(async () => {
+    if (address && chainId) {
+      const res = await borrowableInPeg(address, chainId, provider)
+      setValue(res)
+    } else {
+      setValue(undefined)
+    }
+  }, [address, setValue])
+
+  useEffect(() => {
+    updateBorrowableInPeg()
+  }, [address, updateBorrowableInPeg])
+  return value
+}
+
+export function useBorrowable(address: string | undefined, currency: Currency | undefined): CurrencyAmount | undefined {
+  const { library, chainId } = useActiveWeb3React()
+  const provider: any = getProviderOrSigner(library!, address)
+  const bip = useBorrowableInPeg(address)
+
+  const [balance, setBalance] = useState<CurrencyAmount | undefined>(undefined)
+  const updateBorrowableBalance = useCallback(async () => {
+    if (address && currency && chainId && bip) {
+      const borrowable = new TokenAmount(USDT, bip)
+
+      const wrapped = wrappedCurrency(currency, chainId)
+
+      if (wrapped) {
+        const hundred = `100${'0'.repeat(wrapped.decimals)}`
+        const curPrice = await viewCurrentPriceInPeg(wrapped.address, hundred, chainId, provider)
+        if (curPrice.gt(0)) {
+          const borrowableValue = borrowable.multiply(hundred).divide(curPrice.toString())
+
+          const result =
+            currency.name == 'Ether'
+              ? CurrencyAmount.ether(borrowableValue.remainder.toFixed(0))
+              : new TokenAmount(wrapped, borrowableValue.remainder.toFixed(0))
+
+          setBalance(result)
+        } else {
+          setBalance(undefined)
+        }
+      } else {
+        setBalance(undefined)
+      }
+    }
+  }, [address, currency, setBalance])
+
+  useEffect(() => {
+    updateBorrowableBalance()
+  }, [address, currency, updateBorrowableBalance])
+  return balance
+}
+
 export function useMarginBalance({ address, validatedTokens }: any) {
   const [balances, setBalances] = useState({})
   const { library } = useActiveWeb3React()
@@ -70,20 +130,9 @@ export function useMarginBalance({ address, validatedTokens }: any) {
       const memo: { [tokenAddress: string]: TokenAmount } = {}
       const holdingAmounts = await getHoldingAmounts(address, Number(process.env.REACT_APP_CHAIN_ID), provider as any)
       validatedTokens.forEach((token: Token) => {
-        const value = JSBI.BigInt(holdingAmounts[token.address] ?? 0)
-        memo[token.address] = new TokenAmount(token, value)
+        const balanceValue = JSBI.BigInt(holdingAmounts[token.address] ?? 0)
+        memo[token.address] = new TokenAmount(token, balanceValue)
       })
-
-      for (let index = 0; index < validatedTokens.length; index++) {
-        const token = validatedTokens[index]
-        const value = await borrowable(address, token.address, Number(process.env.REACT_APP_CHAIN_ID), provider as any)
-        const amount = value ? JSBI.BigInt(value.toString()) : undefined
-        if (amount) {
-          memo[token.address] = memo
-            ? memo[token.address].add(new TokenAmount(token, amount))
-            : new TokenAmount(token, amount)
-        }
-      }
       setBalances(memo)
     }
   }, [address, validatedTokens, balances, setBalances])
