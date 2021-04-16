@@ -61,15 +61,33 @@ export function useETHBalances(
   )
 }
 
+export function useBorrowableInPeg(address: string | undefined): string | undefined {
+  const [value, setValue] = useState<string | undefined>(undefined)
+  const { library, chainId } = useActiveWeb3React()
+  const provider: any = getProviderOrSigner(library!, address)
+  const updateBorrowableInPeg = useCallback(async () => {
+    if (address && chainId) {
+      const res = await borrowableInPeg(address, chainId, provider)
+      setValue(res)
+    } else {
+      setValue(undefined)
+    }
+  }, [address, setValue])
+
+  useEffect(() => {
+    updateBorrowableInPeg()
+  }, [address, updateBorrowableInPeg])
+  return value
+}
+
 export function useBorrowable(address: string | undefined, currency: Currency | undefined): CurrencyAmount | undefined {
   const { library, chainId } = useActiveWeb3React()
   const provider: any = getProviderOrSigner(library!, address)
+  const bip = useBorrowableInPeg(address)
 
   const [balance, setBalance] = useState<CurrencyAmount | undefined>(undefined)
   const updateBorrowableBalance = useCallback(async () => {
-    if (address && currency && chainId) {
-      const bip = await borrowableInPeg(address, Number(process.env.REACT_APP_CHAIN_ID), provider)
-
+    if (address && currency && chainId && bip) {
       const borrowable = new TokenAmount(USDT, bip)
 
       const wrapped = wrappedCurrency(currency, chainId)
