@@ -168,7 +168,6 @@ export const MarginAccount = () => {
   ] as const
 
   const getTokensList = async (url: string) => {
-    console.log("getTokensList: chainId ", chainId);
     const tokensRes = await fetchList(tokenListURL, false)
     setTokens(tokensRes.tokens.filter(t => t.chainId === chainId))
   }
