@@ -40,6 +40,8 @@ import { setInterval } from 'timers'
 
 const chainId = Number(process.env.REACT_APP_CHAIN_ID)
 
+const tokenListURL = 'https://raw.githubusercontent.com/marginswap/token-list/main/marginswap.tokenlist.json';
+
 type AccountBalanceData = {
   img: string
   coin: string
@@ -197,7 +199,8 @@ export const MarginAccount = () => {
   ] as const
 
   const getTokensList = async (url: string) => {
-    const tokensRes = await fetchList(url, false)
+    console.log("getTokensList: chainId ", chainId);
+    const tokensRes = await fetchList(tokenListURL, false)
     setTokens(tokensRes.tokens.filter(t => t.chainId === chainId))
   }
   useEffect(() => {
