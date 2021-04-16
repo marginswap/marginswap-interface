@@ -97,7 +97,7 @@ export function useBorrowable(address: string | undefined, currency: Currency | 
 
   useEffect(() => {
     updateBorrowableBalance()
-  }, [address, library, chainId, balance, setBalance, updateBorrowableBalance])
+  }, [address, currency, updateBorrowableBalance])
   return balance
 }
 

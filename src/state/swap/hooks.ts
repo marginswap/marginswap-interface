@@ -155,7 +155,10 @@ export function useDerivedSwapInfo(): {
   const borrowBalance = useBorrowable(account ?? undefined, inputCurrency ?? undefined)
 
   const relevantInput =
-    borrowBalance && leverageType === LeverageType.CROSS_MARGIN
+    !!relevantTokenBalances[0] &&
+    !!borrowBalance &&
+    leverageType === LeverageType.CROSS_MARGIN &&
+    borrowBalance.currency.symbol === relevantTokenBalances[0].currency.symbol
       ? relevantTokenBalances[0]?.add(borrowBalance)
       : relevantTokenBalances[0]
 
