@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useAllLists } from 'state/lists/hooks'
 import { useFetchListCallback } from '../../hooks/useFetchListCallback'
 import TokensTable from '../../components/TokensTable'
 import InfoCard from '../../components/InfoCard'
@@ -40,7 +39,7 @@ import { setInterval } from 'timers'
 
 const chainId = Number(process.env.REACT_APP_CHAIN_ID)
 
-const tokenListURL = 'https://raw.githubusercontent.com/marginswap/token-list/main/marginswap.tokenlist.json';
+const tokenListURL = 'https://raw.githubusercontent.com/marginswap/token-list/main/marginswap.tokenlist.json'
 
 type AccountBalanceData = {
   img: string
@@ -79,7 +78,6 @@ const getRisk = (holding: number, debt: number): number => {
 export const MarginAccount = () => {
   const [error, setError] = useState<string | null>(null)
 
-  const lists = useAllLists()
   const fetchList = useFetchListCallback()
 
   const [tokens, setTokens] = useState<TokenInfo[]>([])
@@ -199,15 +197,15 @@ export const MarginAccount = () => {
   ] as const
 
   const getTokensList = async (url: string) => {
-    const tokensRes = await fetchList(tokenListURL, false)
+    const tokensRes = await fetchList(url, false)
     setTokens(tokensRes.tokens.filter(t => t.chainId === chainId))
   }
   useEffect(() => {
-    getTokensList(Object.keys(lists)[0]).catch(e => {
+    getTokensList(tokenListURL).catch(e => {
       console.error(e)
       setError('Failed to get tokens list')
     })
-  }, [lists])
+  }, [])
 
   const getAccountData = async (_account: string) => {
     const [

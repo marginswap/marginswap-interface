@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { useAllLists } from 'state/lists/hooks'
 import { useFetchListCallback } from '../../hooks/useFetchListCallback'
 import TokensTable from '../../components/TokensTable'
 import InfoCard from '../../components/InfoCard'
@@ -34,7 +33,7 @@ import { setInterval } from 'timers'
 
 const chainId = Number(process.env.REACT_APP_CHAIN_ID)
 
-const tokenListURL = 'https://raw.githubusercontent.com/marginswap/token-list/main/marginswap.tokenlist.json';
+const tokenListURL = 'https://raw.githubusercontent.com/marginswap/token-list/main/marginswap.tokenlist.json'
 
 type BondRateData = {
   img: string
@@ -70,7 +69,6 @@ const apyFromApr = (apr: number, compounds: number): number =>
 export const BondSupply = () => {
   const [error, setError] = useState<string | null>(null)
 
-  const lists = useAllLists()
   const fetchList = useFetchListCallback()
   const [tokens, setTokens] = useState<TokenInfo[]>([])
   const [bondBalances, setBondBalances] = useState<Record<string, string>>({})
@@ -81,15 +79,15 @@ export const BondSupply = () => {
   const [tokenBalances, setTokenBalances] = useState<Record<string, number>>({})
 
   const getTokensList = async (url: string) => {
-    const tokensRes = await fetchList(tokenListURL, false)
+    const tokensRes = await fetchList(url, false)
     setTokens(tokensRes.tokens.filter(t => t.chainId === chainId))
   }
   useEffect(() => {
-    getTokensList(Object.keys(lists)[0]).catch(e => {
+    getTokensList(tokenListURL).catch(e => {
       console.error(e)
       setError('Failed to get tokens list')
     })
-  }, [lists])
+  }, [])
 
   const { account } = useWeb3React()
   const { library } = useActiveWeb3React()
