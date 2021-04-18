@@ -237,12 +237,14 @@ export const MarginAccount = () => {
         provider
       ),
       Promise.all(
-        tokens.map(token => {
+        tokens.map(async token => {
           const tokenToken = new Token(chainId, token.address, token.decimals)
           if (borrowableInPeg) {
             return new TokenAmount(
               tokenToken,
-              borrowableInPeg2token(borrowableInPeg, tokenToken, chainId, provider).toString()
+              (
+                (await borrowableInPeg2token(borrowableInPeg, tokenToken, chainId, provider)) ?? utils.parseUnits('0')
+              ).toString()
             )
           } else {
             return new TokenAmount(tokenToken, '0')
