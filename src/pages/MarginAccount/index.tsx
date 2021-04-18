@@ -264,12 +264,7 @@ export const MarginAccount = () => {
         {}
       )
     )
-    setBorrowableAmounts(
-      _borrowableAmounts.reduce(
-        (acc, cur, index) => ({ ...acc, [tokens[index].address]: Number(BigNumber.from(cur).toString()) }),
-        {}
-      )
-    )
+    setBorrowableAmounts(_borrowableAmounts.reduce((acc, cur, index) => ({ ...acc, [tokens[index].address]: cur }), {}))
     setHoldingAmounts(
       Object.keys(balances.holdingAmounts).reduce(
         (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.holdingAmounts[cur]).toString() }),
@@ -322,7 +317,7 @@ export const MarginAccount = () => {
         decimals: token.decimals,
         balance: Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
         borrowed: Number(borrowingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
-        borrowable: Number(borrowableAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
+        borrowable: borrowableAmounts[token.address] ? parseFloat(borrowableAmounts[token.address].toFixed()) : 0,
         ir: borrowAPRs[token.address],
         available: tokenBalances[token.address],
         getActionNameFromAmount: {
