@@ -287,10 +287,11 @@ export const MobileMenuList = styled.ul<{ open: boolean }>`
   flex-flow: column nowrap;
   background-color: rgb(64, 68, 79);
   position: fixed;
-  top: 10px;
+  top: -15px;
+  left: 0;
   border-radius: 8px;
-  right: 36px;
-  width: 160px;
+  width: 100%;
+  height: 100%;
   padding: 0.5rem;
   transition: transform 0.3s ease-in-out;
   li {
@@ -300,6 +301,7 @@ export const MobileMenuList = styled.ul<{ open: boolean }>`
   > a {
     color: white;
     text-decoration: none;
+    font-size: 18px;
   }
 `
 

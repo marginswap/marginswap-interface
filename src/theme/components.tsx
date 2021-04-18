@@ -53,6 +53,11 @@ export const StyledButton = styled(Button)`
   & .MuiCircularProgress-root {
     margin-left: 5px;
   }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    margin: 3px 0 !important;
+  }
 `
 
 export const ButtonText = styled.button`

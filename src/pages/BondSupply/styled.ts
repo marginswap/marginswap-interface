@@ -3,20 +3,14 @@ import styled from 'styled-components'
 export const StyledWrapperDiv = styled.div`
   display: flex;
   flex-direction: column;
-  width: 75%;
-  padding-right: 20px;
-  @media (max-width: 768px) {
-    width: 95%;
-    justify-content: center;
-    padding-right: 0px;
-  }
+  width: 100%;
+  max-width: 1040px;
   gap: 20px;
 `
 export const StyledSectionDiv = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  padding-right: 20px;
   gap: 20px;
 `
 export const StyledTableContainer = styled.div`

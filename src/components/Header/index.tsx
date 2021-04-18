@@ -4,7 +4,6 @@ import Logo from '../../assets/images/Union.svg'
 import { useActiveWeb3React } from '../../hooks'
 import { useETHBalances } from '../../state/wallet/hooks'
 import { CardNoise } from '../earn/styled'
-//import { CountUp } from 'use-count-up'
 import { TYPE } from '../../theme'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
@@ -14,7 +13,6 @@ import { useUserHasSubmittedClaim } from '../../state/transactions/hooks'
 import { Dots } from '../swap/styleds'
 import Modal from '../Modal'
 import UniBalanceContent from './UniBalanceContent'
-//import usePrevious from '../../hooks/usePrevious'
 import {
   AccountElement,
   BalanceText,
@@ -35,6 +33,7 @@ import {
   StyledMenuItem
 } from './styled'
 import { Link } from 'react-router-dom'
+import useClickOutside from '../../hooks/useClickOutside'
 
 const headerLinks = [
   { path: '/swap', name: 'Swap' },
@@ -53,9 +52,12 @@ const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
 
 const MobileMenu = () => {
   const [open, setOpen] = useState(false)
+  const ref = useClickOutside<HTMLDivElement>(() => {
+    setOpen(false)
+  })
 
   return (
-    <>
+    <div ref={ref}>
       <StyledBurger open={open} onClick={() => setOpen(!open)} id="burger">
         <div />
         <div />
@@ -64,13 +66,19 @@ const MobileMenu = () => {
       {open && (
         <MobileMenuList id="mob" open={open}>
           {headerLinks.map(link => (
-            <Link to={link.path} key={link.path}>
+            <Link
+              to={link.path}
+              key={link.path}
+              onClick={() => {
+                setOpen(false)
+              }}
+            >
               <StyledMenuItem>{link.name}</StyledMenuItem>
             </Link>
           ))}
         </MobileMenuList>
       )}
-    </>
+    </div>
   )
 }
 
@@ -114,7 +122,7 @@ export default function Header() {
             </StyledNavLink>
           ))}
         </HeaderLinks>
-        {<MobileMenu />}
+        <MobileMenu />
       </HeaderRow>
       <HeaderControls>
         <HeaderElement>

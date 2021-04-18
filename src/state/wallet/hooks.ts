@@ -152,7 +152,6 @@ export function useMarginBalance({ address, validatedTokens }: any) {
       const holdingAmounts = await getHoldingAmounts(address, Number(process.env.REACT_APP_CHAIN_ID), provider as any)
       validatedTokens.forEach((token: Token) => {
         const balanceValue = JSBI.BigInt(holdingAmounts[token.address] ?? 0)
-
         memo[token.address] = new TokenAmount(token, balanceValue)
       })
       setBalances(memo)
