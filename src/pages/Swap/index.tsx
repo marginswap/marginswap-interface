@@ -450,7 +450,7 @@ export default function Swap() {
                 <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
                 {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
               </GreyCard>
-            ) : showApproveFlow ? (
+            ) : leverageType !== LeverageType.CROSS_MARGIN && showApproveFlow ? (
               <RowBetween>
                 <ButtonConfirmed
                   onClick={approveCallback}
