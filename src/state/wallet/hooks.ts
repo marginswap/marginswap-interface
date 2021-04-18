@@ -9,7 +9,8 @@ import {
   borrowableInPeg,
   LeverageType,
   getHoldingAmounts,
-  viewCurrentPriceInPeg
+  viewCurrentPriceInPeg,
+  ChainId
 } from '@marginswap/sdk'
 import { useMemo, useState, useEffect, useCallback } from 'react'
 import ERC20_INTERFACE from '../../constants/abis/erc20'
@@ -24,6 +25,8 @@ import { useSwapState } from '../swap/hooks'
 import { getProviderOrSigner } from '../../utils'
 import usePrevious from '../../hooks/usePrevious'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
+import { parseUnits } from 'ethers/lib/utils'
+import { BigNumber } from 'ethers'
 
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.
@@ -80,28 +83,46 @@ export function useBorrowableInPeg(address: string | undefined): string | undefi
   return value
 }
 
-export function useBorrowable(address: string | undefined, currency: Currency | undefined): CurrencyAmount | undefined {
+export async function borrowableInPeg2token(
+  borrowableInPeg: TokenAmount,
+  wrapped: Token,
+  chainId: ChainId,
+  provider: any
+): Promise<BigNumber | undefined> {
+  const hundred = `100${'0'.repeat(wrapped.decimals)}`
+  const curPrice = await viewCurrentPriceInPeg(wrapped.address, hundred, chainId, provider)
+
+  if (curPrice.gt(0)) {
+    const borrowableInTarget = borrowableInPeg.multiply(`100${'0'.repeat(USDT.decimals)}`).divide(curPrice.toString())
+
+    return parseUnits(borrowableInTarget.toFixed(wrapped.decimals))
+  } else {
+    return undefined
+  }
+}
+
+export function useBorrowable(
+  tokenAddress: string | undefined,
+  currency: Currency | undefined
+): CurrencyAmount | undefined {
   const { library, chainId } = useActiveWeb3React()
-  const provider: any = getProviderOrSigner(library!, address)
-  const bip = useBorrowableInPeg(address)
+  const provider: any = getProviderOrSigner(library!, tokenAddress)
+  const bip = useBorrowableInPeg(tokenAddress)
 
   const [balance, setBalance] = useState<CurrencyAmount | undefined>(undefined)
   const updateBorrowableBalance = useCallback(async () => {
-    if (address && currency && chainId && bip) {
-      const borrowable = new TokenAmount(USDT, bip)
+    if (tokenAddress && currency && chainId && bip) {
+      const borrowableInPeg = new TokenAmount(USDT, bip)
 
       const wrapped = wrappedCurrency(currency, chainId)
 
       if (wrapped) {
-        const hundred = `100${'0'.repeat(wrapped.decimals)}`
-        const curPrice = await viewCurrentPriceInPeg(wrapped.address, hundred, chainId, provider)
-        if (curPrice.gt(0)) {
-          const borrowableValue = borrowable.multiply(hundred).divide(curPrice.toString())
-
+        const borrowableInTarget = await borrowableInPeg2token(borrowableInPeg, wrapped, chainId, provider)
+        if (borrowableInTarget) {
           const result =
             currency.name == 'Ether'
-              ? CurrencyAmount.ether(borrowableValue.remainder.toFixed(0))
-              : new TokenAmount(wrapped, borrowableValue.remainder.toFixed(0))
+              ? CurrencyAmount.ether(borrowableInTarget.toString())
+              : new TokenAmount(wrapped, borrowableInTarget.toString())
 
           setBalance(result)
         } else {
@@ -111,11 +132,11 @@ export function useBorrowable(address: string | undefined, currency: Currency | 
         setBalance(undefined)
       }
     }
-  }, [address, currency, setBalance])
+  }, [tokenAddress, currency, setBalance])
 
   useEffect(() => {
     updateBorrowableBalance()
-  }, [address, currency, updateBorrowableBalance])
+  }, [tokenAddress, currency, updateBorrowableBalance])
   return balance
 }
 
