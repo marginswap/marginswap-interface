@@ -75,7 +75,7 @@ export const MarginAccount = () => {
   const [error, setError] = useState<string | null>(null)
   const [holdingAmounts, setHoldingAmounts] = useState<Record<string, number>>({})
   const [borrowingAmounts, setBorrowingAmounts] = useState<Record<string, number>>({})
-  const [holdingTotal, setHoldingTotal] = useState(new TokenAmount(USDT, '0'))
+  const [holdingTotal, setHoldingTotal] = useState<TokenAmount>(new TokenAmount(USDT, '0'))
   const [debtTotal, setDebtTotal] = useState(new TokenAmount(USDT, '0'))
   const [borrowAPRs, setBorrowAPRs] = useState<Record<string, number>>({})
   const [allowances, setAllowances] = useState<Record<string, number>>({})
@@ -331,7 +331,11 @@ export const MarginAccount = () => {
             <InfoCard title="Debt" amount={debtTotal.toSignificant()} small Icon={IconScales} />
             <InfoCard
               title="Equity"
-              amount={holdingTotal.subtract(debtTotal).toSignificant()}
+              amount={
+                holdingTotal.greaterThan(debtTotal)
+                  ? holdingTotal.subtract(debtTotal).toSignificant()
+                  : `- ${debtTotal.subtract(holdingTotal).toSignificant()}`
+              }
               color="secondary"
               small
               Icon={IconCoin}
