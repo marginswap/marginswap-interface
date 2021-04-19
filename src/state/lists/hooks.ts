@@ -184,3 +184,9 @@ export function useIsListActive(url: string): boolean {
   const activeListUrls = useActiveListUrls()
   return Boolean(activeListUrls?.includes(url))
 }
+
+export function useMarginSwapTokenList(chainId: number | undefined): TokenInfo[] {
+  return useMemo(() => {
+    return MARGIN_SWAP_TOKEN_LIST.tokens.filter(t => t.chainId === (chainId || Number(process.env.REACT_APP_CHAIN_ID)))
+  }, [chainId])
+}

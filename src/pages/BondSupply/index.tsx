@@ -1,10 +1,8 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import { useFetchListCallback } from '../../hooks/useFetchListCallback'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import TokensTable from '../../components/TokensTable'
 import InfoCard from '../../components/InfoCard'
 import IconMoneyStackLocked from '../../icons/IconMoneyStackLocked'
 import IconMoneyStack from '../../icons/IconMoneyStack'
-import { TokenInfo } from '@uniswap/token-lists'
 import { useWeb3React } from '@web3-react/core'
 import { useActiveWeb3React } from '../../hooks'
 import { getProviderOrSigner } from '../../utils'
@@ -22,18 +20,13 @@ import {
 } from '@marginswap/sdk'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { BigNumber } from '@ethersproject/bignumber'
-import { StyledTableContainer } from './styled'
-import { StyledWrapperDiv } from './styled'
-import { StyledSectionDiv } from './styled'
+import { StyledTableContainer, StyledWrapperDiv, StyledSectionDiv } from './styled'
 import { utils } from 'ethers'
 import { toast } from 'react-toastify'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { USDT } from '../../constants'
 import { setInterval } from 'timers'
-
-const chainId = Number(process.env.REACT_APP_CHAIN_ID)
-
-const tokenListURL = 'https://raw.githubusercontent.com/marginswap/token-list/main/marginswap.tokenlist.json'
+import { useMarginSwapTokenList } from 'state/lists/hooks'
 
 type BondRateData = {
   img: string
@@ -69,8 +62,6 @@ const apyFromApr = (apr: number, compounds: number): number =>
 export const BondSupply = () => {
   const [error, setError] = useState<string | null>(null)
 
-  const fetchList = useFetchListCallback()
-  const [tokens, setTokens] = useState<TokenInfo[]>([])
   const [bondBalances, setBondBalances] = useState<Record<string, string>>({})
   const [bondAPRs, setBondAPRs] = useState<Record<string, number>>({})
   const [bondMaturities, setBondMaturities] = useState<Record<string, number>>({})
@@ -78,19 +69,10 @@ export const BondSupply = () => {
   const [allowances, setAllowances] = useState<Record<string, number>>({})
   const [tokenBalances, setTokenBalances] = useState<Record<string, number>>({})
 
-  const getTokensList = async (url: string) => {
-    const tokensRes = await fetchList(url, false)
-    setTokens(tokensRes.tokens.filter(t => t.chainId === chainId))
-  }
-  useEffect(() => {
-    getTokensList(tokenListURL).catch(e => {
-      console.error(e)
-      setError('Failed to get tokens list')
-    })
-  }, [])
-
   const { account } = useWeb3React()
-  const { library } = useActiveWeb3React()
+  const { library, chainId } = useActiveWeb3React()
+
+  const tokens = useMarginSwapTokenList(chainId)
 
   const addTransaction = useTransactionAdder()
   let provider: any
@@ -98,158 +80,161 @@ export const BondSupply = () => {
     provider = getProviderOrSigner(library, account)
   }
 
-  const getBondsData = async (address: string, tokens: TokenInfo[]) => {
-    // TODO get chain id from somewhere other than the env variable. Perhaps the wallet/provider?
-    const [balances, interestRates, maturities, bondCosts, _allowances, _tokenBalances] = await Promise.all([
-      getHourlyBondBalances(
-        address,
-        tokens.map(t => t.address),
-        chainId,
-        provider
-      ),
-      getHourlyBondInterestRates(
-        tokens.map(t => t.address),
-        chainId,
-        provider
-      ),
-      getHourlyBondMaturities(
-        address,
-        tokens.map(t => t.address),
-        chainId,
-        provider
-      ),
-      getBondsCostInDollars(
-        address,
-        tokens.map(t => t.address),
-        chainId,
-        provider
-      ),
-      getTokenAllowances(
-        address,
-        tokens.map(t => t.address),
-        chainId,
-        provider
-      ),
-      Promise.all(tokens.map(token => getTokenBalance(address, token.address, provider)))
-    ])
-    setTokenBalances(
-      _tokenBalances.reduce(
-        (acc, cur, index) => ({
-          ...acc,
-          [tokens[index].address]: Number(
-            BigNumber.from(cur).div(BigNumber.from(10).pow(tokens[index].decimals)).toString()
-          )
-        }),
-        {}
-      )
-    )
-    setBondBalances(
-      Object.keys(balances).reduce((acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances[cur]).toString() }), {})
-    )
-    setBondAPRs(
-      Object.keys(interestRates).reduce(
-        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(interestRates[cur]).toNumber() / 100000 }),
-        {}
-      )
-    )
-    setBondMaturities(
-      Object.keys(maturities).reduce(
-        (acc, cur) => ({ ...acc, [cur]: Math.ceil(BigNumber.from(maturities[cur]).toNumber() / 60) }),
-        {}
-      )
-    )
-    setBondUSDCosts(
-      Object.keys(bondCosts).reduce(
-        (acc, cur) => ({ ...acc, [cur]: new TokenAmount(USDT, bondCosts[cur].toString()) }),
-        {}
-      )
-    )
-    setAllowances(
-      _allowances.reduce(
-        (acc, cur, index) => ({ ...acc, [tokens[index].address]: Number(BigNumber.from(cur).toString()) }),
-        {}
-      )
-    )
-  }
-
-  const getData = () => {
-    if (account && library && tokens.length > 0) {
-      getBondsData(account, tokens).catch(e => {
-        console.error(e)
-        setError('Failed to get account data')
-      })
+  const getBondsData = useCallback(async () => {
+    if (!account || !chainId || tokens.length === 0) {
+      return
     }
-  }
+    // TODO get chain id from somewhere other than the env variable. Perhaps the wallet/provider?
+    try {
+      const [balances, interestRates, maturities, bondCosts, _allowances, _tokenBalances] = await Promise.all([
+        getHourlyBondBalances(
+          account,
+          tokens.map(t => t.address),
+          chainId,
+          provider
+        ),
+        getHourlyBondInterestRates(
+          tokens.map(t => t.address),
+          chainId,
+          provider
+        ),
+        getHourlyBondMaturities(
+          account,
+          tokens.map(t => t.address),
+          chainId,
+          provider
+        ),
+        getBondsCostInDollars(
+          account,
+          tokens.map(t => t.address),
+          chainId,
+          provider
+        ),
+        getTokenAllowances(
+          account,
+          tokens.map(t => t.address),
+          chainId,
+          provider
+        ),
+        Promise.all(tokens.map(token => getTokenBalance(account, token.address, provider)))
+      ])
+      setTokenBalances(
+        _tokenBalances.reduce(
+          (acc, cur, index) => ({
+            ...acc,
+            [tokens[index].address]: Number(
+              BigNumber.from(cur).div(BigNumber.from(10).pow(tokens[index].decimals)).toString()
+            )
+          }),
+          {}
+        )
+      )
+      setBondBalances(
+        Object.keys(balances).reduce((acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances[cur]).toString() }), {})
+      )
+      setBondAPRs(
+        Object.keys(interestRates).reduce(
+          (acc, cur) => ({ ...acc, [cur]: BigNumber.from(interestRates[cur]).toNumber() / 100000 }),
+          {}
+        )
+      )
+      setBondMaturities(
+        Object.keys(maturities).reduce(
+          (acc, cur) => ({ ...acc, [cur]: Math.ceil(BigNumber.from(maturities[cur]).toNumber() / 60) }),
+          {}
+        )
+      )
+      setBondUSDCosts(
+        Object.keys(bondCosts).reduce(
+          (acc, cur) => ({ ...acc, [cur]: new TokenAmount(USDT, bondCosts[cur].toString()) }),
+          {}
+        )
+      )
+      setAllowances(
+        _allowances.reduce(
+          (acc, cur, index) => ({ ...acc, [tokens[index].address]: Number(BigNumber.from(cur).toString()) }),
+          {}
+        )
+      )
+    } catch (error) {
+      console.log('account data error :>> ', error)
+      setError('Failed to get account data')
+    }
+  }, [account, chainId, tokens])
+
   useEffect(() => {
-    getData()
-    const interval = setInterval(getData, 10000)
+    getBondsData()
+    const interval = setInterval(getBondsData, 10000)
     return () => {
       clearInterval(interval)
     }
-  }, [account, tokens, library])
+  }, [getBondsData])
 
-  const actions = [
-    {
-      name: 'Deposit',
-      onClick: async (token: BondRateData, amount: number) => {
-        if (!amount) return
-        if (allowances[token.address] < amount) {
-          try {
-            const approveRes: any = await approveToFund(
-              token.address,
-              utils.parseUnits(String(Number.MAX_SAFE_INTEGER), token.decimals).toHexString(),
-              chainId,
-              provider
-            )
-            addTransaction(approveRes, {
-              summary: `Approve`
-            })
-            getData()
-          } catch (e) {
-            toast.error('Approve error', { position: 'bottom-right' })
-            console.error(e)
+  const actions = useMemo(
+    () => [
+      {
+        name: 'Deposit',
+        onClick: async (token: BondRateData, amount: number) => {
+          if (!amount || !chainId) return
+          if (allowances[token.address] < amount) {
+            try {
+              const approveRes: any = await approveToFund(
+                token.address,
+                utils.parseUnits(String(Number.MAX_SAFE_INTEGER), token.decimals).toHexString(),
+                chainId,
+                provider
+              )
+              addTransaction(approveRes, {
+                summary: `Approve`
+              })
+              getBondsData()
+            } catch (e) {
+              toast.error('Approve error', { position: 'bottom-right' })
+              console.error(e)
+            }
+          } else {
+            try {
+              const response: any = await buyHourlyBondSubscription(
+                token.address,
+                utils.parseUnits(String(amount), token.decimals).toHexString(),
+                chainId,
+                provider
+              )
+              addTransaction(response, {
+                summary: `Buy HourlyBond Subscription`
+              })
+            } catch (e) {
+              toast.error('Deposit error', { position: 'bottom-right' })
+              console.error(e)
+            }
           }
-        } else {
+        },
+        deriveMaxFrom: 'available'
+      },
+      {
+        name: 'Withdraw',
+        onClick: async (token: BondRateData, amount: number) => {
+          if (!amount || !chainId) return
           try {
-            const response: any = await buyHourlyBondSubscription(
+            const response: any = await withdrawHourlyBond(
               token.address,
               utils.parseUnits(String(amount), token.decimals).toHexString(),
               chainId,
               provider
             )
             addTransaction(response, {
-              summary: `Buy HourlyBond Subscription`
+              summary: `Withdraw HourlyBond`
             })
           } catch (e) {
-            toast.error('Deposit error', { position: 'bottom-right' })
+            toast.error('Withdrawal error', { position: 'bottom-right' })
             console.error(e)
           }
-        }
-      },
-      deriveMaxFrom: 'available'
-    },
-    {
-      name: 'Withdraw',
-      onClick: async (token: BondRateData, amount: number) => {
-        if (!amount) return
-        try {
-          const response: any = await withdrawHourlyBond(
-            token.address,
-            utils.parseUnits(String(amount), token.decimals).toHexString(),
-            chainId,
-            provider
-          )
-          addTransaction(response, {
-            summary: `Withdraw HourlyBond`
-          })
-        } catch (e) {
-          toast.error('Withdrawal error', { position: 'bottom-right' })
-          console.error(e)
-        }
-      },
-      deriveMaxFrom: 'totalSupplied'
-    }
-  ] as const
+        },
+        deriveMaxFrom: 'totalSupplied'
+      }
+    ],
+    [chainId, allowances, getBondsData]
+  )
 
   const data = useMemo(
     () =>

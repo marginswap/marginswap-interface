@@ -142,21 +142,21 @@ export function useBorrowable(
 
 export function useMarginBalance({ address, validatedTokens }: any) {
   const [balances, setBalances] = useState({})
-  const { library } = useActiveWeb3React()
+  const { library, chainId } = useActiveWeb3React()
   const previousValidatedTokens = usePrevious(validatedTokens)
   const provider = getProviderOrSigner(library!, address)
 
   const updateMarginBalances = useCallback(async () => {
-    if (address && validatedTokens.length > 0) {
+    if (address && chainId && validatedTokens.length > 0) {
       const memo: { [tokenAddress: string]: TokenAmount } = {}
-      const holdingAmounts = await getHoldingAmounts(address, Number(process.env.REACT_APP_CHAIN_ID), provider as any)
+      const holdingAmounts = await getHoldingAmounts(address, chainId, provider as any)
       validatedTokens.forEach((token: Token) => {
         const balanceValue = JSBI.BigInt(holdingAmounts[token.address] ?? 0)
         memo[token.address] = new TokenAmount(token, balanceValue)
       })
       setBalances(memo)
     }
-  }, [address, validatedTokens, balances, setBalances])
+  }, [address, chainId, validatedTokens, balances, setBalances])
 
   useEffect(() => {
     if (JSON.stringify(validatedTokens) !== JSON.stringify(previousValidatedTokens)) {
