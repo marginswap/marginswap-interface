@@ -30,7 +30,7 @@ type TableProps<T extends Record<string, string | boolean | number>> = {
   actions?: readonly {
     name: string
     onClick: (row: T, amount: number, rowIndex: number) => void | Promise<void>
-    deriveMaxFrom?: keyof T // which field defines max available value
+    deriveMaxFrom?: string // which field defines max available value
     max?: number // or set max from external source
     disabled?: boolean | ((row: T) => boolean)
   }[]

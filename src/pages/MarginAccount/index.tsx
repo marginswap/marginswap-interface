@@ -1,5 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import { useFetchListCallback } from '../../hooks/useFetchListCallback'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import TokensTable from '../../components/TokensTable'
 import InfoCard from '../../components/InfoCard'
 import IconBanknotes from '../../icons/IconBanknotes'
@@ -21,7 +20,6 @@ import {
   getTokenBalance,
   Token
 } from '@marginswap/sdk'
-import { TokenInfo } from '@uniswap/token-lists'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { useActiveWeb3React } from '../../hooks'
 import { getProviderOrSigner } from '../../utils'
@@ -37,10 +35,7 @@ import { useTransactionAdder } from '../../state/transactions/hooks'
 import { USDT } from '../../constants'
 import { setInterval } from 'timers'
 import { borrowableInPeg2token, useBorrowableInPeg } from 'state/wallet/hooks'
-
-const chainId = Number(process.env.REACT_APP_CHAIN_ID)
-
-const tokenListURL = 'https://raw.githubusercontent.com/marginswap/token-list/main/marginswap.tokenlist.json'
+import { useMarginSwapTokenList } from 'state/lists/hooks'
 
 type AccountBalanceData = {
   img: string
@@ -78,10 +73,6 @@ const getRisk = (holding: number, debt: number): number => {
 
 export const MarginAccount = () => {
   const [error, setError] = useState<string | null>(null)
-
-  const fetchList = useFetchListCallback()
-
-  const [tokens, setTokens] = useState<TokenInfo[]>([])
   const [holdingAmounts, setHoldingAmounts] = useState<Record<string, number>>({})
   const [borrowingAmounts, setBorrowingAmounts] = useState<Record<string, number>>({})
   const [holdingTotal, setHoldingTotal] = useState(new TokenAmount(USDT, '0'))
@@ -92,11 +83,12 @@ export const MarginAccount = () => {
   const [tokenBalances, setTokenBalances] = useState<Record<string, number>>({})
 
   const { account } = useWeb3React()
-  const { library } = useActiveWeb3React()
+  const { library, chainId } = useActiveWeb3React()
 
   const borrowableInPegString = useBorrowableInPeg(account ?? undefined)
 
   const borrowableInPeg = borrowableInPegString ? new TokenAmount(USDT, borrowableInPegString) : undefined
+  const tokens = useMarginSwapTokenList(chainId)
 
   const addTransaction = useTransactionAdder()
 
@@ -105,208 +97,204 @@ export const MarginAccount = () => {
     provider = getProviderOrSigner(library, account)
   }
 
-  const ACCOUNT_ACTIONS = [
-    {
-      name: 'Borrow',
-      onClick: async (token: AccountBalanceData, amount: number) => {
-        if (!amount) return
-        try {
-          const res: any = await crossBorrow(
-            token.address,
-            utils.parseUnits(String(amount), token.decimals).toHexString(),
-            chainId,
-            provider
-          )
-          addTransaction(res, {
-            summary: `Approve`
+  const getAccountData = useCallback(async () => {
+    if (!account || !chainId || tokens.length === 0) {
+      return
+    }
+    try {
+      const [
+        balances,
+        _holdingTotal,
+        _debtTotal,
+        interestRates,
+        _allowances,
+        _borrowableAmounts,
+        _tokenBalances
+      ] = await Promise.all([
+        getAccountBalances(account, chainId, provider),
+        new TokenAmount(USDT, (await getAccountHoldingTotal(account, chainId, provider)).toString()),
+        new TokenAmount(USDT, (await getAccountBorrowTotal(account, chainId, provider)).toString()),
+        getHourlyBondInterestRates(
+          tokens.map(token => token.address),
+          chainId,
+          provider
+        ),
+        getTokenAllowances(
+          account,
+          tokens.map(token => token.address),
+          chainId,
+          provider
+        ),
+        Promise.all(
+          tokens.map(async token => {
+            const tokenToken = new Token(chainId, token.address, token.decimals)
+            if (borrowableInPeg) {
+              return new TokenAmount(
+                tokenToken,
+                (
+                  (await borrowableInPeg2token(borrowableInPeg, tokenToken, chainId, provider)) ?? utils.parseUnits('0')
+                ).toString()
+              )
+            } else {
+              return new TokenAmount(tokenToken, '0')
+            }
           })
-          getData()
-        } catch (e) {
-          toast.error('Approve error', { position: 'bottom-right' })
-          console.error(error)
-        }
-      },
-      deriveMaxFrom: 'borrowable'
-    },
-    // {
-    //   name: 'Repay',
-    //   onClick: (token: AccountBalanceData, amount: number) => {
-    //     console.log('repay', token)
-    //     console.log('amount :>> ', amount)
-    //   }
-    // },
-    {
-      name: 'Deposit',
-      onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
-        if (!amount) return
-        if (allowances[tokenInfo.address] < amount) {
+        ),
+        Promise.all(tokens.map(token => getTokenBalance(account, token.address, provider)))
+      ])
+      setTokenBalances(
+        _tokenBalances.reduce(
+          (acc, cur, index) => ({
+            ...acc,
+            [tokens[index].address]: Number(
+              BigNumber.from(cur).div(BigNumber.from(10).pow(tokens[index].decimals)).toString()
+            )
+          }),
+          {}
+        )
+      )
+      setBorrowableAmounts(
+        _borrowableAmounts.reduce((acc, cur, index) => ({ ...acc, [tokens[index].address]: cur }), {})
+      )
+      setHoldingAmounts(
+        Object.keys(balances.holdingAmounts).reduce(
+          (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.holdingAmounts[cur]).toString() }),
+          {}
+        )
+      )
+      setBorrowingAmounts(
+        Object.keys(balances.borrowingAmounts).reduce(
+          (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.borrowingAmounts[cur]).toString() }),
+          {}
+        )
+      )
+      setBorrowAPRs(
+        Object.keys(interestRates).reduce(
+          (acc, cur) => ({ ...acc, [cur]: (2 * BigNumber.from(interestRates[cur]).toNumber()) / 100000 }),
+          {}
+        )
+      )
+      setHoldingTotal(_holdingTotal)
+      setDebtTotal(_debtTotal)
+      setAllowances(
+        _allowances.reduce(
+          (acc, cur, index) => ({ ...acc, [tokens[index].address]: Number(BigNumber.from(cur).toString()) }),
+          {}
+        )
+      )
+    } catch (error) {
+      console.log('account data error :>> ', error)
+      setError('Failed to get account data')
+    }
+  }, [account, chainId, tokens])
+
+  const ACCOUNT_ACTIONS = useMemo(
+    () => [
+      {
+        name: 'Borrow',
+        onClick: async (token: AccountBalanceData, amount: number) => {
+          if (!amount || !chainId) return
           try {
-            const approveRes: any = await approveToFund(
-              tokenInfo.address,
-              utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
+            const res: any = await crossBorrow(
+              token.address,
+              utils.parseUnits(String(amount), token.decimals).toHexString(),
               chainId,
               provider
             )
-            localStorage.setItem(`${tokenInfo.coin}_LAST_DEPOSIT`, new Date().toISOString())
-            addTransaction(approveRes, {
+            addTransaction(res, {
               summary: `Approve`
             })
-            getData()
+            getAccountData()
           } catch (e) {
             toast.error('Approve error', { position: 'bottom-right' })
             console.error(error)
           }
-        } else {
+        },
+        deriveMaxFrom: 'borrowable'
+      },
+      // {
+      //   name: 'Repay',
+      //   onClick: (token: AccountBalanceData, amount: number) => {
+      //     console.log('repay', token)
+      //     console.log('amount :>> ', amount)
+      //   }
+      // },
+      {
+        name: 'Deposit',
+        onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
+          if (!amount || !chainId) return
+          if (allowances[tokenInfo.address] < amount) {
+            try {
+              const approveRes: any = await approveToFund(
+                tokenInfo.address,
+                utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
+                chainId,
+                provider
+              )
+              localStorage.setItem(`${tokenInfo.coin}_LAST_DEPOSIT`, new Date().toISOString())
+              addTransaction(approveRes, {
+                summary: `Approve`
+              })
+              getAccountData()
+            } catch (e) {
+              toast.error('Approve error', { position: 'bottom-right' })
+              console.error(error)
+            }
+          } else {
+            try {
+              const depositRes: any = await crossDeposit(
+                tokenInfo.address,
+                utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
+                chainId,
+                provider
+              )
+              addTransaction(depositRes, {
+                summary: `Cross Deposit`
+              })
+            } catch (error) {
+              toast.error('Deposit error', { position: 'bottom-right' })
+              console.error(error)
+            }
+          }
+        },
+        deriveMaxFrom: 'available'
+      },
+      {
+        name: 'Withdraw',
+        onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
+          if (!amount || !chainId) return
           try {
-            const depositRes: any = await crossDeposit(
+            const response: any = await crossWithdraw(
               tokenInfo.address,
               utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
               chainId,
               provider
             )
-            addTransaction(depositRes, {
-              summary: `Cross Deposit`
+            addTransaction(response, {
+              summary: `Cross Withdraw`
             })
           } catch (error) {
-            toast.error('Deposit error', { position: 'bottom-right' })
+            toast.error('Withdrawal error', { position: 'bottom-right' })
             console.error(error)
           }
+        },
+        deriveMaxFrom: 'balance',
+        disabled: (token: AccountBalanceData) => {
+          const date = localStorage.getItem(`${token.coin}_LAST_DEPOSIT`)
+          return !!date && new Date().getTime() - new Date(date).getTime() < 300000
         }
-      },
-      deriveMaxFrom: 'available'
-    },
-    {
-      name: 'Withdraw',
-      onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
-        try {
-          const response: any = await crossWithdraw(
-            tokenInfo.address,
-            utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
-            chainId,
-            provider
-          )
-          addTransaction(response, {
-            summary: `Cross Withdraw`
-          })
-        } catch (error) {
-          toast.error('Withdrawal error', { position: 'bottom-right' })
-          console.error(error)
-        }
-      },
-      deriveMaxFrom: 'balance',
-      disabled: (token: AccountBalanceData) => {
-        const date = localStorage.getItem(`${token.coin}_LAST_DEPOSIT`)
-        return !!date && new Date().getTime() - new Date(date).getTime() < 300000
       }
-    }
-  ] as const
+    ],
+    [chainId, allowances, getAccountData]
+  )
 
-  const getTokensList = async (url: string) => {
-    const tokensRes = await fetchList(url, false)
-    setTokens(tokensRes.tokens.filter(t => t.chainId === chainId))
-  }
   useEffect(() => {
-    getTokensList(tokenListURL).catch(e => {
-      console.error(e)
-      setError('Failed to get tokens list')
-    })
-  }, [])
-
-  const getAccountData = async (_account: string) => {
-    const [
-      balances,
-      _holdingTotal,
-      _debtTotal,
-      interestRates,
-      _allowances,
-      _borrowableAmounts,
-      _tokenBalances
-    ] = await Promise.all([
-      getAccountBalances(_account, chainId, provider),
-      new TokenAmount(USDT, (await getAccountHoldingTotal(_account, chainId, provider)).toString()),
-      new TokenAmount(USDT, (await getAccountBorrowTotal(_account, chainId, provider)).toString()),
-      getHourlyBondInterestRates(
-        tokens.map(token => token.address),
-        chainId,
-        provider
-      ),
-      getTokenAllowances(
-        _account,
-        tokens.map(token => token.address),
-        chainId,
-        provider
-      ),
-      Promise.all(
-        tokens.map(async token => {
-          const tokenToken = new Token(chainId, token.address, token.decimals)
-          if (borrowableInPeg) {
-            return new TokenAmount(
-              tokenToken,
-              (
-                (await borrowableInPeg2token(borrowableInPeg, tokenToken, chainId, provider)) ?? utils.parseUnits('0')
-              ).toString()
-            )
-          } else {
-            return new TokenAmount(tokenToken, '0')
-          }
-        })
-      ),
-      Promise.all(tokens.map(token => getTokenBalance(_account, token.address, provider)))
-    ])
-    setTokenBalances(
-      _tokenBalances.reduce(
-        (acc, cur, index) => ({
-          ...acc,
-          [tokens[index].address]: Number(
-            BigNumber.from(cur).div(BigNumber.from(10).pow(tokens[index].decimals)).toString()
-          )
-        }),
-        {}
-      )
-    )
-    setBorrowableAmounts(_borrowableAmounts.reduce((acc, cur, index) => ({ ...acc, [tokens[index].address]: cur }), {}))
-    setHoldingAmounts(
-      Object.keys(balances.holdingAmounts).reduce(
-        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.holdingAmounts[cur]).toString() }),
-        {}
-      )
-    )
-    setBorrowingAmounts(
-      Object.keys(balances.borrowingAmounts).reduce(
-        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.borrowingAmounts[cur]).toString() }),
-        {}
-      )
-    )
-    setBorrowAPRs(
-      Object.keys(interestRates).reduce(
-        (acc, cur) => ({ ...acc, [cur]: (2 * BigNumber.from(interestRates[cur]).toNumber()) / 100000 }),
-        {}
-      )
-    )
-    setHoldingTotal(_holdingTotal)
-    setDebtTotal(_debtTotal)
-    setAllowances(
-      _allowances.reduce(
-        (acc, cur, index) => ({ ...acc, [tokens[index].address]: Number(BigNumber.from(cur).toString()) }),
-        {}
-      )
-    )
-  }
-  const getData = () => {
-    if (account && library && tokens.length > 0) {
-      getAccountData(account).catch(e => {
-        console.error(e)
-        setError('Failed to get account data')
-      })
-    }
-  }
-  useEffect(() => {
-    getData()
-    const interval = setInterval(getData, 10000)
+    getAccountData()
+    const interval = setInterval(getAccountData, 10000)
     return () => {
       clearInterval(interval)
     }
-  }, [account, library, tokens])
+  }, [getAccountData])
 
   const data = useMemo(
     () =>
