@@ -267,19 +267,19 @@ export const MarginAccount = () => {
     setBorrowableAmounts(_borrowableAmounts.reduce((acc, cur, index) => ({ ...acc, [tokens[index].address]: cur }), {}))
     setHoldingAmounts(
       Object.keys(balances.holdingAmounts).reduce(
-        (acc, cur) => ({ ...acc, [cur.toLowerCase()]: BigNumber.from(balances.holdingAmounts[cur]).toString() }),
+        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.holdingAmounts[cur]).toString() }),
         {}
       )
     )
     setBorrowingAmounts(
       Object.keys(balances.borrowingAmounts).reduce(
-        (acc, cur) => ({ ...acc, [cur.toLowerCase()]: BigNumber.from(balances.borrowingAmounts[cur]).toString() }),
+        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.borrowingAmounts[cur]).toString() }),
         {}
       )
     )
     setBorrowAPRs(
       Object.keys(interestRates).reduce(
-        (acc, cur) => ({ ...acc, [cur.toLowerCase()]: (2 * BigNumber.from(interestRates[cur]).toNumber()) / 100000 }),
+        (acc, cur) => ({ ...acc, [cur]: (2 * BigNumber.from(interestRates[cur]).toNumber()) / 100000 }),
         {}
       )
     )
