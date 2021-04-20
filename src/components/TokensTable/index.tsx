@@ -19,21 +19,26 @@ import {
 import React, { ChangeEvent, Fragment, useMemo, useState } from 'react'
 import { colors, StyledButton, StyledTextField } from '../../theme'
 
+type TableAction<T extends Record<string, string | boolean | number>> = {
+  name: string
+  onClick: (row: T, amount: number, rowIndex: number) => void | Promise<void>
+  deriveMaxFrom?: keyof T // which field defines max available value
+  max?: number // or set max from external source
+  disabled?: boolean | ((row: T) => boolean)
+}
+
 type TableProps<T extends Record<string, string | boolean | number>> = {
   title: string
-  data: (T & { getActionNameFromAmount?: { [key: string]: (amount: number) => string } })[]
+  data: (T & {
+    getActionNameFromAmount?: { [key: string]: (amount: number) => string }
+    customActions?: readonly TableAction<T>[]
+  })[]
   columns: readonly {
     id: keyof T
     name: string
     render?: (token: T) => JSX.Element
   }[]
-  actions?: readonly {
-    name: string
-    onClick: (row: T, amount: number, rowIndex: number) => void | Promise<void>
-    deriveMaxFrom?: keyof T // which field defines max available value
-    max?: number // or set max from external source
-    disabled?: boolean | ((row: T) => boolean)
-  }[]
+  actions?: readonly TableAction<T>[]
   deriveEmptyFrom?: keyof T // which field is used for hiding empty rows
   idCol: keyof T
 }
@@ -80,10 +85,11 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
 
   const handleActionValueChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!(actions && activeAction)) return
-    if (
-      !e.target.value ||
-      !(actions[activeAction.actionIndex].deriveMaxFrom || actions[activeAction.actionIndex].max !== undefined)
-    ) {
+    const currentAction =
+      activeAction.actionIndex < actions.length
+        ? actions[activeAction.actionIndex]
+        : sortedData[activeAction.rowIndex].customActions![activeAction.actionIndex - actions.length]
+    if (!e.target.value || !(currentAction.deriveMaxFrom || currentAction.max !== undefined)) {
       setActionAmount(e.target.value)
     } else {
       setActionAmount(
@@ -91,10 +97,7 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
           Math.round(
             Math.min(
               Number(e.target.value),
-              Number(
-                actions[activeAction.actionIndex].max ??
-                  sortedData[activeAction.rowIndex][actions[activeAction.actionIndex].deriveMaxFrom!]
-              )
+              Number(currentAction.max ?? sortedData[activeAction.rowIndex][currentAction.deriveMaxFrom!])
             ) * 1000000
           ) / 1000000
         )
@@ -104,12 +107,12 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
 
   const handleActionSubmit = async () => {
     if (!(actions && activeAction)) return
+    const currentAction =
+      activeAction.actionIndex < actions.length
+        ? actions[activeAction.actionIndex]
+        : sortedData[activeAction.rowIndex].customActions![activeAction.actionIndex - actions.length]
     setActionLoading(true)
-    const res = actions[activeAction.actionIndex].onClick(
-      sortedData[activeAction.rowIndex],
-      Number(actionAmount),
-      activeAction.rowIndex
-    )
+    const res = currentAction.onClick(sortedData[activeAction.rowIndex], Number(actionAmount), activeAction.rowIndex)
     if (res instanceof Promise) {
       res
         .then(() => {
@@ -182,102 +185,106 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
               </TableRow>
             </TableHead>
             <TableBody>
-              {sortedData.map((row, rowIndex) => (
-                <Fragment key={row[idCol] as number}>
-                  <StyledTableRow selected={activeAction?.actionIndex === rowIndex}>
-                    <StyledTableCell width={52} style={{ borderBottom: 'none' }} />
-                    {columns.map((column, colIndex) => (
-                      <StyledTableCell key={colIndex}>
-                        {column.render
-                          ? column.render(row)
-                          : typeof row[column.id] === 'number'
-                          ? Math.round(Number(row[column.id]) * 1000000) / 1000000
-                          : row[column.id]}
-                      </StyledTableCell>
-                    ))}
-                    {actions && (
-                      <StyledTableCell align="left">
-                        {actions.map((action, actionIndex) => (
-                          <StyledButton
-                            key={actionIndex}
-                            onClick={() => {
-                              handleActionOpen(actionIndex, rowIndex)
-                            }}
-                            disabled={typeof action.disabled === 'function' ? action.disabled(row) : action.disabled}
-                          >
-                            {action.name}
-                          </StyledButton>
-                        ))}
-                      </StyledTableCell>
-                    )}
-                    <StyledTableCell width={24} style={{ borderBottom: 'none' }} />
-                  </StyledTableRow>
-                  {actions && actions.length > 0 && (
-                    <TableRow>
-                      <StyledTableCell style={{ paddingBottom: 0, paddingTop: 0, borderBottom: 'none' }} colSpan={6}>
-                        <Collapse in={activeAction?.rowIndex === rowIndex} timeout="auto" unmountOnExit>
-                          <Box margin={6}>
-                            <h4>{activeAction && actions[activeAction.actionIndex].name}</h4>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                              <div style={{ position: 'relative' }}>
-                                <StyledTextField
-                                  label="Amount"
-                                  type="number"
-                                  onChange={handleActionValueChange}
-                                  value={actionAmount}
-                                />
-                                {activeAction &&
-                                  (actions[activeAction.actionIndex].deriveMaxFrom ||
-                                    actions[activeAction.actionIndex].max !== undefined) && (
-                                    <StyledButton
-                                      color="primary"
-                                      style={{
-                                        position: 'absolute',
-                                        right: 0,
-                                        top: '50%',
-                                        padding: '4px 10px',
-                                        margin: '-10px 0 0 0'
-                                      }}
-                                      onClick={() => {
-                                        setActionAmount(
-                                          String(
-                                            Math.round(
-                                              Number(
-                                                actions[activeAction.actionIndex].max ??
-                                                  row[actions[activeAction.actionIndex].deriveMaxFrom!]
-                                              ) * 1000000
-                                            ) / 1000000
+              {sortedData.map((row, rowIndex) => {
+                const allActions = [...(actions ?? []), ...(row.customActions ?? [])]
+                return (
+                  <Fragment key={row[idCol] as number}>
+                    <StyledTableRow selected={activeAction?.actionIndex === rowIndex}>
+                      <StyledTableCell width={52} style={{ borderBottom: 'none' }} />
+                      {columns.map((column, colIndex) => (
+                        <StyledTableCell key={colIndex}>
+                          {column.render
+                            ? column.render(row)
+                            : typeof row[column.id] === 'number'
+                            ? Math.round(Number(row[column.id]) * 1000000) / 1000000
+                            : row[column.id]}
+                        </StyledTableCell>
+                      ))}
+                      {allActions.length > 0 && (
+                        <StyledTableCell align="left">
+                          {allActions.map((action, actionIndex) => (
+                            <StyledButton
+                              key={actionIndex}
+                              onClick={() => {
+                                handleActionOpen(actionIndex, rowIndex)
+                              }}
+                              disabled={typeof action.disabled === 'function' ? action.disabled(row) : action.disabled}
+                            >
+                              {action.name}
+                            </StyledButton>
+                          ))}
+                        </StyledTableCell>
+                      )}
+                      <StyledTableCell width={24} style={{ borderBottom: 'none' }} />
+                    </StyledTableRow>
+                    {allActions.length > 0 && (
+                      <TableRow>
+                        <StyledTableCell style={{ paddingBottom: 0, paddingTop: 0, borderBottom: 'none' }} colSpan={6}>
+                          <Collapse in={activeAction?.rowIndex === rowIndex} timeout="auto" unmountOnExit>
+                            <Box margin={6}>
+                              <h4>{activeAction && allActions[activeAction.actionIndex]?.name}</h4>
+                              <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <div style={{ position: 'relative' }}>
+                                  <StyledTextField
+                                    label="Amount"
+                                    type="number"
+                                    onChange={handleActionValueChange}
+                                    value={actionAmount}
+                                  />
+                                  {activeAction &&
+                                    (allActions[activeAction.actionIndex]?.deriveMaxFrom ||
+                                      allActions[activeAction.actionIndex]?.max !== undefined) && (
+                                      <StyledButton
+                                        color="primary"
+                                        style={{
+                                          position: 'absolute',
+                                          right: 0,
+                                          top: '50%',
+                                          padding: '4px 10px',
+                                          margin: '-10px 0 0 0'
+                                        }}
+                                        onClick={() => {
+                                          setActionAmount(
+                                            String(
+                                              Math.round(
+                                                Number(
+                                                  allActions[activeAction.actionIndex].max ??
+                                                    row[allActions[activeAction.actionIndex].deriveMaxFrom!]
+                                                ) * 1000000
+                                              ) / 1000000
+                                            )
                                           )
-                                        )
-                                      }}
-                                    >
-                                      MAX
-                                    </StyledButton>
-                                  )}
+                                        }}
+                                      >
+                                        MAX
+                                      </StyledButton>
+                                    )}
+                                </div>
+                                <StyledButton
+                                  color="primary"
+                                  style={{ borderRadius: '16px', padding: '10px 16px', margin: '0 0 0 32px' }}
+                                  onClick={handleActionSubmit}
+                                  disabled={actionLoading}
+                                >
+                                  {activeAction &&
+                                  row.getActionNameFromAmount &&
+                                  allActions[activeAction.actionIndex] &&
+                                  row.getActionNameFromAmount[allActions[activeAction.actionIndex].name]
+                                    ? row.getActionNameFromAmount[allActions[activeAction.actionIndex].name](
+                                        Number(actionAmount)
+                                      )
+                                    : 'Confirm Transaction'}
+                                  {actionLoading && <CircularProgress size={20} color={'white' as any} />}
+                                </StyledButton>
                               </div>
-                              <StyledButton
-                                color="primary"
-                                style={{ borderRadius: '16px', padding: '10px 16px', margin: '0 0 0 32px' }}
-                                onClick={handleActionSubmit}
-                                disabled={actionLoading}
-                              >
-                                {activeAction &&
-                                row.getActionNameFromAmount &&
-                                row.getActionNameFromAmount[actions[activeAction.actionIndex].name]
-                                  ? row.getActionNameFromAmount[actions[activeAction.actionIndex].name](
-                                      Number(actionAmount)
-                                    )
-                                  : 'Confirm Transaction'}
-                                {actionLoading && <CircularProgress size={20} color={'white' as any} />}
-                              </StyledButton>
-                            </div>
-                          </Box>
-                        </Collapse>
-                      </StyledTableCell>
-                    </TableRow>
-                  )}
-                </Fragment>
-              ))}
+                            </Box>
+                          </Collapse>
+                        </StyledTableCell>
+                      </TableRow>
+                    )}
+                  </Fragment>
+                )
+              })}
             </TableBody>
           </StyledTable>
         </TableContainer>

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { useFetchListCallback } from '../../hooks/useFetchListCallback'
 import TokensTable from '../../components/TokensTable'
 import InfoCard from '../../components/InfoCard'
 import IconMoneyStackLocked from '../../icons/IconMoneyStackLocked'
@@ -30,10 +29,9 @@ import { toast } from 'react-toastify'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { USDT } from '../../constants'
 import { setInterval } from 'timers'
+import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 
 const chainId = Number(process.env.REACT_APP_CHAIN_ID)
-
-const tokenListURL = 'https://raw.githubusercontent.com/marginswap/token-list/main/marginswap.tokenlist.json'
 
 type BondRateData = {
   img: string
@@ -69,7 +67,6 @@ const apyFromApr = (apr: number, compounds: number): number =>
 export const BondSupply = () => {
   const [error, setError] = useState<string | null>(null)
 
-  const fetchList = useFetchListCallback()
   const [tokens, setTokens] = useState<TokenInfo[]>([])
   const [bondBalances, setBondBalances] = useState<Record<string, string>>({})
   const [bondAPRs, setBondAPRs] = useState<Record<string, number>>({})
@@ -78,15 +75,8 @@ export const BondSupply = () => {
   const [allowances, setAllowances] = useState<Record<string, number>>({})
   const [tokenBalances, setTokenBalances] = useState<Record<string, number>>({})
 
-  const getTokensList = async (url: string) => {
-    const tokensRes = await fetchList(url, false)
-    setTokens(tokensRes.tokens.filter(t => t.chainId === chainId))
-  }
   useEffect(() => {
-    getTokensList(tokenListURL).catch(e => {
-      console.error(e)
-      setError('Failed to get tokens list')
-    })
+    setTokens(tokensList.tokens.filter(t => t.chainId === chainId))
   }, [])
 
   const { account } = useWeb3React()

@@ -2006,10 +2006,10 @@
   resolved "https://registry.yarnpkg.com/@marginswap/core-abi/-/core-abi-1.1.4.tgz#c805a61c89729a0d559c4cbce92923c299a5f7e7"
   integrity sha512-5byIUI+MYzmvsXKJjkJnu1Z21KZYUmtNXqZkC7vp/5xf+TzMKV13laWwY8CYN4ZqEg5y3vaa4uz0kL86JG0Wvg==
 
-"@marginswap/sdk@^4.1.11":
-  version "4.1.11"
-  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.1.11.tgz#56b22e3027f424debd8f5aca06f9f326867b88e2"
-  integrity sha512-uqpatyWl8EVs5wfx8olP6h6HqkbhmPJr34THbCxTm6Wj/BaUxT9LO6veI0leZKmCKY4LOR7h6O06Ika5V5QDQA==
+"@marginswap/sdk@^4.1.12":
+  version "4.1.12"
+  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.1.12.tgz#7c5213c83925ab984c915e119993987c3efedf98"
+  integrity sha512-D0FtoqO0Jcbn3IZ+iNGo5lVAz0xO//o3vQamPSztrjQCnL0/it4gTLwU9ry7UT0fou/zDqdNhL5Y1+NY95/mnA==
   dependencies:
     "@ethersproject/abstract-provider" "^5.1.0"
     "@ethersproject/abstract-signer" "^5.1.0"

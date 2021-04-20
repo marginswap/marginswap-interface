@@ -19,7 +19,9 @@ import {
   getTokenAllowances,
   crossBorrow,
   getTokenBalance,
-  Token
+  Token,
+  crossDepositETH,
+  crossWithdrawETH
 } from '@marginswap/sdk'
 import { TokenInfo } from '@uniswap/token-lists'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
@@ -30,17 +32,15 @@ import { StyledTableContainer } from './styled'
 import { StyledMobileOnlyRow } from './styled'
 import { StyledWrapperDiv } from './styled'
 import { StyledSectionDiv } from './styled'
-
 import { utils } from 'ethers'
 import { toast } from 'react-toastify'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { USDT } from '../../constants'
 import { setInterval } from 'timers'
-import { borrowableInPeg2token, useBorrowableInPeg } from 'state/wallet/hooks'
+import { borrowableInPeg2token, useBorrowableInPeg, useETHBalances } from 'state/wallet/hooks'
+import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 
 const chainId = Number(process.env.REACT_APP_CHAIN_ID)
-
-const tokenListURL = 'https://raw.githubusercontent.com/marginswap/token-list/main/marginswap.tokenlist.json'
 
 type AccountBalanceData = {
   img: string
@@ -79,8 +79,6 @@ const getRisk = (holding: number, debt: number): number => {
 export const MarginAccount = () => {
   const [error, setError] = useState<string | null>(null)
 
-  const fetchList = useFetchListCallback()
-
   const [tokens, setTokens] = useState<TokenInfo[]>([])
   const [holdingAmounts, setHoldingAmounts] = useState<Record<string, number>>({})
   const [borrowingAmounts, setBorrowingAmounts] = useState<Record<string, number>>({})
@@ -93,6 +91,7 @@ export const MarginAccount = () => {
 
   const { account } = useWeb3React()
   const { library } = useActiveWeb3React()
+  const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
 
   const borrowableInPegString = useBorrowableInPeg(account ?? undefined)
 
@@ -199,15 +198,8 @@ export const MarginAccount = () => {
     }
   ] as const
 
-  const getTokensList = async (url: string) => {
-    const tokensRes = await fetchList(url, false)
-    setTokens(tokensRes.tokens.filter(t => t.chainId === chainId))
-  }
   useEffect(() => {
-    getTokensList(tokenListURL).catch(e => {
-      console.error(e)
-      setError('Failed to get tokens list')
-    })
+    setTokens(tokensList.tokens.filter(t => t.chainId === chainId))
   }, [])
 
   const getAccountData = useCallback(async () => {
@@ -320,7 +312,55 @@ export const MarginAccount = () => {
         available: tokenBalances[token.address],
         getActionNameFromAmount: {
           Deposit: (amount: number) => (allowances[token.address] >= amount ? 'Confirm Transaction' : 'Approve')
-        }
+        },
+        customActions:
+          token.symbol === 'WETH'
+            ? ([
+                {
+                  name: 'Deposit ETH',
+                  onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
+                    if (!amount) return
+                    try {
+                      const depositRes: any = await crossDepositETH(
+                        utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
+                        chainId,
+                        provider
+                      )
+                      addTransaction(depositRes, {
+                        summary: `Cross Deposit `
+                      })
+                    } catch (error) {
+                      toast.error('Deposit error', { position: 'bottom-right' })
+                      console.error(error)
+                    }
+                  },
+                  max: Number(userEthBalance?.toSignificant(6)) || 0
+                },
+                {
+                  name: 'Withdraw ETH',
+                  onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
+                    try {
+                      const response: any = await crossWithdrawETH(
+                        utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
+                        chainId,
+                        provider
+                      )
+                      addTransaction(response, {
+                        summary: `Cross Withdraw ETH`
+                      })
+                    } catch (error) {
+                      toast.error('Withdrawal error', { position: 'bottom-right' })
+                      console.error(error)
+                    }
+                  },
+                  deriveMaxFrom: 'balance',
+                  disabled: (token: AccountBalanceData) => {
+                    const date = localStorage.getItem(`${token.coin}_LAST_DEPOSIT`)
+                    return !!date && new Date().getTime() - new Date(date).getTime() < 300000
+                  }
+                }
+              ] as const)
+            : undefined
       })),
     [tokens, holdingAmounts, borrowingAmounts, borrowAPRs, allowances]
   )
