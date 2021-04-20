@@ -10,6 +10,14 @@
   "keywords": ["marginswap", "defi", "crossmargin"],
   "tokens": [
     {
+      "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "chainId": 31337,
+      "name": "Wrapped ETH",
+      "symbol": "WETH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/marginswap/token-list/main/logo/ethereum.png"
+    },
+    {
       "address": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
       "chainId": 1,
       "name": "Wrapped BTC",
