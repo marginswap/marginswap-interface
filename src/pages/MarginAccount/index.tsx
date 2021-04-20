@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react'
-import { useFetchListCallback } from '../../hooks/useFetchListCallback'
 import TokensTable from '../../components/TokensTable'
 import InfoCard from '../../components/InfoCard'
 import IconBanknotes from '../../icons/IconBanknotes'
