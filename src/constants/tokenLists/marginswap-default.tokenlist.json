@@ -22,7 +22,7 @@
           "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/wrapped-bitcoin.png"
         },
         {
-          "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+          "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
           "chainId": 1,
           "name": "Wrapped ETH",
           "symbol": "WETH",
@@ -30,7 +30,7 @@
           "logoURI": "https://raw.githubusercontent.com/marginswap/token-list/main/logo/ethereum.png"
         },
         {
-          "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+          "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
           "chainId": 31337,
           "name": "Wrapped ETH",
           "symbol": "WETH",
@@ -94,7 +94,7 @@
           "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/uniswap-uni-logo.png"
         },
         {
-          "address": "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
+          "address": "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2",
           "chainId": 1,
           "name": "Maker",
           "symbol": "MKR",
