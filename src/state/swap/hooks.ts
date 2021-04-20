@@ -151,6 +151,20 @@ export function useDerivedSwapInfo(): {
 
   const trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
 
+<<<<<<< HEAD
+=======
+  const { leverageType } = useSwapState()
+  const borrowBalance = useBorrowable(account ?? undefined, inputCurrency ?? undefined)
+
+  const relevantInput =
+    !!relevantTokenBalances[0] &&
+    !!borrowBalance &&
+    leverageType === LeverageType.CROSS_MARGIN &&
+    borrowBalance.currency.symbol === relevantTokenBalances[0].currency.symbol
+      ? relevantTokenBalances[0]?.add(borrowBalance)
+      : relevantTokenBalances[0]
+
+>>>>>>> 4fc88d2a7bff66495bc202cb690e89a955c2e72a
   const currencyBalances = {
     [Field.INPUT]: relevantTokenBalances[0],
     [Field.OUTPUT]: relevantTokenBalances[1]

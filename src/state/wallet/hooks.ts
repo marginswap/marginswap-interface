@@ -8,7 +8,13 @@ import {
   TokenAmount,
   borrowable,
   LeverageType,
+<<<<<<< HEAD
   getHoldingAmounts
+=======
+  getHoldingAmounts,
+  viewCurrentPriceInPeg,
+  ChainId
+>>>>>>> 4fc88d2a7bff66495bc202cb690e89a955c2e72a
 } from '@marginswap/sdk'
 import { useMemo, useState, useEffect, useCallback } from 'react'
 import ERC20_INTERFACE from '../../constants/abis/erc20'
@@ -22,6 +28,12 @@ import { useTotalUniEarned } from '../stake/hooks'
 import { useSwapState } from '../swap/hooks'
 import { getProviderOrSigner } from '../../utils'
 import usePrevious from '../../hooks/usePrevious'
+<<<<<<< HEAD
+=======
+import { wrappedCurrency } from 'utils/wrappedCurrency'
+import { parseUnits } from 'ethers/lib/utils'
+import { BigNumber } from 'ethers'
+>>>>>>> 4fc88d2a7bff66495bc202cb690e89a955c2e72a
 
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.
@@ -59,6 +71,85 @@ export function useETHBalances(
   )
 }
 
+<<<<<<< HEAD
+=======
+export function useBorrowableInPeg(address: string | undefined): string | undefined {
+  const [value, setValue] = useState<string | undefined>(undefined)
+  const { library, chainId } = useActiveWeb3React()
+  const provider: any = getProviderOrSigner(library!, address)
+  const updateBorrowableInPeg = useCallback(async () => {
+    if (address && chainId) {
+      const res = await borrowableInPeg(address, chainId, provider)
+      setValue(res)
+    } else {
+      setValue(undefined)
+    }
+  }, [address, setValue])
+
+  useEffect(() => {
+    updateBorrowableInPeg()
+  }, [address, updateBorrowableInPeg])
+  return value
+}
+
+export async function borrowableInPeg2token(
+  borrowableInPeg: TokenAmount,
+  wrapped: Token,
+  chainId: ChainId,
+  provider: any
+): Promise<BigNumber | undefined> {
+  const hundred = `100${'0'.repeat(wrapped.decimals)}`
+  const curPrice = await viewCurrentPriceInPeg(wrapped.address, hundred, chainId, provider)
+
+  if (curPrice.gt(0)) {
+    const borrowableInTarget = borrowableInPeg.multiply(`100${'0'.repeat(USDT.decimals)}`).divide(curPrice.toString())
+
+    return parseUnits(borrowableInTarget.toFixed(wrapped.decimals))
+  } else {
+    return undefined
+  }
+}
+
+export function useBorrowable(
+  tokenAddress: string | undefined,
+  currency: Currency | undefined
+): CurrencyAmount | undefined {
+  const { library, chainId } = useActiveWeb3React()
+  const provider: any = getProviderOrSigner(library!, tokenAddress)
+  const bip = useBorrowableInPeg(tokenAddress)
+
+  const [balance, setBalance] = useState<CurrencyAmount | undefined>(undefined)
+  const updateBorrowableBalance = useCallback(async () => {
+    if (tokenAddress && currency && chainId && bip) {
+      const borrowableInPeg = new TokenAmount(USDT, bip)
+
+      const wrapped = wrappedCurrency(currency, chainId)
+
+      if (wrapped) {
+        const borrowableInTarget = await borrowableInPeg2token(borrowableInPeg, wrapped, chainId, provider)
+        if (borrowableInTarget) {
+          const result =
+            currency.name == 'Ether'
+              ? CurrencyAmount.ether(borrowableInTarget.toString())
+              : new TokenAmount(wrapped, borrowableInTarget.toString())
+
+          setBalance(result)
+        } else {
+          setBalance(undefined)
+        }
+      } else {
+        setBalance(undefined)
+      }
+    }
+  }, [tokenAddress, currency, setBalance])
+
+  useEffect(() => {
+    updateBorrowableBalance()
+  }, [tokenAddress, currency, updateBorrowableBalance])
+  return balance
+}
+
+>>>>>>> 4fc88d2a7bff66495bc202cb690e89a955c2e72a
 export function useMarginBalance({ address, validatedTokens }: any) {
   const [balances, setBalances] = useState({})
   const { library } = useActiveWeb3React()
@@ -70,8 +161,13 @@ export function useMarginBalance({ address, validatedTokens }: any) {
       const memo: { [tokenAddress: string]: TokenAmount } = {}
       const holdingAmounts = await getHoldingAmounts(address, Number(process.env.REACT_APP_CHAIN_ID), provider as any)
       validatedTokens.forEach((token: Token) => {
+<<<<<<< HEAD
         const value = JSBI.BigInt(holdingAmounts[token.address] ?? 0)
         memo[token.address] = new TokenAmount(token, value)
+=======
+        const balanceValue = JSBI.BigInt(holdingAmounts[token.address] ?? 0)
+        memo[token.address] = new TokenAmount(token, balanceValue)
+>>>>>>> 4fc88d2a7bff66495bc202cb690e89a955c2e72a
       })
 
       for (let index = 0; index < validatedTokens.length; index++) {
