@@ -22,6 +22,8 @@ import useTheme from 'hooks/useTheme'
 import ImportRow from './ImportRow'
 import { Edit } from 'react-feather'
 import { ButtonLight } from 'components/Button'
+import { LeverageType } from '@marginswap/sdk'
+import { useSwapState } from '../../state/swap/hooks'
 
 const ContentWrapper = styled(Column)`
   width: 100%;
@@ -78,6 +80,7 @@ export function CurrencySearch({
   const isAddressSearch = isAddress(searchQuery)
   const searchToken = useToken(searchQuery)
   const searchTokenIsAdded = useIsUserAddedToken(searchToken)
+  const { leverageType } = useSwapState()
 
   useEffect(() => {
     if (isAddressSearch) {
@@ -90,9 +93,12 @@ export function CurrencySearch({
   }, [isAddressSearch])
 
   const showETH: boolean = useMemo(() => {
+    if (leverageType === LeverageType.CROSS_MARGIN) {
+      return false
+    }
     const s = searchQuery.toLowerCase().trim()
     return s === '' || s === 'e' || s === 'et' || s === 'eth'
-  }, [searchQuery])
+  }, [searchQuery, leverageType])
 
   const tokenComparator = useTokenComparator(invertSearchOrder)
 
