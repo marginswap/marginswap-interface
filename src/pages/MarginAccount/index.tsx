@@ -66,8 +66,9 @@ const ACCOUNT_COLUMNS = [
     )
   },
   { name: 'Total Balance', id: 'balance' },
-  { name: 'Borrowed', id: 'borrowed' },
-  { name: 'Interest Rate', id: 'ir' }
+  { name: 'Debt', id: 'borrowed' },
+  { name: 'APR', id: 'ir' },
+  { name: 'Liquidity', id: 'borrowable' }
 ] as const
 
 const getRisk = (holding: number, debt: number): number => {
@@ -361,7 +362,7 @@ export const MarginAccount = () => {
               ] as const)
             : undefined
       })),
-    [tokens, holdingAmounts, borrowingAmounts, borrowAPRs, allowances]
+    [tokens, holdingAmounts, borrowingAmounts, borrowAPRs, allowances, borrowableAmounts, tokenBalances, userEthBalance]
   )
 
   return (
