@@ -4,7 +4,7 @@ export const StyledWrapperDiv = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 1310px;
+  max-width: 1130px;
   gap: 20px;
 `
 export const StyledSectionDiv = styled.div`

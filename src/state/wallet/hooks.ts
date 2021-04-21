@@ -65,25 +65,6 @@ export function useETHBalances(
   )
 }
 
-export function useBorrowableInPeg(address: string | undefined): string | undefined {
-  const [value, setValue] = useState<string | undefined>(undefined)
-  const { library, chainId } = useActiveWeb3React()
-  const provider: any = getProviderOrSigner(library!, address)
-  const updateBorrowableInPeg = useCallback(async () => {
-    if (address && chainId) {
-      const res = await borrowableInPeg(address, chainId, provider)
-      setValue(res)
-    } else {
-      setValue(undefined)
-    }
-  }, [address, setValue])
-
-  useEffect(() => {
-    updateBorrowableInPeg()
-  }, [address, updateBorrowableInPeg])
-  return value
-}
-
 export async function borrowableInPeg2token(
   borrowableInPeg: TokenAmount,
   wrapped: Token,
@@ -96,7 +77,6 @@ export async function borrowableInPeg2token(
 
   if (curPrice.gt(0)) {
     const borrowableInTarget = borrowableInPeg.multiply(`100${'0'.repeat(USDT.decimals)}`).divide(curPrice.toString())
-
     if (borrowableInTarget.greaterThan(totalAvailable.toString())) {
       return parseUnits(totalAvailable.toString(), wrapped.decimals)
     }
@@ -110,32 +90,35 @@ export async function borrowableInPeg2token(
 export function useBorrowable(
   tokenAddress: string | undefined,
   currency: Currency | undefined
-): CurrencyAmount | undefined {
+): CurrencyAmount | undefined | null {
   const { library, chainId } = useActiveWeb3React()
   const provider: any = getProviderOrSigner(library!, tokenAddress)
-  const bip = useBorrowableInPeg(tokenAddress)
-
   const [balance, setBalance] = useState<CurrencyAmount | undefined>(undefined)
+
   const updateBorrowableBalance = useCallback(async () => {
-    if (tokenAddress && currency && chainId && bip) {
-      const borrowableInPeg = new TokenAmount(USDT, bip)
+    if (tokenAddress && chainId && currency) {
+      const bip = await borrowableInPeg(tokenAddress, chainId, provider)
 
-      const wrapped = wrappedCurrency(currency, chainId)
+      if (bip) {
+        const borrowableInPeg = new TokenAmount(USDT, bip)
 
-      if (wrapped) {
-        const borrowableInTarget = await borrowableInPeg2token(borrowableInPeg, wrapped, chainId, provider)
-        if (borrowableInTarget) {
-          const result =
-            currency.name == 'Ether'
-              ? CurrencyAmount.ether(borrowableInTarget.toString())
-              : new TokenAmount(wrapped, borrowableInTarget.toString())
+        const wrapped = wrappedCurrency(currency, chainId)
 
-          setBalance(result)
+        if (wrapped) {
+          const borrowableInTarget = await borrowableInPeg2token(borrowableInPeg, wrapped, chainId, provider)
+          if (borrowableInTarget) {
+            const result =
+              currency.name == 'Ether'
+                ? CurrencyAmount.ether(borrowableInTarget.toString())
+                : new TokenAmount(wrapped, borrowableInTarget.toString())
+
+            setBalance(result)
+          } else {
+            setBalance(undefined)
+          }
         } else {
           setBalance(undefined)
         }
-      } else {
-        setBalance(undefined)
       }
     }
   }, [tokenAddress, currency, setBalance])
