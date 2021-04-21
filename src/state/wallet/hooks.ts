@@ -98,10 +98,10 @@ export async function borrowableInPeg2token(
     const borrowableInTarget = borrowableInPeg.multiply(`100${'0'.repeat(USDT.decimals)}`).divide(curPrice.toString())
 
     if (borrowableInTarget.greaterThan(totalAvailable.toString())) {
-      return parseUnits(totalAvailable.toString())
+      return parseUnits(totalAvailable.toString(), wrapped.decimals)
     }
 
-    return parseUnits(borrowableInTarget.toFixed(wrapped.decimals))
+    return parseUnits(borrowableInTarget.toFixed(wrapped.decimals), wrapped.decimals)
   } else {
     return undefined
   }
