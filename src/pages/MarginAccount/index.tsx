@@ -38,6 +38,7 @@ import { USDT } from '../../constants'
 import { setInterval } from 'timers'
 import { borrowableInPeg2token, useBorrowableInPeg, useETHBalances } from 'state/wallet/hooks'
 import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
+import EthereumLogo from '../../assets/images/ethereum-logo.png'
 
 const chainId = Number(process.env.REACT_APP_CHAIN_ID)
 
@@ -136,37 +137,53 @@ export const MarginAccount = () => {
       name: 'Deposit',
       onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
         if (!amount) return
-        if (allowances[tokenInfo.address] < amount) {
+        if (tokenInfo.coin === 'ETH') {
           try {
-            const approveRes: any = await approveToFund(
-              tokenInfo.address,
-              utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
-              chainId,
-              provider
-            )
-            localStorage.setItem(`${tokenInfo.coin}_LAST_DEPOSIT`, new Date().toISOString())
-            addTransaction(approveRes, {
-              summary: `Approve`
-            })
-            getAccountData()
-          } catch (e) {
-            toast.error('Approve error', { position: 'bottom-right' })
-            console.error(error)
-          }
-        } else {
-          try {
-            const depositRes: any = await crossDeposit(
-              tokenInfo.address,
+            const depositRes: any = await crossDepositETH(
               utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
               chainId,
               provider
             )
             addTransaction(depositRes, {
-              summary: `Cross Deposit`
+              summary: `Cross Deposit `
             })
           } catch (error) {
             toast.error('Deposit error', { position: 'bottom-right' })
             console.error(error)
+          }
+        } else {
+          if (allowances[tokenInfo.address] < amount) {
+            try {
+              const approveRes: any = await approveToFund(
+                tokenInfo.address,
+                utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
+                chainId,
+                provider
+              )
+              localStorage.setItem(`${tokenInfo.coin}_LAST_DEPOSIT`, new Date().toISOString())
+              addTransaction(approveRes, {
+                summary: `Approve`
+              })
+              getAccountData()
+            } catch (e) {
+              toast.error('Approve error', { position: 'bottom-right' })
+              console.error(error)
+            }
+          } else {
+            try {
+              const depositRes: any = await crossDeposit(
+                tokenInfo.address,
+                utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
+                chainId,
+                provider
+              )
+              addTransaction(depositRes, {
+                summary: `Cross Deposit`
+              })
+            } catch (error) {
+              toast.error('Deposit error', { position: 'bottom-right' })
+              console.error(error)
+            }
           }
         }
       },
@@ -176,15 +193,26 @@ export const MarginAccount = () => {
       name: 'Withdraw',
       onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
         try {
-          const response: any = await crossWithdraw(
-            tokenInfo.address,
-            utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
-            chainId,
-            provider
-          )
-          addTransaction(response, {
-            summary: `Cross Withdraw`
-          })
+          if (tokenInfo.coin === 'ETH') {
+            const response: any = await crossWithdrawETH(
+              utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
+              chainId,
+              provider
+            )
+            addTransaction(response, {
+              summary: `Cross Withdraw ETH`
+            })
+          } else {
+            const response: any = await crossWithdraw(
+              tokenInfo.address,
+              utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
+              chainId,
+              provider
+            )
+            addTransaction(response, {
+              summary: `Cross Withdraw`
+            })
+          }
         } catch (error) {
           toast.error('Withdrawal error', { position: 'bottom-right' })
           console.error(error)
@@ -301,66 +329,20 @@ export const MarginAccount = () => {
   const data = useMemo(
     () =>
       tokens.map(token => ({
-        img: token.logoURI ?? '',
-        coin: token.symbol,
+        img: token.symbol === 'WETH' ? EthereumLogo : token.logoURI ?? '',
+        coin: token.symbol === 'WETH' ? 'ETH' : token.symbol,
         address: token.address,
         decimals: token.decimals,
         balance: Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
         borrowed: Number(borrowingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
         borrowable: borrowableAmounts[token.address] ? parseFloat(borrowableAmounts[token.address].toFixed()) : 0,
         ir: borrowAPRs[token.address],
-        available: tokenBalances[token.address],
+        available:
+          token.symbol === 'WETH' ? Number(userEthBalance?.toSignificant(6)) || 0 : tokenBalances[token.address],
         getActionNameFromAmount: {
-          Deposit: (amount: number) => (allowances[token.address] >= amount ? 'Confirm Transaction' : 'Approve')
-        },
-        customActions:
-          token.symbol === 'WETH'
-            ? ([
-                {
-                  name: 'Deposit ETH',
-                  onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
-                    if (!amount) return
-                    try {
-                      const depositRes: any = await crossDepositETH(
-                        utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
-                        chainId,
-                        provider
-                      )
-                      addTransaction(depositRes, {
-                        summary: `Cross Deposit `
-                      })
-                    } catch (error) {
-                      toast.error('Deposit error', { position: 'bottom-right' })
-                      console.error(error)
-                    }
-                  },
-                  max: Number(userEthBalance?.toSignificant(6)) || 0
-                },
-                {
-                  name: 'Withdraw ETH',
-                  onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
-                    try {
-                      const response: any = await crossWithdrawETH(
-                        utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
-                        chainId,
-                        provider
-                      )
-                      addTransaction(response, {
-                        summary: `Cross Withdraw ETH`
-                      })
-                    } catch (error) {
-                      toast.error('Withdrawal error', { position: 'bottom-right' })
-                      console.error(error)
-                    }
-                  },
-                  deriveMaxFrom: 'balance',
-                  disabled: (token: AccountBalanceData) => {
-                    const date = localStorage.getItem(`${token.coin}_LAST_DEPOSIT`)
-                    return !!date && new Date().getTime() - new Date(date).getTime() < 300000
-                  }
-                }
-              ] as const)
-            : undefined
+          Deposit: (amount: number) =>
+            allowances[token.address] >= amount || token.symbol === 'WETH' ? 'Confirm Transaction' : 'Approve'
+        }
       })),
     [tokens, holdingAmounts, borrowingAmounts, borrowAPRs, allowances, borrowableAmounts, tokenBalances, userEthBalance]
   )
