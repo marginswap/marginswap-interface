@@ -20,7 +20,8 @@ import {
   getTokenBalance,
   Token,
   crossDepositETH,
-  crossWithdrawETH
+  crossWithdrawETH,
+  borrowableInPeg
 } from '@marginswap/sdk'
 import { TokenInfo } from '@uniswap/token-lists'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
@@ -36,7 +37,7 @@ import { toast } from 'react-toastify'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { USDT } from '../../constants'
 import { setInterval } from 'timers'
-import { borrowableInPeg2token, useBorrowableInPeg, useETHBalances } from 'state/wallet/hooks'
+import { borrowableInPeg2token, useETHBalances } from 'state/wallet/hooks'
 import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 
 const chainId = Number(process.env.REACT_APP_CHAIN_ID)
@@ -76,6 +77,8 @@ const getRisk = (holding: number, debt: number): number => {
   return Math.min(Math.max(((holding - debt) / debt - 1.1) * -41.6 + 10, 0), 10)
 }
 
+const DATA_POLLING_INTERVAL = 10000
+
 export const MarginAccount = () => {
   const [error, setError] = useState<string | null>(null)
 
@@ -88,14 +91,12 @@ export const MarginAccount = () => {
   const [allowances, setAllowances] = useState<Record<string, number>>({})
   const [borrowableAmounts, setBorrowableAmounts] = useState<Record<string, TokenAmount>>({})
   const [tokenBalances, setTokenBalances] = useState<Record<string, number>>({})
+  const [pollingInterval, setPollingInterval] = useState<ReturnType<typeof setInterval> | null>()
+  const [triggerDataPoll, setTriggerDataPoll] = useState<boolean>(true)
 
   const { account } = useWeb3React()
   const { library } = useActiveWeb3React()
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
-
-  const borrowableInPegString = useBorrowableInPeg(account ?? undefined)
-
-  const borrowableInPeg = borrowableInPegString ? new TokenAmount(USDT, borrowableInPegString) : undefined
 
   const addTransaction = useTransactionAdder()
 
@@ -119,7 +120,7 @@ export const MarginAccount = () => {
           addTransaction(res, {
             summary: `Approve`
           })
-          getData()
+          setTriggerDataPoll(true)
         } catch (e) {
           toast.error('Approve error', { position: 'bottom-right' })
           console.error(error)
@@ -150,7 +151,7 @@ export const MarginAccount = () => {
             addTransaction(approveRes, {
               summary: `Approve`
             })
-            getData()
+            setTriggerDataPoll(true)
           } catch (e) {
             toast.error('Approve error', { position: 'bottom-right' })
             console.error(error)
@@ -201,8 +202,9 @@ export const MarginAccount = () => {
   ] as const
 
   useEffect(() => {
-    setTokens(tokensList.tokens.filter(t => t.chainId === chainId))
-  }, [])
+    const tokensToSet = tokensList.tokens.filter(t => t.chainId === chainId)
+    setTokens(tokensToSet)
+  }, [tokensList, chainId])
 
   const getAccountData = async (_account: string) => {
     const [
@@ -231,12 +233,13 @@ export const MarginAccount = () => {
       Promise.all(
         tokens.map(async token => {
           const tokenToken = new Token(chainId, token.address, token.decimals)
-          if (borrowableInPeg) {
+          const bipString = await borrowableInPeg(token.address, chainId, provider)
+          const bip = new TokenAmount(USDT, bipString)
+
+          if (bip) {
             return new TokenAmount(
               tokenToken,
-              (
-                (await borrowableInPeg2token(borrowableInPeg, tokenToken, chainId, provider)) ?? utils.parseUnits('0')
-              ).toString()
+              ((await borrowableInPeg2token(bip, tokenToken, chainId, provider)) ?? utils.parseUnits('0')).toString()
             )
           } else {
             return new TokenAmount(tokenToken, '0')
@@ -245,6 +248,7 @@ export const MarginAccount = () => {
       ),
       Promise.all(tokens.map(token => getTokenBalance(_account, token.address, provider)))
     ])
+
     setTokenBalances(
       _tokenBalances.reduce(
         (acc, cur, index) => ({
@@ -284,21 +288,29 @@ export const MarginAccount = () => {
       )
     )
   }
-  const getData = () => {
-    if (account && library && tokens.length > 0) {
-      getAccountData(account).catch(e => {
+
+  useEffect(() => {
+    if (triggerDataPoll && account && library && tokens.length) {
+      try {
+        setTriggerDataPoll(false)
+        getAccountData(account)
+      } catch (e) {
         console.error(e)
         setError('Failed to get account data')
-      })
+      }
     }
-  }
+  }, [triggerDataPoll, account, library, tokens])
+
   useEffect(() => {
-    getData()
-    const interval = setInterval(getData, 10000)
+    const interval = setInterval(() => setTriggerDataPoll(true), DATA_POLLING_INTERVAL)
+    setPollingInterval(interval)
+
     return () => {
-      clearInterval(interval)
+      if (pollingInterval) {
+        clearInterval(pollingInterval)
+      }
     }
-  }, [account, library, tokens])
+  }, [])
 
   const data = useMemo(
     () =>
