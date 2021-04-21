@@ -364,7 +364,7 @@ export const MarginAccount = () => {
               ] as const)
             : undefined
       })),
-    [tokens, holdingAmounts, borrowingAmounts, borrowAPRs, allowances]
+    [tokens, holdingAmounts, borrowingAmounts, borrowAPRs, allowances, borrowableAmounts, tokenBalances, userEthBalance]
   )
 
   return (
