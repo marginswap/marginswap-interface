@@ -95,7 +95,7 @@ export async function borrowableInPeg2token(
   if (curPrice.gt(0)) {
     const borrowableInTarget = borrowableInPeg.multiply(`100${'0'.repeat(USDT.decimals)}`).divide(curPrice.toString())
 
-    return parseUnits(borrowableInTarget.toFixed(wrapped.decimals))
+    return parseUnits(borrowableInTarget.toFixed(wrapped.decimals), wrapped.decimals)
   } else {
     return undefined
   }
