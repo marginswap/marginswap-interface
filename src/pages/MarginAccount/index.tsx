@@ -77,6 +77,8 @@ const getRisk = (holding: number, debt: number): number => {
   return Math.min(Math.max(((holding - debt) / debt - 1.1) * -41.6 + 10, 0), 10)
 }
 
+const DATA_POLLING_INTERVAL = 10000
+
 export const MarginAccount = () => {
   const [error, setError] = useState<string | null>(null)
 
@@ -90,7 +92,7 @@ export const MarginAccount = () => {
   const [borrowableAmounts, setBorrowableAmounts] = useState<Record<string, TokenAmount>>({})
   const [tokenBalances, setTokenBalances] = useState<Record<string, number>>({})
   const [pollingInterval, setPollingInterval] = useState<ReturnType<typeof setInterval> | null>()
-  const [triggerDataPoll, setTriggerDataPoll] = useState<boolean>(false)
+  const [triggerDataPoll, setTriggerDataPoll] = useState<boolean>(true)
 
   const { account } = useWeb3React()
   const { library } = useActiveWeb3React()
@@ -288,7 +290,7 @@ export const MarginAccount = () => {
   }
 
   useEffect(() => {
-    if (account && library && tokens.length) {
+    if (triggerDataPoll && account && library && tokens.length) {
       try {
         setTriggerDataPoll(false)
         getAccountData(account)
@@ -296,13 +298,11 @@ export const MarginAccount = () => {
         console.error(e)
         setError('Failed to get account data')
       }
-    } else {
-      console.info('Tried to call getAccountData() without required dependencies')
     }
   }, [triggerDataPoll, account, library, tokens])
 
   useEffect(() => {
-    const interval = setInterval(() => setTriggerDataPoll(true), 10000)
+    const interval = setInterval(() => setTriggerDataPoll(true), DATA_POLLING_INTERVAL)
     setPollingInterval(interval)
 
     return () => {
