@@ -90,7 +90,7 @@ export async function borrowableInPeg2token(
 export function useBorrowable(
   tokenAddress: string | undefined,
   currency: Currency | undefined
-): CurrencyAmount | undefined | null {
+): CurrencyAmount | undefined {
   const { library, chainId } = useActiveWeb3React()
   const provider: any = getProviderOrSigner(library!, tokenAddress)
   const [balance, setBalance] = useState<CurrencyAmount | undefined>(undefined)
