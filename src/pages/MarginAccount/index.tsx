@@ -66,9 +66,9 @@ const ACCOUNT_COLUMNS = [
     )
   },
   { name: 'Total Balance', id: 'balance' },
-  { name: 'Borrowed', id: 'borrowed' },
-  { name: 'Interest Rate', id: 'ir' },
-  { name: 'Available to Borrow', id: 'borrowable' }
+  { name: 'Debt', id: 'borrowed' },
+  { name: 'APR', id: 'ir' },
+  { name: 'Liquidity', id: 'borrowable' }
 ] as const
 
 const getRisk = (holding: number, debt: number): number => {
