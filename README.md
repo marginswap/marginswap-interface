@@ -36,7 +36,7 @@ yarn start
 
 ## set up this repo (marginswap-interface)
 1. `yarn install`
-2. `cp .env.sample .env.local`
+2. `cp .env.sample .env`
 3. link the core repo `yarn link @marginswap/core-abi`
 4. link the sdk repo `yarn link @marginswap/sdk`
 5. In metamask, set your network to Localhost 8545, then go to Settings > Networks > Localhost 8545 and set the chain ID to 31337
@@ -44,7 +44,7 @@ yarn start
 
 To have the interface default to a different network when a wallet is not connected:
 
-1. Make a copy of `.env` named `.env.local`
+1. Make a copy of `.env.sample` named `.env`
 2. Change `REACT_APP_NETWORK_ID` to `"{YOUR_NETWORK_ID}"`
 3. Change `REACT_APP_NETWORK_URL` to e.g. `"https://{YOUR_NETWORK_ID}.infura.io/v3/{YOUR_INFURA_KEY}"` 
 
