@@ -78,7 +78,7 @@ export const BondSupply = () => {
 
   useEffect(() => {
     setTokens(tokensList.tokens.filter(t => t.chainId === chainId))
-    setTokenApprovalStates(tokens.reduce((ts, t) => ({...ts, [t.address]: false}), {}));
+    setTokenApprovalStates(tokens.reduce((ts, t) => ({ ...ts, [t.address]: false }), {}))
   }, [])
 
   const { account } = useWeb3React()
@@ -197,9 +197,9 @@ export const BondSupply = () => {
               summary: `Approve`
             })
             getData()
-            setTokenApprovalStates({...tokenApprovalStates, [token.address]: true})
+            setTokenApprovalStates({ ...tokenApprovalStates, [token.address]: true })
             setTimeout(() => {
-              setTokenApprovalStates({...tokenApprovalStates, [token.address]: false})
+              setTokenApprovalStates({ ...tokenApprovalStates, [token.address]: false })
             }, 10 * 1000)
           } catch (e) {
             toast.error('Approve error', { position: 'bottom-right' })
@@ -259,8 +259,12 @@ export const BondSupply = () => {
         maturity: bondMaturities[token.address] ?? 0,
         available: tokenBalances[token.address],
         getActionNameFromAmount: {
-          Deposit: (amount: number) => (allowances[token.address] >= amount ? 'Confirm Transaction'  :
-          tokenApprovalStates[token.address] ? 'Approving' : 'Approve')
+          Deposit: (amount: number) =>
+            allowances[token.address] >= amount
+              ? 'Confirm Transaction'
+              : tokenApprovalStates[token.address]
+              ? 'Approving'
+              : 'Approve'
         }
       })),
     [tokens, bondBalances, bondMaturities, allowances]
