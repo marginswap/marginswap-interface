@@ -233,7 +233,7 @@ export const MarginAccount = () => {
       Promise.all(
         tokens.map(async token => {
           const tokenToken = new Token(chainId, token.address, token.decimals)
-          const bipString = await borrowableInPeg(token.address, chainId, provider)
+          const bipString = await borrowableInPeg(_account, chainId, provider)
           const bip = new TokenAmount(USDT, bipString)
 
           if (bip) {

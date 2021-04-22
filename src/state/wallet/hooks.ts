@@ -91,13 +91,13 @@ export function useBorrowable(
   tokenAddress: string | undefined,
   currency: Currency | undefined
 ): CurrencyAmount | undefined {
-  const { library, chainId } = useActiveWeb3React()
+  const { library, chainId, account } = useActiveWeb3React()
   const provider: any = getProviderOrSigner(library!, tokenAddress)
   const [balance, setBalance] = useState<CurrencyAmount | undefined>(undefined)
 
   const updateBorrowableBalance = useCallback(async () => {
-    if (tokenAddress && chainId && currency) {
-      const bip = await borrowableInPeg(tokenAddress, chainId, provider)
+    if (tokenAddress && chainId && currency && account) {
+      const bip = await borrowableInPeg(account, chainId, provider)
 
       if (bip) {
         const borrowableInPeg = new TokenAmount(USDT, bip)
