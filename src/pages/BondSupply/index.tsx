@@ -156,7 +156,10 @@ export const BondSupply = () => {
     )
     setAllowances(
       _allowances.reduce(
-        (acc, cur, index) => ({ ...acc, [tokens[index].address]: Number(BigNumber.from(cur).toString()) }),
+        (acc: any, cur: any, index: number) => ({
+          ...acc,
+          [tokens[index].address]: Number(BigNumber.from(cur).toString())
+        }),
         {}
       )
     )

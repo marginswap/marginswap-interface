@@ -7,16 +7,12 @@
     "minor": 0,
     "patch": 0
   },
-  "keywords": ["marginswap", "defi", "crossmargin"],
+  "keywords": [
+    "marginswap",
+    "defi",
+    "crossmargin"
+  ],
   "tokens": [
-    {
-      "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
-      "chainId": 31337,
-      "name": "Wrapped ETH",
-      "symbol": "WETH",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/marginswap/token-list/main/logo/ethereum.png"
-    },
     {
       "address": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
       "chainId": 1,
@@ -28,6 +24,14 @@
     {
       "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
       "chainId": 1,
+      "name": "Wrapped ETH",
+      "symbol": "WETH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/marginswap/token-list/main/logo/ethereum.png"
+    },
+    {
+      "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+      "chainId": 31337,
       "name": "Wrapped ETH",
       "symbol": "WETH",
       "decimals": 18,
@@ -113,7 +117,7 @@
       "decimals": 18,
       "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/multi-collateral-dai.png"
     },
-    {
+    { 
       "address": "0xd0A1E359811322d97991E03f863a0C30C2cF029C",
       "chainId": 42,
       "name": "Wrapped ETH",
