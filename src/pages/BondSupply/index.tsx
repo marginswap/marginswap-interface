@@ -74,9 +74,11 @@ export const BondSupply = () => {
   const [bondUSDCosts, setBondUSDCosts] = useState<Record<string, TokenAmount>>({})
   const [allowances, setAllowances] = useState<Record<string, number>>({})
   const [tokenBalances, setTokenBalances] = useState<Record<string, number>>({})
+  const [tokenApprovalStates, setTokenApprovalStates] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     setTokens(tokensList.tokens.filter(t => t.chainId === chainId))
+    setTokenApprovalStates(tokens.reduce((ts, t) => ({ ...ts, [t.address]: false }), {}))
   }, [])
 
   const { account } = useWeb3React()
@@ -185,7 +187,7 @@ export const BondSupply = () => {
     {
       name: 'Deposit',
       onClick: async (token: BondRateData, amount: number) => {
-        if (!amount) return
+        if (!amount || tokenApprovalStates[token.address]) return
         if (allowances[token.address] < amount) {
           try {
             const approveRes: any = await approveToFund(
@@ -198,6 +200,10 @@ export const BondSupply = () => {
               summary: `Approve`
             })
             getData()
+            setTokenApprovalStates({ ...tokenApprovalStates, [token.address]: true })
+            setTimeout(() => {
+              setTokenApprovalStates({ ...tokenApprovalStates, [token.address]: false })
+            }, 10 * 1000)
           } catch (e) {
             toast.error('Approve error', { position: 'bottom-right' })
             console.error(e)
@@ -256,7 +262,12 @@ export const BondSupply = () => {
         maturity: bondMaturities[token.address] ?? 0,
         available: tokenBalances[token.address],
         getActionNameFromAmount: {
-          Deposit: (amount: number) => (allowances[token.address] >= amount ? 'Confirm Transaction' : 'Approve')
+          Deposit: (amount: number) =>
+            allowances[token.address] >= amount
+              ? 'Confirm Transaction'
+              : tokenApprovalStates[token.address]
+              ? 'Approving'
+              : 'Approve'
         }
       })),
     [tokens, bondBalances, bondMaturities, allowances]

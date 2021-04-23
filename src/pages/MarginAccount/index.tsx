@@ -93,6 +93,7 @@ export const MarginAccount = () => {
   const [tokenBalances, setTokenBalances] = useState<Record<string, number>>({})
   const [pollingInterval, setPollingInterval] = useState<ReturnType<typeof setInterval> | null>()
   const [triggerDataPoll, setTriggerDataPoll] = useState<boolean>(true)
+  const [tokenApprovalStates, setTokenApprovalStates] = useState<Record<string, boolean>>({})
 
   const { account } = useWeb3React()
   const { library } = useActiveWeb3React()
@@ -138,7 +139,7 @@ export const MarginAccount = () => {
     {
       name: 'Deposit',
       onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
-        if (!amount) return
+        if (!amount || tokenApprovalStates[tokenInfo.address]) return
         if (allowances[tokenInfo.address] < amount) {
           try {
             const approveRes: any = await approveToFund(
@@ -152,6 +153,11 @@ export const MarginAccount = () => {
               summary: `Approve`
             })
             setTriggerDataPoll(true)
+
+            setTokenApprovalStates({ ...tokenApprovalStates, [tokenInfo.address]: true })
+            setTimeout(() => {
+              setTokenApprovalStates({ ...tokenApprovalStates, [tokenInfo.address]: false })
+            }, 10 * 1000)
           } catch (e) {
             toast.error('Approve error', { position: 'bottom-right' })
             console.error(error)
@@ -204,6 +210,7 @@ export const MarginAccount = () => {
   useEffect(() => {
     const tokensToSet = tokensList.tokens.filter(t => t.chainId === chainId)
     setTokens(tokensToSet)
+    setTokenApprovalStates(tokens.reduce((ts, t) => ({ ...ts, [t.address]: false }), {}))
   }, [tokensList, chainId])
 
   const getAccountData = async (_account: string) => {
@@ -328,7 +335,12 @@ export const MarginAccount = () => {
         ir: borrowAPRs[token.address],
         available: tokenBalances[token.address],
         getActionNameFromAmount: {
-          Deposit: (amount: number) => (allowances[token.address] >= amount ? 'Confirm Transaction' : 'Approve')
+          Deposit: (amount: number) =>
+            allowances[token.address] >= amount
+              ? 'Confirm Transaction'
+              : tokenApprovalStates[token.address]
+              ? 'Approving'
+              : 'Approve'
         },
         customActions:
           token.symbol === 'WETH'
