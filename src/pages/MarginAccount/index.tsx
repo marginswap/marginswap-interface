@@ -14,7 +14,6 @@ import {
   crossWithdraw,
   approveToFund,
   TokenAmount,
-  getHourlyBondInterestRates,
   getTokenAllowances,
   crossBorrow,
   getTokenBalance,
@@ -22,7 +21,8 @@ import {
   crossDepositETH,
   crossWithdrawETH,
   borrowableInPeg,
-  totalLendingAvailable
+  totalLendingAvailable,
+  getBorrowInterestRates
 } from '@marginswap/sdk'
 import { TokenInfo } from '@uniswap/token-lists'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
@@ -232,7 +232,7 @@ export const MarginAccount = () => {
       getAccountBalances(_account, chainId, provider),
       new TokenAmount(getPegCurrency(chainId), (await getAccountHoldingTotal(_account, chainId, provider)).toString()),
       new TokenAmount(getPegCurrency(chainId), (await getAccountBorrowTotal(_account, chainId, provider)).toString()),
-      getHourlyBondInterestRates(
+      getBorrowInterestRates(
         tokens.map(token => token.address),
         chainId,
         provider
