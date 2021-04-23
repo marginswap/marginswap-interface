@@ -255,13 +255,16 @@ export const MarginAccount = () => {
       ),
       Promise.all(tokens.map(token => getTokenBalance(_account, token.address, provider)))
     ])
-
+    // 6 implies 6 decimals to show/store here
     setTokenBalances(
       _tokenBalances.reduce(
         (acc, cur, index) => ({
           ...acc,
           [tokens[index].address]: Number(
-            BigNumber.from(cur).div(BigNumber.from(10).pow(tokens[index].decimals)).toString()
+            BigNumber.from(cur)
+              .div(BigNumber.from(10).pow(Math.max(tokens[index].decimals - 6, 0)))
+              .toNumber() *
+              0.1 ** Math.max(tokens[index].decimals > 6 ? 6 : tokens[index].decimals, 0)
           )
         }),
         {}
