@@ -162,7 +162,7 @@ export const MarginAccount = () => {
             setTokenApprovalStates({ ...tokenApprovalStates, [tokenInfo.address]: true })
             setTimeout(() => {
               setTokenApprovalStates({ ...tokenApprovalStates, [tokenInfo.address]: false })
-            }, 10 * 1000)
+            }, 20 * 1000)
           } catch (e) {
             toast.error('Approve error', { position: 'bottom-right' })
             console.error(error)
