@@ -14,7 +14,6 @@ import {
   crossWithdraw,
   approveToFund,
   TokenAmount,
-  getHourlyBondInterestRates,
   getTokenAllowances,
   crossBorrow,
   getTokenBalance,
@@ -22,7 +21,8 @@ import {
   crossDepositETH,
   crossWithdrawETH,
   borrowableInPeg,
-  totalLendingAvailable
+  totalLendingAvailable,
+  getBorrowInterestRates
 } from '@marginswap/sdk'
 import { TokenInfo } from '@uniswap/token-lists'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
@@ -52,6 +52,7 @@ type AccountBalanceData = {
   borrowed: number
   borrowable: number
   liquidity: number
+  maxBorrow: number
   available: number
   ir: number
 }
@@ -131,7 +132,7 @@ export const MarginAccount = () => {
           console.error(error)
         }
       },
-      deriveMaxFrom: 'borrowable'
+      deriveMaxFrom: 'maxBorrow'
     },
     // {
     //   name: 'Repay',
@@ -231,7 +232,7 @@ export const MarginAccount = () => {
       getAccountBalances(_account, chainId, provider),
       new TokenAmount(getPegCurrency(chainId), (await getAccountHoldingTotal(_account, chainId, provider)).toString()),
       new TokenAmount(getPegCurrency(chainId), (await getAccountBorrowTotal(_account, chainId, provider)).toString()),
-      getHourlyBondInterestRates(
+      getBorrowInterestRates(
         tokens.map(token => token.address),
         chainId,
         provider
@@ -274,9 +275,7 @@ export const MarginAccount = () => {
       _tokenBalances.reduce(
         (acc, cur, index) => ({
           ...acc,
-          [tokens[index].address]: Number(
-            BigNumber.from(cur).div(BigNumber.from(10).pow(tokens[index].decimals)).toString()
-          )
+          [tokens[index].address]: Number(utils.formatUnits(_tokenBalances[index], tokens[index].decimals))
         }),
         {}
       )
@@ -348,6 +347,10 @@ export const MarginAccount = () => {
         borrowed: Number(borrowingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
         borrowable: borrowableAmounts[token.address] ? parseFloat(borrowableAmounts[token.address].toFixed()) : 0,
         liquidity: liquidities[token.address] ? parseFloat(liquidities[token.address].toFixed()) : 0,
+        maxBorrow: Math.min(
+          borrowableAmounts[token.address] ? parseFloat(borrowableAmounts[token.address].toFixed()) : 0,
+          liquidities[token.address] ? parseFloat(liquidities[token.address].toFixed()) : 0
+        ),
         ir: borrowAPRs[token.address],
         available: tokenBalances[token.address],
         getActionNameFromAmount: {

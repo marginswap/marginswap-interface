@@ -10,8 +10,7 @@ import {
   LeverageType,
   getHoldingAmounts,
   viewCurrentPriceInPeg,
-  ChainId,
-  totalLendingAvailable
+  ChainId
 } from '@marginswap/sdk'
 import { useMemo, useState, useEffect, useCallback } from 'react'
 import ERC20_INTERFACE from '../../constants/abis/erc20'
@@ -73,14 +72,9 @@ export async function borrowableInPeg2token(
 ): Promise<BigNumber | undefined> {
   const hundred = `100${'0'.repeat(wrapped.decimals)}`
   const curPrice = await viewCurrentPriceInPeg(wrapped.address, hundred, chainId, provider)
-  const totalAvailable = await totalLendingAvailable(wrapped.address, chainId, provider)
 
   if (curPrice.gt(0)) {
     const borrowableInTarget = borrowableInPeg.multiply(`100${'0'.repeat(USDT.decimals)}`).divide(curPrice.toString())
-    if (borrowableInTarget.greaterThan(totalAvailable.toString())) {
-      return parseUnits(totalAvailable.toString(), wrapped.decimals)
-    }
-
     return parseUnits(borrowableInTarget.toFixed(wrapped.decimals), wrapped.decimals)
   } else {
     return undefined
