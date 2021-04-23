@@ -6,10 +6,6 @@ export const StyledTableWrapper = styled('div')`
   border-radius: 32px;
   padding: 24px 0;
 
-  @media (max-width: 768px) {
-    //margin: 0 -35px 0 -25px;
-  }
-
   h3 {
     margin: 0 0 0 52px;
     color: white;
