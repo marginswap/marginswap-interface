@@ -52,6 +52,7 @@ type AccountBalanceData = {
   borrowed: number
   borrowable: number
   liquidity: number
+  maxBorrow: number
   available: number
   ir: number
 }
@@ -131,7 +132,7 @@ export const MarginAccount = () => {
           console.error(error)
         }
       },
-      deriveMaxFrom: 'borrowable'
+      deriveMaxFrom: 'maxBorrow'
     },
     // {
     //   name: 'Repay',
@@ -346,6 +347,10 @@ export const MarginAccount = () => {
         borrowed: Number(borrowingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
         borrowable: borrowableAmounts[token.address] ? parseFloat(borrowableAmounts[token.address].toFixed()) : 0,
         liquidity: liquidities[token.address] ? parseFloat(liquidities[token.address].toFixed()) : 0,
+        maxBorrow: Math.min(
+          borrowableAmounts[token.address] ? parseFloat(borrowableAmounts[token.address].toFixed()) : 0,
+          liquidities[token.address] ? parseFloat(liquidities[token.address].toFixed()) : 0
+        ),
         ir: borrowAPRs[token.address],
         available: tokenBalances[token.address],
         getActionNameFromAmount: {
