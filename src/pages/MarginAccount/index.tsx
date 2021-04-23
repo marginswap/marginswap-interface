@@ -260,12 +260,11 @@ export const MarginAccount = () => {
       _tokenBalances.reduce(
         (acc, cur, index) => ({
           ...acc,
-          [tokens[index].address]: Number(
+          [tokens[index].address]:
             BigNumber.from(cur)
               .div(BigNumber.from(10).pow(Math.max(tokens[index].decimals - 6, 0)))
               .toNumber() *
-              0.1 ** Math.max(tokens[index].decimals > 6 ? 6 : tokens[index].decimals, 0)
-          )
+            0.1 ** Math.max(tokens[index].decimals > 6 ? 6 : tokens[index].decimals, 0)
         }),
         {}
       )
