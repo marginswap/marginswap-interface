@@ -35,7 +35,7 @@ import { StyledSectionDiv } from './styled'
 import { utils } from 'ethers'
 import { toast } from 'react-toastify'
 import { useTransactionAdder } from '../../state/transactions/hooks'
-import { USDT } from '../../constants'
+import { getPegCurrency } from '../../constants'
 import { setInterval } from 'timers'
 import { borrowableInPeg2token, useETHBalances } from 'state/wallet/hooks'
 import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
@@ -85,8 +85,8 @@ export const MarginAccount = () => {
   const [tokens, setTokens] = useState<TokenInfo[]>([])
   const [holdingAmounts, setHoldingAmounts] = useState<Record<string, number>>({})
   const [borrowingAmounts, setBorrowingAmounts] = useState<Record<string, number>>({})
-  const [holdingTotal, setHoldingTotal] = useState<TokenAmount>(new TokenAmount(USDT, '0'))
-  const [debtTotal, setDebtTotal] = useState(new TokenAmount(USDT, '0'))
+  const [holdingTotal, setHoldingTotal] = useState<TokenAmount>(new TokenAmount(getPegCurrency(chainId), '0'))
+  const [debtTotal, setDebtTotal] = useState(new TokenAmount(getPegCurrency(chainId), '0'))
   const [borrowAPRs, setBorrowAPRs] = useState<Record<string, number>>({})
   const [allowances, setAllowances] = useState<Record<string, number>>({})
   const [borrowableAmounts, setBorrowableAmounts] = useState<Record<string, TokenAmount>>({})
@@ -224,8 +224,8 @@ export const MarginAccount = () => {
       _tokenBalances
     ] = await Promise.all([
       getAccountBalances(_account, chainId, provider),
-      new TokenAmount(USDT, (await getAccountHoldingTotal(_account, chainId, provider)).toString()),
-      new TokenAmount(USDT, (await getAccountBorrowTotal(_account, chainId, provider)).toString()),
+      new TokenAmount(getPegCurrency(chainId), (await getAccountHoldingTotal(_account, chainId, provider)).toString()),
+      new TokenAmount(getPegCurrency(chainId), (await getAccountBorrowTotal(_account, chainId, provider)).toString()),
       getHourlyBondInterestRates(
         tokens.map(token => token.address),
         chainId,
@@ -241,7 +241,7 @@ export const MarginAccount = () => {
         tokens.map(async token => {
           const tokenToken = new Token(chainId, token.address, token.decimals)
           const bipString = await borrowableInPeg(_account, chainId, provider)
-          const bip = new TokenAmount(USDT, bipString)
+          const bip = new TokenAmount(getPegCurrency(chainId), bipString)
 
           if (bip) {
             return new TokenAmount(

@@ -27,7 +27,7 @@ import { StyledSectionDiv } from './styled'
 import { utils } from 'ethers'
 import { toast } from 'react-toastify'
 import { useTransactionAdder } from '../../state/transactions/hooks'
-import { USDT } from '../../constants'
+import { getPegCurrency } from '../../constants'
 import { setInterval } from 'timers'
 import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 
@@ -152,7 +152,7 @@ export const BondSupply = () => {
     )
     setBondUSDCosts(
       Object.keys(bondCosts).reduce(
-        (acc, cur) => ({ ...acc, [cur]: new TokenAmount(USDT, bondCosts[cur].toString()) }),
+        (acc, cur) => ({ ...acc, [cur]: new TokenAmount(getPegCurrency(chainId), bondCosts[cur].toString()) }),
         {}
       )
     )
@@ -272,7 +272,7 @@ export const BondSupply = () => {
       })),
     [tokens, bondBalances, bondMaturities, allowances]
   )
-  const ZERO_DAI = new TokenAmount(USDT, '0')
+  const ZERO_DAI = new TokenAmount(getPegCurrency(chainId), '0')
 
   const averageYield = useMemo(() => {
     const bondCosts = tokens.reduce(
