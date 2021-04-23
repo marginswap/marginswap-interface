@@ -33,7 +33,7 @@ import { StyledTableContainer } from './styled'
 import { StyledMobileOnlyRow } from './styled'
 import { StyledWrapperDiv } from './styled'
 import { StyledSectionDiv } from './styled'
-import { utils } from 'ethers'
+import { utils, constants } from 'ethers'
 import { toast } from 'react-toastify'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { getPegCurrency } from '../../constants'
@@ -149,7 +149,7 @@ export const MarginAccount = () => {
           try {
             const approveRes: any = await approveToFund(
               tokenInfo.address,
-              utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
+              constants.MaxUint256.toHexString(),
               chainId,
               provider
             )
