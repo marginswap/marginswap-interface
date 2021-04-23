@@ -24,7 +24,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { StyledTableContainer } from './styled'
 import { StyledWrapperDiv } from './styled'
 import { StyledSectionDiv } from './styled'
-import { utils } from 'ethers'
+import { utils, constants } from 'ethers'
 import { toast } from 'react-toastify'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { getPegCurrency } from '../../constants'
@@ -192,7 +192,7 @@ export const BondSupply = () => {
           try {
             const approveRes: any = await approveToFund(
               token.address,
-              utils.parseUnits(String(Number.MAX_SAFE_INTEGER), token.decimals).toHexString(),
+              constants.MaxUint256.toHexString(),
               chainId,
               provider
             )
