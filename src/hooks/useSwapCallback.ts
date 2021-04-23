@@ -134,7 +134,10 @@ export function useSwapCallback(
                   })
                   .catch(callError => {
                     console.debug('Call threw error', call, callError)
-                    const errorMessage = `The transaction cannot succeed due to error: ${callError.reason}. This is probably an issue with one of the tokens you are swapping.`
+
+                    const errorMessage = !!callError.reason
+                      ? `The transaction cannot succeed due to error: ${callError.reason}. This is probably an issue with one of the tokens you are swapping.`
+                      : 'The transaction can not succeed due to lack of lending liquidity for one of the tokens. Please check margin account for amount available to be borrowed.'
                     return { call, error: new Error(errorMessage) }
                   })
               })
