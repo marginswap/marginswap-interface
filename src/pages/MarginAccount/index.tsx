@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import useParsedQueryString from 'hooks/useParsedQueryString'
 import TokensTable from '../../components/TokensTable'
 import InfoCard from '../../components/InfoCard'
 import IconBanknotes from '../../icons/IconBanknotes'
@@ -80,6 +81,8 @@ const getRisk = (holding: number, debt: number): number => {
 const DATA_POLLING_INTERVAL = 10000
 
 export const MarginAccount = () => {
+  const { eth } = useParsedQueryString()
+
   const [error, setError] = useState<string | null>(null)
 
   const [tokens, setTokens] = useState<TokenInfo[]>([])
@@ -328,7 +331,7 @@ export const MarginAccount = () => {
           Deposit: (amount: number) => (allowances[token.address] >= amount ? 'Confirm Transaction' : 'Approve')
         },
         customActions:
-          token.symbol === 'WETH'
+          token.symbol === 'WETH' && eth === '1'
             ? ([
                 {
                   name: 'Deposit ETH',
