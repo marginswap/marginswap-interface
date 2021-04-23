@@ -230,6 +230,7 @@ export const BondSupply = () => {
     {
       name: 'Withdraw',
       onClick: async (token: BondRateData, amount: number) => {
+        if ((bondMaturities[token.address] ?? 0) <= 50) return
         if (!amount) return
         try {
           const response: any = await withdrawHourlyBond(
@@ -267,7 +268,11 @@ export const BondSupply = () => {
               ? 'Confirm Transaction'
               : tokenApprovalStates[token.address]
               ? 'Approving'
-              : 'Approve'
+              : 'Approve',
+          Withdraw: () =>
+            bondMaturities[token.address] && bondMaturities[token.address] <= 50
+              ? (bondMaturities[token.address] ?? 0) + ' minutes remaining'
+              : 'Confirm Transaction'
         }
       })),
     [tokens, bondBalances, bondMaturities, allowances]
