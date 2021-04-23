@@ -128,9 +128,7 @@ export const BondSupply = () => {
       _tokenBalances.reduce(
         (acc, cur, index) => ({
           ...acc,
-          [tokens[index].address]: Number(
-            BigNumber.from(cur).div(BigNumber.from(10).pow(tokens[index].decimals)).toString()
-          )
+          [tokens[index].address]: Number(utils.formatUnits(_tokenBalances[index], tokens[index].decimals))
         }),
         {}
       )
