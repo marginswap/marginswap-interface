@@ -189,7 +189,7 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
                 const allActions = [...(actions ?? []), ...(row.customActions ?? [])]
                 return (
                   <Fragment key={row[idCol] as number}>
-                    <StyledTableRow selected={activeAction?.actionIndex === rowIndex}>
+                    <StyledTableRow selected={activeAction?.rowIndex === rowIndex}>
                       <StyledTableCell width={52} style={{ borderBottom: 'none' }} />
                       {columns.map((column, colIndex) => (
                         <StyledTableCell key={colIndex}>
