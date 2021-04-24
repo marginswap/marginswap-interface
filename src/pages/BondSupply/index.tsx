@@ -33,6 +33,10 @@ import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.
 
 const chainId = Number(process.env.REACT_APP_CHAIN_ID)
 
+// Amount of maturity a bond must have (or below) to be locked up
+// and unable to be withdrawn.
+const BOND_LOCKUP = 50
+
 type BondRateData = {
   img: string
   coin: string
@@ -228,7 +232,7 @@ export const BondSupply = () => {
     {
       name: 'Withdraw',
       onClick: async (token: BondRateData, amount: number) => {
-        if ((bondMaturities[token.address] ?? 0) <= 50) return
+        if ((bondMaturities[token.address] ?? 0) <= BOND_LOCKUP) return
         if (!amount) return
         try {
           const response: any = await withdrawHourlyBond(
@@ -268,7 +272,7 @@ export const BondSupply = () => {
               ? 'Approving'
               : 'Approve',
           Withdraw: () =>
-            bondMaturities[token.address] && bondMaturities[token.address] <= 50
+            bondMaturities[token.address] && bondMaturities[token.address] <= BOND_LOCKUP
               ? (bondMaturities[token.address] ?? 0) + ' minutes remaining'
               : 'Confirm Transaction'
         }
