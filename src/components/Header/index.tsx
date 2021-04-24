@@ -1,5 +1,6 @@
 import { ChainId } from '@marginswap/sdk'
 import React, { useState } from 'react'
+import useParsedQueryString from 'hooks/useParsedQueryString'
 import Logo from '../../assets/images/Union.svg'
 import { useActiveWeb3React } from '../../hooks'
 import { useETHBalances } from '../../state/wallet/hooks'
@@ -50,7 +51,11 @@ const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.KOVAN]: 'Kovan'
 }
 
-const MobileMenu = () => {
+type MobileMenuProps = {
+  stake: any
+}
+
+const MobileMenu = ({ stake }: MobileMenuProps) => {
   const [open, setOpen] = useState(false)
   const ref = useClickOutside<HTMLDivElement>(() => {
     setOpen(false)
@@ -65,17 +70,21 @@ const MobileMenu = () => {
       </StyledBurger>
       {open && (
         <MobileMenuList id="mob" open={open}>
-          {headerLinks.map(link => (
-            <Link
-              to={link.path}
-              key={link.path}
-              onClick={() => {
-                setOpen(false)
-              }}
-            >
-              <StyledMenuItem>{link.name}</StyledMenuItem>
-            </Link>
-          ))}
+          {headerLinks.map(link => {
+            if (stake !== '1' && link.name === 'Stake') return null
+
+            return (
+              <Link
+                to={link.path}
+                key={link.path}
+                onClick={() => {
+                  setOpen(false)
+                }}
+              >
+                <StyledMenuItem>{link.name}</StyledMenuItem>
+              </Link>
+            )
+          })}
         </MobileMenuList>
       )}
     </div>
@@ -83,6 +92,7 @@ const MobileMenu = () => {
 }
 
 export default function Header() {
+  const { stake } = useParsedQueryString()
   const { account, chainId } = useActiveWeb3React()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
@@ -116,13 +126,17 @@ export default function Header() {
       </Title>
       <HeaderRow>
         <HeaderLinks id="desk">
-          {headerLinks.map(link => (
-            <StyledNavLink key={link.path} id={`swap-nav-link`} to={link.path}>
-              {link.name}
-            </StyledNavLink>
-          ))}
+          {headerLinks.map(link => {
+            if (stake !== '1' && link.name === 'Stake') return null
+
+            return (
+              <StyledNavLink key={link.path} id={`swap-nav-link`} to={link.path}>
+                {link.name}
+              </StyledNavLink>
+            )
+          })}
         </HeaderLinks>
-        <MobileMenu />
+        <MobileMenu stake={stake} />
       </HeaderRow>
       <HeaderControls>
         <HeaderElement>

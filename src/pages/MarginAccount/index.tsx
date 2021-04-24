@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import useParsedQueryString from 'hooks/useParsedQueryString'
 import TokensTable from '../../components/TokensTable'
 import InfoCard from '../../components/InfoCard'
 import IconBanknotes from '../../icons/IconBanknotes'
@@ -14,14 +15,15 @@ import {
   crossWithdraw,
   approveToFund,
   TokenAmount,
-  getHourlyBondInterestRates,
   getTokenAllowances,
   crossBorrow,
   getTokenBalance,
   Token,
   crossDepositETH,
   crossWithdrawETH,
-  borrowableInPeg
+  borrowableInPeg,
+  totalLendingAvailable,
+  getBorrowInterestRates
 } from '@marginswap/sdk'
 import { TokenInfo } from '@uniswap/token-lists'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
@@ -32,7 +34,7 @@ import { StyledTableContainer } from './styled'
 import { StyledMobileOnlyRow } from './styled'
 import { StyledWrapperDiv } from './styled'
 import { StyledSectionDiv } from './styled'
-import { utils } from 'ethers'
+import { utils, constants } from 'ethers'
 import { toast } from 'react-toastify'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { getPegCurrency } from '../../constants'
@@ -50,6 +52,8 @@ type AccountBalanceData = {
   balance: number
   borrowed: number
   borrowable: number
+  liquidity: number
+  maxBorrow: number
   available: number
   ir: number
 }
@@ -69,7 +73,8 @@ const ACCOUNT_COLUMNS = [
   { name: 'Total Balance', id: 'balance' },
   { name: 'Debt', id: 'borrowed' },
   { name: 'APR', id: 'ir' },
-  { name: 'Liquidity', id: 'borrowable' }
+  { name: 'Borrowable', id: 'borrowable' },
+  { name: 'Liquidity', id: 'liquidity' }
 ] as const
 
 const getRisk = (holding: number, debt: number): number => {
@@ -80,6 +85,8 @@ const getRisk = (holding: number, debt: number): number => {
 const DATA_POLLING_INTERVAL = 10000
 
 export const MarginAccount = () => {
+  const { eth } = useParsedQueryString()
+
   const [error, setError] = useState<string | null>(null)
 
   const [tokens, setTokens] = useState<TokenInfo[]>([])
@@ -90,6 +97,7 @@ export const MarginAccount = () => {
   const [borrowAPRs, setBorrowAPRs] = useState<Record<string, number>>({})
   const [allowances, setAllowances] = useState<Record<string, number>>({})
   const [borrowableAmounts, setBorrowableAmounts] = useState<Record<string, TokenAmount>>({})
+  const [liquidities, setLiquidities] = useState<Record<string, TokenAmount>>({})
   const [tokenBalances, setTokenBalances] = useState<Record<string, number>>({})
   const [pollingInterval, setPollingInterval] = useState<ReturnType<typeof setInterval> | null>()
   const [triggerDataPoll, setTriggerDataPoll] = useState<boolean>(true)
@@ -119,15 +127,15 @@ export const MarginAccount = () => {
             provider
           )
           addTransaction(res, {
-            summary: `Approve`
+            summary: `Borrow`
           })
           setTriggerDataPoll(true)
         } catch (e) {
-          toast.error('Approve error', { position: 'bottom-right' })
+          toast.error('Borrow error', { position: 'bottom-right' })
           console.error(error)
         }
       },
-      deriveMaxFrom: 'borrowable'
+      deriveMaxFrom: 'maxBorrow'
     },
     // {
     //   name: 'Repay',
@@ -144,7 +152,7 @@ export const MarginAccount = () => {
           try {
             const approveRes: any = await approveToFund(
               tokenInfo.address,
-              utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
+              constants.MaxUint256.toHexString(),
               chainId,
               provider
             )
@@ -221,12 +229,13 @@ export const MarginAccount = () => {
       interestRates,
       _allowances,
       _borrowableAmounts,
+      _liquidities,
       _tokenBalances
     ] = await Promise.all([
       getAccountBalances(_account, chainId, provider),
       new TokenAmount(getPegCurrency(chainId), (await getAccountHoldingTotal(_account, chainId, provider)).toString()),
       new TokenAmount(getPegCurrency(chainId), (await getAccountBorrowTotal(_account, chainId, provider)).toString()),
-      getHourlyBondInterestRates(
+      getBorrowInterestRates(
         tokens.map(token => token.address),
         chainId,
         provider
@@ -253,6 +262,15 @@ export const MarginAccount = () => {
           }
         })
       ),
+      Promise.all(
+        tokens.map(async token => {
+          const tokenToken = new Token(chainId, token.address, token.decimals)
+          return new TokenAmount(
+            tokenToken,
+            ((await totalLendingAvailable(token.address, chainId, provider)) ?? utils.parseUnits('0')).toString()
+          )
+        })
+      ),
       Promise.all(tokens.map(token => getTokenBalance(_account, token.address, provider)))
     ])
 
@@ -260,14 +278,13 @@ export const MarginAccount = () => {
       _tokenBalances.reduce(
         (acc, cur, index) => ({
           ...acc,
-          [tokens[index].address]: Number(
-            BigNumber.from(cur).div(BigNumber.from(10).pow(tokens[index].decimals)).toString()
-          )
+          [tokens[index].address]: Number(utils.formatUnits(_tokenBalances[index], tokens[index].decimals))
         }),
         {}
       )
     )
     setBorrowableAmounts(_borrowableAmounts.reduce((acc, cur, index) => ({ ...acc, [tokens[index].address]: cur }), {}))
+    setLiquidities(_liquidities.reduce((acc, cur, index) => ({ ...acc, [tokens[index].address]: cur }), {}))
     setHoldingAmounts(
       Object.keys(balances.holdingAmounts).reduce(
         (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.holdingAmounts[cur]).toString() }),
@@ -332,6 +349,11 @@ export const MarginAccount = () => {
         balance: Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
         borrowed: Number(borrowingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
         borrowable: borrowableAmounts[token.address] ? parseFloat(borrowableAmounts[token.address].toFixed()) : 0,
+        liquidity: liquidities[token.address] ? parseFloat(liquidities[token.address].toFixed()) : 0,
+        maxBorrow: Math.min(
+          borrowableAmounts[token.address] ? parseFloat(borrowableAmounts[token.address].toFixed()) : 0,
+          liquidities[token.address] ? parseFloat(liquidities[token.address].toFixed()) : 0
+        ),
         ir: borrowAPRs[token.address],
         available: tokenBalances[token.address],
         getActionNameFromAmount: {
@@ -343,7 +365,7 @@ export const MarginAccount = () => {
               : 'Approve'
         },
         customActions:
-          token.symbol === 'WETH'
+          token.symbol === 'WETH' && eth === '1'
             ? ([
                 {
                   name: 'Deposit ETH',
