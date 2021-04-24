@@ -10,7 +10,8 @@ import {
   LeverageType,
   getHoldingAmounts,
   viewCurrentPriceInPeg,
-  ChainId
+  ChainId,
+  totalLendingAvailable
 } from '@marginswap/sdk'
 import { useMemo, useState, useEffect, useCallback } from 'react'
 import ERC20_INTERFACE from '../../constants/abis/erc20'
@@ -26,7 +27,8 @@ import { getProviderOrSigner } from '../../utils'
 import usePrevious from '../../hooks/usePrevious'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
 import { parseUnits } from 'ethers/lib/utils'
-import { BigNumber } from 'ethers'
+import { BigNumber, utils } from 'ethers'
+import { TokenInfo } from '@uniswap/token-lists'
 
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.
@@ -81,16 +83,13 @@ export async function borrowableInPeg2token(
   }
 }
 
-export function useBorrowable(
-  tokenAddress: string | undefined,
-  currency: Currency | undefined
-): CurrencyAmount | undefined {
+export function useBorrowable(currency: Currency | undefined): CurrencyAmount | undefined {
   const { library, chainId, account } = useActiveWeb3React()
-  const provider: any = getProviderOrSigner(library!, tokenAddress)
+  const provider: any = getProviderOrSigner(library!)
   const [balance, setBalance] = useState<CurrencyAmount | undefined>(undefined)
 
   const updateBorrowableBalance = useCallback(async () => {
-    if (tokenAddress && chainId && currency && account) {
+    if (chainId && currency && account) {
       const bip = await borrowableInPeg(account, chainId, provider)
 
       if (bip) {
@@ -115,11 +114,11 @@ export function useBorrowable(
         }
       }
     }
-  }, [tokenAddress, currency, setBalance])
+  }, [currency, setBalance])
 
   useEffect(() => {
     updateBorrowableBalance()
-  }, [tokenAddress, currency, updateBorrowableBalance])
+  }, [currency, updateBorrowableBalance])
   return balance
 }
 
@@ -257,4 +256,29 @@ export function useAggregateUniBalance(): TokenAmount | undefined {
       uniUnHarvested?.raw ?? JSBI.BigInt(0)
     )
   )
+}
+
+// get the total amount of liquidity / lending that is available for a given token
+export function useLendingAvailable(
+  chainId: number | undefined,
+  token: TokenInfo | undefined,
+  provider: any
+): CurrencyAmount | undefined {
+  const [lendingAvailable, setLendingAvailable] = useState<CurrencyAmount | undefined>()
+
+  const getLendingAvailable = async () => {
+    if (!chainId || !token) return
+    const tokenToken = new Token(chainId, token.address, token.decimals)
+    const result = ((await totalLendingAvailable(token.address, chainId, provider)) ?? utils.parseUnits('0')).toString()
+
+    setLendingAvailable(new TokenAmount(tokenToken, result))
+  }
+
+  useEffect(() => {
+    if (chainId && token && provider) {
+      getLendingAvailable()
+    }
+  }, [chainId, token, provider])
+
+  return lendingAvailable
 }

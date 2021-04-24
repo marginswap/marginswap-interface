@@ -83,7 +83,8 @@ export function useSwapCallback(
   trade: Trade | undefined, // trade to execute, required
   marginTrade: boolean,
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
-  recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
+  recipientAddressOrName: string | null, // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
+  maxMarginTrade: number | undefined
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
   const { account, chainId, library } = useActiveWeb3React()
 
@@ -97,6 +98,9 @@ export function useSwapCallback(
   return useMemo(() => {
     if (!trade || !library || !account || !chainId) {
       return { state: SwapCallbackState.INVALID, callback: null, error: 'Missing dependencies' }
+    }
+    if (marginTrade && trade.inputAmount.greaterThan(String(maxMarginTrade))) {
+      return { state: SwapCallbackState.INVALID, callback: null, error: 'Insufficient balance' }
     }
     if (!recipient) {
       if (recipientAddressOrName !== null) {

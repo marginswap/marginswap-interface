@@ -41,8 +41,6 @@ import { setInterval } from 'timers'
 import { borrowableInPeg2token, useETHBalances } from 'state/wallet/hooks'
 import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 
-const chainId = Number(process.env.REACT_APP_CHAIN_ID)
-
 type AccountBalanceData = {
   img: string
   coin: string
@@ -84,6 +82,7 @@ const getRisk = (holding: number, debt: number): number => {
 const DATA_POLLING_INTERVAL = 10000
 
 export const MarginAccount = () => {
+  const { library, chainId } = useActiveWeb3React()
   const [error, setError] = useState<string | null>(null)
 
   const [tokens, setTokens] = useState<TokenInfo[]>([])
@@ -101,7 +100,6 @@ export const MarginAccount = () => {
   const [tokenApprovalStates, setTokenApprovalStates] = useState<Record<string, boolean>>({})
 
   const { account } = useWeb3React()
-  const { library } = useActiveWeb3React()
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
 
   const addTransaction = useTransactionAdder()
@@ -115,7 +113,7 @@ export const MarginAccount = () => {
     {
       name: 'Borrow',
       onClick: async (token: AccountBalanceData, amount: number) => {
-        if (!amount) return
+        if (!amount || !chainId) return
         try {
           const res: any = await crossBorrow(
             token.address,
@@ -144,7 +142,7 @@ export const MarginAccount = () => {
     {
       name: 'Deposit',
       onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
-        if (!amount || tokenApprovalStates[tokenInfo.address]) return
+        if (!amount || tokenApprovalStates[tokenInfo.address] || !chainId) return
         if (allowances[tokenInfo.address] < amount) {
           try {
             const approveRes: any = await approveToFund(
@@ -189,6 +187,7 @@ export const MarginAccount = () => {
     {
       name: 'Withdraw',
       onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
+        if (!chainId) return
         try {
           const response: any = await crossWithdraw(
             tokenInfo.address,
@@ -219,6 +218,7 @@ export const MarginAccount = () => {
   }, [tokensList, chainId])
 
   const getAccountData = async (_account: string) => {
+    if (!chainId) return
     const [
       balances,
       _holdingTotal,
@@ -367,7 +367,7 @@ export const MarginAccount = () => {
                 {
                   name: 'Deposit ETH',
                   onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
-                    if (!amount) return
+                    if (!amount || !chainId) return
                     try {
                       const depositRes: any = await crossDepositETH(
                         utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
@@ -387,6 +387,7 @@ export const MarginAccount = () => {
                 {
                   name: 'Withdraw ETH',
                   onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
+                    if (!chainId) return
                     try {
                       const response: any = await crossWithdrawETH(
                         utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
