@@ -26,6 +26,7 @@ import {
   StyledNavLink,
   Title,
   UNIAmount,
+  StyledMobileMenu,
   MobileMenuList,
   StyledBurger,
   UniIcon,
@@ -57,7 +58,7 @@ const MobileMenu = () => {
   })
 
   return (
-    <div ref={ref}>
+    <StyledMobileMenu ref={ref}>
       <StyledBurger open={open} onClick={() => setOpen(!open)} id="burger">
         <div />
         <div />
@@ -78,7 +79,7 @@ const MobileMenu = () => {
           ))}
         </MobileMenuList>
       )}
-    </div>
+    </StyledMobileMenu>
   )
 }
 

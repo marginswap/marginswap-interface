@@ -247,11 +247,10 @@ export const StyledMenuButton = styled.button`
 export const StyledBurger = styled.div<{ open: boolean }>`
   width: 2rem;
   height: 2rem;
-  position: fixed;
-  top: 15px;
-  right: 20px;
   z-index: 20;
+  position: relative;
   display: none;
+  margin-left: auto;
   @media (max-width: 768px) {
     display: flex;
     justify-content: space-around;
@@ -275,6 +274,12 @@ export const StyledBurger = styled.div<{ open: boolean }>`
       transform: ${({ open }) => (open ? 'rotate(-45deg)' : 'rotate(0)')};
     }
   }
+`
+
+export const StyledMobileMenu = styled.div`
+  display: block;
+  margin-left: auto;
+  margin-right: 10px;
 `
 
 export const MobileMenuList = styled.ul<{ open: boolean }>`
