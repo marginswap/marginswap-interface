@@ -127,11 +127,11 @@ export const MarginAccount = () => {
             provider
           )
           addTransaction(res, {
-            summary: `Approve`
+            summary: `Borrow`
           })
           setTriggerDataPoll(true)
         } catch (e) {
-          toast.error('Approve error', { position: 'bottom-right' })
+          toast.error('Borrow error', { position: 'bottom-right' })
           console.error(error)
         }
       },
