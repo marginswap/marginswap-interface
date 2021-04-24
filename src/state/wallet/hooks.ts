@@ -10,8 +10,7 @@ import {
   LeverageType,
   getHoldingAmounts,
   viewCurrentPriceInPeg,
-  ChainId,
-  totalLendingAvailable
+  ChainId
 } from '@marginswap/sdk'
 import { useMemo, useState, useEffect, useCallback } from 'react'
 import ERC20_INTERFACE from '../../constants/abis/erc20'
@@ -73,14 +72,9 @@ export async function borrowableInPeg2token(
 ): Promise<BigNumber | undefined> {
   const hundred = `100${'0'.repeat(wrapped.decimals)}`
   const curPrice = await viewCurrentPriceInPeg(wrapped.address, hundred, chainId, provider)
-  const totalAvailable = await totalLendingAvailable(wrapped.address, chainId, provider)
 
   if (curPrice.gt(0)) {
     const borrowableInTarget = borrowableInPeg.multiply(`100${'0'.repeat(USDT.decimals)}`).divide(curPrice.toString())
-    if (borrowableInTarget.greaterThan(totalAvailable.toString())) {
-      return parseUnits(totalAvailable.toString(), wrapped.decimals)
-    }
-
     return parseUnits(borrowableInTarget.toFixed(wrapped.decimals), wrapped.decimals)
   } else {
     return undefined
@@ -131,21 +125,21 @@ export function useBorrowable(
 
 export function useMarginBalance({ address, validatedTokens }: any) {
   const [balances, setBalances] = useState({})
-  const { library } = useActiveWeb3React()
+  const { library, chainId } = useActiveWeb3React()
   const previousValidatedTokens = usePrevious(validatedTokens)
   const provider = getProviderOrSigner(library!, address)
 
   const updateMarginBalances = useCallback(async () => {
-    if (address && validatedTokens.length > 0) {
+    if (address && chainId && validatedTokens.length > 0) {
       const memo: { [tokenAddress: string]: TokenAmount } = {}
-      const holdingAmounts = await getHoldingAmounts(address, Number(process.env.REACT_APP_CHAIN_ID), provider as any)
+      const holdingAmounts = await getHoldingAmounts(address, chainId, provider as any)
       validatedTokens.forEach((token: Token) => {
         const balanceValue = JSBI.BigInt(holdingAmounts[token.address] ?? 0)
         memo[token.address] = new TokenAmount(token, balanceValue)
       })
       setBalances(memo)
     }
-  }, [address, validatedTokens, balances, setBalances])
+  }, [address, chainId, validatedTokens, balances, setBalances])
 
   useEffect(() => {
     if (JSON.stringify(validatedTokens) !== JSON.stringify(previousValidatedTokens)) {

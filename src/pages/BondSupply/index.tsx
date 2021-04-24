@@ -24,10 +24,10 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { StyledTableContainer } from './styled'
 import { StyledWrapperDiv } from './styled'
 import { StyledSectionDiv } from './styled'
-import { utils } from 'ethers'
+import { utils, constants } from 'ethers'
 import { toast } from 'react-toastify'
 import { useTransactionAdder } from '../../state/transactions/hooks'
-import { USDT } from '../../constants'
+import { getPegCurrency } from '../../constants'
 import { setInterval } from 'timers'
 import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 
@@ -74,9 +74,11 @@ export const BondSupply = () => {
   const [bondUSDCosts, setBondUSDCosts] = useState<Record<string, TokenAmount>>({})
   const [allowances, setAllowances] = useState<Record<string, number>>({})
   const [tokenBalances, setTokenBalances] = useState<Record<string, number>>({})
+  const [tokenApprovalStates, setTokenApprovalStates] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     setTokens(tokensList.tokens.filter(t => t.chainId === chainId))
+    setTokenApprovalStates(tokens.reduce((ts, t) => ({ ...ts, [t.address]: false }), {}))
   }, [])
 
   const { account } = useWeb3React()
@@ -126,9 +128,7 @@ export const BondSupply = () => {
       _tokenBalances.reduce(
         (acc, cur, index) => ({
           ...acc,
-          [tokens[index].address]: Number(
-            BigNumber.from(cur).div(BigNumber.from(10).pow(tokens[index].decimals)).toString()
-          )
+          [tokens[index].address]: Number(utils.formatUnits(_tokenBalances[index], tokens[index].decimals))
         }),
         {}
       )
@@ -150,13 +150,16 @@ export const BondSupply = () => {
     )
     setBondUSDCosts(
       Object.keys(bondCosts).reduce(
-        (acc, cur) => ({ ...acc, [cur]: new TokenAmount(USDT, bondCosts[cur].toString()) }),
+        (acc, cur) => ({ ...acc, [cur]: new TokenAmount(getPegCurrency(chainId), bondCosts[cur].toString()) }),
         {}
       )
     )
     setAllowances(
       _allowances.reduce(
-        (acc, cur, index) => ({ ...acc, [tokens[index].address]: Number(BigNumber.from(cur).toString()) }),
+        (acc: any, cur: any, index: number) => ({
+          ...acc,
+          [tokens[index].address]: Number(BigNumber.from(cur).toString())
+        }),
         {}
       )
     )
@@ -182,12 +185,12 @@ export const BondSupply = () => {
     {
       name: 'Deposit',
       onClick: async (token: BondRateData, amount: number) => {
-        if (!amount) return
+        if (!amount || tokenApprovalStates[token.address]) return
         if (allowances[token.address] < amount) {
           try {
             const approveRes: any = await approveToFund(
               token.address,
-              utils.parseUnits(String(Number.MAX_SAFE_INTEGER), token.decimals).toHexString(),
+              constants.MaxUint256.toHexString(),
               chainId,
               provider
             )
@@ -195,6 +198,10 @@ export const BondSupply = () => {
               summary: `Approve`
             })
             getData()
+            setTokenApprovalStates({ ...tokenApprovalStates, [token.address]: true })
+            setTimeout(() => {
+              setTokenApprovalStates({ ...tokenApprovalStates, [token.address]: false })
+            }, 10 * 1000)
           } catch (e) {
             toast.error('Approve error', { position: 'bottom-right' })
             console.error(e)
@@ -253,12 +260,17 @@ export const BondSupply = () => {
         maturity: bondMaturities[token.address] ?? 0,
         available: tokenBalances[token.address],
         getActionNameFromAmount: {
-          Deposit: (amount: number) => (allowances[token.address] >= amount ? 'Confirm Transaction' : 'Approve')
+          Deposit: (amount: number) =>
+            allowances[token.address] >= amount
+              ? 'Confirm Transaction'
+              : tokenApprovalStates[token.address]
+              ? 'Approving'
+              : 'Approve'
         }
       })),
     [tokens, bondBalances, bondMaturities, allowances]
   )
-  const ZERO_DAI = new TokenAmount(USDT, '0')
+  const ZERO_DAI = new TokenAmount(getPegCurrency(chainId), '0')
 
   const averageYield = useMemo(() => {
     const bondCosts = tokens.reduce(
