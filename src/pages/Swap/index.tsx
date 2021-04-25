@@ -100,7 +100,14 @@ export default function Swap() {
 
   // swap state
   const { independentField, typedValue, recipient, leverageType } = useSwapState()
-  const { trade, currencyBalances, parsedAmount, currencies, inputError: swapInputError } = useDerivedSwapInfo()
+  const {
+    trade,
+    currencyBalances,
+    marginAccountBalances,
+    parsedAmount,
+    currencies,
+    inputError: swapInputError
+  } = useDerivedSwapInfo()
   const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
     currencies[Field.INPUT],
     currencies[Field.OUTPUT],
@@ -187,11 +194,6 @@ export default function Swap() {
     }
   }, [approval, approvalSubmitted])
 
-  const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
-  const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
-
-  const marginTrade = leverageType === LeverageType.CROSS_MARGIN
-
   let provider: any
   if (library && account) {
     provider = getProviderOrSigner(library, account)
@@ -203,29 +205,30 @@ export default function Swap() {
   const token = tokenList.find(t => t.symbol === currencySymbol)
   const lendingAvailable = useLendingAvailable(chainId, token, provider)
 
-  const [maxData, setMaxData] = useState<
-    | {
-        maxBorrow: number | undefined
-        maxMarginTrade: number | undefined
-      }
-    | undefined
-  >()
+  const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(
+    currencyBalances[Field.INPUT],
+    lendingAvailable,
+    marginAccountBalances[Field.INPUT]
+  )
+  const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
+  const marginTrade = leverageType === LeverageType.CROSS_MARGIN
+  const [maxBorrow, setMaxBorrow] = useState<number | undefined>()
 
   useEffect(() => {
     const maxBorrow = Math.min(
       borrowableBalance ? parseFloat(borrowableBalance.toSignificant(6)) : 0,
-      lendingAvailable ? parseFloat(lendingAvailable.toFixed()) : 0
+      lendingAvailable ? parseFloat(lendingAvailable.toSignificant(6)) : 0
     )
-    const maxMarginTrade = maxBorrow + parseFloat(maxAmountInput?.toSignificant(6) || '0')
-    setMaxData({ maxMarginTrade, maxBorrow })
+    setMaxBorrow(maxBorrow)
   }, [borrowableBalance, lendingAvailable])
+
   // the callback to execute the swap
   const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(
     trade,
     marginTrade,
     allowedSlippage,
     recipient,
-    maxData?.maxMarginTrade
+    leverageType === LeverageType.CROSS_MARGIN && maxAmountInput ? maxAmountInput.toSignificant(6) : '0'
   )
 
   const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade)
@@ -399,7 +402,7 @@ export default function Swap() {
                 {leverageType === LeverageType.CROSS_MARGIN && (
                   <span>
                     Borrowable:
-                    {` ${maxData?.maxBorrow ? maxData.maxBorrow : '-'}`}
+                    {` ${maxBorrow ? maxBorrow : '-'}`}
                   </span>
                 )}
                 {recipient === null && !showWrap && isExpertMode ? (

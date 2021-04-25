@@ -4,8 +4,13 @@ import { MIN_ETH } from '../constants'
 /**
  * Given some token amount, return the max that can be spent of it
  * @param currencyAmount to return max of
+ * @param lendingAvailable total amount of liquidity
  */
-export function maxAmountSpend(currencyAmount?: CurrencyAmount): CurrencyAmount | undefined {
+export function maxAmountSpend(
+  currencyAmount?: CurrencyAmount,
+  lendingAvailable?: CurrencyAmount,
+  inputMarginAccountBalance?: CurrencyAmount
+): CurrencyAmount | undefined {
   if (!currencyAmount) return undefined
   if (currencyAmount.currency === ETHER) {
     if (JSBI.greaterThan(currencyAmount.raw, MIN_ETH)) {
@@ -14,5 +19,13 @@ export function maxAmountSpend(currencyAmount?: CurrencyAmount): CurrencyAmount 
       return CurrencyAmount.ether(JSBI.BigInt(0))
     }
   }
-  return currencyAmount
+
+  const maxTrade =
+    lendingAvailable && inputMarginAccountBalance ? inputMarginAccountBalance.add(lendingAvailable) : currencyAmount
+
+  if (currencyAmount.lessThan(maxTrade)) {
+    return currencyAmount
+  }
+
+  return maxTrade
 }

@@ -131,7 +131,7 @@ export const PagerSwap: FunctionComponent<{
   // the callback to execute the swap
   // TODO the following is incorrect, to just set it (marginTrade) to true
   // TODO - the last argument of 0 needs to be changed to the correct maxMarginTrade number as it is in the swap page
-  const { callback: swapCallback } = useSwapCallback(trade, true, slippageTolerance, recipient, 0)
+  const { callback: swapCallback } = useSwapCallback(trade, true, slippageTolerance, recipient, '0')
 
   const handleSwap = useCallback(() => {
     if (!swapCallback) {

@@ -278,7 +278,7 @@ export function useLendingAvailable(
     if (chainId && token && provider) {
       getLendingAvailable()
     }
-  }, [chainId, token, provider])
+  }, [token?.symbol])
 
   return lendingAvailable
 }

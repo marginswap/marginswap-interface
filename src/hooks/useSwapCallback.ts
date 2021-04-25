@@ -84,7 +84,7 @@ export function useSwapCallback(
   marginTrade: boolean,
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
   recipientAddressOrName: string | null, // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
-  maxMarginTrade: number | undefined
+  maxMarginTrade: string | undefined = ''
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
   const { account, chainId, library } = useActiveWeb3React()
 
@@ -99,7 +99,11 @@ export function useSwapCallback(
     if (!trade || !library || !account || !chainId) {
       return { state: SwapCallbackState.INVALID, callback: null, error: 'Missing dependencies' }
     }
-    if (marginTrade && trade.inputAmount.greaterThan(String(maxMarginTrade))) {
+    let maxMarginBigInt = JSBI.BigInt('0')
+    try {
+      maxMarginBigInt = JSBI.BigInt(maxMarginTrade)
+    } catch {}
+    if (marginTrade && trade.inputAmount.greaterThan(maxMarginBigInt)) {
       return { state: SwapCallbackState.INVALID, callback: null, error: 'Insufficient balance' }
     }
     if (!recipient) {
@@ -204,5 +208,16 @@ export function useSwapCallback(
       },
       error: null
     }
-  }, [trade, library, account, chainId, recipient, recipientAddressOrName, swapCalls, addTransaction])
+  }, [
+    trade,
+    library,
+    account,
+    chainId,
+    recipient,
+    recipientAddressOrName,
+    swapCalls,
+    addTransaction,
+    marginTrade,
+    maxMarginTrade
+  ])
 }
