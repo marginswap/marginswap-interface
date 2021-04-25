@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import useParsedQueryString from 'hooks/useParsedQueryString'
 import TokensTable from '../../components/TokensTable'
 import InfoCard from '../../components/InfoCard'
 import IconBanknotes from '../../icons/IconBanknotes'
@@ -83,6 +84,7 @@ const DATA_POLLING_INTERVAL = 10000
 
 export const MarginAccount = () => {
   const { library, chainId } = useActiveWeb3React()
+  const { eth } = useParsedQueryString()
   const [error, setError] = useState<string | null>(null)
 
   const [tokens, setTokens] = useState<TokenInfo[]>([])
@@ -122,11 +124,11 @@ export const MarginAccount = () => {
             provider
           )
           addTransaction(res, {
-            summary: `Approve`
+            summary: `Borrow`
           })
           setTriggerDataPoll(true)
         } catch (e) {
-          toast.error('Approve error', { position: 'bottom-right' })
+          toast.error('Borrow error', { position: 'bottom-right' })
           console.error(error)
         }
       },
@@ -160,7 +162,7 @@ export const MarginAccount = () => {
             setTokenApprovalStates({ ...tokenApprovalStates, [tokenInfo.address]: true })
             setTimeout(() => {
               setTokenApprovalStates({ ...tokenApprovalStates, [tokenInfo.address]: false })
-            }, 10 * 1000)
+            }, 20 * 1000)
           } catch (e) {
             toast.error('Approve error', { position: 'bottom-right' })
             console.error(error)
@@ -362,7 +364,7 @@ export const MarginAccount = () => {
               : 'Approve'
         },
         customActions:
-          token.symbol === 'WETH'
+          token.symbol === 'WETH' && eth === '1'
             ? ([
                 {
                   name: 'Deposit ETH',
