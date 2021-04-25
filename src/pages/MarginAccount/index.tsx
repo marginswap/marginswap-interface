@@ -219,6 +219,7 @@ export const MarginAccount = () => {
           addTransaction(response, {
             summary: `Cross Withdraw`
           })
+          setTriggerDataPoll(true)
           getUserMarginswapData()
         } catch (error) {
           toast.error('Withdrawal error', { position: 'bottom-right' })
@@ -310,7 +311,7 @@ export const MarginAccount = () => {
    *
    */
   const getUserMarginswapData = async () => {
-    if (!chainId || !account) return
+    if (!chainId || !account || !tokens?.length) return
 
     // a big Promise.all to fetch all the data
     const [_balances, _holdingTotal, _debtTotal, _allowances, _borrowableAmounts, _tokenBalances] = await Promise.all([
