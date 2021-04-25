@@ -517,7 +517,7 @@ export default function Swap() {
                     }
                   }}
                   width="48%"
-                  id="swap-button"
+                  id="swap-button-1"
                   disabled={
                     !isValid || approval !== ApprovalState.APPROVED || (priceImpactSeverity > 3 && !isExpertMode)
                   }
@@ -545,7 +545,7 @@ export default function Swap() {
                     })
                   }
                 }}
-                id="swap-button"
+                id="swap-button-2"
                 disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
                 error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
               >

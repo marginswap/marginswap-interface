@@ -99,7 +99,7 @@ export function useSwapCallback(
     if (!trade || !library || !account || !chainId) {
       return { state: SwapCallbackState.INVALID, callback: null, error: 'Missing dependencies' }
     }
-    let maxMarginBigInt = JSBI.BigInt('0')
+    let maxMarginBigInt = JSBI.BigInt(Number.MAX_SAFE_INTEGER)
     try {
       maxMarginBigInt = JSBI.BigInt(maxMarginTrade)
     } catch {}
