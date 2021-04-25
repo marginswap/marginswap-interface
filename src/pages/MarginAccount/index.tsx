@@ -36,11 +36,12 @@ import { StyledWrapperDiv } from './styled'
 import { StyledSectionDiv } from './styled'
 import { utils, constants } from 'ethers'
 import { toast } from 'react-toastify'
-import { useTransactionAdder } from '../../state/transactions/hooks'
+import { useIsTransactionPending, useTransactionAdder } from '../../state/transactions/hooks'
 import { getPegCurrency } from '../../constants'
 import { setInterval } from 'timers'
 import { borrowableInPeg2token, useETHBalances } from 'state/wallet/hooks'
 import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
+import { TransactionDetails } from '../../state/transactions/reducer'
 
 type AccountBalanceData = {
   img: string
@@ -84,7 +85,7 @@ const getRisk = (holding: number, debt: number): number => {
   return 10 - 10 * ((marginLevel - LIQUIDATION_RATIO) / (SAFE_RATIO - LIQUIDATION_RATIO))
 }
 
-const DATA_POLLING_INTERVAL = 10000
+const DATA_POLLING_INTERVAL = 60 * 1000
 
 export const MarginAccount = () => {
   const { library, chainId } = useActiveWeb3React()
@@ -104,11 +105,29 @@ export const MarginAccount = () => {
   const [pollingInterval, setPollingInterval] = useState<ReturnType<typeof setInterval> | null>()
   const [triggerDataPoll, setTriggerDataPoll] = useState<boolean>(true)
   const [tokenApprovalStates, setTokenApprovalStates] = useState<Record<string, boolean>>({})
+  const [pendingTxhHash, setPendingTxhHash] = useState<string | null>()
 
   const { account } = useWeb3React()
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
+  const isTxnPending = useIsTransactionPending(pendingTxhHash || '')
 
-  const addTransaction = useTransactionAdder()
+  const addTransactionResponseCallback = (responseObject: TransactionDetails) => {
+    if (responseObject.summary !== 'Approve') {
+      setPendingTxhHash(responseObject.hash)
+    }
+  }
+
+  useEffect(() => {
+    if (!isTxnPending && pendingTxhHash) {
+      setPendingTxhHash(null)
+
+      setTimeout(() => {
+        getUserMarginswapData()
+      }, 2 * 1000)
+    }
+  }, [isTxnPending])
+
+  const addTransaction = useTransactionAdder(addTransactionResponseCallback)
 
   let provider: any
   if (library && account) {
@@ -131,6 +150,7 @@ export const MarginAccount = () => {
             summary: `Borrow`
           })
           setTriggerDataPoll(true)
+          getUserMarginswapData()
         } catch (e) {
           toast.error('Borrow error', { position: 'bottom-right' })
           console.error(error)
@@ -163,6 +183,7 @@ export const MarginAccount = () => {
               summary: `Approve`
             })
             setTriggerDataPoll(true)
+            getUserMarginswapData()
 
             setTokenApprovalStates({ ...tokenApprovalStates, [tokenInfo.address]: true })
             setTimeout(() => {
@@ -183,6 +204,8 @@ export const MarginAccount = () => {
             addTransaction(depositRes, {
               summary: `Cross Deposit`
             })
+            setTriggerDataPoll(true)
+            getUserMarginswapData()
           } catch (error) {
             toast.error('Deposit error', { position: 'bottom-right' })
             console.error(error)
@@ -205,6 +228,8 @@ export const MarginAccount = () => {
           addTransaction(response, {
             summary: `Cross Withdraw`
           })
+          setTriggerDataPoll(true)
+          getUserMarginswapData()
         } catch (error) {
           toast.error('Withdrawal error', { position: 'bottom-right' })
           console.error(error)
@@ -224,48 +249,24 @@ export const MarginAccount = () => {
     setTokenApprovalStates(tokens.reduce((ts, t) => ({ ...ts, [t.address]: false }), {}))
   }, [tokensList, chainId])
 
-  const getAccountData = async (_account: string) => {
+  /**
+   *
+   *
+   * Get market data
+   * @description fetches the data related to the MarginSwap market via polling
+   *
+   */
+  const getMarketData = async () => {
     if (!chainId) return
-    const [
-      balances,
-      _holdingTotal,
-      _debtTotal,
-      interestRates,
-      _allowances,
-      _borrowableAmounts,
-      _liquidities,
-      _tokenBalances
-    ] = await Promise.all([
-      getAccountBalances(_account, chainId, provider),
-      new TokenAmount(getPegCurrency(chainId), (await getAccountHoldingTotal(_account, chainId, provider)).toString()),
-      new TokenAmount(getPegCurrency(chainId), (await getAccountBorrowTotal(_account, chainId, provider)).toString()),
+
+    const [_interestRates, _liquidities] = await Promise.all([
+      // interest rates by token
       getBorrowInterestRates(
         tokens.map(token => token.address),
         chainId,
         provider
       ),
-      getTokenAllowances(
-        _account,
-        tokens.map(token => token.address),
-        chainId,
-        provider
-      ),
-      Promise.all(
-        tokens.map(async token => {
-          const tokenToken = new Token(chainId, token.address, token.decimals)
-          const bipString = await borrowableInPeg(_account, chainId, provider)
-          const bip = new TokenAmount(getPegCurrency(chainId), bipString)
-
-          if (bip) {
-            return new TokenAmount(
-              tokenToken,
-              ((await borrowableInPeg2token(bip, tokenToken, chainId, provider)) ?? utils.parseUnits('0')).toString()
-            )
-          } else {
-            return new TokenAmount(tokenToken, '0')
-          }
-        })
-      ),
+      // liquidities (max lending available by token)
       Promise.all(
         tokens.map(async token => {
           const tokenToken = new Token(chainId, token.address, token.decimals)
@@ -274,63 +275,31 @@ export const MarginAccount = () => {
             ((await totalLendingAvailable(token.address, chainId, provider)) ?? utils.parseUnits('0')).toString()
           )
         })
-      ),
-      Promise.all(tokens.map(token => getTokenBalance(_account, token.address, provider)))
+      )
     ])
-
-    setTokenBalances(
-      _tokenBalances.reduce(
-        (acc, cur, index) => ({
-          ...acc,
-          [tokens[index].address]: Number(utils.formatUnits(_tokenBalances[index], tokens[index].decimals))
-        }),
-        {}
-      )
-    )
-    setBorrowableAmounts(_borrowableAmounts.reduce((acc, cur, index) => ({ ...acc, [tokens[index].address]: cur }), {}))
-    setLiquidities(_liquidities.reduce((acc, cur, index) => ({ ...acc, [tokens[index].address]: cur }), {}))
-    setHoldingAmounts(
-      Object.keys(balances.holdingAmounts).reduce(
-        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.holdingAmounts[cur]).toString() }),
-        {}
-      )
-    )
-    setBorrowingAmounts(
-      Object.keys(balances.borrowingAmounts).reduce(
-        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances.borrowingAmounts[cur]).toString() }),
-        {}
-      )
-    )
+    // interest rates by token
     setBorrowAPRs(
-      Object.keys(interestRates).reduce(
-        (acc, cur) => ({ ...acc, [cur]: (2 * BigNumber.from(interestRates[cur]).toNumber()) / 100000 }),
+      Object.keys(_interestRates).reduce(
+        (acc, cur) => ({ ...acc, [cur]: (2 * BigNumber.from(_interestRates[cur]).toNumber()) / 100000 }),
         {}
       )
     )
-    setHoldingTotal(_holdingTotal)
-    setDebtTotal(_debtTotal)
-    setAllowances(
-      _allowances.reduce(
-        (acc: any, cur: any, index: number) => ({
-          ...acc,
-          [tokens[index].address]: Number(BigNumber.from(cur).toString())
-        }),
-        {}
-      )
-    )
+    // liquidities (max lending available by token)
+    setLiquidities(_liquidities.reduce((acc, cur, index) => ({ ...acc, [tokens[index].address]: cur }), {}))
   }
 
+  // these next two useEffect hooks handle data polling by calling the
   useEffect(() => {
-    if (triggerDataPoll && account && library && tokens.length) {
+    if (triggerDataPoll && library && tokens.length) {
       try {
         setTriggerDataPoll(false)
-        getAccountData(account)
+        getMarketData()
       } catch (e) {
         console.error(e)
         setError('Failed to get account data')
       }
     }
-  }, [triggerDataPoll, account, library, tokens])
+  }, [triggerDataPoll, library, tokens])
 
   useEffect(() => {
     const interval = setInterval(() => setTriggerDataPoll(true), DATA_POLLING_INTERVAL)
@@ -343,6 +312,105 @@ export const MarginAccount = () => {
     }
   }, [])
 
+  /**
+   *
+   *
+   * Get User MarginSwap Data
+   * @description fetches the data that does not need to be polled because the app knows when it changes
+   *
+   */
+  const getUserMarginswapData = async () => {
+    if (!chainId || !account || !tokens?.length) return
+
+    // a big Promise.all to fetch all the data
+    const [_balances, _holdingTotal, _debtTotal, _allowances, _borrowableAmounts, _tokenBalances] = await Promise.all([
+      // margin account balances (array)
+      getAccountBalances(account, chainId, provider),
+      // holding total (sum of all account balances)
+      new TokenAmount(getPegCurrency(chainId), (await getAccountHoldingTotal(account, chainId, provider)).toString()),
+      // debt total (sum of all debt balances)
+      new TokenAmount(getPegCurrency(chainId), (await getAccountBorrowTotal(account, chainId, provider)).toString()),
+      // which tokens have approved the marginswap contract
+      getTokenAllowances(
+        account,
+        tokens.map(token => token.address),
+        chainId,
+        provider
+      ),
+      // borrowable amounts (max borrowable by token)
+      Promise.all(
+        tokens.map(async token => {
+          const tokenToken = new Token(chainId, token.address, token.decimals)
+          const bipString = await borrowableInPeg(account, chainId, provider)
+          const bip = new TokenAmount(getPegCurrency(chainId), bipString)
+
+          if (bip) {
+            return new TokenAmount(
+              tokenToken,
+              ((await borrowableInPeg2token(bip, tokenToken, chainId, provider)) ?? utils.parseUnits('0')).toString()
+            )
+          } else {
+            return new TokenAmount(tokenToken, '0')
+          }
+        })
+      ),
+      // wallet token balances
+      Promise.all(tokens.map(token => getTokenBalance(account, token.address, provider)))
+    ])
+
+    /*** now set the state for all that data ***/
+
+    // margin account equity balances
+    setHoldingAmounts(
+      Object.keys(_balances.holdingAmounts).reduce(
+        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(_balances.holdingAmounts[cur]).toString() }),
+        {}
+      )
+    )
+    // margin account debt balances
+    setBorrowingAmounts(
+      Object.keys(_balances.borrowingAmounts).reduce(
+        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(_balances.borrowingAmounts[cur]).toString() }),
+        {}
+      )
+    )
+    // holding total (sum of all account balances)
+    setHoldingTotal(_holdingTotal)
+    // debt total (sum of all debt balances)
+    setDebtTotal(_debtTotal)
+    // which tokens have approved the marginswap contract
+    setAllowances(
+      _allowances.reduce(
+        (acc: any, cur: any, index: number) => ({
+          ...acc,
+          [tokens[index].address]: Number(BigNumber.from(cur).toString())
+        }),
+        {}
+      )
+    )
+    // borrowable amounts (max borrowable by token)
+    setBorrowableAmounts(_borrowableAmounts.reduce((acc, cur, index) => ({ ...acc, [tokens[index].address]: cur }), {}))
+    // wallet token balances
+    setTokenBalances(
+      _tokenBalances.reduce(
+        (acc, cur, index) => ({
+          ...acc,
+          [tokens[index].address]: Number(utils.formatUnits(_tokenBalances[index], tokens[index].decimals))
+        }),
+        {}
+      )
+    )
+  }
+  /**
+   * ^^^ END Get User MarginSwap Data ^^^
+   */
+
+  // call getUserMarginswapData when relevant things change
+  useEffect(() => {
+    getUserMarginswapData()
+  }, [account, tokens, chainId, provider?._address])
+
+  // build an array of token data to display in the table
   const data = useMemo(
     () =>
       tokens.map(token => ({
@@ -384,6 +452,7 @@ export const MarginAccount = () => {
                       addTransaction(depositRes, {
                         summary: `Cross Deposit `
                       })
+                      getUserMarginswapData()
                     } catch (error) {
                       toast.error('Deposit error', { position: 'bottom-right' })
                       console.error(error)
@@ -404,6 +473,7 @@ export const MarginAccount = () => {
                       addTransaction(response, {
                         summary: `Cross Withdraw ETH`
                       })
+                      getUserMarginswapData()
                     } catch (error) {
                       toast.error('Withdrawal error', { position: 'bottom-right' })
                       console.error(error)
