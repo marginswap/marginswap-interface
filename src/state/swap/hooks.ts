@@ -24,6 +24,7 @@ import { SwapState } from './reducer'
 import { ParsedQs } from 'qs'
 import useParsedQueryString from 'hooks/useParsedQueryString'
 import { LeverageType } from '@marginswap/sdk'
+import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap)
@@ -123,7 +124,8 @@ export function useDerivedSwapInfo(): {
   trade: Trade | undefined
   inputError?: string
 } {
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
+  const { leverageType } = useSwapState()
 
   const {
     independentField,
@@ -133,7 +135,16 @@ export function useDerivedSwapInfo(): {
     recipient
   } = useSwapState()
 
-  const inputCurrency = useCurrency(inputCurrencyId)
+  const WETH = tokensList.tokens.find(t => t.chainId == chainId && t.symbol == 'WETH')
+  const WETHAddress = WETH ? WETH.address : inputCurrencyId
+
+  const inputCurrency = useCurrency(
+    leverageType === LeverageType.CROSS_MARGIN
+      ? inputCurrencyId == 'ETH'
+        ? WETHAddress
+        : inputCurrencyId
+      : inputCurrencyId
+  )
   const outputCurrency = useCurrency(outputCurrencyId)
   const recipientLookup = useENS(recipient ?? undefined)
   const to: string | null = (recipient === null ? account : recipientLookup.address) ?? null
@@ -151,7 +162,6 @@ export function useDerivedSwapInfo(): {
 
   const trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
 
-  const { leverageType } = useSwapState()
   const borrowBalance = useBorrowable(account ?? undefined, inputCurrency ?? undefined)
 
   const relevantInput =
@@ -292,11 +302,14 @@ export function useDefaultsFromURLSearch():
     if (!chainId) return
     const parsed = queryParametersToSwapState(parsedQs)
 
+    const WETH = tokensList.tokens.find(t => t.chainId == chainId && t.symbol == 'WETH')
+    const WETHAddress = WETH ? WETH.address : parsed[Field.INPUT].currencyId
+
     dispatch(
       replaceSwapState({
         typedValue: parsed.typedValue,
         field: parsed.independentField,
-        inputCurrencyId: leverageType === LeverageType.CROSS_MARGIN ? '' : parsed[Field.INPUT].currencyId,
+        inputCurrencyId: leverageType === LeverageType.CROSS_MARGIN ? WETHAddress : parsed[Field.INPUT].currencyId,
         outputCurrencyId: parsed[Field.OUTPUT].currencyId,
         recipient: parsed.recipient,
         leverageType
