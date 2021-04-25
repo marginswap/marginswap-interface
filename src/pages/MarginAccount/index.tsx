@@ -80,11 +80,10 @@ const ACCOUNT_COLUMNS = [
 const LIQUIDATION_RATIO = 1.15
 const SAFE_RATIO = 2.0
 
-
 const getRisk = (holding: number, debt: number): number => {
   if (debt === 0) return 0
-  const marginLevel = Math.max(Math.min(holding/debt, SAFE_RATIO), LIQUIDATION_RATIO)
-  return 10 - 10*((marginLevel - LIQUIDATION_RATIO)/(SAFE_RATIO - LIQUIDATION_RATIO))
+  const marginLevel = Math.max(Math.min(holding / debt, SAFE_RATIO), LIQUIDATION_RATIO)
+  return 10 - 10 * ((marginLevel - LIQUIDATION_RATIO) / (SAFE_RATIO - LIQUIDATION_RATIO))
 }
 
 const DATA_POLLING_INTERVAL = 10000
