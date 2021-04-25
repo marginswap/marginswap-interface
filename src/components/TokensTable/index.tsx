@@ -116,7 +116,6 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
       activeAction.actionIndex < actions.length
         ? actions[activeAction.actionIndex]
         : sortedData[activeAction.rowIndex].customActions![activeAction.actionIndex - actions.length]
-    console.log('CURRENT ACTION ::', currentAction)
     setActionLoading(true)
     const res = currentAction.onClick(sortedData[activeAction.rowIndex], Number(actionAmount), activeAction.rowIndex)
     if (res instanceof Promise) {
