@@ -61,7 +61,11 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
   const sortedData = useMemo(
     () =>
       data
-        .filter(token => (deriveEmptyFrom && hideEmpty ? token[deriveEmptyFrom] !== 0 : true))
+        .filter(token =>
+          deriveEmptyFrom && hideEmpty
+            ? token[deriveEmptyFrom] !== 0 || ('borrowed' in token && token['borrowed'] !== 0)
+            : true
+        )
         .sort((a, b) =>
           typeof a[orderBy] === 'number'
             ? order === 'asc'
