@@ -110,19 +110,20 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
     }
   }
 
-  const handleActionSubmit = async () => {
+  const handleActionSubmit = async (actionTitle: string) => {
     if (!(actions && activeAction)) return
     const currentAction =
       activeAction.actionIndex < actions.length
         ? actions[activeAction.actionIndex]
         : sortedData[activeAction.rowIndex].customActions![activeAction.actionIndex - actions.length]
+    console.log('CURRENT ACTION ::', currentAction)
     setActionLoading(true)
     const res = currentAction.onClick(sortedData[activeAction.rowIndex], Number(actionAmount), activeAction.rowIndex)
     if (res instanceof Promise) {
       res
         .then(() => {
           setActionLoading(false)
-          setActiveAction(null)
+          if (actionTitle !== 'Approve') setActiveAction(null)
         })
         .catch(() => {
           setActionLoading(false)
@@ -194,6 +195,13 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
             <TableBody>
               {sortedData.map((row, rowIndex) => {
                 const allActions = [...(actions ?? []), ...(row.customActions ?? [])]
+                const actionTitle =
+                  activeAction &&
+                  row.getActionNameFromAmount &&
+                  allActions[activeAction.actionIndex] &&
+                  row.getActionNameFromAmount[allActions[activeAction.actionIndex].name]
+                    ? row.getActionNameFromAmount[allActions[activeAction.actionIndex].name](Number(actionAmount))
+                    : 'Confirm Transaction'
                 return (
                   <Fragment key={row[idCol] as number}>
                     <StyledTableRow selected={activeAction?.rowIndex === rowIndex}>
@@ -275,17 +283,10 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
                                 <StyledButton
                                   color="primary"
                                   style={{ borderRadius: '16px', padding: '10px 16px', margin: '0 0 0 32px' }}
-                                  onClick={handleActionSubmit}
+                                  onClick={() => handleActionSubmit(actionTitle)}
                                   disabled={actionLoading}
                                 >
-                                  {activeAction &&
-                                  row.getActionNameFromAmount &&
-                                  allActions[activeAction.actionIndex] &&
-                                  row.getActionNameFromAmount[allActions[activeAction.actionIndex].name]
-                                    ? row.getActionNameFromAmount[allActions[activeAction.actionIndex].name](
-                                        Number(actionAmount)
-                                      )
-                                    : 'Confirm Transaction'}
+                                  {actionTitle}
                                   {actionLoading && <CircularProgress size={20} color={'white' as any} />}
                                 </StyledButton>
                               </div>

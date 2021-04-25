@@ -188,6 +188,7 @@ export const BondSupply = () => {
         if (!amount || tokenApprovalStates[token.address]) return
         if (allowances[token.address] < amount) {
           try {
+            setTokenApprovalStates({ ...tokenApprovalStates, [token.address]: true })
             const approveRes: any = await approveToFund(
               token.address,
               constants.MaxUint256.toHexString(),
@@ -198,11 +199,9 @@ export const BondSupply = () => {
               summary: `Approve`
             })
             getData()
-            setTokenApprovalStates({ ...tokenApprovalStates, [token.address]: true })
-            setTimeout(() => {
-              setTokenApprovalStates({ ...tokenApprovalStates, [token.address]: false })
-            }, 20 * 1000)
+            setTokenApprovalStates({ ...tokenApprovalStates, [token.address]: false })
           } catch (e) {
+            setTokenApprovalStates({ ...tokenApprovalStates, [token.address]: false })
             toast.error('Approve error', { position: 'bottom-right' })
             console.error(e)
           }
