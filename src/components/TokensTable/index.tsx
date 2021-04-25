@@ -39,7 +39,7 @@ type TableProps<T extends Record<string, string | boolean | number>> = {
     render?: (token: T) => JSX.Element
   }[]
   actions?: readonly TableAction<T>[]
-  deriveEmptyFrom?: keyof T // which field is used for hiding empty rows
+  deriveEmptyFrom?: string[] // which fields are used for hiding empty rows
   idCol: keyof T
 }
 
@@ -58,10 +58,15 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
   const [actionAmount, setActionAmount] = useState('')
   const [actionLoading, setActionLoading] = useState(false)
 
+  const areFieldsEmpty = (token: any) => {
+    const nonZeroFiels = deriveEmptyFrom?.filter(d => token[d] !== 0) || []
+    return nonZeroFiels?.length > 0
+  }
+
   const sortedData = useMemo(
     () =>
       data
-        .filter(token => (deriveEmptyFrom && hideEmpty ? token[deriveEmptyFrom] !== 0 : true))
+        .filter(token => (deriveEmptyFrom?.length && hideEmpty ? areFieldsEmpty(token) : true))
         .sort((a, b) =>
           typeof a[orderBy] === 'number'
             ? order === 'asc'
@@ -139,7 +144,7 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
       <StyledTableWrapper>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginRight: '24px' }}>
           <h3>{title}</h3>
-          {deriveEmptyFrom && (
+          {deriveEmptyFrom?.length && (
             <StyledFormControlLabel
               control={
                 <Switch

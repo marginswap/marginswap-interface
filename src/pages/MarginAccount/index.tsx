@@ -524,7 +524,7 @@ export const MarginAccount = () => {
           data={data}
           columns={ACCOUNT_COLUMNS}
           actions={ACCOUNT_ACTIONS}
-          deriveEmptyFrom="balance"
+          deriveEmptyFrom={['balance', 'borrowed']}
           idCol="coin"
         />
       </StyledSectionDiv>
