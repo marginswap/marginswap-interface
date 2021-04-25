@@ -111,7 +111,10 @@ export const MarginAccount = () => {
 
   const addTransactionResponseCallback = (responseObject: TransactionDetails) => {
     if (responseObject.summary !== 'Approve') {
-      getUserMarginswapData()
+      // give it a couple of seconds before trying to fetch the new data
+      setTimeout(() => {
+        getUserMarginswapData()
+      }, 2 * 1000)
     }
   }
 
