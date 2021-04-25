@@ -137,7 +137,7 @@ export const BondSupply = () => {
     )
     setBondAPRs(
       Object.keys(interestRates).reduce(
-        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(interestRates[cur]).toNumber() / 100000 }),
+        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(interestRates[cur]).toNumber() / 100 }),
         {}
       )
     )
