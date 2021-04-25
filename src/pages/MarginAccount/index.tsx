@@ -433,7 +433,7 @@ export const MarginAccount = () => {
             <InfoCard
               title="Equity"
               amount={
-                holdingTotal.greaterThan(debtTotal)
+                holdingTotal.greaterThan(debtTotal) || holdingTotal.equalTo(debtTotal)
                   ? holdingTotal.subtract(debtTotal).toSignificant()
                   : `- ${debtTotal.subtract(holdingTotal).toSignificant()}`
               }
