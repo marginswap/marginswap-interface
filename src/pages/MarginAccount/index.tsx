@@ -36,7 +36,7 @@ import { StyledWrapperDiv } from './styled'
 import { StyledSectionDiv } from './styled'
 import { utils, constants } from 'ethers'
 import { toast } from 'react-toastify'
-import { useTransactionAdder } from '../../state/transactions/hooks'
+import { useIsTransactionPending, useTransactionAdder } from '../../state/transactions/hooks'
 import { getPegCurrency } from '../../constants'
 import { setInterval } from 'timers'
 import { borrowableInPeg2token, useETHBalances } from 'state/wallet/hooks'
@@ -105,18 +105,27 @@ export const MarginAccount = () => {
   const [pollingInterval, setPollingInterval] = useState<ReturnType<typeof setInterval> | null>()
   const [triggerDataPoll, setTriggerDataPoll] = useState<boolean>(true)
   const [tokenApprovalStates, setTokenApprovalStates] = useState<Record<string, boolean>>({})
+  const [pendingTxhHash, setPendingTxhHash] = useState<string | null>()
 
   const { account } = useWeb3React()
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
+  const isTxnPending = useIsTransactionPending(pendingTxhHash || '')
 
   const addTransactionResponseCallback = (responseObject: TransactionDetails) => {
     if (responseObject.summary !== 'Approve') {
-      // give it a couple of seconds before trying to fetch the new data
+      setPendingTxhHash(responseObject.hash)
+    }
+  }
+
+  useEffect(() => {
+    if (!isTxnPending && pendingTxhHash) {
+      setPendingTxhHash(null)
+
       setTimeout(() => {
         getUserMarginswapData()
       }, 2 * 1000)
     }
-  }
+  }, [isTxnPending])
 
   const addTransaction = useTransactionAdder(addTransactionResponseCallback)
 
