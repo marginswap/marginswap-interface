@@ -231,7 +231,6 @@ export const BondSupply = () => {
     {
       name: 'Withdraw',
       onClick: async (token: BondRateData, amount: number) => {
-        if ((bondMaturities[token.address] ?? 0) <= BOND_LOCKUP) return
         if (!amount) return
         try {
           const response: any = await withdrawHourlyBond(
@@ -247,6 +246,9 @@ export const BondSupply = () => {
           toast.error('Withdrawal error', { position: 'bottom-right' })
           console.error(e)
         }
+      },
+      disabled: (token: BondRateData) => {
+        return (bondMaturities[token.address] ?? 0) <= BOND_LOCKUP
       },
       deriveMaxFrom: 'totalSupplied'
     }
@@ -269,11 +271,7 @@ export const BondSupply = () => {
               ? 'Confirm Transaction'
               : tokenApprovalStates[token.address]
               ? 'Approving'
-              : 'Approve',
-          Withdraw: () =>
-            bondMaturities[token.address] && bondMaturities[token.address] <= BOND_LOCKUP
-              ? (bondMaturities[token.address] ?? 0) + ' minutes remaining'
-              : 'Confirm Transaction'
+              : 'Approve'
         }
       })),
     [tokens, bondBalances, bondMaturities, allowances]
