@@ -21,12 +21,10 @@ export const AMPL = new Token(ChainId.MAINNET, '0xD46bA6D942050d489DBd938a2C909A
 export const WBTC = new Token(ChainId.MAINNET, '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', 8, 'WBTC', 'Wrapped BTC')
 
 // Environment dependant peg currency
-function getPegCurrency(chainId: number) {
+export function getPegCurrency(chainId: number) {
   if (chainId == ChainId.KOVAN) return DAI
   return USDT
 }
-
-export { getPegCurrency as getPegCurrency }
 
 // Block time here is slightly higher (~1s) than average in order to avoid ongoing proposals past the displayed time
 export const AVERAGE_BLOCK_TIME_IN_SECS = 13
@@ -56,13 +54,19 @@ export const MERKLE_DISTRIBUTOR_ADDRESS: { [chainId in ChainId]?: string } = {
   [ChainId.MAINNET]: '0x090D4613473dEE047c3f2706764f49E0821D256e'
 }
 
-export const WETH_ONLY: ChainTokenList = {
+const WETH_ONLY: ChainTokenList = {
   [ChainId.MAINNET]: [WETH[ChainId.MAINNET]],
   [ChainId.ROPSTEN]: [WETH[ChainId.ROPSTEN]],
   [ChainId.RINKEBY]: [WETH[ChainId.RINKEBY]],
   [ChainId.GÖRLI]: [WETH[ChainId.GÖRLI]],
   [ChainId.KOVAN]: [WETH[ChainId.KOVAN]],
   [ChainId.LOCAL]: [WETH[ChainId.LOCAL]]
+}
+
+export function getWETH(chainId: ChainId | undefined) {
+  let WETHAddress = null
+  if (WETH_ONLY[chainId ?? 1] && WETH_ONLY[chainId ?? 1].length > 0) WETHAddress = WETH_ONLY[chainId ?? 1][0].address
+  return WETHAddress ?? ''
 }
 
 // used to construct intermediary pairs for trading

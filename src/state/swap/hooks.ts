@@ -24,7 +24,7 @@ import { SwapState } from './reducer'
 import { ParsedQs } from 'qs'
 import useParsedQueryString from 'hooks/useParsedQueryString'
 import { LeverageType } from '@marginswap/sdk'
-import { WETH_ONLY } from '../../constants'
+import { getWETH } from '../../constants'
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap)
@@ -135,8 +135,7 @@ export function useDerivedSwapInfo(): {
     recipient
   } = useSwapState()
 
-  let WETHAddress = null
-  if (WETH_ONLY[chainId ?? 1] && WETH_ONLY[chainId ?? 1].length > 0) WETHAddress = WETH_ONLY[chainId ?? 1][0].address
+  const WETHAddress = getWETH(chainId)
 
   const inputCurrency = useCurrency(
     leverageType === LeverageType.CROSS_MARGIN
@@ -302,15 +301,11 @@ export function useDefaultsFromURLSearch():
     if (!chainId) return
     const parsed = queryParametersToSwapState(parsedQs)
 
-    let WETHAddress = null
-    if (WETH_ONLY[chainId ?? 1] && WETH_ONLY[chainId ?? 1].length > 0) WETHAddress = WETH_ONLY[chainId ?? 1][0].address
-
     dispatch(
       replaceSwapState({
         typedValue: parsed.typedValue,
         field: parsed.independentField,
-        inputCurrencyId:
-          leverageType === LeverageType.CROSS_MARGIN ? WETHAddress ?? '' : parsed[Field.INPUT].currencyId,
+        inputCurrencyId: leverageType === LeverageType.CROSS_MARGIN ? getWETH(chainId) : parsed[Field.INPUT].currencyId,
         outputCurrencyId: parsed[Field.OUTPUT].currencyId,
         recipient: parsed.recipient,
         leverageType
