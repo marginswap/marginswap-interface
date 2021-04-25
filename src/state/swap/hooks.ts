@@ -24,7 +24,7 @@ import { SwapState } from './reducer'
 import { ParsedQs } from 'qs'
 import useParsedQueryString from 'hooks/useParsedQueryString'
 import { LeverageType } from '@marginswap/sdk'
-import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
+import { WETH_ONLY } from '../../constants'
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap)
@@ -135,8 +135,8 @@ export function useDerivedSwapInfo(): {
     recipient
   } = useSwapState()
 
-  const WETH = tokensList.tokens.find(t => t.chainId == chainId && t.symbol == 'WETH')
-  const WETHAddress = WETH ? WETH.address : inputCurrencyId
+  let WETHAddress = null
+  if (WETH_ONLY[chainId ?? 1] && WETH_ONLY[chainId ?? 1].length > 0) WETHAddress = WETH_ONLY[chainId ?? 1][0].address
 
   const inputCurrency = useCurrency(
     leverageType === LeverageType.CROSS_MARGIN
@@ -302,8 +302,8 @@ export function useDefaultsFromURLSearch():
     if (!chainId) return
     const parsed = queryParametersToSwapState(parsedQs)
 
-    const WETH = tokensList.tokens.find(t => t.chainId == chainId && t.symbol == 'WETH')
-    const WETHAddress = WETH ? WETH.address : parsed[Field.INPUT].currencyId
+    let WETHAddress = null
+    if (WETH_ONLY[chainId ?? 1] && WETH_ONLY[chainId ?? 1].length > 0) WETHAddress = WETH_ONLY[chainId ?? 1][0].address
 
     dispatch(
       replaceSwapState({
