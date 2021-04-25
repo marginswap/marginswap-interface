@@ -13,6 +13,7 @@ import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import { SwapPoolTabs } from '../../components/NavigationTabs'
 import { AutoRow, RowBetween } from '../../components/Row'
 import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetailsDropdown'
+import { getProviderOrSigner } from '../../utils'
 
 import confirmPriceImpactWithoutFee from '../../components/swap/confirmPriceImpactWithoutFee'
 import {
@@ -56,7 +57,8 @@ import Loader from '../../components/Loader'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import { LeverageType } from '@marginswap/sdk'
-import { useBorrowable } from '../../state/wallet/hooks'
+import { useBorrowable, useLendingAvailable } from '../../state/wallet/hooks'
+import { useMarginSwapTokenList } from '../../state/lists/hooks'
 
 export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -83,7 +85,7 @@ export default function Swap() {
       return !Boolean(token.address in defaultTokens)
     }).length > 0
 
-  const { account } = useActiveWeb3React()
+  const { library, account, chainId } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
 
   // toggle wallet when disconnected
@@ -98,7 +100,14 @@ export default function Swap() {
 
   // swap state
   const { independentField, typedValue, recipient, leverageType } = useSwapState()
-  const { trade, currencyBalances, parsedAmount, currencies, inputError: swapInputError } = useDerivedSwapInfo()
+  const {
+    trade,
+    currencyBalances,
+    marginAccountBalances,
+    parsedAmount,
+    currencies,
+    inputError: swapInputError
+  } = useDerivedSwapInfo()
   const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
     currencies[Field.INPUT],
     currencies[Field.OUTPUT],
@@ -185,16 +194,41 @@ export default function Swap() {
     }
   }, [approval, approvalSubmitted])
 
-  const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
-  const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
+  let provider: any
+  if (library && account) {
+    provider = getProviderOrSigner(library, account)
+  }
 
+  const borrowableBalance = useBorrowable(currencies[Field.INPUT] ?? undefined)
+  const currencySymbol = currencies[Field.INPUT]?.symbol
+  const tokenList = useMarginSwapTokenList(chainId)
+  const token = tokenList.find(t => t.symbol === currencySymbol)
+  const lendingAvailable = useLendingAvailable(chainId, token, provider)
+
+  const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(
+    currencyBalances[Field.INPUT],
+    lendingAvailable,
+    marginAccountBalances[Field.INPUT]
+  )
+  const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
   const marginTrade = leverageType === LeverageType.CROSS_MARGIN
+  const [maxBorrow, setMaxBorrow] = useState<number | undefined>()
+
+  useEffect(() => {
+    const maxBorrow = Math.min(
+      borrowableBalance ? parseFloat(borrowableBalance.toSignificant(6)) : 0,
+      lendingAvailable ? parseFloat(lendingAvailable.toSignificant(6)) : 0
+    )
+    setMaxBorrow(maxBorrow)
+  }, [borrowableBalance, lendingAvailable])
+
   // the callback to execute the swap
   const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(
     trade,
     marginTrade,
     allowedSlippage,
-    recipient
+    recipient,
+    leverageType === LeverageType.CROSS_MARGIN && maxAmountInput ? maxAmountInput.toSignificant(6) : '0'
   )
 
   const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade)
@@ -294,7 +328,6 @@ export default function Swap() {
   ])
 
   const swapIsUnsupported = useIsTransactionUnsupported(currencies?.INPUT, currencies?.OUTPUT)
-  const borrowableBalance = useBorrowable(account ?? undefined, currencies[Field.INPUT] ?? undefined)
 
   return (
     <>
@@ -369,7 +402,7 @@ export default function Swap() {
                 {leverageType === LeverageType.CROSS_MARGIN && (
                   <span>
                     Borrowable:
-                    {` ${borrowableBalance ? borrowableBalance?.toSignificant(6) : '-'}`}
+                    {` ${maxBorrow ? maxBorrow : '-'}`}
                   </span>
                 )}
                 {recipient === null && !showWrap && isExpertMode ? (
@@ -484,7 +517,7 @@ export default function Swap() {
                     }
                   }}
                   width="48%"
-                  id="swap-button"
+                  id="swap-button-1"
                   disabled={
                     !isValid || approval !== ApprovalState.APPROVED || (priceImpactSeverity > 3 && !isExpertMode)
                   }
@@ -512,7 +545,7 @@ export default function Swap() {
                     })
                   }
                 }}
-                id="swap-button"
+                id="swap-button-2"
                 disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
                 error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
               >

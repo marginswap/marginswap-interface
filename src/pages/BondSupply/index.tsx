@@ -31,8 +31,6 @@ import { getPegCurrency } from '../../constants'
 import { setInterval } from 'timers'
 import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 
-const chainId = Number(process.env.REACT_APP_CHAIN_ID)
-
 // Amount of maturity a bond must have (or below) to be locked up
 // and unable to be withdrawn.
 const BOND_LOCKUP = 50
@@ -69,6 +67,7 @@ const apyFromApr = (apr: number, compounds: number): number =>
   (Math.pow(1 + apr / (compounds * 100), compounds) - 1) * 100
 
 export const BondSupply = () => {
+  const { library, chainId } = useActiveWeb3React()
   const [error, setError] = useState<string | null>(null)
 
   const [tokens, setTokens] = useState<TokenInfo[]>([])
@@ -86,7 +85,6 @@ export const BondSupply = () => {
   }, [])
 
   const { account } = useWeb3React()
-  const { library } = useActiveWeb3React()
 
   const addTransaction = useTransactionAdder()
   let provider: any
@@ -95,6 +93,7 @@ export const BondSupply = () => {
   }
 
   const getBondsData = async (address: string, tokens: TokenInfo[]) => {
+    if (!chainId) return
     // TODO get chain id from somewhere other than the env variable. Perhaps the wallet/provider?
     const [balances, interestRates, maturities, bondCosts, _allowances, _tokenBalances] = await Promise.all([
       getHourlyBondBalances(
@@ -189,7 +188,7 @@ export const BondSupply = () => {
     {
       name: 'Deposit',
       onClick: async (token: BondRateData, amount: number) => {
-        if (!amount || tokenApprovalStates[token.address]) return
+        if (!amount || tokenApprovalStates[token.address] || !chainId) return
         if (allowances[token.address] < amount) {
           try {
             const approveRes: any = await approveToFund(
@@ -205,7 +204,7 @@ export const BondSupply = () => {
             setTokenApprovalStates({ ...tokenApprovalStates, [token.address]: true })
             setTimeout(() => {
               setTokenApprovalStates({ ...tokenApprovalStates, [token.address]: false })
-            }, 10 * 1000)
+            }, 20 * 1000)
           } catch (e) {
             toast.error('Approve error', { position: 'bottom-right' })
             console.error(e)
