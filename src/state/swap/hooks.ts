@@ -140,7 +140,7 @@ export function useDerivedSwapInfo(): {
 
   const inputCurrency = useCurrency(
     leverageType === LeverageType.CROSS_MARGIN
-      ? inputCurrencyId == 'ETH'
+      ? inputCurrencyId == 'ETH' && WETHAddress
         ? WETHAddress
         : inputCurrencyId
       : inputCurrencyId
@@ -309,7 +309,8 @@ export function useDefaultsFromURLSearch():
       replaceSwapState({
         typedValue: parsed.typedValue,
         field: parsed.independentField,
-        inputCurrencyId: leverageType === LeverageType.CROSS_MARGIN ? WETHAddress : parsed[Field.INPUT].currencyId,
+        inputCurrencyId:
+          leverageType === LeverageType.CROSS_MARGIN ? WETHAddress ?? '' : parsed[Field.INPUT].currencyId,
         outputCurrencyId: parsed[Field.OUTPUT].currencyId,
         recipient: parsed.recipient,
         leverageType
