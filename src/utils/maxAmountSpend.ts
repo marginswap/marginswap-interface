@@ -20,12 +20,16 @@ export function maxAmountSpend(
     }
   }
 
-  const maxTrade =
-    lendingAvailable && inputMarginAccountBalance ? inputMarginAccountBalance.add(lendingAvailable) : currencyAmount
+  try {
+    const maxTrade =
+      lendingAvailable && inputMarginAccountBalance ? inputMarginAccountBalance.add(lendingAvailable) : currencyAmount
 
-  if (currencyAmount.lessThan(maxTrade)) {
+    if (currencyAmount.lessThan(maxTrade)) {
+      return currencyAmount
+    }
+
+    return maxTrade
+  } catch {
     return currencyAmount
   }
-
-  return maxTrade
 }
