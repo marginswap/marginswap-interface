@@ -52,23 +52,32 @@ function Updaters() {
 }
 
 ReactDOM.render(
-  <StrictMode>
-    <FixedGlobalStyle />
-    <Web3ReactProvider getLibrary={getLibrary}>
-      <Web3ProviderNetwork getLibrary={getLibrary}>
-        <Blocklist>
-          <Provider store={store}>
-            <Updaters />
-            <ThemeProvider>
-              <ThemedGlobalStyle />
-              <BrowserRouter>
-                <App />
-              </BrowserRouter>
-            </ThemeProvider>
-          </Provider>
-        </Blocklist>
-      </Web3ProviderNetwork>
-    </Web3ReactProvider>
-  </StrictMode>,
+  <div
+    style={{
+      minHeight: '100vh',
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: 'cover',
+      backgroundImage: 'url("/images/bg.png")'
+    }}
+  >
+    <StrictMode>
+      <FixedGlobalStyle />
+      <Web3ReactProvider getLibrary={getLibrary}>
+        <Web3ProviderNetwork getLibrary={getLibrary}>
+          <Blocklist>
+            <Provider store={store}>
+              <Updaters />
+              <ThemeProvider>
+                <ThemedGlobalStyle />
+                <BrowserRouter>
+                  <App />
+                </BrowserRouter>
+              </ThemeProvider>
+            </Provider>
+          </Blocklist>
+        </Web3ProviderNetwork>
+      </Web3ReactProvider>
+    </StrictMode>
+  </div>,
   document.getElementById('root')
 )
