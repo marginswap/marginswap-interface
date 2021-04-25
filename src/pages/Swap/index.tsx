@@ -48,7 +48,8 @@ import {
   useSwapState
 } from '../../state/swap/hooks'
 import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } from '../../state/user/hooks'
-import { LinkStyledButton, TYPE } from '../../theme'
+import { LinkStyledButton, TYPE, CustomLightSpinner } from '../../theme'
+import Circle from '../../assets/images/blue-loader.svg'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import AppBody from '../AppBody'
@@ -69,6 +70,10 @@ export default function Swap() {
     useCurrency(loadedUrlParams?.outputCurrencyId)
   ]
   const [dismissTokenWarning, setDismissTokenWarning] = useState<boolean>(false)
+  const [tradeLoading, setTradeLoading] = useState<{
+    isLoading: boolean
+    timeout: ReturnType<typeof setTimeout> | undefined
+  }>({ isLoading: false, timeout: undefined })
   const urlLoadedTokens: Token[] = useMemo(
     () => [loadedInputCurrency, loadedOutputCurrency]?.filter((c): c is Token => c instanceof Token) ?? [],
     [loadedInputCurrency, loadedOutputCurrency]
@@ -180,6 +185,17 @@ export default function Swap() {
     currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmounts[independentField]?.greaterThan(JSBI.BigInt(0))
   )
   const noRoute = !route
+
+  useEffect(() => {
+    const { isLoading, timeout } = tradeLoading
+    if (noRoute && userHasSpecifiedInputOutput && !isLoading && !timeout) {
+      const timeout = setTimeout(() => setTradeLoading({ isLoading: false, timeout: undefined }), 60 * 1000)
+      setTradeLoading({
+        isLoading: true,
+        timeout
+      })
+    }
+  }, [noRoute, userHasSpecifiedInputOutput])
 
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage, leverageType)
@@ -478,6 +494,10 @@ export default function Swap() {
                 {wrapInputError ??
                   (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
               </ButtonPrimary>
+            ) : noRoute && userHasSpecifiedInputOutput && tradeLoading.isLoading ? (
+              <GreyCard style={{ textAlign: 'center' }}>
+                <CustomLightSpinner src={Circle} alt="loader" size={'25px'} />
+              </GreyCard>
             ) : noRoute && userHasSpecifiedInputOutput ? (
               <GreyCard style={{ textAlign: 'center' }}>
                 <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
