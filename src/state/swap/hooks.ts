@@ -138,10 +138,8 @@ export function useDerivedSwapInfo(): {
   const WETHAddress = getWETH(chainId)
 
   const inputCurrency = useCurrency(
-    leverageType === LeverageType.CROSS_MARGIN
-      ? inputCurrencyId == 'ETH' && WETHAddress
-        ? WETHAddress
-        : inputCurrencyId
+    leverageType === LeverageType.CROSS_MARGIN && inputCurrencyId == 'ETH' && WETHAddress
+      ? WETHAddress
       : inputCurrencyId
   )
   const outputCurrency = useCurrency(outputCurrencyId)
