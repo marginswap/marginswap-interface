@@ -99,7 +99,7 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
     } else {
       setActionAmount(
         String(
-          Math.round(
+          Math.floor(
             Math.min(
               Number(e.target.value),
               Number(currentAction.max ?? sortedData[activeAction.rowIndex][currentAction.deriveMaxFrom!])
@@ -251,12 +251,8 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
                                         onClick={() => {
                                           setActionAmount(
                                             String(
-                                              Math.round(
-                                                Number(
-                                                  allActions[activeAction.actionIndex].max ??
-                                                    row[allActions[activeAction.actionIndex].deriveMaxFrom!]
-                                                ) * 1000000
-                                              ) / 1000000
+                                              allActions[activeAction.actionIndex].max ??
+                                                row[allActions[activeAction.actionIndex].deriveMaxFrom!]
                                             )
                                           )
                                         }}
