@@ -16,7 +16,7 @@ import {
   approveToFund,
   TokenAmount,
   getTokenAllowances,
-  crossBorrow,
+  //  crossBorrow,
   getTokenBalance,
   Token,
   crossDepositETH,
@@ -135,29 +135,29 @@ export const MarginAccount = () => {
   }
 
   const ACCOUNT_ACTIONS = [
-    {
-      name: 'Borrow',
-      onClick: async (token: AccountBalanceData, amount: number) => {
-        if (!amount || !chainId) return
-        try {
-          const res: any = await crossBorrow(
-            token.address,
-            utils.parseUnits(String(amount), token.decimals).toHexString(),
-            chainId,
-            provider
-          )
-          addTransaction(res, {
-            summary: `Borrow`
-          })
-          setTriggerDataPoll(true)
-          getUserMarginswapData()
-        } catch (e) {
-          toast.error('Borrow error', { position: 'bottom-right' })
-          console.error(error)
-        }
-      },
-      deriveMaxFrom: 'maxBorrow'
-    },
+    // {
+    //   name: 'Borrow',
+    //   onClick: async (token: AccountBalanceData, amount: number) => {
+    //     if (!amount || !chainId) return
+    //     try {
+    //       const res: any = await crossBorrow(
+    //         token.address,
+    //         utils.parseUnits(String(amount), token.decimals).toHexString(),
+    //         chainId,
+    //         provider
+    //       )
+    //       addTransaction(res, {
+    //         summary: `Borrow`
+    //       })
+    //       setTriggerDataPoll(true)
+    //       getUserMarginswapData()
+    //     } catch (e) {
+    //       toast.error('Borrow error', { position: 'bottom-right' })
+    //       console.error(error)
+    //     }
+    //   },
+    //   deriveMaxFrom: 'maxBorrow'
+    // },
     //
     // {
     //   name: 'Repay',
