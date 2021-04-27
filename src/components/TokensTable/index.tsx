@@ -95,24 +95,16 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
       activeAction.actionIndex < actions.length
         ? actions[activeAction.actionIndex]
         : sortedData[activeAction.rowIndex].customActions![activeAction.actionIndex - actions.length]
-    if (
-      !inputValue ||
-      !(currentAction.deriveMaxFrom || currentAction.max !== undefined) ||
-      // if user inputs 0.0 as they start to input a decimal,
-      // don't parse that to a number because it loses the decimal
-      /0\.0+\b/.test(inputValue)
-    ) {
+    if (!inputValue || !(currentAction.deriveMaxFrom || currentAction.max !== undefined)) {
       setActionAmount(inputValue)
     } else {
       setActionAmount(
-        String(
-          Math.floor(
-            Math.min(
-              Number(inputValue),
-              Number(currentAction.max ?? sortedData[activeAction.rowIndex][currentAction.deriveMaxFrom!])
-            ) * 1000000
-          ) / 1000000
-        )
+        Number(inputValue) >=
+          Number(currentAction.max ?? sortedData[activeAction.rowIndex][currentAction.deriveMaxFrom!])
+          ? String(currentAction.max ?? sortedData[activeAction.rowIndex][currentAction.deriveMaxFrom!])
+          : inputValue.split('.')[1] && inputValue.split('.')[1].length > 6
+          ? `${inputValue.split('.')[0]}.${inputValue.split('.')[1].slice(0, 6)}`
+          : inputValue
       )
     }
   }
