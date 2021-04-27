@@ -77,7 +77,7 @@ const ACCOUNT_COLUMNS = [
 ] as const
 
 const LIQUIDATION_RATIO = 1.15
-const SAFE_RATIO = 2.0
+const SAFE_RATIO = 2.5
 
 const getRisk = (holding: number, debt: number): number => {
   if (debt === 0) return 0
