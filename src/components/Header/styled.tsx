@@ -35,6 +35,8 @@ export const HeaderControls = styled.div`
   flex-direction: row;
   align-items: center;
   justify-self: flex-end;
+  min-width: 262px;
+  justify-content: flex-end;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     flex-direction: row;
@@ -303,6 +305,10 @@ export const MobileMenuList = styled.ul<{ open: boolean }>`
     text-decoration: none;
     font-size: 18px;
   }
+`
+
+export const LogoWrapper = styled.div`
+  min-width: 262px;
 `
 
 export const StyledMenuItem = styled.li``
