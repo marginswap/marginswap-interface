@@ -90,18 +90,25 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
 
   const handleActionValueChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!(actions && activeAction)) return
+    const inputValue = e.target.value
     const currentAction =
       activeAction.actionIndex < actions.length
         ? actions[activeAction.actionIndex]
         : sortedData[activeAction.rowIndex].customActions![activeAction.actionIndex - actions.length]
-    if (!e.target.value || !(currentAction.deriveMaxFrom || currentAction.max !== undefined)) {
-      setActionAmount(e.target.value)
+    if (
+      !inputValue ||
+      !(currentAction.deriveMaxFrom || currentAction.max !== undefined) ||
+      // if user inputs 0.0 as they start to input a decimal,
+      // don't parse that to a number because it loses the decimal
+      /0\.0+\b/.test(inputValue)
+    ) {
+      setActionAmount(inputValue)
     } else {
       setActionAmount(
         String(
-          Math.round(
+          Math.floor(
             Math.min(
-              Number(e.target.value),
+              Number(inputValue),
               Number(currentAction.max ?? sortedData[activeAction.rowIndex][currentAction.deriveMaxFrom!])
             ) * 1000000
           ) / 1000000
@@ -251,12 +258,8 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
                                         onClick={() => {
                                           setActionAmount(
                                             String(
-                                              Math.round(
-                                                Number(
-                                                  allActions[activeAction.actionIndex].max ??
-                                                    row[allActions[activeAction.actionIndex].deriveMaxFrom!]
-                                                ) * 1000000
-                                              ) / 1000000
+                                              allActions[activeAction.actionIndex].max ??
+                                                row[allActions[activeAction.actionIndex].deriveMaxFrom!]
                                             )
                                           )
                                         }}

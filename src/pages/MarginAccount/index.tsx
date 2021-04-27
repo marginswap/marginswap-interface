@@ -427,7 +427,7 @@ export const MarginAccount = () => {
           liquidities[token.address] ? parseFloat(liquidities[token.address].toFixed()) : 0
         ),
         ir: borrowAPRs[token.address],
-        available: tokenBalances[token.address],
+        available: tokenBalances[token.address] ?? 0,
         getActionNameFromAmount: {
           Deposit: (amount: number) =>
             allowances[token.address] >= amount
