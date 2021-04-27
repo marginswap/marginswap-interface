@@ -31,7 +31,8 @@ import {
   StyledBurger,
   UniIcon,
   UNIWrapper,
-  StyledMenuItem
+  StyledMenuItem,
+  LogoWrapper
 } from './styled'
 import { Link } from 'react-router-dom'
 import useClickOutside from '../../hooks/useClickOutside'
@@ -118,12 +119,14 @@ export default function Header() {
       <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
         <UniBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
       </Modal>
-      <Title href=".">
-        <UniIcon>
-          <img width={'33px'} src={Logo} alt="logo" />
-        </UniIcon>
-        <span>Marginswap</span>
-      </Title>
+      <LogoWrapper>
+        <Title href=".">
+          <UniIcon>
+            <img width={'33px'} src={Logo} alt="logo" />
+          </UniIcon>
+          <span>Marginswap</span>
+        </Title>
+      </LogoWrapper>
       <HeaderRow>
         <HeaderLinks id="desk">
           {headerLinks.map(link => {
