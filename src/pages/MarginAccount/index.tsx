@@ -117,13 +117,17 @@ export const MarginAccount = () => {
     }
   }
 
+  const delayedFetchUserData = () => {
+    setTimeout(() => {
+      getUserMarginswapData()
+    }, 2 * 1000)
+  }
+
   useEffect(() => {
     if (!isTxnPending && pendingTxhHash) {
       setPendingTxhHash(null)
 
-      setTimeout(() => {
-        getUserMarginswapData()
-      }, 2 * 1000)
+      delayedFetchUserData()
     }
   }, [isTxnPending])
 
@@ -183,7 +187,7 @@ export const MarginAccount = () => {
               summary: `Approve`
             })
             setTriggerDataPoll(true)
-            getUserMarginswapData()
+            delayedFetchUserData()
 
             setTokenApprovalStates({ ...tokenApprovalStates, [tokenInfo.address]: true })
             setTimeout(() => {
@@ -205,7 +209,7 @@ export const MarginAccount = () => {
               summary: `Cross Deposit`
             })
             setTriggerDataPoll(true)
-            getUserMarginswapData()
+            delayedFetchUserData()
           } catch (error) {
             toast.error('Deposit error', { position: 'bottom-right' })
             console.error(error)
@@ -229,7 +233,7 @@ export const MarginAccount = () => {
             summary: `Cross Withdraw`
           })
           setTriggerDataPoll(true)
-          getUserMarginswapData()
+          delayedFetchUserData()
         } catch (error) {
           toast.error('Withdrawal error', { position: 'bottom-right' })
           console.error(error)
@@ -257,9 +261,9 @@ export const MarginAccount = () => {
    *
    */
   const getMarketData = async () => {
-    if (!chainId) return
+    if (!chainId || !account) return
 
-    const [_interestRates, _liquidities] = await Promise.all([
+    const [_interestRates, _liquidities, _holdingTotal, _debtTotal] = await Promise.all([
       // interest rates by token
       getBorrowInterestRates(
         tokens.map(token => token.address),
@@ -275,7 +279,11 @@ export const MarginAccount = () => {
             ((await totalLendingAvailable(token.address, chainId, provider)) ?? utils.parseUnits('0')).toString()
           )
         })
-      )
+      ),
+      // holding total (sum of all account balances)
+      new TokenAmount(getPegCurrency(chainId), (await getAccountHoldingTotal(account, chainId, provider)).toString()),
+      // debt total (sum of all debt balances)
+      new TokenAmount(getPegCurrency(chainId), (await getAccountBorrowTotal(account, chainId, provider)).toString())
     ])
     // interest rates by token
     setBorrowAPRs(
@@ -286,6 +294,10 @@ export const MarginAccount = () => {
     )
     // liquidities (max lending available by token)
     setLiquidities(_liquidities.reduce((acc, cur, index) => ({ ...acc, [tokens[index].address]: cur }), {}))
+    // holding total (sum of all account balances)
+    setHoldingTotal(_holdingTotal)
+    // debt total (sum of all debt balances)
+    setDebtTotal(_debtTotal)
   }
 
   // these next two useEffect hooks handle data polling by calling the
@@ -323,13 +335,9 @@ export const MarginAccount = () => {
     if (!chainId || !account || !tokens?.length) return
 
     // a big Promise.all to fetch all the data
-    const [_balances, _holdingTotal, _debtTotal, _allowances, _borrowableAmounts, _tokenBalances] = await Promise.all([
+    const [_balances, _allowances, _borrowableAmounts, _tokenBalances, _holdingTotal, _debtTotal] = await Promise.all([
       // margin account balances (array)
       getAccountBalances(account, chainId, provider),
-      // holding total (sum of all account balances)
-      new TokenAmount(getPegCurrency(chainId), (await getAccountHoldingTotal(account, chainId, provider)).toString()),
-      // debt total (sum of all debt balances)
-      new TokenAmount(getPegCurrency(chainId), (await getAccountBorrowTotal(account, chainId, provider)).toString()),
       // which tokens have approved the marginswap contract
       getTokenAllowances(
         account,
@@ -355,7 +363,11 @@ export const MarginAccount = () => {
         })
       ),
       // wallet token balances
-      Promise.all(tokens.map(token => getTokenBalance(account, token.address, provider)))
+      Promise.all(tokens.map(token => getTokenBalance(account, token.address, provider))),
+      // holding total (sum of all account balances)
+      new TokenAmount(getPegCurrency(chainId), (await getAccountHoldingTotal(account, chainId, provider)).toString()),
+      // debt total (sum of all debt balances)
+      new TokenAmount(getPegCurrency(chainId), (await getAccountBorrowTotal(account, chainId, provider)).toString())
     ])
 
     /*** now set the state for all that data ***/
@@ -374,10 +386,6 @@ export const MarginAccount = () => {
         {}
       )
     )
-    // holding total (sum of all account balances)
-    setHoldingTotal(_holdingTotal)
-    // debt total (sum of all debt balances)
-    setDebtTotal(_debtTotal)
     // which tokens have approved the marginswap contract
     setAllowances(
       _allowances.reduce(
@@ -400,6 +408,10 @@ export const MarginAccount = () => {
         {}
       )
     )
+    // holding total (sum of all account balances)
+    setHoldingTotal(_holdingTotal)
+    // debt total (sum of all debt balances)
+    setDebtTotal(_debtTotal)
   }
   /**
    * ^^^ END Get User MarginSwap Data ^^^
@@ -452,7 +464,7 @@ export const MarginAccount = () => {
                       addTransaction(depositRes, {
                         summary: `Cross Deposit `
                       })
-                      getUserMarginswapData()
+                      delayedFetchUserData()
                     } catch (error) {
                       toast.error('Deposit error', { position: 'bottom-right' })
                       console.error(error)
@@ -473,7 +485,7 @@ export const MarginAccount = () => {
                       addTransaction(response, {
                         summary: `Cross Withdraw ETH`
                       })
-                      getUserMarginswapData()
+                      delayedFetchUserData()
                     } catch (error) {
                       toast.error('Withdrawal error', { position: 'bottom-right' })
                       console.error(error)
