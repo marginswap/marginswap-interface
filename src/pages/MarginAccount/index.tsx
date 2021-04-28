@@ -288,7 +288,7 @@ export const MarginAccount = () => {
     // interest rates by token
     setBorrowAPRs(
       Object.keys(_interestRates).reduce(
-        (acc, cur) => ({ ...acc, [cur]: (2 * BigNumber.from(_interestRates[cur]).toNumber()) / 100 }),
+        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(_interestRates[cur]).toNumber() * 0.01 }),
         {}
       )
     )
