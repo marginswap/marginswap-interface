@@ -251,8 +251,6 @@ export const BondSupply = () => {
     getUserMarginswapData()
   }, [account, tokens, chainId, provider?._address])
 
-  // ************************************************
-
   const actions = [
     {
       name: 'Deposit',
