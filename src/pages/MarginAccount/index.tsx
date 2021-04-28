@@ -300,7 +300,7 @@ export const MarginAccount = () => {
     setDebtTotal(_debtTotal)
   }
 
-  // these next two useEffect hooks handle data polling by calling the
+  // these next two useEffect hooks handle data polling
   useEffect(() => {
     if (triggerDataPoll && library && tokens.length) {
       try {
