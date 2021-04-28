@@ -144,7 +144,7 @@ export const BondSupply = () => {
         tokens.map(t => t.address),
         chainId,
         provider
-      ),
+      )
     ])
 
     /*** now set the state for all that data ***/
