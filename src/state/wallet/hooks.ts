@@ -66,8 +66,8 @@ export function useETHBalances(
   )
 }
 
-export async function borrowableInPeg2token(
-  borrowableInPeg: TokenAmount,
+export async function valueInPeg2token(
+  valueInPeg: TokenAmount,
   wrapped: Token,
   chainId: ChainId,
   provider: any
@@ -76,8 +76,8 @@ export async function borrowableInPeg2token(
   const curPrice = await viewCurrentPriceInPeg(wrapped.address, hundred, chainId, provider)
 
   if (curPrice.gt(0)) {
-    const borrowableInTarget = borrowableInPeg.multiply(`100${'0'.repeat(USDT.decimals)}`).divide(curPrice.toString())
-    return parseUnits(borrowableInTarget.toFixed(wrapped.decimals), wrapped.decimals)
+    const valueInTarget = valueInPeg.multiply(`100${'0'.repeat(USDT.decimals)}`).divide(curPrice.toString())
+    return parseUnits(valueInTarget.toFixed(wrapped.decimals), wrapped.decimals)
   } else {
     return undefined
   }
@@ -98,7 +98,7 @@ export function useBorrowable(currency: Currency | undefined): CurrencyAmount | 
         const wrapped = wrappedCurrency(currency, chainId)
 
         if (wrapped) {
-          const borrowableInTarget = await borrowableInPeg2token(borrowableInPeg, wrapped, chainId, provider)
+          const borrowableInTarget = await valueInPeg2token(borrowableInPeg, wrapped, chainId, provider)
           if (borrowableInTarget) {
             const result =
               currency.name == 'Ether'
