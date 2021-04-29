@@ -85,7 +85,12 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
 
   const handleActionOpen = (actionIndex: number, rowIndex: number) => {
     setActionAmount('')
-    setActiveAction({ actionIndex, rowIndex })
+
+    if (activeAction && activeAction.actionIndex === actionIndex && activeAction.rowIndex === rowIndex) {
+      setActiveAction(null)
+    } else {
+      setActiveAction({ actionIndex, rowIndex })
+    }
   }
 
   const handleActionValueChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -109,7 +114,7 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
     }
   }
 
-  const handleActionSubmit = async () => {
+  const handleActionSubmit = async (actionTitle: string) => {
     if (!(actions && activeAction)) return
     const currentAction =
       activeAction.actionIndex < actions.length
@@ -121,12 +126,14 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
       res
         .then(() => {
           setActionLoading(false)
+          if (actionTitle !== 'Approve') setActiveAction(null)
         })
         .catch(() => {
           setActionLoading(false)
         })
     } else {
       setActionLoading(false)
+      setActiveAction(null)
     }
   }
 
@@ -191,6 +198,13 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
             <TableBody>
               {sortedData.map((row, rowIndex) => {
                 const allActions = [...(actions ?? []), ...(row.customActions ?? [])]
+                const actionTitle =
+                  activeAction &&
+                  row.getActionNameFromAmount &&
+                  allActions[activeAction.actionIndex] &&
+                  row.getActionNameFromAmount[allActions[activeAction.actionIndex].name]
+                    ? row.getActionNameFromAmount[allActions[activeAction.actionIndex].name](Number(actionAmount))
+                    : 'Confirm Transaction'
                 return (
                   <Fragment key={row[idCol] as number}>
                     <StyledTableRow selected={activeAction?.rowIndex === rowIndex}>
@@ -209,6 +223,11 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
                           {allActions.map((action, actionIndex) => (
                             <StyledButton
                               key={actionIndex}
+                              color={
+                                activeAction?.actionIndex === actionIndex && activeAction?.rowIndex === rowIndex
+                                  ? 'primary'
+                                  : undefined
+                              }
                               onClick={() => {
                                 handleActionOpen(actionIndex, rowIndex)
                               }}
@@ -263,17 +282,10 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
                                 <StyledButton
                                   color="primary"
                                   style={{ borderRadius: '16px', padding: '10px 16px', margin: '0 0 0 32px' }}
-                                  onClick={handleActionSubmit}
+                                  onClick={() => handleActionSubmit(actionTitle)}
                                   disabled={actionLoading}
                                 >
-                                  {activeAction &&
-                                  row.getActionNameFromAmount &&
-                                  allActions[activeAction.actionIndex] &&
-                                  row.getActionNameFromAmount[allActions[activeAction.actionIndex].name]
-                                    ? row.getActionNameFromAmount[allActions[activeAction.actionIndex].name](
-                                        Number(actionAmount)
-                                      )
-                                    : 'Confirm Transaction'}
+                                  {actionTitle}
                                   {actionLoading && <CircularProgress size={20} color={'white' as any} />}
                                 </StyledButton>
                               </div>
