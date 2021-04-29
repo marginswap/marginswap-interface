@@ -26,10 +26,13 @@ import { StyledWrapperDiv } from './styled'
 import { StyledSectionDiv } from './styled'
 import { utils, constants } from 'ethers'
 import { toast } from 'react-toastify'
-import { useTransactionAdder } from '../../state/transactions/hooks'
+import { useTransactionAdder, useIsTransactionPending } from '../../state/transactions/hooks'
 import { getPegCurrency } from '../../constants'
 import { setInterval } from 'timers'
 import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
+import { TransactionDetails } from '../../state/transactions/reducer'
+
+const DATA_POLLING_INTERVAL = 60 * 1000
 
 type BondRateData = {
   img: string
@@ -73,85 +76,148 @@ export const BondSupply = () => {
   const [bondUSDCosts, setBondUSDCosts] = useState<Record<string, TokenAmount>>({})
   const [allowances, setAllowances] = useState<Record<string, number>>({})
   const [tokenBalances, setTokenBalances] = useState<Record<string, number>>({})
-  const [tokenApprovalStates, setTokenApprovalStates] = useState<Record<string, boolean>>({})
+  const [pollingInterval, setPollingInterval] = useState<ReturnType<typeof setInterval> | null>()
+  const [triggerDataPoll, setTriggerDataPoll] = useState<boolean>(true)
+  const [pendingTxhHash, setPendingTxhHash] = useState<string | null>()
 
   useEffect(() => {
     setTokens(tokensList.tokens.filter(t => t.chainId === chainId))
-    setTokenApprovalStates(tokens.reduce((ts, t) => ({ ...ts, [t.address]: false }), {}))
   }, [])
 
   const { account } = useWeb3React()
+  const isTxnPending = useIsTransactionPending(pendingTxhHash || '')
 
-  const addTransaction = useTransactionAdder()
+  const addTransactionResponseCallback = (responseObject: TransactionDetails) => {
+    setPendingTxhHash(responseObject.hash)
+  }
+
+  const delayedFetchUserData = () => {
+    setTimeout(() => {
+      getUserMarginswapData()
+      getMarketData()
+    }, 2 * 1000)
+  }
+
+  useEffect(() => {
+    if (!isTxnPending && pendingTxhHash) {
+      setPendingTxhHash(null)
+
+      delayedFetchUserData()
+    }
+  }, [isTxnPending])
+
+  const addTransaction = useTransactionAdder(addTransactionResponseCallback)
+
   let provider: any
   if (library && account) {
     provider = getProviderOrSigner(library, account)
   }
 
-  const getBondsData = async (address: string, tokens: TokenInfo[]) => {
-    if (!chainId) return
-    // TODO get chain id from somewhere other than the env variable. Perhaps the wallet/provider?
-    const [balances, interestRates, maturities, bondCosts, _allowances, _tokenBalances] = await Promise.all([
-      getHourlyBondBalances(
-        address,
-        tokens.map(t => t.address),
-        chainId,
-        provider
-      ),
+  /**
+   *
+   *
+   * Get market data
+   * @description fetches the data related to the MarginSwap market via polling
+   *
+   */
+  const getMarketData = async () => {
+    if (!chainId || !account) return
+
+    const [_interestRates, _maturities, _bondCosts] = await Promise.all([
       getHourlyBondInterestRates(
         tokens.map(t => t.address),
         chainId,
         provider
       ),
       getHourlyBondMaturities(
-        address,
+        account,
         tokens.map(t => t.address),
         chainId,
         provider
       ),
       getBondsCostInDollars(
-        address,
+        account,
+        tokens.map(t => t.address),
+        chainId,
+        provider
+      )
+    ])
+
+    /*** now set the state for all that data ***/
+    setBondAPRs(
+      Object.keys(_interestRates).reduce(
+        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(_interestRates[cur]).toNumber() / 100 }),
+        {}
+      )
+    )
+    setBondMaturities(
+      Object.keys(_maturities).reduce(
+        (acc, cur) => ({ ...acc, [cur]: Math.ceil(BigNumber.from(_maturities[cur]).toNumber() / 60) }),
+        {}
+      )
+    )
+    setBondUSDCosts(
+      Object.keys(_bondCosts).reduce(
+        (acc, cur) => ({ ...acc, [cur]: new TokenAmount(getPegCurrency(chainId), _bondCosts[cur].toString()) }),
+        {}
+      )
+    )
+  }
+
+  // these next two useEffect hooks handle data polling
+  useEffect(() => {
+    if (triggerDataPoll && library && tokens.length) {
+      try {
+        setTriggerDataPoll(false)
+        getMarketData()
+      } catch (e) {
+        console.error(e)
+        setError('Failed to get account data')
+      }
+    }
+  }, [triggerDataPoll, library, tokens])
+
+  useEffect(() => {
+    const interval = setInterval(() => setTriggerDataPoll(true), DATA_POLLING_INTERVAL)
+    setPollingInterval(interval)
+
+    return () => {
+      if (pollingInterval) {
+        clearInterval(pollingInterval)
+      }
+    }
+  }, [])
+
+  /**
+   *
+   *
+   * Get User MarginSwap Data
+   * @description fetches the data that does not need to be polled because the app knows when it changes
+   *
+   */
+  const getUserMarginswapData = async () => {
+    if (!chainId || !account || !tokens?.length) return
+
+    // a big Promise.all to fetch all the data
+    const [_balances, _allowances, _tokenBalances] = await Promise.all([
+      getHourlyBondBalances(
+        account,
         tokens.map(t => t.address),
         chainId,
         provider
       ),
       getTokenAllowances(
-        address,
+        account,
         tokens.map(t => t.address),
         chainId,
         provider
       ),
-      Promise.all(tokens.map(token => getTokenBalance(address, token.address, provider)))
+      Promise.all(tokens.map(token => getTokenBalance(account, token.address, provider)))
     ])
-    setTokenBalances(
-      _tokenBalances.reduce(
-        (acc, cur, index) => ({
-          ...acc,
-          [tokens[index].address]: Number(utils.formatUnits(_tokenBalances[index], tokens[index].decimals))
-        }),
-        {}
-      )
-    )
+
+    /*** now set the state for all that data ***/
     setBondBalances(
-      Object.keys(balances).reduce((acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances[cur]).toString() }), {})
-    )
-    setBondAPRs(
-      Object.keys(interestRates).reduce(
-        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(interestRates[cur]).toNumber() / 100 }),
-        {}
-      )
-    )
-    setBondMaturities(
-      Object.keys(maturities).reduce(
-        (acc, cur) => ({ ...acc, [cur]: Math.ceil(BigNumber.from(maturities[cur]).toNumber() / 60) }),
-        {}
-      )
-    )
-    setBondUSDCosts(
-      Object.keys(bondCosts).reduce(
-        (acc, cur) => ({ ...acc, [cur]: new TokenAmount(getPegCurrency(chainId), bondCosts[cur].toString()) }),
-        {}
-      )
+      Object.keys(_balances).reduce((acc, cur) => ({ ...acc, [cur]: BigNumber.from(_balances[cur]).toString() }), {})
     )
     setAllowances(
       _allowances.reduce(
@@ -162,30 +228,31 @@ export const BondSupply = () => {
         {}
       )
     )
+    setTokenBalances(
+      _tokenBalances.reduce(
+        (acc, cur, index) => ({
+          ...acc,
+          [tokens[index].address]: Number(utils.formatUnits(_tokenBalances[index], tokens[index].decimals))
+        }),
+        {}
+      )
+    )
   }
+  /**
+   * ^^^ END Get User MarginSwap Data ^^^
+   */
 
-  const getData = () => {
-    if (account && library && tokens.length > 0) {
-      getBondsData(account, tokens).catch(e => {
-        console.error(e)
-        setError('Failed to get account data')
-      })
-    }
-  }
+  // call getUserMarginswapData when relevant things change
   useEffect(() => {
-    getData()
-    const interval = setInterval(getData, 10000)
-    return () => {
-      clearInterval(interval)
-    }
-  }, [account, tokens, library])
+    getUserMarginswapData()
+  }, [account, tokens, chainId, provider?._address])
 
   const actions = [
     {
       name: 'Deposit',
       onClick: async (token: BondRateData, amount: number) => {
-        if (!amount || tokenApprovalStates[token.address] || !chainId) return
-        if (allowances[token.address] < amount) {
+        if (!amount || !chainId) return
+        if (allowances[token.address] <= 0) {
           try {
             const approveRes: any = await approveToFund(
               token.address,
@@ -196,11 +263,7 @@ export const BondSupply = () => {
             addTransaction(approveRes, {
               summary: `Approve`
             })
-            getData()
-            setTokenApprovalStates({ ...tokenApprovalStates, [token.address]: true })
-            setTimeout(() => {
-              setTokenApprovalStates({ ...tokenApprovalStates, [token.address]: false })
-            }, 20 * 1000)
+            delayedFetchUserData()
           } catch (e) {
             toast.error('Approve error', { position: 'bottom-right' })
             console.error(e)
@@ -216,6 +279,7 @@ export const BondSupply = () => {
             addTransaction(response, {
               summary: `Buy HourlyBond Subscription`
             })
+            delayedFetchUserData()
           } catch (e) {
             toast.error('Deposit error', { position: 'bottom-right' })
             console.error(e)
@@ -238,6 +302,7 @@ export const BondSupply = () => {
           addTransaction(response, {
             summary: `Withdraw HourlyBond`
           })
+          delayedFetchUserData()
         } catch (e) {
           toast.error('Withdrawal error', { position: 'bottom-right' })
           console.error(e)
@@ -259,12 +324,7 @@ export const BondSupply = () => {
         maturity: bondMaturities[token.address] ?? 0,
         available: tokenBalances[token.address],
         getActionNameFromAmount: {
-          Deposit: (amount: number) =>
-            allowances[token.address] >= amount
-              ? 'Confirm Transaction'
-              : tokenApprovalStates[token.address]
-              ? 'Approving'
-              : 'Approve'
+          Deposit: () => (allowances[token.address] > 0 ? 'Confirm Transaction' : 'Approve')
         }
       })),
     [tokens, bondBalances, bondMaturities, allowances]
@@ -308,7 +368,14 @@ export const BondSupply = () => {
             Icon={IconMoneyStack}
           />
         </StyledTableContainer>
-        <TokensTable title="Bond Rates" data={data} columns={BOND_RATES_COLUMNS} idCol="coin" actions={actions} />
+        <TokensTable
+          title="Bond Rates"
+          data={data}
+          columns={BOND_RATES_COLUMNS}
+          idCol="coin"
+          actions={actions}
+          isTxnPending={!!pendingTxhHash}
+        />
       </StyledSectionDiv>
     </StyledWrapperDiv>
   )
