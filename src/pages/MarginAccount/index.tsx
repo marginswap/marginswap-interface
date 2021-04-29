@@ -22,6 +22,7 @@ import {
   crossDepositETH,
   crossWithdrawETH,
   borrowableInPeg,
+  withdrawableInPeg,
   totalLendingAvailable,
   getBorrowInterestRates
 } from '@marginswap/sdk'
@@ -39,7 +40,7 @@ import { toast } from 'react-toastify'
 import { useIsTransactionPending, useTransactionAdder } from '../../state/transactions/hooks'
 import { getPegCurrency } from '../../constants'
 import { setInterval } from 'timers'
-import { borrowableInPeg2token, useETHBalances } from 'state/wallet/hooks'
+import { valueInPeg2token, useETHBalances } from 'state/wallet/hooks'
 import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 import { TransactionDetails } from '../../state/transactions/reducer'
 
@@ -51,8 +52,10 @@ type AccountBalanceData = {
   balance: number
   borrowed: number
   borrowable: number
+  withdrawable: number
   liquidity: number
   maxBorrow: number
+  maxWithdraw: number
   available: number
   ir: number
 }
@@ -100,6 +103,7 @@ export const MarginAccount = () => {
   const [borrowAPRs, setBorrowAPRs] = useState<Record<string, number>>({})
   const [allowances, setAllowances] = useState<Record<string, number>>({})
   const [borrowableAmounts, setBorrowableAmounts] = useState<Record<string, TokenAmount>>({})
+  const [withdrawableAmounts, setWithdrawableAmounts] = useState<Record<string, TokenAmount>>({})
   const [liquidities, setLiquidities] = useState<Record<string, TokenAmount>>({})
   const [tokenBalances, setTokenBalances] = useState<Record<string, number>>({})
   const [pollingInterval, setPollingInterval] = useState<ReturnType<typeof setInterval> | null>()
@@ -239,7 +243,7 @@ export const MarginAccount = () => {
           console.error(error)
         }
       },
-      deriveMaxFrom: 'balance',
+      deriveMaxFrom: 'maxWithdraw',
       disabled: (token: AccountBalanceData) => {
         const date = localStorage.getItem(`${token.coin}_LAST_DEPOSIT`)
         return !!date && new Date().getTime() - new Date(date).getTime() < 300000
@@ -288,7 +292,7 @@ export const MarginAccount = () => {
     // interest rates by token
     setBorrowAPRs(
       Object.keys(_interestRates).reduce(
-        (acc, cur) => ({ ...acc, [cur]: (2 * BigNumber.from(_interestRates[cur]).toNumber()) / 100 }),
+        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(_interestRates[cur]).toNumber() * 0.01 }),
         {}
       )
     )
@@ -335,7 +339,15 @@ export const MarginAccount = () => {
     if (!chainId || !account || !tokens?.length) return
 
     // a big Promise.all to fetch all the data
-    const [_balances, _allowances, _borrowableAmounts, _tokenBalances, _holdingTotal, _debtTotal] = await Promise.all([
+    const [
+      _balances,
+      _allowances,
+      _borrowableAmounts,
+      _withdrawableAmounts,
+      _tokenBalances,
+      _holdingTotal,
+      _debtTotal
+    ] = await Promise.all([
       // margin account balances (array)
       getAccountBalances(account, chainId, provider),
       // which tokens have approved the marginswap contract
@@ -355,8 +367,26 @@ export const MarginAccount = () => {
           if (bip) {
             return new TokenAmount(
               tokenToken,
-              ((await borrowableInPeg2token(bip, tokenToken, chainId, provider)) ?? utils.parseUnits('0')).toString()
+              ((await valueInPeg2token(bip, tokenToken, chainId, provider)) ?? utils.parseUnits('0')).toString()
             )
+          } else {
+            return new TokenAmount(tokenToken, '0')
+          }
+        })
+      ),
+      // withdrawable amounts (max withdrawable by token)
+      Promise.all(
+        tokens.map(async token => {
+          const tokenToken = new Token(chainId, token.address, token.decimals)
+          const wipString = await withdrawableInPeg(account, chainId, provider)
+          const wip = new TokenAmount(getPegCurrency(chainId), wipString)
+
+          if (wip) {
+            const tokenAmount = (
+              (await valueInPeg2token(wip, tokenToken, chainId, provider)) ?? utils.parseUnits('0')
+            ).toString()
+
+            return new TokenAmount(tokenToken, tokenAmount)
           } else {
             return new TokenAmount(tokenToken, '0')
           }
@@ -398,6 +428,10 @@ export const MarginAccount = () => {
     )
     // borrowable amounts (max borrowable by token)
     setBorrowableAmounts(_borrowableAmounts.reduce((acc, cur, index) => ({ ...acc, [tokens[index].address]: cur }), {}))
+    // withdrawable amounts (max borrowable by token)
+    setWithdrawableAmounts(
+      _withdrawableAmounts.reduce((acc, cur, index) => ({ ...acc, [tokens[index].address]: cur }), {})
+    )
     // wallet token balances
     setTokenBalances(
       _tokenBalances.reduce(
@@ -433,10 +467,15 @@ export const MarginAccount = () => {
         balance: Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
         borrowed: Number(borrowingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
         borrowable: borrowableAmounts[token.address] ? parseFloat(borrowableAmounts[token.address].toFixed()) : 0,
+        withdrawable: withdrawableAmounts[token.address] ? parseFloat(withdrawableAmounts[token.address].toFixed()) : 0,
         liquidity: liquidities[token.address] ? parseFloat(liquidities[token.address].toFixed()) : 0,
         maxBorrow: Math.min(
           borrowableAmounts[token.address] ? parseFloat(borrowableAmounts[token.address].toFixed()) : 0,
           liquidities[token.address] ? parseFloat(liquidities[token.address].toFixed()) : 0
+        ),
+        maxWithdraw: Math.min(
+          withdrawableAmounts[token.address] ? parseFloat(withdrawableAmounts[token.address].toFixed()) : 0,
+          Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals)
         ),
         ir: borrowAPRs[token.address],
         available: tokenBalances[token.address] ?? 0,
@@ -500,7 +539,17 @@ export const MarginAccount = () => {
               ] as const)
             : undefined
       })),
-    [tokens, holdingAmounts, borrowingAmounts, borrowAPRs, allowances, borrowableAmounts, tokenBalances, userEthBalance]
+    [
+      tokens,
+      holdingAmounts,
+      borrowingAmounts,
+      borrowAPRs,
+      allowances,
+      borrowableAmounts,
+      withdrawableAmounts,
+      tokenBalances,
+      userEthBalance
+    ]
   )
 
   return (
