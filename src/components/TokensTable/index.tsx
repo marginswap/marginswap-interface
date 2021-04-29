@@ -82,7 +82,7 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
             ? 1
             : -1
         ),
-    [data, order, orderBy, hideEmpty, deriveEmptyFrom]
+    [data, order, orderBy, hideEmpty, deriveEmptyFrom, isTxnPending]
   )
 
   const handleActionOpen = (actionIndex: number, rowIndex: number) => {
