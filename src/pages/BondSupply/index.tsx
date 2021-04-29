@@ -76,23 +76,19 @@ export const BondSupply = () => {
   const [bondUSDCosts, setBondUSDCosts] = useState<Record<string, TokenAmount>>({})
   const [allowances, setAllowances] = useState<Record<string, number>>({})
   const [tokenBalances, setTokenBalances] = useState<Record<string, number>>({})
-  const [tokenApprovalStates, setTokenApprovalStates] = useState<Record<string, boolean>>({})
   const [pollingInterval, setPollingInterval] = useState<ReturnType<typeof setInterval> | null>()
   const [triggerDataPoll, setTriggerDataPoll] = useState<boolean>(true)
   const [pendingTxhHash, setPendingTxhHash] = useState<string | null>()
 
   useEffect(() => {
     setTokens(tokensList.tokens.filter(t => t.chainId === chainId))
-    setTokenApprovalStates(tokens.reduce((ts, t) => ({ ...ts, [t.address]: false }), {}))
   }, [])
 
   const { account } = useWeb3React()
   const isTxnPending = useIsTransactionPending(pendingTxhHash || '')
 
   const addTransactionResponseCallback = (responseObject: TransactionDetails) => {
-    if (responseObject.summary !== 'Approve') {
-      setPendingTxhHash(responseObject.hash)
-    }
+    setPendingTxhHash(responseObject.hash)
   }
 
   const delayedFetchUserData = () => {
@@ -255,8 +251,8 @@ export const BondSupply = () => {
     {
       name: 'Deposit',
       onClick: async (token: BondRateData, amount: number) => {
-        if (!amount || tokenApprovalStates[token.address] || !chainId) return
-        if (allowances[token.address] < amount) {
+        if (!amount || !chainId) return
+        if (allowances[token.address] <= 0) {
           try {
             const approveRes: any = await approveToFund(
               token.address,
@@ -268,10 +264,6 @@ export const BondSupply = () => {
               summary: `Approve`
             })
             delayedFetchUserData()
-            setTokenApprovalStates({ ...tokenApprovalStates, [token.address]: true })
-            setTimeout(() => {
-              setTokenApprovalStates({ ...tokenApprovalStates, [token.address]: false })
-            }, 20 * 1000)
           } catch (e) {
             toast.error('Approve error', { position: 'bottom-right' })
             console.error(e)
@@ -332,12 +324,7 @@ export const BondSupply = () => {
         maturity: bondMaturities[token.address] ?? 0,
         available: tokenBalances[token.address],
         getActionNameFromAmount: {
-          Deposit: (amount: number) =>
-            allowances[token.address] >= amount
-              ? 'Confirm Transaction'
-              : tokenApprovalStates[token.address]
-              ? 'Approving'
-              : 'Approve'
+          Deposit: () => (allowances[token.address] > 0 ? 'Confirm Transaction' : 'Approve')
         }
       })),
     [tokens, bondBalances, bondMaturities, allowances]
@@ -381,7 +368,14 @@ export const BondSupply = () => {
             Icon={IconMoneyStack}
           />
         </StyledTableContainer>
-        <TokensTable title="Bond Rates" data={data} columns={BOND_RATES_COLUMNS} idCol="coin" actions={actions} />
+        <TokensTable
+          title="Bond Rates"
+          data={data}
+          columns={BOND_RATES_COLUMNS}
+          idCol="coin"
+          actions={actions}
+          isTxnPending={!!pendingTxhHash}
+        />
       </StyledSectionDiv>
     </StyledWrapperDiv>
   )

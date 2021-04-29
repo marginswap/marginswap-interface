@@ -41,6 +41,7 @@ type TableProps<T extends Record<string, string | boolean | number>> = {
   actions?: readonly TableAction<T>[]
   deriveEmptyFrom?: string[] // which fields are used for hiding empty rows
   idCol: keyof T
+  isTxnPending?: boolean
 }
 
 const TokensTable: <T extends { [key: string]: string | boolean | number }>(props: TableProps<T>) => JSX.Element = ({
@@ -49,7 +50,8 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
   columns,
   actions,
   deriveEmptyFrom,
-  idCol
+  idCol,
+  isTxnPending
 }) => {
   const [hideEmpty, setHideEmpty] = useState(false)
   const [order, setOrder] = useState<'asc' | 'desc'>('asc')
@@ -264,7 +266,7 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
                                   color="primary"
                                   style={{ borderRadius: '16px', padding: '10px 16px', margin: '0 0 0 32px' }}
                                   onClick={handleActionSubmit}
-                                  disabled={actionLoading}
+                                  disabled={actionLoading || isTxnPending || !actionAmount.length}
                                 >
                                   {activeAction &&
                                   row.getActionNameFromAmount &&
@@ -274,7 +276,9 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
                                         Number(actionAmount)
                                       )
                                     : 'Confirm Transaction'}
-                                  {actionLoading && <CircularProgress size={20} color={'white' as any} />}
+                                  {(actionLoading || isTxnPending) && (
+                                    <CircularProgress size={20} color={'white' as any} />
+                                  )}
                                 </StyledButton>
                               </div>
                             </Box>

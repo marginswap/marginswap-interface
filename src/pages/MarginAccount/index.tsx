@@ -108,7 +108,6 @@ export const MarginAccount = () => {
   const [tokenBalances, setTokenBalances] = useState<Record<string, number>>({})
   const [pollingInterval, setPollingInterval] = useState<ReturnType<typeof setInterval> | null>()
   const [triggerDataPoll, setTriggerDataPoll] = useState<boolean>(true)
-  const [tokenApprovalStates, setTokenApprovalStates] = useState<Record<string, boolean>>({})
   const [pendingTxhHash, setPendingTxhHash] = useState<string | null>()
 
   const { account } = useWeb3React()
@@ -116,9 +115,7 @@ export const MarginAccount = () => {
   const isTxnPending = useIsTransactionPending(pendingTxhHash || '')
 
   const addTransactionResponseCallback = (responseObject: TransactionDetails) => {
-    if (responseObject.summary !== 'Approve') {
-      setPendingTxhHash(responseObject.hash)
-    }
+    setPendingTxhHash(responseObject.hash)
   }
 
   const delayedFetchUserData = () => {
@@ -177,8 +174,8 @@ export const MarginAccount = () => {
     {
       name: 'Deposit',
       onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
-        if (!amount || tokenApprovalStates[tokenInfo.address] || !chainId) return
-        if (allowances[tokenInfo.address] < amount) {
+        if (!amount || !chainId) return
+        if (allowances[tokenInfo.address] <= 0) {
           try {
             const approveRes: any = await approveToFund(
               tokenInfo.address,
@@ -192,11 +189,6 @@ export const MarginAccount = () => {
             })
             setTriggerDataPoll(true)
             delayedFetchUserData()
-
-            setTokenApprovalStates({ ...tokenApprovalStates, [tokenInfo.address]: true })
-            setTimeout(() => {
-              setTokenApprovalStates({ ...tokenApprovalStates, [tokenInfo.address]: false })
-            }, 20 * 1000)
           } catch (e) {
             toast.error('Approve error', { position: 'bottom-right' })
             console.error(error)
@@ -254,7 +246,6 @@ export const MarginAccount = () => {
   useEffect(() => {
     const tokensToSet = tokensList.tokens.filter(t => t.chainId === chainId)
     setTokens(tokensToSet)
-    setTokenApprovalStates(tokens.reduce((ts, t) => ({ ...ts, [t.address]: false }), {}))
   }, [tokensList, chainId])
 
   /**
@@ -480,12 +471,7 @@ export const MarginAccount = () => {
         ir: borrowAPRs[token.address],
         available: tokenBalances[token.address] ?? 0,
         getActionNameFromAmount: {
-          Deposit: (amount: number) =>
-            allowances[token.address] >= amount
-              ? 'Confirm Transaction'
-              : tokenApprovalStates[token.address]
-              ? 'Approving'
-              : 'Approve'
+          Deposit: () => (allowances[token.address] > 0 ? 'Confirm Transaction' : 'Approve')
         },
         customActions:
           token.symbol === 'WETH' && eth === '1'
@@ -587,6 +573,7 @@ export const MarginAccount = () => {
           actions={ACCOUNT_ACTIONS}
           deriveEmptyFrom={['balance', 'borrowed']}
           idCol="coin"
+          isTxnPending={!!pendingTxhHash}
         />
       </StyledSectionDiv>
     </StyledWrapperDiv>
