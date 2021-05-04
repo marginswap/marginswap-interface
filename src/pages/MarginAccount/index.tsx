@@ -6,6 +6,7 @@ import IconBanknotes from '../../icons/IconBanknotes'
 import IconScales from '../../icons/IconScales'
 import IconCoin from '../../icons/IconCoin'
 import RiskMeter from '../../components/Riskmeter'
+import VideoExplainerLink from '../../components/VideoExplainerLink'
 import { useWeb3React } from '@web3-react/core'
 import {
   getAccountBalances,
@@ -72,11 +73,32 @@ const ACCOUNT_COLUMNS = [
       </div>
     )
   },
-  { name: 'Total Balance', id: 'balance' },
-  { name: 'Debt', id: 'borrowed' },
-  { name: 'APR', id: 'ir' },
-  { name: 'Borrowable', id: 'borrowable' },
-  { name: 'Liquidity', id: 'liquidity' }
+  {
+    name: 'Total Balance',
+    id: 'balance',
+    // eslint-disable-next-line react/display-name
+    render: ({ balance }: { balance: number }) => <span>{balance ? balance.toFixed(2) : 0}</span>
+  },
+  { name: 'Debt', id: 'borrowed',
+// eslint-disable-next-line react/display-name
+render: ({ borrowed }: { borrowed: number }) => <span>{borrowed ? borrowed.toFixed(2) : 0}</span> },
+  {
+    name: 'Interest',
+    id: 'ir',
+    // eslint-disable-next-line react/display-name
+    render: ({ ir }: { ir: number }) => <span>{ir ? `${ir.toFixed(2)}%` : 0}</span>,
+    tooltip: 'Interest will start accruing per block as soon as a token is borrowed for a margin trade'
+  },
+  { name: 'Borrowable', id: 'borrowable', tooltip: 'This is the total amount you can borrow with your equity',
+  // eslint-disable-next-line react/display-name
+  render: ({ borrowable }: { borrowable: number }) => <span>{borrowable ? borrowable.toFixed(2) : 0}</span> },
+  {
+    name: 'Liquidity',
+    id: 'liquidity',
+    tooltip: 'This is the total amount of an asset available to be borrowed for a trade',
+    // eslint-disable-next-line react/display-name
+    render: ({ liquidity }: { liquidity: number }) => <span>{liquidity ? liquidity.toFixed(2) : 0}</span>
+  }
 ] as const
 
 const LIQUIDATION_RATIO = 1.15
@@ -575,6 +597,7 @@ export const MarginAccount = () => {
           idCol="coin"
           isTxnPending={!!pendingTxhHash}
         />
+        <VideoExplainerLink />
       </StyledSectionDiv>
     </StyledWrapperDiv>
   )

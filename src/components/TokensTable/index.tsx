@@ -4,7 +4,8 @@ import {
   StyledTableCell,
   StyledTableRow,
   StyledTableSortLabel,
-  StyledTableWrapper
+  StyledTableWrapper,
+  StyledInfoIcon
 } from './styled'
 import {
   Box,
@@ -14,7 +15,8 @@ import {
   TableBody,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
+  Tooltip
 } from '@material-ui/core'
 import React, { ChangeEvent, Fragment, useMemo, useState } from 'react'
 import { colors, StyledButton, StyledTextField } from '../../theme'
@@ -37,6 +39,7 @@ type TableProps<T extends Record<string, string | boolean | number>> = {
     id: keyof T
     name: string
     render?: (token: T) => JSX.Element
+    tooltip?: string
   }[]
   actions?: readonly TableAction<T>[]
   deriveEmptyFrom?: string[] // which fields are used for hiding empty rows
@@ -179,6 +182,11 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
                       }}
                     >
                       {column.name}
+                      {column.tooltip && (
+                        <Tooltip title={column.tooltip} placement="top" arrow>
+                          <StyledInfoIcon fontSize="small" />
+                        </Tooltip>
+                      )}
                     </StyledTableSortLabel>
                   </StyledTableCell>
                 ))}
