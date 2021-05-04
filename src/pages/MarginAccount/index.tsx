@@ -79,9 +79,12 @@ const ACCOUNT_COLUMNS = [
     // eslint-disable-next-line react/display-name
     render: ({ balance }: { balance: number }) => <span>{balance ? balance.toFixed(2) : 0}</span>
   },
-  { name: 'Debt', id: 'borrowed',
-// eslint-disable-next-line react/display-name
-render: ({ borrowed }: { borrowed: number }) => <span>{borrowed ? borrowed.toFixed(2) : 0}</span> },
+  {
+    name: 'Debt',
+    id: 'borrowed',
+    // eslint-disable-next-line react/display-name
+    render: ({ borrowed }: { borrowed: number }) => <span>{borrowed ? borrowed.toFixed(2) : 0}</span>
+  },
   {
     name: 'Interest',
     id: 'ir',
@@ -89,9 +92,13 @@ render: ({ borrowed }: { borrowed: number }) => <span>{borrowed ? borrowed.toFix
     render: ({ ir }: { ir: number }) => <span>{ir ? `${ir.toFixed(2)}%` : 0}</span>,
     tooltip: 'Interest will start accruing per block as soon as a token is borrowed for a margin trade'
   },
-  { name: 'Borrowable', id: 'borrowable', tooltip: 'This is the total amount you can borrow with your equity',
-  // eslint-disable-next-line react/display-name
-  render: ({ borrowable }: { borrowable: number }) => <span>{borrowable ? borrowable.toFixed(2) : 0}</span> },
+  {
+    name: 'Borrowable',
+    id: 'borrowable',
+    tooltip: 'This is the total amount you can borrow with your equity',
+    // eslint-disable-next-line react/display-name
+    render: ({ borrowable }: { borrowable: number }) => <span>{borrowable ? borrowable.toFixed(2) : 0}</span>
+  },
   {
     name: 'Liquidity',
     id: 'liquidity',
