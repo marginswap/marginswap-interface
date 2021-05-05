@@ -343,15 +343,47 @@ export const BondSupply = () => {
   const ZERO_DAI = new TokenAmount(getPegCurrency(chainId), '0')
 
   const averageYield = useMemo(() => {
-    const bondCosts = tokens.reduce(
-      (acc, cur) => acc + Number((bondUSDCosts[cur.address] ?? ZERO_DAI).toSignificant()),
-      0
-    )
-    if (bondCosts === 0) return 0
-    return tokens.reduce((acc, cur) => {
+    let tokenWithYieldCount = 0
+
+    const totalYields = tokens.reduce((acc, cur) => {
       const apy = apyFromApr(bondAPRs[cur.address], 365 * 24)
-      return acc + (apy * Number(bondUSDCosts[cur.address].toSignificant(4))) / bondCosts
+
+      if (apy > 0) {
+        tokenWithYieldCount++
+        return acc + apy
+      }
+
+      return acc
     }, 0)
+
+    if (tokenWithYieldCount === 0) {
+      return 0
+    }
+
+    return (totalYields / tokenWithYieldCount).toFixed(2)
+  }, [tokens, bondAPRs])
+
+  const earningsPerDay = useMemo(() => {
+    if (!Object.keys(bondUSDCosts).length || !Object.keys(bondAPRs).length) {
+      return 0
+    }
+
+    const totalAnnualEarnings = tokens.reduce((acc, cur) => {
+      const apy = apyFromApr(bondAPRs[cur.address], 365 * 24)
+      const bondBalance = Number(bondUSDCosts[cur.address].toSignificant(4))
+
+      if (apy > 0 && bondBalance > 0) {
+        return acc + (apy / 100) * bondBalance
+      }
+
+      return acc
+    }, 0)
+
+    if (totalAnnualEarnings === 0) {
+      return 0
+    }
+
+    return (totalAnnualEarnings / 365).toFixed(2)
   }, [tokens, bondAPRs, bondUSDCosts])
 
   return (
@@ -362,18 +394,15 @@ export const BondSupply = () => {
         <StyledTableContainer>
           <InfoCard
             title="Total Bond"
-            amount={Object.keys(bondUSDCosts)
+            amount={`$${Object.keys(bondUSDCosts)
               .reduce((acc, cur) => acc.add(bondUSDCosts[cur]), ZERO_DAI)
-              .toSignificant()}
+              .toSignificant()}`}
             Icon={IconMoneyStackLocked}
           />
-          <InfoCard title="Average Yield" amount={averageYield} ghost Icon={IconMoneyStackLocked} />
+          <InfoCard title="Average Yield" amount={`${averageYield}%`} ghost Icon={IconMoneyStackLocked} />
           <InfoCard
             title="Earnings per day"
-            amount={tokens
-              .reduce((acc, cur) => acc.add(bondUSDCosts[cur.address] ?? ZERO_DAI), ZERO_DAI)
-              .divide('365')
-              .toSignificant(4)}
+            amount={`$${earningsPerDay}`}
             color="secondary"
             ghost
             Icon={IconMoneyStack}
