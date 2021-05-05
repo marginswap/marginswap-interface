@@ -4,6 +4,7 @@ import { ChainId } from '@marginswap/sdk'
 //import Avalanche from '../assets/networks/avalanche-network.jpg'
 import Bsc from '../assets/networks/bsc-network.jpg'
 import Fantom from '../assets/networks/fantom-network.jpg'
+import Avalanche from '../assets/networks/avalanche-network.jpg'
 import Goerli from '../assets/networks/goerli-network.jpg'
 import Harmony from '../assets/networks/harmonyone-network.jpg'
 import Heco from '../assets/networks/heco-network.jpg'
@@ -23,6 +24,7 @@ export const NETWORK_ICON = {
   [ChainId.GÖRLI]: Goerli,
   [ChainId.KOVAN]: Kovan,
   [ChainId.FANTOM]: Fantom,
+  [ChainId.AVALANCHE]: Avalanche,
   [ChainId.BSC]: Bsc,
   [ChainId.MATIC]: Matic,
   [ChainId.XDAI]: Xdai,
@@ -38,6 +40,7 @@ export const NETWORK_LABEL: { [chainId in ChainId]?: string } = {
   [ChainId.GÖRLI]: 'Görli',
   [ChainId.KOVAN]: 'Kovan',
   [ChainId.FANTOM]: 'Fantom',
+  [ChainId.AVALANCHE]: 'Avalanche',
   [ChainId.MATIC]: 'Matic',
   [ChainId.XDAI]: 'xDai',
   [ChainId.BSC]: 'BSC',

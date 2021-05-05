@@ -87,6 +87,17 @@ const PARAMS: {
     rpcUrls: ['https://rpcapi.fantom.network'],
     blockExplorerUrls: ['https://ftmscan.com']
   },
+  [ChainId.AVALANCHE]: {
+    chainId: '43114',
+    chainName: 'Avalanche',
+    nativeCurrency: {
+      name: 'Avalanche',
+      symbol: 'AVAX',
+      decimals: 18
+    },
+    rpcUrls: ['https://rpcapi.fantom.network'],
+    blockExplorerUrls: ['https://ftmscan.com']
+  },
   [ChainId.BSC]: {
     chainId: '0x38',
     chainName: 'Binance Smart Chain',
@@ -223,13 +234,14 @@ export default function NetworkModal(): JSX.Element | null {
             /*ChainId.ROPSTEN,
             ChainId.RINKEBY,
             ChainId.GÖRLI,
-            ChainId.KOVAN, */
-            ChainId.FANTOM,
-            ChainId.BSC,
-            ChainId.MATIC,
+            ChainId.KOVAN,
+            ChainId.FANTOM,*/
+            ChainId.AVALANCHE,
+            ChainId.BSC
+            /*ChainId.MATIC,
             ChainId.HECO,
             ChainId.XDAI,
-            ChainId.HARMONY
+            ChainId.HARMONY*/
           ].map((key: ChainId, i: number) => {
             if (chainId === key) return null
             return (

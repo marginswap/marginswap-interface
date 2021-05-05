@@ -49,6 +49,7 @@ const EMPTY_LIST: TokenAddressMap = {
   [ChainId.HECO]: {},
   [ChainId.HARMONY]: {},
   [ChainId.FANTOM]: {},
+  [ChainId.AVALANCHE]: {},
   [ChainId.BSC]: {},
   [ChainId.LOCAL]: {}
 }
@@ -112,7 +113,8 @@ function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): TokenAddress
     128: { ...map1[128], ...map2[128] },
     250: { ...map1[250], ...map2[250] },
     56: { ...map1[56], ...map2[56] },
-    31337: { ...map1[31337], ...map2[31337] }
+    31337: { ...map1[31337], ...map2[31337] },
+    43114: { ...map1[43114], ...map2[43114] }
   }
 }
 

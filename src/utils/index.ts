@@ -29,6 +29,7 @@ const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
   128: 'heco.',
   1666600000: 'harmony.',
   250: 'fantom.',
+  43114: 'Avalanche.',
   56: 'binance.',
   31337: ''
 }

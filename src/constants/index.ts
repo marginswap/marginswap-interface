@@ -46,8 +46,8 @@ export const UNI: { [chainId in ChainId]: Token } = {
   [ChainId.XDAI]: new Token(ChainId.FANTOM, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
   [ChainId.HECO]: new Token(ChainId.FANTOM, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
   [ChainId.HARMONY]: new Token(ChainId.FANTOM, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-
   [ChainId.FANTOM]: new Token(ChainId.FANTOM, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
+  [ChainId.AVALANCHE]: new Token(ChainId.AVALANCHE, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
   [ChainId.BSC]: new Token(ChainId.BSC, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
   [ChainId.LOCAL]: new Token(ChainId.MATIC, UNI_ADDRESS, 18, 'UNI', 'Uniswap')
 }
@@ -74,6 +74,7 @@ const WETH_ONLY: ChainTokenList = {
   [ChainId.HECO]: [WETH[ChainId.HECO]],
   [ChainId.HARMONY]: [WETH[ChainId.HARMONY]],
   [ChainId.FANTOM]: [WETH[ChainId.FANTOM]],
+  [ChainId.AVALANCHE]: [WETH[ChainId.AVALANCHE]],
   [ChainId.BSC]: [WETH[ChainId.BSC]],
   [ChainId.LOCAL]: [WETH[ChainId.LOCAL]]
 }
