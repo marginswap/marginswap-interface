@@ -32,7 +32,7 @@ const PARAMS: {
     rpcUrls: ['https://mainnet.infura.io/v3'],
     blockExplorerUrls: ['https://etherscan.com']
   },
-  [ChainId.ROPSTEN]: {
+  /*[ChainId.ROPSTEN]: {
     chainId: '0x3',
     chainName: 'Ropsten',
     nativeCurrency: {
@@ -75,8 +75,8 @@ const PARAMS: {
     },
     rpcUrls: ['https://mainnet.infura.io/v3'],
     blockExplorerUrls: ['https://etherscan.com']
-  }
-  /*[ChainId.FANTOM]: {
+  },*/
+  [ChainId.FANTOM]: {
     chainId: '0xfa',
     chainName: 'Fantom',
     nativeCurrency: {
@@ -141,7 +141,7 @@ const PARAMS: {
     },
     rpcUrls: ['https://api.s0.t.hmny.io'],
     blockExplorerUrls: ['https://explorer.harmony.one/']
-  }*/
+  }
 }
 
 const Wrapper = styled.div`
@@ -220,13 +220,18 @@ export default function NetworkModal(): JSX.Element | null {
         <ContentWrapper>
           {[
             ChainId.MAINNET,
-            ChainId.ROPSTEN,
+            /*ChainId.ROPSTEN,
             ChainId.RINKEBY,
             ChainId.GÖRLI,
-            ChainId.KOVAN
-            /*, ChainId.FANTOM, ChainId.BSC, ChainId.MATIC, ChainId.HECO, ChainId.XDAI, ChainId.HARMONY*/
+            ChainId.KOVAN, */
+            ChainId.FANTOM,
+            ChainId.BSC,
+            ChainId.MATIC,
+            ChainId.HECO,
+            ChainId.XDAI,
+            ChainId.HARMONY
           ].map((key: ChainId, i: number) => {
-            if (chainId === key) return null;
+            if (chainId === key) return null
             return (
               <NetworkOption
                 key={i}

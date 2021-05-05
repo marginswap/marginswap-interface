@@ -18,47 +18,30 @@ import Mainnet from '../assets/networks/mainnet-network.jpg'
 
 export const NETWORK_ICON = {
   [ChainId.MAINNET]: Mainnet,
-  [ChainId.ROPSTEN]: Ropsten,
+ /* [ChainId.ROPSTEN]: Ropsten,
   [ChainId.RINKEBY]: Rinkeby,
   [ChainId.GÖRLI]: Goerli,
-  [ChainId.KOVAN]: Kovan,
-  /*[ChainId.FANTOM]: Fantom,
-  [ChainId.FANTOM_TESTNET]: Fantom,
+  [ChainId.KOVAN]: Kovan,*/
+  [ChainId.FANTOM]: Fantom,
   [ChainId.BSC]: Bsc,
-  [ChainId.BSC_TESTNET]: Bsc,
   [ChainId.MATIC]: Matic,
-  [ChainId.MATIC_TESTNET]: Matic,
   [ChainId.XDAI]: Xdai,
-  [ChainId.ARBITRUM]: Arbitrum,
-  [ChainId.MOONBASE]: Moonbeam,
-  [ChainId.AVALANCHE]: Avalanche,
-  [ChainId.FUJI]: Avalanche,
   [ChainId.HECO]: Heco,
-  [ChainId.HECO_TESTNET]: Heco,
   [ChainId.HARMONY]: Harmony,
-  [ChainId.HARMONY_TESTNET]: Harmony,*/
   [ChainId.LOCAL]: Harmony
 }
 
 export const NETWORK_LABEL: { [chainId in ChainId]?: string } = {
   [ChainId.MAINNET]: 'Ethereum',
-  [ChainId.RINKEBY]: 'Rinkeby',
+  /*[ChainId.RINKEBY]: 'Rinkeby',
   [ChainId.ROPSTEN]: 'Ropsten',
   [ChainId.GÖRLI]: 'Görli',
-  [ChainId.KOVAN]: 'Kovan',
-  /*[ChainId.FANTOM]: 'Fantom',
-  [ChainId.FANTOM_TESTNET]: 'Fantom Testnet',
+  [ChainId.KOVAN]: 'Kovan',*/
+  [ChainId.FANTOM]: 'Fantom',
   [ChainId.MATIC]: 'Matic',
-  [ChainId.MATIC_TESTNET]: 'Matic Testnet',
   [ChainId.XDAI]: 'xDai',
   [ChainId.BSC]: 'BSC',
-  [ChainId.BSC_TESTNET]: 'BSC Testnet',
-  [ChainId.MOONBASE]: 'Moonbase',
-  [ChainId.AVALANCHE]: 'Avalanche',
-  [ChainId.FUJI]: 'Fuji',
   [ChainId.HECO]: 'HECO',
-  [ChainId.HECO_TESTNET]: 'HECO Testnet',
   [ChainId.HARMONY]: 'Harmony',
-  [ChainId.HARMONY_TESTNET]: 'Harmony Testnet',*/
   [ChainId.LOCAL]: 'Local Testnet'
 }

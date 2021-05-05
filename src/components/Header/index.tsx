@@ -47,10 +47,16 @@ const headerLinks = [
 ]
 
 const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
-  [ChainId.RINKEBY]: 'Rinkeby',
+  /*[ChainId.RINKEBY]: 'Rinkeby',
   [ChainId.ROPSTEN]: 'Ropsten',
   [ChainId.GÖRLI]: 'Görli',
-  [ChainId.KOVAN]: 'Kovan'
+  [ChainId.KOVAN]: 'Kovan',*/
+  [ChainId.MATIC]: 'Matic',
+  [ChainId.XDAI]: 'xDai',
+  [ChainId.HECO]: 'Heco',
+  [ChainId.HARMONY]: 'Harmony',
+  [ChainId.FANTOM]: 'Fantom',
+  [ChainId.BSC]: 'Binance'
 }
 
 type MobileMenuProps = {

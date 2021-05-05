@@ -20,10 +20,16 @@ export function isAddress(value: any): string | false {
 
 const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
   1: '',
-  3: 'ropsten.',
+  /*3: 'ropsten.',
   4: 'rinkeby.',
   5: 'goerli.',
-  42: 'kovan.',
+  42: 'kovan.',*/
+  137: 'matic.',
+  100: 'xDai.',
+  128: 'heco.',
+  1666600001: 'harmony.',
+  250: 'fantom.',
+  56: 'binance.',
   31337: ''
 }
 
