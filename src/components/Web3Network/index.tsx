@@ -15,7 +15,7 @@ const NetworkContainer = styled.div`
 
 const NetworkDescription = styled(ButtonSecondary)`
   font-weight: 500;
-  background-color: #373B44;
+  background-color: #373b44;
   padding: 0.5em;
   border-radius: 12px;
   color: ${({ theme }) => theme.white};
@@ -38,7 +38,7 @@ function Web3Network(): JSX.Element | null {
     <>
       <NetworkContainer onClick={() => toggleNetworkModal()}>
         <NetworkImg src={NETWORK_ICON[chainId]} alt="Switch Network" style={{ width: 22, height: 22 }} />
-        <NetworkDescription >{NETWORK_LABEL[chainId]}</NetworkDescription>
+        <NetworkDescription>{NETWORK_LABEL[chainId]}</NetworkDescription>
       </NetworkContainer>
       {/* <div
                 className="bg-cover bg-no-repeat bg-chain-static hover:bg-chain-animated"

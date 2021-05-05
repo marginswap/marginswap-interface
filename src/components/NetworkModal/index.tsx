@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { ChainId } from '@marginswap/sdk'
 import styled from 'styled-components'
 import { useActiveWeb3React } from 'hooks'

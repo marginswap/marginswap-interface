@@ -1,4 +1,4 @@
-import { ChainId } from '@marginswap/sdk'
+//import { ChainId } from '@marginswap/sdk'
 import React, { useState } from 'react'
 import useParsedQueryString from 'hooks/useParsedQueryString'
 import Logo from '../../assets/images/Union.svg'
@@ -23,8 +23,6 @@ import {
   HeaderFrame,
   HeaderLinks,
   HeaderRow,
-  HideSmall,
-  NetworkCard,
   StyledNavLink,
   Title,
   UNIAmount,
@@ -46,18 +44,18 @@ const headerLinks = [
   // { path: '/Analytics', name: 'Analytics' }
 ]
 
-const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
-  /*[ChainId.RINKEBY]: 'Rinkeby',
+/*const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
+  [ChainId.RINKEBY]: 'Rinkeby',
   [ChainId.ROPSTEN]: 'Ropsten',
   [ChainId.GÖRLI]: 'Görli',
-  [ChainId.KOVAN]: 'Kovan',*/
+  [ChainId.KOVAN]: 'Kovan',
   [ChainId.MATIC]: 'Matic',
   [ChainId.XDAI]: 'xDai',
   [ChainId.HECO]: 'Heco',
   [ChainId.HARMONY]: 'Harmony',
   [ChainId.FANTOM]: 'Fantom',
   [ChainId.BSC]: 'Binance'
-}
+}*/
 
 type MobileMenuProps = {
   stake: any
@@ -101,7 +99,7 @@ const MobileMenu = ({ stake }: MobileMenuProps) => {
 
 export default function Header() {
   const { stake } = useParsedQueryString()
-  const { account, chainId, library } = useActiveWeb3React()
+  const { account /*, chainId, library*/ } = useActiveWeb3React()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
   // const [darkMode, toggleDarkMode] = useDarkModeManager()
@@ -149,7 +147,7 @@ export default function Header() {
         <MobileMenu stake={stake} />
       </HeaderRow>
       <HeaderControls>
-        <HeaderElement style={{marginRight: 10}}>
+        <HeaderElement style={{ marginRight: 10 }}>
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
             <Web3Network />
           </AccountElement>
