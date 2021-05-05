@@ -14,6 +14,7 @@ import { SwapPoolTabs } from '../../components/NavigationTabs'
 import { AutoRow, RowBetween } from '../../components/Row'
 import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetailsDropdown'
 import { getProviderOrSigner } from '../../utils'
+import VideoExplainerLink from '../../components/VideoExplainerLink'
 
 import confirmPriceImpactWithoutFee from '../../components/swap/confirmPriceImpactWithoutFee'
 import {
@@ -592,6 +593,7 @@ export default function Swap() {
       ) : (
         <UnsupportedCurrencyFooter show={swapIsUnsupported} currencies={[currencies.INPUT, currencies.OUTPUT]} />
       )}
+      <VideoExplainerLink />
     </>
   )
 }
