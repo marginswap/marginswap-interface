@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { FormControlLabel, Table, TableCell, TableRow, TableSortLabel } from '@material-ui/core'
+import InfoIcon from '@material-ui/icons/InfoOutlined'
 
 export const StyledTableWrapper = styled('div')`
   border: 1px solid #777777;
@@ -71,4 +72,8 @@ export const StyledFormControlLabel = styled(FormControlLabel)`
   @media (max-width: 768px) {
     display: none !important;
   }
+`
+
+export const StyledInfoIcon = styled(InfoIcon)`
+  margin-left: 5px;
 `

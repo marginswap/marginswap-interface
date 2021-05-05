@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import TokensTable from '../../components/TokensTable'
 import InfoCard from '../../components/InfoCard'
+import VideoExplainerLink from '../../components/VideoExplainerLink'
 import IconMoneyStackLocked from '../../icons/IconMoneyStackLocked'
 import IconMoneyStack from '../../icons/IconMoneyStack'
 import { TokenInfo } from '@uniswap/token-lists'
@@ -21,9 +22,7 @@ import {
 } from '@marginswap/sdk'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { BigNumber } from '@ethersproject/bignumber'
-import { StyledTableContainer } from './styled'
-import { StyledWrapperDiv } from './styled'
-import { StyledSectionDiv } from './styled'
+import { StyledTableContainer, StyledWrapperDiv, StyledSectionDiv } from './styled'
 import { utils, constants } from 'ethers'
 import { toast } from 'react-toastify'
 import { useTransactionAdder, useIsTransactionPending } from '../../state/transactions/hooks'
@@ -57,8 +56,20 @@ const BOND_RATES_COLUMNS = [
       </div>
     )
   },
-  { name: 'Total Supplied', id: 'totalSupplied' },
-  { name: 'APY', id: 'apy' },
+  {
+    name: 'Total Supplied',
+    id: 'totalSupplied',
+    // eslint-disable-next-line react/display-name
+    render: ({ totalSupplied }: { totalSupplied: number }) => (
+      <span>{totalSupplied ? totalSupplied.toFixed(2) : 0}</span>
+    )
+  },
+  {
+    name: 'APY',
+    id: 'apy',
+    // eslint-disable-next-line react/display-name
+    render: ({ apy }: { apy: number }) => <span>{apy ? `${apy.toFixed(2)}%` : 0}</span>
+  },
   { name: 'Maturity (minutes remaining)', id: 'maturity' }
 ] as const
 
@@ -376,6 +387,7 @@ export const BondSupply = () => {
           actions={actions}
           isTxnPending={!!pendingTxhHash}
         />
+        <VideoExplainerLink />
       </StyledSectionDiv>
     </StyledWrapperDiv>
   )
