@@ -51,6 +51,7 @@ interface CurrencySearchProps {
   showManageView: () => void
   showImportView: () => void
   setImportToken: (token: Token) => void
+  allowManualAddToken: boolean
 }
 
 export function CurrencySearch({
@@ -62,7 +63,8 @@ export function CurrencySearch({
   isOpen,
   showManageView,
   showImportView,
-  setImportToken
+  setImportToken,
+  allowManualAddToken
 }: CurrencySearchProps) {
   const { chainId } = useActiveWeb3React()
   const theme = useTheme()
@@ -291,16 +293,18 @@ export function CurrencySearch({
           </Row>
         )}
       <Footer>
-        <Row justify="center">
-          <ButtonText onClick={showManageView} color={theme.blue1} className="list-token-manage-button">
-            <RowFixed>
-              <IconWrapper size="16px" marginRight="6px">
-                <Edit />
-              </IconWrapper>
-              <TYPE.main color={theme.blue1}>Manage</TYPE.main>
-            </RowFixed>
-          </ButtonText>
-        </Row>
+        {allowManualAddToken && (
+          <Row justify="center">
+            <ButtonText onClick={showManageView} color={theme.blue1} className="list-token-manage-button">
+              <RowFixed>
+                <IconWrapper size="16px" marginRight="6px">
+                  <Edit />
+                </IconWrapper>
+                <TYPE.main color={theme.blue1}>Manage</TYPE.main>
+              </RowFixed>
+            </ButtonText>
+          </Row>
+        )}
       </Footer>
     </ContentWrapper>
   )
