@@ -22,7 +22,7 @@ export const WBTC = new Token(ChainId.MAINNET, '0x2260FAC5E5542a773Aa44fBCfeDf7C
 
 // Environment dependant peg currency
 function getPegCurrency(chainId: ChainId | undefined) {
-  //if (chainId == ChainId.KOVAN) return DAI
+  if (chainId == ChainId.KOVAN) return DAI
   return USDT
 }
 
@@ -38,10 +38,10 @@ export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
 const UNI_ADDRESS = '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984'
 export const UNI: { [chainId in ChainId]: Token } = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-  /*[ChainId.RINKEBY]: new Token(ChainId.RINKEBY, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
+  [ChainId.RINKEBY]: new Token(ChainId.RINKEBY, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
   [ChainId.ROPSTEN]: new Token(ChainId.ROPSTEN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
   [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-  [ChainId.KOVAN]: new Token(ChainId.KOVAN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),*/
+  [ChainId.KOVAN]: new Token(ChainId.KOVAN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
   [ChainId.MATIC]: new Token(ChainId.FANTOM, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
   [ChainId.XDAI]: new Token(ChainId.FANTOM, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
   [ChainId.HECO]: new Token(ChainId.FANTOM, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
@@ -65,10 +65,10 @@ export const MERKLE_DISTRIBUTOR_ADDRESS: { [chainId in ChainId]?: string } = {
 
 const WETH_ONLY: ChainTokenList = {
   [ChainId.MAINNET]: [WETH[ChainId.MAINNET]],
-  /*[ChainId.ROPSTEN]: [WETH[ChainId.ROPSTEN]],
+  [ChainId.ROPSTEN]: [WETH[ChainId.ROPSTEN]],
   [ChainId.RINKEBY]: [WETH[ChainId.RINKEBY]],
   [ChainId.GÖRLI]: [WETH[ChainId.GÖRLI]],
-  [ChainId.KOVAN]: [WETH[ChainId.KOVAN]],*/
+  [ChainId.KOVAN]: [WETH[ChainId.KOVAN]],
   [ChainId.MATIC]: [WETH[ChainId.MATIC]],
   [ChainId.XDAI]: [WETH[ChainId.XDAI]],
   [ChainId.HECO]: [WETH[ChainId.HECO]],

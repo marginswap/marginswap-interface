@@ -18,10 +18,10 @@ import Mainnet from '../assets/networks/mainnet-network.jpg'
 
 export const NETWORK_ICON = {
   [ChainId.MAINNET]: Mainnet,
- /* [ChainId.ROPSTEN]: Ropsten,
+  [ChainId.ROPSTEN]: Ropsten,
   [ChainId.RINKEBY]: Rinkeby,
   [ChainId.GÖRLI]: Goerli,
-  [ChainId.KOVAN]: Kovan,*/
+  [ChainId.KOVAN]: Kovan,
   [ChainId.FANTOM]: Fantom,
   [ChainId.BSC]: Bsc,
   [ChainId.MATIC]: Matic,
@@ -33,10 +33,10 @@ export const NETWORK_ICON = {
 
 export const NETWORK_LABEL: { [chainId in ChainId]?: string } = {
   [ChainId.MAINNET]: 'Ethereum',
-  /*[ChainId.RINKEBY]: 'Rinkeby',
+  [ChainId.RINKEBY]: 'Rinkeby',
   [ChainId.ROPSTEN]: 'Ropsten',
   [ChainId.GÖRLI]: 'Görli',
-  [ChainId.KOVAN]: 'Kovan',*/
+  [ChainId.KOVAN]: 'Kovan',
   [ChainId.FANTOM]: 'Fantom',
   [ChainId.MATIC]: 'Matic',
   [ChainId.XDAI]: 'xDai',
