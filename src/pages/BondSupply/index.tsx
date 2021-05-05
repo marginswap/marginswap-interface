@@ -343,25 +343,17 @@ export const BondSupply = () => {
   const ZERO_DAI = new TokenAmount(getPegCurrency(chainId), '0')
 
   const averageYield = useMemo(() => {
-    let tokenWithYieldCount = 0
-
-    const totalYields = tokens.reduce((acc, cur) => {
+    const bondCosts = tokens.reduce(
+      (acc, cur) => acc + Number((bondUSDCosts[cur.address] ?? ZERO_DAI).toSignificant()),
+      0
+    )
+    if (bondCosts === 0) return 0
+    const avgYield = tokens.reduce((acc, cur) => {
       const apy = apyFromApr(bondAPRs[cur.address], 365 * 24)
-
-      if (apy > 0) {
-        tokenWithYieldCount++
-        return acc + apy
-      }
-
-      return acc
+      return acc + (apy * Number(bondUSDCosts[cur.address].toSignificant(4))) / bondCosts
     }, 0)
-
-    if (tokenWithYieldCount === 0) {
-      return 0
-    }
-
-    return (totalYields / tokenWithYieldCount).toFixed(2)
-  }, [tokens, bondAPRs])
+    return avgYield.toFixed(2)
+  }, [tokens, bondAPRs, bondUSDCosts])
 
   const earningsPerDay = useMemo(() => {
     if (!Object.keys(bondUSDCosts).length || !Object.keys(bondAPRs).length) {
