@@ -3,6 +3,7 @@ import { parseUnits } from '@ethersproject/units'
 import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount, Trade } from '@marginswap/sdk'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { BigNumber } from '@ethersproject/bignumber'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency } from '../../hooks/Tokens'
 import { useTradeExactIn, useTradeExactOut } from '../../hooks/Trades'
@@ -238,7 +239,7 @@ function parseCurrencyFromURLParameter(urlParam: any): string {
 }
 
 function parseTokenAmountURLParameter(urlParam: any): string {
-  return typeof urlParam === 'string' && !isNaN(parseFloat(urlParam)) ? urlParam : ''
+  return typeof urlParam === 'string' && !isNaN(BigNumber.from(urlParam).toNumber()) ? urlParam : ''
 }
 
 function parseIndependentFieldURLParameter(urlParam: any): Field {

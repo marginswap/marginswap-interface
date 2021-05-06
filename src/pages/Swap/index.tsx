@@ -4,6 +4,7 @@ import { ArrowDown } from 'react-feather'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
+import { BigNumber } from '@ethersproject/bignumber'
 import AddressInputPanel from '../../components/AddressInputPanel'
 import { ButtonError, ButtonLight, ButtonPrimary, ButtonConfirmed } from '../../components/Button'
 import Card, { GreyCard } from '../../components/Card'
@@ -232,8 +233,8 @@ export default function Swap() {
 
   useEffect(() => {
     const maxBorrow = Math.min(
-      borrowableBalance ? parseFloat(borrowableBalance.toSignificant(6)) : 0,
-      lendingAvailable ? parseFloat(lendingAvailable.toSignificant(6)) : 0
+      borrowableBalance ? BigNumber.from(borrowableBalance.toSignificant(6)).toNumber() : 0,
+      lendingAvailable ? BigNumber.from(lendingAvailable.toSignificant(6)).toNumber() : 0
     )
     setMaxBorrow(maxBorrow)
   }, [borrowableBalance, lendingAvailable])
