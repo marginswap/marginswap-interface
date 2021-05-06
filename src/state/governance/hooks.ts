@@ -1,6 +1,7 @@
 import { UNI, PRELOADED_PROPOSALS } from './../../constants/index'
 import { TokenAmount } from '@marginswap/sdk'
 import { isAddress } from 'ethers/lib/utils'
+import { BigNumber } from '@ethersproject/bignumber'
 import { useGovernanceContract, useUniContract } from '../../hooks/useContract'
 import { useSingleCallResult, useSingleContractMultipleData } from '../multicall/hooks'
 import { useActiveWeb3React } from '../../hooks'
@@ -128,8 +129,12 @@ export function useAllProposalData() {
           description: description || 'No description.',
           proposer: allProposals[i]?.result?.proposer,
           status: enumerateProposalState(allProposalStates[i]?.result?.[0]) ?? 'Undetermined',
-          forCount: parseFloat(ethers.utils.formatUnits(allProposals[i]?.result?.forVotes.toString(), 18)),
-          againstCount: parseFloat(ethers.utils.formatUnits(allProposals[i]?.result?.againstVotes.toString(), 18)),
+          forCount: BigNumber.from(
+            ethers.utils.formatUnits(allProposals[i]?.result?.forVotes.toString(), 18)
+          ).toNumber(),
+          againstCount: BigNumber.from(
+            ethers.utils.formatUnits(allProposals[i]?.result?.againstVotes.toString(), 18)
+          ).toNumber(),
           startBlock: parseInt(allProposals[i]?.result?.startBlock?.toString()),
           endBlock: parseInt(allProposals[i]?.result?.endBlock?.toString()),
           details: formattedEvents[i].details

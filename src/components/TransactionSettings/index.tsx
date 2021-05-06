@@ -1,5 +1,6 @@
 import React, { useState, useRef, useContext } from 'react'
 import { ThemeContext } from 'styled-components'
+import { BigNumber } from '@ethersproject/bignumber'
 import QuestionHelper from '../QuestionHelper'
 import { TYPE } from '../../theme'
 import { AutoColumn } from '../Column'
@@ -32,7 +33,7 @@ export default function SlippageTabs({ rawSlippage, setRawSlippage, deadline, se
   const [deadlineInput, setDeadlineInput] = useState('')
 
   const slippageInputIsValid =
-    slippageInput === '' || (rawSlippage / 100).toFixed(2) === Number.parseFloat(slippageInput).toFixed(2)
+    slippageInput === '' || (rawSlippage / 100).toFixed(2) === BigNumber.from(slippageInput).toNumber().toFixed(2)
   const deadlineInputIsValid = deadlineInput === '' || (deadline / 60).toString() === deadlineInput
 
   let slippageError: SlippageError | undefined
@@ -57,7 +58,7 @@ export default function SlippageTabs({ rawSlippage, setRawSlippage, deadline, se
     setSlippageInput(value)
 
     try {
-      const valueAsIntFromRoundedFloat = Number.parseInt((Number.parseFloat(value) * 100).toString())
+      const valueAsIntFromRoundedFloat = Number.parseInt((BigNumber.from(value).toNumber() * 100).toString())
       if (!Number.isNaN(valueAsIntFromRoundedFloat) && valueAsIntFromRoundedFloat < 5000) {
         setRawSlippage(valueAsIntFromRoundedFloat)
       }

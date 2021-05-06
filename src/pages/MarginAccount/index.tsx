@@ -457,16 +457,22 @@ export const MarginAccount = () => {
         decimals: token.decimals,
         balance: Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
         borrowed: Number(borrowingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
-        borrowable: borrowableAmounts[token.address] ? parseFloat(borrowableAmounts[token.address].toFixed()) : 0,
-        withdrawable: withdrawableAmounts[token.address] ? parseFloat(withdrawableAmounts[token.address].toFixed()) : 0,
-        liquidity: liquidities[token.address] ? parseFloat(liquidities[token.address].toFixed()) : 0,
+        borrowable: borrowableAmounts[token.address]
+          ? BigNumber.from(borrowableAmounts[token.address].toFixed()).toNumber()
+          : 0,
+        withdrawable: withdrawableAmounts[token.address]
+          ? BigNumber.from(withdrawableAmounts[token.address].toFixed()).toNumber()
+          : 0,
+        liquidity: liquidities[token.address] ? BigNumber.from(liquidities[token.address].toFixed()).toNumber() : 0,
         maxBorrow: Math.min(
-          borrowableAmounts[token.address] ? parseFloat(borrowableAmounts[token.address].toFixed()) : 0,
-          liquidities[token.address] ? parseFloat(liquidities[token.address].toFixed()) : 0
+          borrowableAmounts[token.address] ? BigNumber.from(borrowableAmounts[token.address].toFixed()).toNumber() : 0,
+          liquidities[token.address] ? BigNumber.from(liquidities[token.address].toFixed()).toNumber() : 0
         ),
         maxWithdraw: Math.min(
-          withdrawableAmounts[token.address] ? parseFloat(withdrawableAmounts[token.address].toFixed()) : 0,
-          Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals)
+          withdrawableAmounts[token.address]
+            ? BigNumber.from(withdrawableAmounts[token.address].toFixed()).toNumber()
+            : 0,
+          BigNumber.from(holdingAmounts[token.address] ?? 0).toNumber() / Math.pow(10, token.decimals)
         ),
         ir: borrowAPRs[token.address],
         available: tokenBalances[token.address] ?? 0,
