@@ -398,6 +398,7 @@ export default function Swap() {
               onMax={handleMaxInput}
               onCurrencySelect={handleInputSelect}
               otherCurrency={currencies[Field.OUTPUT]}
+              allowManualAddToken={leverageType === LeverageType.SPOT}
               id="swap-currency-input"
             />
             <AutoColumn justify="space-between">
@@ -437,6 +438,7 @@ export default function Swap() {
               currency={currencies[Field.OUTPUT]}
               onCurrencySelect={handleOutputSelect}
               otherCurrency={currencies[Field.INPUT]}
+              allowManualAddToken={leverageType === LeverageType.SPOT}
               id="swap-currency-output"
             />
 
