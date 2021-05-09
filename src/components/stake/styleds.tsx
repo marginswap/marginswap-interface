@@ -1,5 +1,32 @@
-import { Tabs } from '@material-ui/core'
+import Tabs from '@material-ui/core/Tabs'
+import OutlinedInput from '@material-ui/core/OutlinedInput'
 import styled from 'styled-components'
+
+export const StyledStakeHeader = styled.div`
+  padding: 1.5em 1rem 0px 1.5rem;
+  margin-bottom: -4px;
+  width: 100%;
+  max-width: 420px;
+  color: ${({ theme }) => theme.text2};
+`
+
+export const StyledOutlinedInput = styled(OutlinedInput)`
+  width: 100%;
+  height: 50px;
+  color: ${({ theme }) => theme.white} !important;
+  border: 1px solid ${({ theme }) => theme.secondary1};
+  margin: 1em 0;
+`
+
+export const DataContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin: 1em 0;
+`
+export const DropdownsContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
 
 export const StakingWrapper = styled.div`
   margin: auto;

@@ -13,7 +13,7 @@ import Swap from './Swap'
 import Vote from './Vote'
 import VotePage from './Vote/VotePage'
 import BondSupply from './BondSupply'
-import { Staking } from '../components/Staking'
+import Stake from './Stake'
 import { Analytics } from './Analytics'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -67,7 +67,7 @@ export default function App() {
           <Web3ReactManager>
             <Switch>
               <Route exact strict path="/swap" component={Swap} />
-              <Route exact strict path="/stake" component={Staking} />
+              <Route exact strict path="/stake" component={Stake} />
               <Route exact strict path="/margin-account" component={MarginAccount} />
               <Route exact strict path="/bond-supply" component={BondSupply} />
               <Route exact strict path="/analytics" component={Analytics} />
