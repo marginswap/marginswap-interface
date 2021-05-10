@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react'
+import React, { useState, ChangeEvent, useEffect } from 'react'
 import {
   getMFIStaking,
   getLiquidityMiningReward,
@@ -29,16 +29,24 @@ const Transact = () => {
 
   console.log(`chainId: ${chainId}, MFIStake: ${mfiStake}`)
 
-  const contract1 = chainId && library ? getLiquidityMiningReward(chainId, library) : undefined
-  console.log({ contract1 })
+  useEffect(() => {
+    if (mfiStake && chainId && library) {
+      const contract1 = getMFIStaking(chainId, library)
+      console.log({ contract1 })
 
-  if (mfiStake && contract1 && library) {
-    getMFIAPRPerWeight(contract1, library)
-      .then((data: any) => console.log({ data }))
-      .catch(e => {
-        console.log('ERROR MESSAGE :::', e.message)
-      })
-  }
+      getMFIAPRPerWeight(contract1, library)
+        .then((aprData: any) => console.log({ aprData }))
+        .catch(e => {
+          console.log('APR ERROR MESSAGE :::', e.message)
+        })
+
+      canWithdraw(contract1, '0xE653DDeebF6778A56Dd9BCda5a3B91D53023AB28')
+        .then((canWithdrawData: any) => console.log({ canWithdrawData }))
+        .catch(e => {
+          console.log('CAN WITHDRAW ERROR MESSAGE :::', e.message)
+        })
+    }
+  }, [mfiStake, chainId, library])
 
   const handleActionValueChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value
