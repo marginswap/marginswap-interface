@@ -1,25 +1,17 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { StyledSelect } from './styleds'
-import MenuItem from '@material-ui/core/MenuItem'
 
 type SelectProps = {
-  value?: string
   options: string[]
 }
 
-const Select = ({ options, value: selected = '' }: SelectProps) => {
-  const [selectOption, setSelectOption] = useState(selected || options[0])
-
-  const handleChange = (value: any) => {
-    setSelectOption(value)
-  }
-
+const Select = ({ options, ...props }: SelectProps) => {
   return (
-    <StyledSelect value={selectOption} onChange={e => handleChange(e.target.value)}>
+    <StyledSelect {...props}>
       {options.map(option => (
-        <MenuItem key={option} value={option}>
+        <option key={option} value={option}>
           {option}
-        </MenuItem>
+        </option>
       ))}
     </StyledSelect>
   )

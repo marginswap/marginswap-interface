@@ -94,6 +94,7 @@ function CurrencyRow({
   otherSelected: boolean
   style: CSSProperties
 }) {
+  console.log({ currency })
   const { account } = useActiveWeb3React()
   const key = currencyKey(currency)
   const selectedTokenList = useCombinedActiveList()

@@ -14,8 +14,14 @@ export const StyledOutlinedInput = styled(OutlinedInput)`
   width: 100%;
   height: 50px;
   color: ${({ theme }) => theme.white} !important;
-  border: 1px solid ${({ theme }) => theme.secondary1};
+  border: 1px solid ${({ theme }) => theme.bg5};
+  padding: 1em;
   margin: 1em 0;
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 `
 
 export const DataContainer = styled.div`

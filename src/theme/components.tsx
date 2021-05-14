@@ -7,7 +7,7 @@ import { Button, TextField } from '@material-ui/core'
 
 export const StyledTextField = styled(TextField)`
   .MuiInput-input {
-    color: white !important;
+    color: ${({ theme, color }) => color || theme.white} !important;
   }
 
   .MuiFormLabel-root {
