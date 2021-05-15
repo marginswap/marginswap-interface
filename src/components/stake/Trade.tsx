@@ -1,8 +1,7 @@
 import React, { useState, ChangeEvent, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
-import { useCurrency, useDefaultTokens, useAllTokens } from '../../hooks/Tokens'
+import { useCurrency, useDefaultTokens, useAllTokens, useIsUserAddedToken } from '../../hooks/Tokens'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
-import Input from '@material-ui/core/Input'
 
 import {
   getMFIStaking,
@@ -15,7 +14,11 @@ import {
   getTimeUntilLockEnd,
   withdrawReward,
   withdrawStake,
-  TokenAmount
+  TokenAmount,
+  stake,
+  getAccountHoldingTotal,
+  BigintIsh,
+  Duration
 } from '@marginswap/sdk'
 
 import {
@@ -24,6 +27,7 @@ import {
   useSwapActionHandlers,
   useSwapState
 } from '../../state/swap/hooks'
+import { BigNumber } from '@ethersproject/bignumber'
 
 import AppBody from '../../pages/AppBody'
 import { TYPE, StyledButton } from '../../theme'
@@ -31,7 +35,9 @@ import { RowBetween } from '../Row'
 import { ButtonPrimary } from '../Button'
 import Select from '../Select'
 import ToggleSelector from '../ToggleSelector'
-import { Field } from '../../state/swap/actions'
+
+import { getAPRPerPeriod } from './utils'
+import { getMFIStakingContract } from '../../utils'
 
 import { DropdownsContainer, DataContainer, StyledOutlinedInput, StyledStakeHeader } from './styleds'
 import { PaddedColumn, BottomGrouping, Wrapper } from '../swap/styleds'
@@ -43,6 +49,7 @@ type StakeProps = {
   address: string
   account?: string
 }
+
 const Trade = ({ chainId, provider, address, account }: StakeProps) => {
   const [mfiStake, setMfiStake] = useState(true)
   const [withdrawRewardValue, setWithdrawRewardValue] = useState(0)
@@ -54,8 +61,8 @@ const Trade = ({ chainId, provider, address, account }: StakeProps) => {
   const { handleSubmit, control, watch, setValue } = useForm()
   const allTokens = useAllTokens()
   const getMFIToken = allTokens['0xAa4e3edb11AFa93c41db59842b29de64b72E355B']
+  const customAdded = useIsUserAddedToken(getMFIToken)
   const balance = useCurrencyBalance(account ?? undefined, getMFIToken)
-  console.log('🚀 ~ file: Trade.tsx ~ line 54 ~ Trade ~ balance', balance?.toSignificant(4))
 
   const {
     onSwitchTokens,
@@ -65,30 +72,59 @@ const Trade = ({ chainId, provider, address, account }: StakeProps) => {
     onSwitchLeverageType
   } = useSwapActionHandlers()
 
-  const amount = watch('amount', false)
+  const amount = watch('amount', '')
   const transactionType = watch('transactionType', 'Deposit')
+  const period = watch('period', 'One Week')
   let contract: any
+  let contract2: any
 
-  console.log(`chainId: ${chainId}, provider: ${provider}, MFIStake: ${mfiStake}`)
+  console.log(`CHAIN ID: ${chainId}, PROVIDER: ${provider}, MFI STAKE: ${mfiStake}`)
+  console.log(`TRANSITON TYPE: ${transactionType} PERIOD: ${period}`)
 
   if (chainId && provider) {
     if (mfiStake) {
       contract = getMFIStaking(chainId, provider)
       getMFIAPRPerWeight(contract, provider)
-        .then((aprData: any) => setEstimatedAPR(aprData))
+        .then((aprData: any) => setEstimatedAPR(getAPRPerPeriod(aprData, period)))
         .catch((e: any) => {
           console.log('APR ERROR MESSAGE :::', e.message)
         })
     } else {
       contract = getLiquidityMiningReward(chainId, provider)
       getLiquidityAPRPerWeight(contract, provider)
-        .then((liquityData: any) => setEstimatedAPR(liquityData))
+        .then((liquityData: any) => setEstimatedAPR(getAPRPerPeriod(liquityData, period)))
         .catch((e: any) => {
           console.log('LIQUITY ERROR MESSAGE :::', e.message)
         })
     }
 
     if (contract && address) {
+      if (account) {
+        getAccountHoldingTotal(account, chainId, provider)
+          .then((accHolding: any) => {
+            console.log('account :::::::::::', accHolding.toString())
+          })
+          .catch((e: any) => {
+            console.log('accHolding ERROR MESSAGE :::', e.message)
+          })
+
+        contract2 = getMFIStakingContract(chainId, provider, account)
+        console.log('ACCOUNT ::', account)
+        console.log('CONTRACT2 ::', contract2)
+
+        /*withdrawReward(contract2)
+          .then((wdr: any) => console.log({ wdr }))
+          .catch((e: any) => {
+            console.log('WITHDRAW REWARD ERROR MESSAGE :::', e.message)
+          })
+
+        withdrawStake(contract2, new TokenAmount(getMFIToken, '1000'))
+          .then((ws: any) => console.log({ ws }))
+          .catch((e: any) => {
+            console.log('WITHDRAW STAKE ERROR MESSAGE :::', e.message)
+          })*/
+      }
+
       accruedReward(contract, address)
         .then((accruedReward: any) => {
           setCurrentStakedBalance(accruedReward.toNumber())
@@ -110,33 +146,32 @@ const Trade = ({ chainId, provider, address, account }: StakeProps) => {
         .catch((e: any) => {
           console.log('CAN WITHDRAW ERROR MESSAGE :::', e.message)
         })
-
-      withdrawReward(contract)
-        .then((wdr: any) => console.log({ wdr }))
-        .catch((e: any) => {
-          console.log('WITHDRAW REWARD ERROR MESSAGE :::', e.message)
-        })
-
-      withdrawStake(contract, new TokenAmount(getMFIToken, '1000'))
-        .then((ws: any) => console.log({ ws }))
-        .catch((e: any) => {
-          console.log('WITHDRAW STAKE ERROR MESSAGE :::', e.message)
-        })
     }
   }
 
   const handleMaxAmount = () => {
+    console.log('BALANCE ::', balance?.toSignificant(4).toString())
     setValue('amount', balance?.toSignificant(4).toString())
   }
 
-  const onSubmit = (data: any) => console.log(data)
-  /*stake(contract, stakeAmount, ONE_WEEK)
-      .then((data: any) => console.log('STAKE RESULT ::', data))
-      .catch((e: any) => {
-        console.log('STAKE ACTION ERROR MESSAGE :::', e.message)
-      })*/
+  const onSubmit = (data: any) => {
+    console.log('here ::')
+    let tokenAmt: TokenAmount
+    try {
+      tokenAmt = new TokenAmount(getMFIToken, amount)
+      console.log('tokenAmt ::', tokenAmt)
 
-  const isAbleTransaction = !Boolean(amount?.length)
+      stake(contract2, tokenAmt, Duration.ONE_WEEK)
+        .then((data: any) => console.log('STAKE RESULT ::', data))
+        .catch((e: any) => {
+          console.log('STAKE ACTION ERROR MESSAGE :::', e.message)
+        })
+    } catch (error: any) {
+      console.log('error :::', error)
+    }
+  }
+
+  const isAbleTransaction = Boolean(amount?.length) && Number(amount) > 0
 
   return (
     <AppBody>
@@ -184,6 +219,7 @@ const Trade = ({ chainId, provider, address, account }: StakeProps) => {
             <div style={{ position: 'relative', width: '100%' }}>
               <Controller
                 name="amount"
+                defaultValue=""
                 control={control}
                 render={({ field }) => (
                   <StyledOutlinedInput
@@ -205,16 +241,13 @@ const Trade = ({ chainId, provider, address, account }: StakeProps) => {
               />
             </div>
           </div>
-          <ButtonPrimary type="submit" disabled={isAbleTransaction}>
-            {isAbleTransaction ? 'Enter Amount' : transactionType}
+          <ButtonPrimary type="submit" disabled={!isAbleTransaction}>
+            {isAbleTransaction ? transactionType : 'Enter Amount'}
           </ButtonPrimary>
         </Wrapper>
       </form>
     </AppBody>
   )
 }
-console.log('🚀 ~ file: Trade.tsx ~ line 194 ~ Trade ~ useDefaultTokens', useDefaultTokens)
-console.log('🚀 ~ file: Trade.tsx ~ line 194 ~ Trade ~ useDefaultTokens', useDefaultTokens)
-console.log('🚀 ~ file: Trade.tsx ~ line 194 ~ Trade ~ useDefaultTokens', useDefaultTokens)
 
 export default Trade

@@ -286,7 +286,6 @@ export const MarginAccount = () => {
    */
   const getMarketData = async () => {
     if (!chainId || !account) return
-
     const [_interestRates, _liquidities, _holdingTotal, _debtTotal] = await Promise.all([
       // interest rates by token
       getBorrowInterestRates(

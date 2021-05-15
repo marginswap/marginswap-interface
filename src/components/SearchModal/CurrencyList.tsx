@@ -101,6 +101,7 @@ function CurrencyRow({
   const isOnSelectedList = isTokenOnList(selectedTokenList, currency)
   const customAdded = useIsUserAddedToken(currency)
   const balance = useCurrencyBalance(account ?? undefined, currency)
+  console.log('🚀 ~ file: CurrencyList.tsx ~ line 104 ~ balance', balance)
 
   // only show add or remove buttons if not on selected list
   return (

@@ -6,6 +6,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER, getAddresses } from '@marginswap/sdk'
 import MarginRouter from '@marginswap/core-abi/artifacts/contracts/MarginRouter.sol/MarginRouter.json'
 import SpotRouter from '@marginswap/core-abi/artifacts/contracts/SpotRouter.sol/SpotRouter.json'
+import MFIStaking from '@marginswap/core-abi/artifacts/contracts/MFIStaking.sol/MFIStaking.json'
 
 import { TokenAddressMap } from '../state/lists/hooks'
 
@@ -116,4 +117,9 @@ export function getSpotRouterContract(chainId: ChainId, library: Web3Provider, a
 // account is optional
 export function getMarginRouterContract(chainId: ChainId, library: Web3Provider, account?: string): Contract {
   return getContract(getAddresses(chainId).MarginRouter, MarginRouter.abi, library, account)
+}
+
+// account is optional
+export function getMFIStakingContract(chainId: ChainId, library: Web3Provider, account?: string): Contract {
+  return getContract(getAddresses(chainId).MFIStaking, MFIStaking.abi, library, account)
 }
