@@ -2,6 +2,7 @@ import React, { useState, ChangeEvent, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { useCurrency, useDefaultTokens, useAllTokens, useIsUserAddedToken } from '../../hooks/Tokens'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
+import { utils } from 'ethers'
 
 import {
   getMFIStaking,
@@ -156,12 +157,11 @@ const Trade = ({ chainId, provider, address, account }: StakeProps) => {
 
   const onSubmit = (data: any) => {
     console.log('here ::')
-    let tokenAmt: TokenAmount
     try {
-      tokenAmt = new TokenAmount(getMFIToken, amount)
+      const tokenAmt = utils.parseUnits(amount, 18)
       console.log('tokenAmt ::', tokenAmt)
 
-      stake(contract2, tokenAmt, Duration.ONE_WEEK)
+      stake(contract2, tokenAmt.toHexString(), Duration.ONE_WEEK)
         .then((data: any) => console.log('STAKE RESULT ::', data))
         .catch((e: any) => {
           console.log('STAKE ACTION ERROR MESSAGE :::', e.message)
