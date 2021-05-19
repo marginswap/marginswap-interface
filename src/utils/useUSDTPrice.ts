@@ -1,6 +1,6 @@
-import { ChainId, Currency, currencyEquals, JSBI, Price, WETH, AMMs } from '@marginswap/sdk'
+import { ChainId, Currency, currencyEquals, JSBI, Price, WETH, AMMs, ammsPerChain } from '@marginswap/sdk'
 import { useMemo } from 'react'
-import { USDT } from '../constants'
+import { getPegCurrency } from '../constants'
 import { PairState, usePairs } from '../data/Reserves'
 import { useActiveWeb3React } from '../hooks'
 import { wrappedCurrency } from './wrappedCurrency'
@@ -9,18 +9,21 @@ import { wrappedCurrency } from './wrappedCurrency'
  * Returns the price in USDC of the input currency
  * @param currency currency to compute the USDC price of
  */
-export default function useUSDTPrice(currency?: Currency): Price | undefined {
+export default function usePegPrice(currency?: Currency): Price | undefined {
   const { chainId } = useActiveWeb3React()
+
+  const pegCurrency = getPegCurrency(chainId)
+  const amm1 = ammsPerChain[chainId ?? ChainId.MAINNET][0]
   const wrapped = wrappedCurrency(currency, chainId)
   const tokenPairs: [AMMs, Currency | undefined, Currency | undefined][] = useMemo(
     () => [
       [
-        AMMs.UNI,
+        amm1,
         chainId && wrapped && currencyEquals(WETH[chainId], wrapped) ? undefined : currency,
         chainId ? WETH[chainId] : undefined
       ],
-      [AMMs.UNI, wrapped?.equals(USDT) ? undefined : wrapped, chainId === ChainId.MAINNET ? USDT : undefined],
-      [AMMs.UNI, chainId ? WETH[chainId] : undefined, chainId === ChainId.MAINNET ? USDT : undefined]
+      [amm1, pegCurrency ? (wrapped?.equals(pegCurrency) ? undefined : wrapped) : undefined, pegCurrency],
+      [amm1, chainId ? WETH[chainId] : undefined, pegCurrency]
     ],
     [chainId, currency, wrapped]
   )
@@ -32,16 +35,16 @@ export default function useUSDTPrice(currency?: Currency): Price | undefined {
     }
     // handle weth/eth
     if (wrapped.equals(WETH[chainId])) {
-      if (usdcPair) {
+      if (usdcPair && pegCurrency) {
         const price = usdcPair.priceOf(WETH[chainId])
-        return new Price(currency, USDT, price.denominator, price.numerator)
+        return new Price(currency, pegCurrency, price.denominator, price.numerator)
       } else {
         return undefined
       }
     }
     // handle usdc
-    if (wrapped.equals(USDT)) {
-      return new Price(USDT, USDT, '1', '1')
+    if (pegCurrency && wrapped.equals(pegCurrency)) {
+      return new Price(pegCurrency, pegCurrency, '1', '1')
     }
 
     const ethPairETHAmount = ethPair?.reserveOf(WETH[chainId])
@@ -50,16 +53,25 @@ export default function useUSDTPrice(currency?: Currency): Price | undefined {
 
     // all other tokens
     // first try the usdc pair
-    if (usdcPairState === PairState.EXISTS && usdcPair && usdcPair.reserveOf(USDT).greaterThan(ethPairETHUSDCValue)) {
+    if (
+      usdcPairState === PairState.EXISTS &&
+      usdcPair &&
+      pegCurrency &&
+      usdcPair.reserveOf(pegCurrency).greaterThan(ethPairETHUSDCValue)
+    ) {
       const price = usdcPair.priceOf(wrapped)
-      return new Price(currency, USDT, price.denominator, price.numerator)
+      return new Price(currency, pegCurrency, price.denominator, price.numerator)
     }
     if (ethPairState === PairState.EXISTS && ethPair && usdcEthPairState === PairState.EXISTS && usdcEthPair) {
-      if (usdcEthPair.reserveOf(USDT).greaterThan('0') && ethPair.reserveOf(WETH[chainId]).greaterThan('0')) {
-        const ethUsdcPrice = usdcEthPair.priceOf(USDT)
+      if (
+        pegCurrency &&
+        usdcEthPair.reserveOf(pegCurrency).greaterThan('0') &&
+        ethPair.reserveOf(WETH[chainId]).greaterThan('0')
+      ) {
+        const ethUsdcPrice = usdcEthPair.priceOf(pegCurrency)
         const currencyEthPrice = ethPair.priceOf(WETH[chainId])
         const usdcPrice = ethUsdcPrice.multiply(currencyEthPrice).invert()
-        return new Price(currency, USDT, usdcPrice.denominator, usdcPrice.numerator)
+        return new Price(currency, pegCurrency, usdcPrice.denominator, usdcPrice.numerator)
       }
     }
     return undefined

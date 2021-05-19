@@ -26,7 +26,7 @@ import { StyledTableContainer, StyledWrapperDiv, StyledSectionDiv } from './styl
 import { utils, constants } from 'ethers'
 import { toast } from 'react-toastify'
 import { useTransactionAdder, useIsTransactionPending } from '../../state/transactions/hooks'
-import { getPegCurrency } from '../../constants'
+import { getPegCurrency, USDT_MAINNET } from '../../constants'
 import { setInterval } from 'timers'
 import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 import { TransactionDetails } from '../../state/transactions/reducer'
@@ -132,7 +132,8 @@ export const BondSupply = () => {
    *
    */
   const getMarketData = async () => {
-    if (!chainId || !account) return
+    const pegCurrency = getPegCurrency(chainId)
+    if (!chainId || !account || !pegCurrency) return
 
     const [_interestRates, _maturities, _bondCosts] = await Promise.all([
       getHourlyBondInterestRates(
@@ -169,7 +170,7 @@ export const BondSupply = () => {
     )
     setBondUSDCosts(
       Object.keys(_bondCosts).reduce(
-        (acc, cur) => ({ ...acc, [cur]: new TokenAmount(getPegCurrency(chainId), _bondCosts[cur].toString()) }),
+        (acc, cur) => ({ ...acc, [cur]: new TokenAmount(pegCurrency, _bondCosts[cur].toString()) }),
         {}
       )
     )
@@ -340,7 +341,9 @@ export const BondSupply = () => {
       })),
     [tokens, bondBalances, bondMaturities, allowances]
   )
-  const ZERO_DAI = new TokenAmount(getPegCurrency(chainId), '0')
+
+  const pegCurrency = getPegCurrency(chainId) ?? USDT_MAINNET
+  const ZERO_DAI = new TokenAmount(pegCurrency, '0')
 
   const averageYield = useMemo(() => {
     // get the total balance of all the user's bonds
