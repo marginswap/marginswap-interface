@@ -1,9 +1,8 @@
 import React, { useState, ChangeEvent, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
+
 import { useCurrency, useDefaultTokens, useAllTokens, useIsUserAddedToken } from '../../hooks/Tokens'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
-import { utils } from 'ethers'
-
 import {
   getMFIStaking,
   getLiquidityMiningReward,
@@ -19,7 +18,9 @@ import {
   stake,
   getAccountHoldingTotal,
   BigintIsh,
-  Duration
+  Duration,
+  Trade,
+  LeverageType
 } from '@marginswap/sdk'
 
 import {
@@ -28,30 +29,35 @@ import {
   useSwapActionHandlers,
   useSwapState
 } from '../../state/swap/hooks'
-import { BigNumber } from '@ethersproject/bignumber'
+import { useTradeExactIn, useTradeExactOut } from '../../hooks/Trades'
+import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } from '../../state/user/hooks'
+import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
 
 import AppBody from '../../pages/AppBody'
 import { TYPE, StyledButton } from '../../theme'
-import { RowBetween } from '../Row'
-import { ButtonPrimary } from '../Button'
+import { RowBetween, AutoRow } from '../Row'
+import { ButtonPrimary, ButtonConfirmed, ButtonError } from '../Button'
 import Select from '../Select'
 import ToggleSelector from '../ToggleSelector'
+import { GreyCard } from '../../components/Card'
+import ApprovalStepper from './ApprovalStepper'
 
-import { getAPRPerPeriod } from './utils'
+import { utils } from 'ethers'
+import { getAPRPerPeriod, getNotificationMsn } from './utils'
 import { getMFIStakingContract } from '../../utils'
 
 import { DropdownsContainer, DataContainer, StyledOutlinedInput, StyledStakeHeader } from './styleds'
 import { PaddedColumn, BottomGrouping, Wrapper } from '../swap/styleds'
 import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
 
-type StakeProps = {
+interface StakeProps {
   chainId?: ChainId
   provider?: Web3Provider
   address: string
   account?: string
 }
 
-const Trade = ({ chainId, provider, address, account }: StakeProps) => {
+export default function TradeStake({ chainId, provider, address, account }: StakeProps) {
   const [mfiStake, setMfiStake] = useState(true)
   const [withdrawRewardValue, setWithdrawRewardValue] = useState(0)
   const [withdrawStakeValue, setWithdrawStakeValue] = useState(0)
@@ -60,10 +66,28 @@ const Trade = ({ chainId, provider, address, account }: StakeProps) => {
   const [availableForWithdrawAfter, setAvailableForWithdrawAfter] = useState(undefined)
 
   const { handleSubmit, control, watch, setValue } = useForm()
+
+  const amount = watch('amount', '')
+  const transactionType = watch('transactionType', 'Deposit')
+  const period = watch('period', 'One Week')
+
   const allTokens = useAllTokens()
   const getMFIToken = allTokens['0xAa4e3edb11AFa93c41db59842b29de64b72E355B']
   const customAdded = useIsUserAddedToken(getMFIToken)
   const balance = useCurrencyBalance(account ?? undefined, getMFIToken)
+
+  // check whether the user has approved the router on the input token
+  const [approval, approveCallback] = useApproveCallback(new TokenAmount(getMFIToken, amount), getMFIToken.address)
+
+  // check if user has gone through approval process, used to show two step buttons, reset on token change
+  const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false)
+
+  // mark when a user has submitted an approval, reset onTokenSelection for input field
+  useEffect(() => {
+    if (approval === ApprovalState.PENDING) {
+      setApprovalSubmitted(true)
+    }
+  }, [approval, approvalSubmitted])
 
   const {
     onSwitchTokens,
@@ -73,14 +97,18 @@ const Trade = ({ chainId, provider, address, account }: StakeProps) => {
     onSwitchLeverageType
   } = useSwapActionHandlers()
 
-  const amount = watch('amount', '')
-  const transactionType = watch('transactionType', 'Deposit')
-  const period = watch('period', 'One Week')
+  // show approve flow when: no error on inputs, not approved or pending, or approved in current session
+  // never show if price impact is above threshold in non expert mode
+  const showApproveFlow =
+    approval === ApprovalState.NOT_APPROVED ||
+    approval === ApprovalState.PENDING ||
+    (approvalSubmitted && approval === ApprovalState.APPROVED)
+
   let contract: any
   let contract2: any
 
-  console.log(`CHAIN ID: ${chainId}, PROVIDER: ${provider}, MFI STAKE: ${mfiStake}`)
-  console.log(`TRANSITON TYPE: ${transactionType} PERIOD: ${period}`)
+  //console.log(`CHAIN ID: ${chainId}, PROVIDER: ${provider}, MFI STAKE: ${mfiStake}`)
+  //console.log(`TRANSITON TYPE: ${transactionType} PERIOD: ${period}`)
 
   if (chainId && provider) {
     if (mfiStake) {
@@ -110,8 +138,6 @@ const Trade = ({ chainId, provider, address, account }: StakeProps) => {
           })
 
         contract2 = getMFIStakingContract(chainId, provider, account)
-        console.log('ACCOUNT ::', account)
-        console.log('CONTRACT2 ::', contract2)
 
         /*withdrawReward(contract2)
           .then((wdr: any) => console.log({ wdr }))
@@ -142,11 +168,11 @@ const Trade = ({ chainId, provider, address, account }: StakeProps) => {
           console.log('ACCRUED REWARD ERROR MESSAGE :::', e.message)
         })
 
-      canWithdraw(contract, address)
+      /*canWithdraw(contract, address)
         .then((canWithdrawData: any) => console.log({ canWithdrawData }))
         .catch((e: any) => {
           console.log('CAN WITHDRAW ERROR MESSAGE :::', e.message)
-        })
+        })*/
     }
   }
 
@@ -155,11 +181,12 @@ const Trade = ({ chainId, provider, address, account }: StakeProps) => {
     setValue('amount', balance?.toSignificant(4).toString())
   }
 
-  const onSubmit = (data: any) => {
+  const onSubmit = () => {
     console.log('here ::')
     try {
       const tokenAmt = utils.parseUnits(amount, 18)
-      console.log('tokenAmt ::', tokenAmt)
+      console.log('🚀 ~ file: Trade.tsx ~ line 162 ~ onSubmit ~ tokenAmt', tokenAmt)
+      console.log('tokenAmt ::', tokenAmt.toHexString())
 
       stake(contract2, tokenAmt.toHexString(), Duration.ONE_WEEK)
         .then((data: any) => console.log('STAKE RESULT ::', data))
@@ -241,13 +268,20 @@ const Trade = ({ chainId, provider, address, account }: StakeProps) => {
               />
             </div>
           </div>
-          <ButtonPrimary type="submit" disabled={!isAbleTransaction}>
-            {isAbleTransaction ? transactionType : 'Enter Amount'}
-          </ButtonPrimary>
+          {isAbleTransaction ? (
+            <ApprovalStepper
+              firstStepLabel={transactionType}
+              onClick={approveCallback}
+              approval={approval}
+              approvalSubmitted={approvalSubmitted}
+            />
+          ) : (
+            <GreyCard style={{ textAlign: 'center' }}>
+              <TYPE.main mb="4px">{getNotificationMsn(isAbleTransaction, false)}</TYPE.main>
+            </GreyCard>
+          )}
         </Wrapper>
       </form>
     </AppBody>
   )
 }
-
-export default Trade

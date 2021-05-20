@@ -24,8 +24,10 @@ export function useApproveCallback(
 ): [ApprovalState, () => Promise<void>] {
   const { account } = useActiveWeb3React()
   const token = amountToApprove instanceof TokenAmount ? amountToApprove.token : undefined
+
   const currentAllowance = useTokenAllowance(token, account ?? undefined, spender)
   const pendingApproval = useHasPendingApproval(token?.address, spender)
+  console.log('🚀 ~ file: useApproveCallback.ts ~ line 30 ~ pendingApproval', pendingApproval)
 
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
@@ -97,7 +99,7 @@ export function useApproveCallback(
 }
 
 // wraps useApproveCallback in the context of a swap
-export function useApproveCallbackFromTrade(trade?: Trade, allowedSlippage = 0, leverageType?: LeverageType) {
+export function useApproveCallbackFromTrade(trade?: Trade | null, allowedSlippage = 0, leverageType?: LeverageType) {
   const amountToApprove = useMemo(
     () => (trade ? computeSlippageAdjustedAmounts(trade, allowedSlippage)[Field.INPUT] : undefined),
     [trade, allowedSlippage]

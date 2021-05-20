@@ -8,3 +8,11 @@ export function getAPRPerPeriod(apr: any, period: string): number {
       return apr
   }
 }
+
+export function getNotificationMsn(isAble: boolean, isError: boolean): string {
+  if (isError) return 'Not Approved Transaction'
+
+  if (!isAble) return 'Enter Amount'
+
+  return 'Ok'
+}
