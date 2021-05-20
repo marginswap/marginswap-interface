@@ -35,7 +35,7 @@ export const WBTC = new Token(ChainId.MAINNET, '0x2260FAC5E5542a773Aa44fBCfeDf7C
 
 // Environment dependant peg currency
 function getPegCurrency(chainId: ChainId | undefined) {
-  const pegCurrencyMap: Record<ChainId, Token> = {
+  const pegCurrencyMap = {
     [ChainId.KOVAN]: DAI,
     [ChainId.ROPSTEN]: DAI,
     [ChainId.RINKEBY]: DAI,
@@ -46,7 +46,7 @@ function getPegCurrency(chainId: ChainId | undefined) {
     [ChainId.FUJI]: USDT_AVALANCHE
   }
   if (chainId && chainId in pegCurrencyMap) {
-    return pegCurrencyMap[chainId]
+    return (pegCurrencyMap as any)[chainId]
   } else {
     return undefined
   }
@@ -68,7 +68,14 @@ export const UNI = {
   [ChainId.ROPSTEN]: new Token(ChainId.ROPSTEN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
   [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
   [ChainId.KOVAN]: new Token(ChainId.KOVAN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-  [ChainId.LOCAL]: new Token(ChainId.LOCAL, UNI_ADDRESS, 18, 'UNI', 'Uniswap')
+  [ChainId.MATIC]: new Token(ChainId.FANTOM, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
+  [ChainId.XDAI]: new Token(ChainId.FANTOM, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
+  [ChainId.HECO]: new Token(ChainId.FANTOM, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
+  [ChainId.HARMONY]: new Token(ChainId.FANTOM, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
+  [ChainId.FANTOM]: new Token(ChainId.FANTOM, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
+  [ChainId.AVALANCHE]: new Token(ChainId.AVALANCHE, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
+  [ChainId.BSC]: new Token(ChainId.BSC, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
+  [ChainId.LOCAL]: new Token(ChainId.MATIC, UNI_ADDRESS, 18, 'UNI', 'Uniswap')
 }
 
 export const COMMON_CONTRACT_NAMES: { [address: string]: string } = {
@@ -88,9 +95,15 @@ const WETH_ONLY: ChainTokenList = {
   [ChainId.RINKEBY]: [WETH[ChainId.RINKEBY]],
   [ChainId.GÖRLI]: [WETH[ChainId.GÖRLI]],
   [ChainId.KOVAN]: [WETH[ChainId.KOVAN]],
-  [ChainId.LOCAL]: [WETH[ChainId.LOCAL]],
+  [ChainId.MATIC]: [WETH[ChainId.MATIC]],
+  [ChainId.XDAI]: [WETH[ChainId.XDAI]],
+  [ChainId.HECO]: [WETH[ChainId.HECO]],
+  [ChainId.HARMONY]: [WETH[ChainId.HARMONY]],
+  [ChainId.FANTOM]: [WETH[ChainId.FANTOM]],
   [ChainId.AVALANCHE]: [WETH[ChainId.AVALANCHE]],
-  [ChainId.FUJI]: [WETH[ChainId.FUJI]]
+  [ChainId.BSC]: [WETH[ChainId.BSC]],
+  [ChainId.LOCAL]: [WETH[ChainId.LOCAL]],
+  [ChainId.FUJI]: [WETH[ChainId.AVALANCHE]]
 }
 
 // used to construct intermediary pairs for trading

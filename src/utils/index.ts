@@ -18,6 +18,22 @@ export function isAddress(value: any): string | false {
   }
 }
 
+// const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
+//   1: '',
+//   3: 'ropsten.',
+//   4: 'rinkeby.',
+//   5: 'goerli.',
+//   42: 'kovan.',
+//   137: 'matic.',
+//   100: 'xDai.',
+//   128: 'heco.',
+//   1666600000: 'harmony.',
+//   250: 'fantom.',
+//   43114: 'Avalanche.',
+//   56: 'binance.',
+//   31337: ''
+// }
+
 // Multichain Explorer
 const builders = {
   etherscan: (chainName: string, data: string, type: 'transaction' | 'token' | 'address' | 'block') => {
@@ -29,7 +45,6 @@ const builders = {
         return `${prefix}/${type}/${data}`
     }
   },
-
   fantom: (_: string, data: string, type: 'transaction' | 'token' | 'address' | 'block') => {
     const prefix = 'https://ftmscan.com'
     switch (type) {

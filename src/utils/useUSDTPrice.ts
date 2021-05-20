@@ -13,7 +13,7 @@ export default function usePegPrice(currency?: Currency): Price | undefined {
   const { chainId } = useActiveWeb3React()
 
   const pegCurrency = getPegCurrency(chainId)
-  const amm1 = ammsPerChain[chainId ?? ChainId.MAINNET][0]
+  const amm1 = chainId && chainId in ammsPerChain ? (ammsPerChain as any)[chainId][0] : ammsPerChain[ChainId.MAINNET][0]
   const wrapped = wrappedCurrency(currency, chainId)
   const tokenPairs: [AMMs, Currency | undefined, Currency | undefined][] = useMemo(
     () => [

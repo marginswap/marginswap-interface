@@ -59,7 +59,10 @@ function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
               return true
             })
             .flatMap(tokens => {
-              const [amm1, amm2] = ammsPerChain[chainId ?? ChainId.MAINNET]
+              const [amm1, amm2] =
+                chainId ?? ChainId.MAINNET in ammsPerChain
+                  ? (ammsPerChain as any)[chainId ?? ChainId.MAINNET]
+                  : ammsPerChain[ChainId.MAINNET]
               return [
                 [amm1, ...tokens],
                 [amm2, ...tokens]
