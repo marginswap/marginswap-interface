@@ -88,15 +88,15 @@ const PARAMS: {
     blockExplorerUrls: ['https://ftmscan.com']
   },
   [ChainId.AVALANCHE]: {
-    chainId: '43114',
+    chainId: '0xa86a',
     chainName: 'Avalanche',
     nativeCurrency: {
       name: 'Avalanche',
       symbol: 'AVAX',
       decimals: 18
     },
-    rpcUrls: ['https://rpcapi.fantom.network'],
-    blockExplorerUrls: ['https://ftmscan.com']
+    rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
+    blockExplorerUrls: ['https://cchain.explorer.avax.network/']
   },
   [ChainId.BSC]: {
     chainId: '0x38',
@@ -236,9 +236,9 @@ export default function NetworkModal(): JSX.Element | null {
             ChainId.GÖRLI,
             ChainId.KOVAN,
             ChainId.FANTOM,*/
-            ChainId.AVALANCHE,
-            ChainId.BSC
-            /*ChainId.MATIC,
+            ChainId.AVALANCHE
+            /*ChainId.BSC
+            ChainId.MATIC,
             ChainId.HECO,
             ChainId.XDAI,
             ChainId.HARMONY*/
