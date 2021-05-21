@@ -364,7 +364,7 @@ export const BondSupply = () => {
 
     const totalAnnualEarnings = tokens.reduce((acc, cur) => {
       const apy = apyFromApr(bondAPRs[cur.address], 365 * 24)
-      const bondBalance = Number(bondUSDCosts[cur.address].toSignificant(6))
+      const bondBalance = Number(bondUSDCosts[cur.address].toFixed(6))
 
       if (apy > 0 && bondBalance > 0) {
         return acc + (apy / 100) * bondBalance

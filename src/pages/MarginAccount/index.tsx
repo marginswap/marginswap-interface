@@ -528,7 +528,7 @@ export const MarginAccount = () => {
                       console.error(error)
                     }
                   },
-                  max: Number(userEthBalance?.toSignificant(6)) || 0
+                  max: Number(userEthBalance?.toFixed(6)) || 0
                 },
                 {
                   name: 'Withdraw ETH',
@@ -597,7 +597,7 @@ export const MarginAccount = () => {
               Icon={IconCoin}
             />
           </StyledMobileOnlyRow>
-          <RiskMeter risk={getRisk(Number(holdingTotal.toSignificant(6)), Number(debtTotal.toSignificant(6)))} />
+          <RiskMeter risk={getRisk(Number(holdingTotal.toFixed(6)), Number(debtTotal.toFixed(6)))} />
         </StyledTableContainer>
         <TokensTable
           title="Account balance"
