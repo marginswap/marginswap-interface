@@ -153,7 +153,7 @@
       "address": "0xf20d962a6c8f70c731bd838a3a388D7d48fA6e15",
       "chainId": 43114,
       "name": "Wrapped ETH",
-      "symbol": "ETH",
+      "symbol": "WETH",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/marginswap/token-list/main/logo/ethereum.png"
     },
