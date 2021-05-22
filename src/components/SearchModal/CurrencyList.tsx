@@ -1,22 +1,23 @@
 import { Currency, CurrencyAmount, currencyEquals, ETHER, Token } from '@marginswap/sdk'
+import { useActiveWeb3React } from 'hooks'
+import useTheme from 'hooks/useTheme'
 import React, { CSSProperties, MutableRefObject, useCallback, useMemo } from 'react'
 import { FixedSizeList } from 'react-window'
 import { Text } from 'rebass'
 import styled from 'styled-components'
-import { useActiveWeb3React } from '../../hooks'
-import { WrappedTokenInfo, useCombinedActiveList } from '../../state/lists/hooks'
+import { wrappedCurrency } from 'utils/wrappedCurrency'
+import { useAllInactiveTokens, useIsUserAddedToken } from '../../hooks/Tokens'
+import { useCombinedActiveList, WrappedTokenInfo } from '../../state/lists/hooks'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
 import { TYPE } from '../../theme'
-import { useIsUserAddedToken, useAllInactiveTokens } from '../../hooks/Tokens'
-import Column from '../Column'
-import { RowFixed } from '../Row'
-import CurrencyLogo from '../CurrencyLogo'
-import { MouseoverTooltip } from '../Tooltip'
-import { MenuItem } from './styleds'
-import Loader from '../Loader'
 import { isTokenOnList } from '../../utils'
+import Column from '../Column'
+import CurrencyLogo from '../CurrencyLogo'
+import Loader from '../Loader'
+import { RowFixed } from '../Row'
+import { MouseoverTooltip } from '../Tooltip'
 import ImportRow from './ImportRow'
-import { wrappedCurrency } from 'utils/wrappedCurrency'
+import { MenuItem } from './styleds'
 
 function currencyKey(currency: Currency): string {
   return currency instanceof Token ? currency.address : currency === ETHER ? 'ETHER' : ''
@@ -94,7 +95,7 @@ function CurrencyRow({
   otherSelected: boolean
   style: CSSProperties
 }) {
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const key = currencyKey(currency)
   const selectedTokenList = useCombinedActiveList()
   const isOnSelectedList = isTokenOnList(selectedTokenList, currency)
@@ -112,11 +113,11 @@ function CurrencyRow({
     >
       <CurrencyLogo currency={currency} size={'24px'} />
       <Column>
-        <Text title={currency.name} fontWeight={500}>
-          {currency.symbol}
+        <Text title={currency.getName(chainId)} fontWeight={500}>
+          {currency.getSymbol(chainId)}
         </Text>
         <TYPE.darkGray ml="0px" fontSize={'12px'} fontWeight={300}>
-          {currency.name} {!isOnSelectedList && customAdded && '• Added by user'}
+          {currency.getName(chainId)} {!isOnSelectedList && customAdded && '• Added by user'}
         </TYPE.darkGray>
       </Column>
       <TokenTags currency={currency} />
@@ -148,9 +149,13 @@ export default function CurrencyList({
   showImportView: () => void
   setImportToken: (token: Token) => void
 }) {
-  const itemData = useMemo(() => (showETH ? [Currency.ETHER, ...currencies] : currencies), [currencies, showETH])
+  const itemData: (Currency | undefined)[] = useMemo(() => {
+    const formatted: (Currency | undefined)[] = showETH ? [Currency.ETHER, ...currencies] : currencies
+    return formatted
+  }, [currencies, showETH])
 
   const { chainId } = useActiveWeb3React()
+  const theme = useTheme()
 
   const inactiveTokens: {
     [address: string]: Token
@@ -189,7 +194,16 @@ export default function CurrencyList({
         )
       }
     },
-    [chainId, inactiveTokens, onCurrencySelect, otherCurrency, selectedCurrency, setImportToken, showImportView]
+    [
+      chainId,
+      inactiveTokens,
+      onCurrencySelect,
+      otherCurrency,
+      selectedCurrency,
+      setImportToken,
+      showImportView,
+      theme.text1
+    ]
   )
 
   const itemKey = useCallback((index: number, data: any) => currencyKey(data[index]), [])
