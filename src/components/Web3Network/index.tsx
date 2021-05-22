@@ -40,10 +40,6 @@ function Web3Network(): JSX.Element | null {
         <NetworkImg src={NETWORK_ICON[chainId]} alt="Switch Network" style={{ width: 22, height: 22 }} />
         <NetworkDescription>{NETWORK_LABEL[chainId]}</NetworkDescription>
       </NetworkContainer>
-      {/* <div
-                className="bg-cover bg-no-repeat bg-chain-static hover:bg-chain-animated"
-                style={{ width: 22, height: 22 }}
-            /> */}
       <NetworkModel />
     </>
   )

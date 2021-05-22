@@ -1,4 +1,3 @@
-//import { ChainId } from '@marginswap/sdk'
 import React, { useState } from 'react'
 import useParsedQueryString from 'hooks/useParsedQueryString'
 import Logo from '../../assets/images/Union.svg'
@@ -99,7 +98,7 @@ const MobileMenu = ({ stake }: MobileMenuProps) => {
 
 export default function Header() {
   const { stake } = useParsedQueryString()
-  const { account /*, chainId, library*/ } = useActiveWeb3React()
+  const { account } = useActiveWeb3React()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
   // const [darkMode, toggleDarkMode] = useDarkModeManager()
