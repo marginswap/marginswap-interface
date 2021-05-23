@@ -23,7 +23,7 @@ export const USDT_MAINNET = new Token(
 )
 export const USDT_AVALANCHE = new Token(
   ChainId.AVALANCHE,
-  '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
+  '0xde3A24028580884448a5397872046a019649b084',
   6,
   'USDT',
   'Tether USD'
