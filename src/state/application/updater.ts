@@ -53,5 +53,9 @@ export default function Updater(): null {
     dispatch(updateBlockNumber({ chainId: debouncedState.chainId, blockNumber: debouncedState.blockNumber }))
   }, [windowVisible, dispatch, debouncedState.blockNumber, debouncedState.chainId])
 
+  useEffect(() => {
+    console.log('NEW CHAIN ID ::', chainId)
+  }, [chainId])
+
   return null
 }
