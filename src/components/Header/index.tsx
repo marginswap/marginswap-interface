@@ -98,7 +98,7 @@ const MobileMenu = ({ stake }: MobileMenuProps) => {
 
 export default function Header() {
   const { stake } = useParsedQueryString()
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
   // const [darkMode, toggleDarkMode] = useDarkModeManager()
@@ -191,7 +191,7 @@ export default function Header() {
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
             {account && userEthBalance ? (
               <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
-                {userEthBalance?.toSignificant(4)} ETH
+                {userEthBalance?.toSignificant(4)} {userEthBalance?.currency.getSymbol(chainId)}
               </BalanceText>
             ) : null}
             <Web3Status />
