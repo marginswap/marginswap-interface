@@ -38,10 +38,10 @@ type BondRateData = {
   coin: string
   address: string
   decimals: number
-  totalSupplied: number
+  totalSupplied: string
   apy: number
   maturity: number
-  available: number
+  available: string
 }
 
 const BOND_RATES_COLUMNS = [
@@ -60,8 +60,8 @@ const BOND_RATES_COLUMNS = [
     name: 'Total Supplied',
     id: 'totalSupplied',
     // eslint-disable-next-line react/display-name
-    render: ({ totalSupplied }: { totalSupplied: number }) => (
-      <span>{totalSupplied ? utils.commify(totalSupplied.toFixed(6)) : 0}</span>
+    render: ({ totalSupplied }: { totalSupplied: string }) => (
+      <span>{totalSupplied ? utils.commify(totalSupplied) : 0}</span>
     )
   },
   {
@@ -330,10 +330,12 @@ export const BondSupply = () => {
         address: token.address,
         decimals: token.decimals,
         coin: token.symbol,
-        totalSupplied: Number(bondBalances[token.address] ?? 0) / Math.pow(10, token.decimals),
+        totalSupplied: bondBalances[token.address]
+          ? (Number(bondBalances[token.address] ?? 0) / Math.pow(10, token.decimals)).toFixed(6)
+          : '0',
         apy: apyFromApr(bondAPRs[token.address] ?? 0, 365 * 24),
         maturity: bondMaturities[token.address] ?? 0,
-        available: tokenBalances[token.address],
+        available: tokenBalances[token.address] ? tokenBalances[token.address].toFixed(6) : '0',
         getActionNameFromAmount: {
           Deposit: () => (allowances[token.address] > 0 ? 'Confirm Transaction' : 'Approve')
         }

@@ -486,8 +486,8 @@ export const MarginAccount = () => {
         coin: token.symbol,
         address: token.address,
         decimals: token.decimals,
-        balance: Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
-        borrowed: Number(borrowingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
+        balance: holdingAmounts[token.address] ? parseFloat(holdingAmounts[token.address].toFixed(6)) : 0,
+        borrowed: borrowingAmounts[token.address] ? parseFloat(borrowingAmounts[token.address].toFixed(6)) : 0,
         borrowable: borrowableAmounts[token.address] ? parseFloat(borrowableAmounts[token.address].toFixed(6)) : 0,
         withdrawable: withdrawableAmounts[token.address]
           ? parseFloat(withdrawableAmounts[token.address].toFixed(6))
@@ -499,10 +499,10 @@ export const MarginAccount = () => {
         ),
         maxWithdraw: Math.min(
           withdrawableAmounts[token.address] ? parseFloat(withdrawableAmounts[token.address].toFixed(6)) : 0,
-          Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals)
+          holdingAmounts[token.address] ? parseFloat(holdingAmounts[token.address].toFixed(6)) : 0
         ),
         ir: borrowAPRs[token.address],
-        available: tokenBalances[token.address] ?? 0,
+        available: tokenBalances[token.address] ? parseFloat(tokenBalances[token.address].toFixed(6)) : 0,
         getActionNameFromAmount: {
           Deposit: () => (allowances[token.address] > 0 ? 'Confirm Transaction' : 'Approve')
         },
