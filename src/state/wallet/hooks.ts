@@ -1,4 +1,4 @@
-import { UNI, USDT } from '../../constants/index'
+import { UNI, getPegCurrency } from '../../constants/index'
 import {
   Currency,
   CurrencyAmount,
@@ -75,8 +75,9 @@ export async function valueInPeg2token(
   const hundred = `100${'0'.repeat(wrapped.decimals)}`
   const curPrice = await viewCurrentPriceInPeg(wrapped.address, hundred, chainId, provider)
 
-  if (curPrice.gt(0)) {
-    const valueInTarget = valueInPeg.multiply(`100${'0'.repeat(USDT.decimals)}`).divide(curPrice.toString())
+  const pegCurrency = getPegCurrency(chainId)
+  if (pegCurrency && curPrice.gt(0)) {
+    const valueInTarget = valueInPeg.multiply(`100${'0'.repeat(pegCurrency.decimals)}`).divide(curPrice.toString())
     return parseUnits(valueInTarget.toFixed(wrapped.decimals), wrapped.decimals)
   } else {
     return undefined
@@ -89,11 +90,12 @@ export function useBorrowable(currency: Currency | undefined): CurrencyAmount | 
   const [balance, setBalance] = useState<CurrencyAmount | undefined>(undefined)
 
   const updateBorrowableBalance = useCallback(async () => {
-    if (chainId && currency && account) {
+    const pegCurrency = getPegCurrency(chainId)
+    if (chainId && currency && account && pegCurrency) {
       const bip = await borrowableInPeg(account, chainId, provider)
 
       if (bip) {
-        const borrowableInPeg = new TokenAmount(USDT, bip)
+        const borrowableInPeg = new TokenAmount(pegCurrency, bip)
 
         const wrapped = wrappedCurrency(currency, chainId)
 
@@ -241,7 +243,7 @@ export function useAllTokenBalances(): { [tokenAddress: string]: TokenAmount | u
 export function useAggregateUniBalance(): TokenAmount | undefined {
   const { account, chainId } = useActiveWeb3React()
 
-  const uni = chainId ? UNI[chainId] : undefined
+  const uni = chainId === ChainId.MAINNET ? UNI[ChainId.MAINNET] : undefined
 
   const uniBalance: TokenAmount | undefined = useTokenBalance(account ?? undefined, uni)
   const uniUnclaimed: TokenAmount | undefined = useUserUnclaimedAmount(account)

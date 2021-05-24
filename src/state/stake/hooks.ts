@@ -1,6 +1,6 @@
 import { ChainId, JSBI, Token, TokenAmount, WETH, Pair, AMMs } from '@marginswap/sdk'
 import { useMemo } from 'react'
-import { DAI, UNI, USDC, USDT, WBTC } from '../../constants'
+import { DAI, UNI, USDC, WBTC } from '../../constants'
 import { STAKING_REWARDS_INTERFACE } from '../../constants/abis/staking-rewards'
 import { useActiveWeb3React } from '../../hooks'
 import { NEVER_RELOAD, useMultipleContractSingleData } from '../multicall/hooks'
@@ -23,10 +23,6 @@ const STAKING_REWARDS_INFO: {
     {
       tokens: [WETH[ChainId.MAINNET], USDC],
       stakingRewardAddress: '0x7FBa4B8Dc5E7616e59622806932DBea72537A56b'
-    },
-    {
-      tokens: [WETH[ChainId.MAINNET], USDT],
-      stakingRewardAddress: '0x6C3e4cb2E96B01F4b866965A91ed4437839A121a'
     },
     {
       tokens: [WETH[ChainId.MAINNET], WBTC],
@@ -85,7 +81,7 @@ function useStakingInfo(pairToFilterBy?: Pair | null): StakingInfo[] {
     [chainId, pairToFilterBy]
   )
 
-  const uni = chainId ? UNI[chainId] : undefined
+  const uni = chainId === ChainId.MAINNET ? UNI[ChainId.MAINNET] : undefined
 
   const rewardsAddresses = useMemo(() => info.map(({ stakingRewardAddress }) => stakingRewardAddress), [info])
 
@@ -211,7 +207,7 @@ function useStakingInfo(pairToFilterBy?: Pair | null): StakingInfo[] {
 
 export function useTotalUniEarned(): TokenAmount | undefined {
   const { chainId } = useActiveWeb3React()
-  const uni = chainId ? UNI[chainId] : undefined
+  const uni = chainId === ChainId.MAINNET ? UNI[ChainId.MAINNET] : undefined
   const stakingInfos = useStakingInfo()
 
   return useMemo(() => {

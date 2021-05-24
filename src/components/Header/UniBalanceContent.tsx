@@ -12,7 +12,7 @@ import { useTotalUniEarned } from '../../state/stake/hooks'
 import { useAggregateUniBalance, useTokenBalance } from '../../state/wallet/hooks'
 import { ExternalLink, StyledInternalLink, TYPE, UniTokenAnimated } from '../../theme'
 import { computeUniCirculation } from '../../utils/computeUniCirculation'
-import useUSDTPrice from '../../utils/useUSDTPrice'
+import usePegPrice from '../../utils/useUSDTPrice'
 import { AutoColumn } from '../Column'
 import { RowBetween } from '../Row'
 import { Break, CardBGImage, CardNoise, CardSection, DataCard } from '../earn/styled'
@@ -42,14 +42,14 @@ const StyledClose = styled(X)`
  */
 export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowUniBalanceModal: any }) {
   const { account, chainId } = useActiveWeb3React()
-  const uni = chainId ? UNI[chainId] : undefined
+  const uni = chainId === ChainId.MAINNET ? UNI[ChainId.MAINNET] : undefined
 
   const total = useAggregateUniBalance()
   const uniBalance: TokenAmount | undefined = useTokenBalance(account ?? undefined, uni)
   const uniToClaim: TokenAmount | undefined = useTotalUniEarned()
 
   const totalSupply: TokenAmount | undefined = useTotalSupply(uni)
-  const uniPrice = useUSDTPrice(uni)
+  const uniPrice = usePegPrice(uni)
   const blockTimestamp = useCurrentBlockTimestamp()
   const unclaimedUni = useTokenBalance(useMerkleDistributorContract()?.address, uni)
   const circulation: TokenAmount | undefined = useMemo(

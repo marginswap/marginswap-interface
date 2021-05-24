@@ -1,5 +1,5 @@
 import { isTradeBetter } from 'utils/trades'
-import { Currency, CurrencyAmount, Pair, Token, Trade, AMMs } from '@marginswap/sdk'
+import { Currency, CurrencyAmount, Pair, Token, Trade, AMMs, ammsPerChain, ChainId } from '@marginswap/sdk'
 import flatMap from 'lodash.flatmap'
 import { useMemo } from 'react'
 
@@ -58,10 +58,16 @@ function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
 
               return true
             })
-            .flatMap(tokens => [
-              [AMMs.UNI, ...tokens],
-              [AMMs.SUSHI, ...tokens]
-            ])
+            .flatMap(tokens => {
+              const [amm1, amm2] =
+                chainId ?? ChainId.MAINNET in ammsPerChain
+                  ? (ammsPerChain as any)[chainId ?? ChainId.MAINNET]
+                  : ammsPerChain[ChainId.MAINNET]
+              return [
+                [amm1, ...tokens],
+                [amm2, ...tokens]
+              ]
+            })
         : [],
     [tokenA, tokenB, bases, basePairs, chainId]
   )
