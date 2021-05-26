@@ -441,23 +441,29 @@ export const MarginAccount = () => {
     // margin account equity balances
     setHoldingAmounts(
       Object.keys(_balances.holdingAmounts).reduce(
-        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(_balances.holdingAmounts[cur]).toString() }),
+        (acc, cur) => ({
+          ...acc,
+          [cur]: new TokenAmount(getPegCurrency(chainId) ?? USDT_MAINNET, _balances.holdingAmounts[cur].toString())
+        }),
         {}
       )
     )
     // margin account debt balances
     setBorrowingAmounts(
       Object.keys(_balances.borrowingAmounts).reduce(
-        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(_balances.borrowingAmounts[cur]).toString() }),
+        (acc, cur) => ({
+          ...acc,
+          [cur]: new TokenAmount(getPegCurrency(chainId) ?? USDT_MAINNET, _balances.borrowingAmounts[cur].toString())
+        }),
         {}
       )
     )
     // which tokens have approved the marginswap contract
     setAllowances(
       _allowances.reduce(
-        (acc: any, cur: any, index: number) => ({
+        (acc: any, cur: number, index: number) => ({
           ...acc,
-          [tokens[index].address]: Number(BigNumber.from(cur).toString())
+          [tokens[index].address]: cur
         }),
         {}
       )
@@ -593,18 +599,18 @@ export const MarginAccount = () => {
         <StyledTableContainer>
           <InfoCard
             title="Total Account Balance"
-            amount={utils.commify(holdingTotal.toFixed(2))}
+            amount={`$${holdingTotal.toFixed(2)}`}
             withUnderlyingCard
             Icon={IconBanknotes}
           />
           <StyledMobileOnlyRow>
-            <InfoCard title="Debt" amount={utils.commify(debtTotal.toFixed(2))} small Icon={IconScales} />
+            <InfoCard title="Debt" amount={`$${debtTotal.toFixed(2)}`} small Icon={IconScales} />
             <InfoCard
               title="Equity"
               amount={
                 holdingTotal.greaterThan(debtTotal) || holdingTotal.equalTo(debtTotal)
-                  ? utils.commify(holdingTotal.subtract(debtTotal).toFixed(2))
-                  : `- ${utils.commify(debtTotal.subtract(holdingTotal).toFixed(2))}`
+                  ? `$${holdingTotal.subtract(debtTotal).toFixed(2)}`
+                  : `- $${debtTotal.subtract(holdingTotal).toFixed(2)}`
               }
               color="secondary"
               small
