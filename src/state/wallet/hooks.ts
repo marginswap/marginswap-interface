@@ -11,7 +11,8 @@ import {
   getHoldingAmounts,
   viewCurrentPriceInPeg,
   ChainId,
-  totalLendingAvailable
+  totalLendingAvailable,
+  Balances
 } from '@marginswap/sdk'
 import { useMemo, useState, useEffect, useCallback } from 'react'
 import ERC20_INTERFACE from '../../constants/abis/erc20'
@@ -29,6 +30,7 @@ import { wrappedCurrency } from 'utils/wrappedCurrency'
 import { parseUnits } from 'ethers/lib/utils'
 import { BigNumber, utils } from 'ethers'
 import { TokenInfo } from '@uniswap/token-lists'
+import isEqual from 'lodash.isequal'
 
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.
@@ -124,29 +126,47 @@ export function useBorrowable(currency: Currency | undefined): CurrencyAmount | 
   return balance
 }
 
+export function useHoldingAmounts({ address, chainId, provider }: any): Balances | undefined {
+  const [holdingAmounts, setHoldingAmounts] = useState<Balances | undefined>()
+  const previousHoldingAmounts = usePrevious(holdingAmounts)
+
+  const updateHoldingAmounts = async () => {
+    const holdings: Balances = await getHoldingAmounts(address, chainId, provider as any)
+
+    if (holdings && !isEqual(holdings, previousHoldingAmounts)) {
+      setHoldingAmounts(holdings)
+    }
+  }
+
+  updateHoldingAmounts()
+
+  return holdingAmounts
+}
+
 export function useMarginBalance({ address, validatedTokens }: any) {
   const [balances, setBalances] = useState({})
   const { library, chainId } = useActiveWeb3React()
   const previousValidatedTokens = usePrevious(validatedTokens)
   const provider = getProviderOrSigner(library!, address)
+  const holdingAmounts = useHoldingAmounts({ address, chainId, provider })
+  const previousHoldingAmounts = usePrevious(holdingAmounts)
 
-  const updateMarginBalances = useCallback(async () => {
-    if (address && chainId && validatedTokens.length > 0) {
+  const updateMarginBalances = () => {
+    if (holdingAmounts && address && chainId && validatedTokens.length > 0) {
       const memo: { [tokenAddress: string]: TokenAmount } = {}
-      const holdingAmounts = await getHoldingAmounts(address, chainId, provider as any)
       validatedTokens.forEach((token: Token) => {
         const balanceValue = JSBI.BigInt(holdingAmounts[token.address] ?? 0)
         memo[token.address] = new TokenAmount(token, balanceValue)
       })
       setBalances(memo)
     }
-  }, [address, chainId, validatedTokens, balances, setBalances])
+  }
 
   useEffect(() => {
-    if (JSON.stringify(validatedTokens) !== JSON.stringify(previousValidatedTokens)) {
+    if (!isEqual(validatedTokens, previousValidatedTokens) || !isEqual(holdingAmounts, previousHoldingAmounts)) {
       updateMarginBalances()
     }
-  }, [address, library, validatedTokens, balances, setBalances, updateMarginBalances])
+  }, [address, library, validatedTokens, holdingAmounts])
   return balances
 }
 
@@ -168,22 +188,18 @@ export function useTokenBalancesWithLoadingIndicator(
   const { leverageType } = useSwapState()
 
   return [
-    useMemo(
-      () =>
-        address && validatedTokens.length > 0
-          ? leverageType === LeverageType.CROSS_MARGIN
-            ? marginBalances
-            : validatedTokens.reduce<{ [tokenAddress: string]: TokenAmount | undefined }>((memo, token, i) => {
-                const value = balances?.[i]?.result?.[0]
-                const amount = value ? JSBI.BigInt(value.toString()) : undefined
-                if (amount) {
-                  memo[token.address] = new TokenAmount(token, amount)
-                }
-                return memo
-              }, {})
-          : {},
-      [address, validatedTokens, balances, marginBalances, leverageType]
-    ),
+    address && validatedTokens.length > 0
+      ? leverageType === LeverageType.CROSS_MARGIN
+        ? marginBalances
+        : validatedTokens.reduce<{ [tokenAddress: string]: TokenAmount | undefined }>((memo, token, i) => {
+            const value = balances?.[i]?.result?.[0]
+            const amount = value ? JSBI.BigInt(value.toString()) : undefined
+            if (amount) {
+              memo[token.address] = new TokenAmount(token, amount)
+            }
+            return memo
+          }, {})
+      : {},
     anyLoading
   ]
 }
@@ -214,15 +230,13 @@ export function useCurrencyBalances(
   const containsETH: boolean = useMemo(() => currencies?.some(currency => currency === ETHER) ?? false, [currencies])
   const ethBalance = useETHBalances(containsETH ? [account] : [])
 
-  return useMemo(
-    () =>
-      currencies?.map(currency => {
-        if (!account || !currency) return undefined
-        if (currency instanceof Token) return tokenBalances[currency.address]
-        if (currency === ETHER) return ethBalance[account]
-        return undefined
-      }) ?? [],
-    [account, currencies, ethBalance, tokenBalances]
+  return (
+    currencies?.map(currency => {
+      if (!account || !currency) return undefined
+      if (currency instanceof Token) return tokenBalances[currency.address]
+      if (currency === ETHER) return ethBalance[account]
+      return undefined
+    }) ?? []
   )
 }
 
