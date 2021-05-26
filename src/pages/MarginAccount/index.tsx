@@ -39,7 +39,7 @@ import { StyledSectionDiv } from './styled'
 import { utils, constants } from 'ethers'
 import { toast } from 'react-toastify'
 import { useIsTransactionPending, useTransactionAdder } from '../../state/transactions/hooks'
-import { getPegCurrency } from '../../constants'
+import { getPegCurrency, USDT_MAINNET } from '../../constants'
 import { setInterval } from 'timers'
 import { valueInPeg2token, useETHBalances } from 'state/wallet/hooks'
 import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
@@ -129,8 +129,10 @@ export const MarginAccount = () => {
   const [tokens, setTokens] = useState<TokenInfo[]>([])
   const [holdingAmounts, setHoldingAmounts] = useState<Record<string, number>>({})
   const [borrowingAmounts, setBorrowingAmounts] = useState<Record<string, number>>({})
-  const [holdingTotal, setHoldingTotal] = useState<TokenAmount>(new TokenAmount(getPegCurrency(chainId), '0'))
-  const [debtTotal, setDebtTotal] = useState(new TokenAmount(getPegCurrency(chainId), '0'))
+  const [holdingTotal, setHoldingTotal] = useState<TokenAmount>(
+    new TokenAmount(getPegCurrency(chainId) ?? USDT_MAINNET, '0')
+  )
+  const [debtTotal, setDebtTotal] = useState(new TokenAmount(getPegCurrency(chainId) ?? USDT_MAINNET, '0'))
   const [borrowAPRs, setBorrowAPRs] = useState<Record<string, number>>({})
   const [allowances, setAllowances] = useState<Record<string, number>>({})
   const [borrowableAmounts, setBorrowableAmounts] = useState<Record<string, TokenAmount>>({})
@@ -307,9 +309,15 @@ export const MarginAccount = () => {
         })
       ),
       // holding total (sum of all account balances)
-      new TokenAmount(getPegCurrency(chainId), (await getAccountHoldingTotal(account, chainId, provider)).toString()),
+      new TokenAmount(
+        getPegCurrency(chainId) ?? USDT_MAINNET,
+        (await getAccountHoldingTotal(account, chainId, provider)).toString()
+      ),
       // debt total (sum of all debt balances)
-      new TokenAmount(getPegCurrency(chainId), (await getAccountBorrowTotal(account, chainId, provider)).toString())
+      new TokenAmount(
+        getPegCurrency(chainId) ?? USDT_MAINNET,
+        (await getAccountBorrowTotal(account, chainId, provider)).toString()
+      )
     ])
     // interest rates by token
     setBorrowAPRs(
@@ -384,7 +392,7 @@ export const MarginAccount = () => {
         tokens.map(async token => {
           const tokenToken = new Token(chainId, token.address, token.decimals)
           const bipString = await borrowableInPeg(account, chainId, provider)
-          const bip = new TokenAmount(getPegCurrency(chainId), bipString)
+          const bip = new TokenAmount(getPegCurrency(chainId) ?? USDT_MAINNET, bipString)
 
           if (bip) {
             return new TokenAmount(
@@ -401,7 +409,7 @@ export const MarginAccount = () => {
         tokens.map(async token => {
           const tokenToken = new Token(chainId, token.address, token.decimals)
           const wipString = await withdrawableInPeg(account, chainId, provider)
-          const wip = new TokenAmount(getPegCurrency(chainId), wipString)
+          const wip = new TokenAmount(getPegCurrency(chainId) ?? USDT_MAINNET, wipString)
 
           if (wip) {
             const tokenAmount = (
@@ -417,9 +425,15 @@ export const MarginAccount = () => {
       // wallet token balances
       Promise.all(tokens.map(token => getTokenBalance(account, token.address, provider))),
       // holding total (sum of all account balances)
-      new TokenAmount(getPegCurrency(chainId), (await getAccountHoldingTotal(account, chainId, provider)).toString()),
+      new TokenAmount(
+        getPegCurrency(chainId) ?? USDT_MAINNET,
+        (await getAccountHoldingTotal(account, chainId, provider)).toString()
+      ),
       // debt total (sum of all debt balances)
-      new TokenAmount(getPegCurrency(chainId), (await getAccountBorrowTotal(account, chainId, provider)).toString())
+      new TokenAmount(
+        getPegCurrency(chainId) ?? USDT_MAINNET,
+        (await getAccountBorrowTotal(account, chainId, provider)).toString()
+      )
     ])
 
     /*** now set the state for all that data ***/

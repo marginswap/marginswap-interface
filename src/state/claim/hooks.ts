@@ -80,7 +80,7 @@ export function useUserUnclaimedAmount(account: string | null | undefined): Toke
   const userClaimData = useUserClaimData(account)
   const canClaim = useUserHasAvailableClaim(account)
 
-  const uni = chainId ? UNI[chainId] : undefined
+  const uni = chainId === ChainId.MAINNET ? UNI[ChainId.MAINNET] : undefined
   if (!uni) return undefined
   if (!canClaim || !userClaimData) {
     return new TokenAmount(uni, JSBI.BigInt(0))

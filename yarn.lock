@@ -2001,15 +2001,15 @@
   dependencies:
     "@json-rpc-tools/types" "^1.6.1"
 
-"@marginswap/core-abi@1.2.1", "@marginswap/core-abi@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@marginswap/core-abi/-/core-abi-1.2.1.tgz#690590effb0a9486ba60abfb1d4e76af0657d325"
-  integrity sha512-ivY1vB1pO4194clzMIjJGh6GXUc40g1Ibj3YXEx/ZQ0G46Ser60bADVYJfhN+9Up6/O4SDa3m0Y/7lDMD3mKJA==
+"@marginswap/core-abi@^1.2.6":
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/@marginswap/core-abi/-/core-abi-1.2.6.tgz#354ae5cffded5097a72a77350ae22a5deae6f23b"
+  integrity sha512-mnC92vef2SRC7Zn/9ytMRskILvedvHA4xGqrJqVJldh1DfOsHIPxpv6fFJrw6mXyDoBmi644NATDn6oG0Y+ezQ==
 
-"@marginswap/sdk@^4.2.2":
-  version "4.2.2"
-  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.2.2.tgz#534e4c4d6abfc08ec577d8b56de5a3a881d6bdd8"
-  integrity sha512-Wo+GT3Yp8rMWnnJQ2ZIHIDszX5pO5Y0yqw1LmMxs48NVoyvnfA+JlHx9odVLpudgaJulF/g0kdUEZ/fmtKPGyQ==
+"@marginswap/sdk@^4.2.10":
+  version "4.2.10"
+  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.2.10.tgz#e05badf1f6abf913963f3c606d3d2faa14b44a3e"
+  integrity sha512-IqAPXzmKIr1yMRWvRM2/KDEEo+K4d0xYpG66Q5jh6OHMoI0HDLpQS/eUmJp490O/9Xi/RsGQjzBDymIKyOqTtg==
   dependencies:
     "@ethersproject/abstract-provider" "^5.1.0"
     "@ethersproject/abstract-signer" "^5.1.0"
@@ -2020,7 +2020,7 @@
     "@ethersproject/networks" "^5.1.0"
     "@ethersproject/providers" "^5.1.0"
     "@ethersproject/solidity" "^5.1.0"
-    "@marginswap/core-abi" "1.2.1"
+    "@marginswap/core-abi" "^1.2.6"
     "@uniswap/v2-core" "^1.0.0"
     big.js "^5.2.2"
     decimal.js-light "^2.5.0"
@@ -2639,6 +2639,13 @@
   version "4.5.6"
   resolved "https://registry.yarnpkg.com/@types/lodash.flatmap/-/lodash.flatmap-4.5.6.tgz#5f1ea80cebe403f0fbfcc1b5ad75cd09dd8b5785"
   integrity sha512-ELNrUL9q+MB7AACaHivWIsKDFDgYhHE3/svXhqvDJgONtn2c467Cy87nEb7CEDvfaGCPv91lPaW596I8s5oiNQ==
+  dependencies:
+    "@types/lodash" "*"
+
+"@types/lodash.isequal@^4.5.5":
+  version "4.5.5"
+  resolved "https://registry.yarnpkg.com/@types/lodash.isequal/-/lodash.isequal-4.5.5.tgz#4fed1b1b00bef79e305de0352d797e9bb816c8ff"
+  integrity sha512-4IKbinG7MGP131wRfceK6W4E/Qt3qssEFLF30LnJbjYiSfHGGRU/Io8YxXrZX109ir+iDETC8hw8QsDijukUVg==
   dependencies:
     "@types/lodash" "*"
 
@@ -10119,6 +10126,11 @@ lodash.flatten@^4.4.0:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/lodash.flatten/-/lodash.flatten-4.4.0.tgz#f31c22225a9632d2bbf8e4addbef240aa765a61f"
   integrity sha1-8xwiIlqWMtK7+OSt2+8kCqdlph8=
+
+lodash.isequal@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
+  integrity sha1-QVxEePK8wwEgwizhDtMib30+GOA=
 
 lodash.memoize@^4.1.2:
   version "4.1.2"
