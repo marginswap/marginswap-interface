@@ -17,7 +17,7 @@ import {
   approveToFund,
   TokenAmount,
   getTokenAllowances,
-  //  crossBorrow,
+  crossBorrow,
   getTokenBalance,
   Token,
   crossDepositETH,
@@ -170,7 +170,33 @@ export const MarginAccount = () => {
     provider = getProviderOrSigner(library, account)
   }
 
-  const ACCOUNT_ACTIONS = [
+  const BORROW_ACCOUNT_ACTION = [
+    {
+      name: 'Borrow',
+      onClick: async (token: AccountBalanceData, amount: number) => {
+        if (!amount || !chainId) return
+        try {
+          const res: any = await crossBorrow(
+            token.address,
+            utils.parseUnits(String(amount), token.decimals).toHexString(),
+            chainId,
+            provider
+          )
+          addTransaction(res, {
+            summary: `Borrow`
+          })
+          setTriggerDataPoll(true)
+          getUserMarginswapData()
+        } catch (e) {
+          toast.error('Borrow error', { position: 'bottom-right' })
+          console.error(error)
+        }
+      },
+      deriveMaxFrom: 'maxBorrow'
+    }
+  ]
+
+  const ACCOUNT_ACTIONS: any = [
     // {
     //   name: 'Borrow',
     //   onClick: async (token: AccountBalanceData, amount: number) => {
@@ -517,7 +543,7 @@ export const MarginAccount = () => {
           Deposit: () => (allowances[token.address] > 0 ? 'Confirm Transaction' : 'Approve')
         },
         customActions:
-          token.symbol === 'WETH' && (eth === '1' || chainId !== 1)
+          token.symbol === 'WETH' && eth === '1'
             ? ([
                 {
                   name: 'Deposit ETH',
@@ -613,7 +639,7 @@ export const MarginAccount = () => {
           title="Account balance"
           data={data}
           columns={ACCOUNT_COLUMNS}
-          actions={ACCOUNT_ACTIONS}
+          actions={chainId !== 1 ? ACCOUNT_ACTIONS.concat(BORROW_ACCOUNT_ACTION) : ACCOUNT_ACTIONS}
           deriveEmptyFrom={['balance', 'borrowed']}
           idCol="coin"
           isTxnPending={!!pendingTxhHash}
