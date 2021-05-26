@@ -164,7 +164,7 @@ export const MarginAccount = () => {
     if (!isTxnPending && pendingTxhHash) {
       setPendingTxhHash(null)
 
-      //delayedFetchUserData()
+      delayedFetchUserData()
     }
   }, [isTxnPending])
 

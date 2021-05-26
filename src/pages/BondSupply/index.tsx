@@ -119,7 +119,7 @@ export const BondSupply = () => {
     if (!isTxnPending && pendingTxhHash) {
       setPendingTxhHash(null)
 
-      //delayedFetchUserData()
+      delayedFetchUserData()
     }
   }, [isTxnPending])
 
