@@ -122,6 +122,7 @@ const DATA_POLLING_INTERVAL = 60 * 1000
 export const MarginAccount = () => {
   const { library, chainId } = useActiveWeb3React()
   const { eth } = useParsedQueryString()
+  const [chainRefresh, setChainRefresh] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [tokens, setTokens] = useState<TokenInfo[]>([])
@@ -156,10 +157,14 @@ export const MarginAccount = () => {
   }
 
   useEffect(() => {
+    setChainRefresh(true)
+  }, [chainId])
+
+  useEffect(() => {
     if (!isTxnPending && pendingTxhHash) {
       setPendingTxhHash(null)
 
-      delayedFetchUserData()
+      //delayedFetchUserData()
     }
   }, [isTxnPending])
 
@@ -483,6 +488,8 @@ export const MarginAccount = () => {
 
     // debt total (sum of all debt balances)
     setDebtTotal(_debtTotal)
+
+    setChainRefresh(false)
   }
   /**
    * ^^^ END Get User MarginSwap Data ^^^
@@ -584,6 +591,14 @@ export const MarginAccount = () => {
     ]
   )
 
+  const holdingTotalAmount = () => {
+    if (chainRefresh) return 0
+
+    return holdingTotal.greaterThan(debtTotal) || holdingTotal.equalTo(debtTotal)
+      ? holdingTotal?.subtract(debtTotal).toSignificant()
+      : `- ${debtTotal?.subtract(holdingTotal).toSignificant()}`
+  }
+
   return (
     <StyledWrapperDiv>
       <StyledSectionDiv>
@@ -598,17 +613,7 @@ export const MarginAccount = () => {
           />
           <StyledMobileOnlyRow>
             <InfoCard title="Debt" amount={debtTotal.toSignificant()} small Icon={IconScales} />
-            <InfoCard
-              title="Equity"
-              amount={
-                holdingTotal.greaterThan(debtTotal) || holdingTotal.equalTo(debtTotal)
-                  ? holdingTotal?.subtract(debtTotal).toSignificant()
-                  : `- ${debtTotal?.subtract(holdingTotal).toSignificant()}`
-              }
-              color="secondary"
-              small
-              Icon={IconCoin}
-            />
+            <InfoCard title="Equity" amount={holdingTotalAmount()} color="secondary" small Icon={IconCoin} />
           </StyledMobileOnlyRow>
           <RiskMeter risk={getRisk(Number(holdingTotal.toSignificant()), Number(debtTotal.toSignificant()))} />
         </StyledTableContainer>

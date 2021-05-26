@@ -79,6 +79,7 @@ const apyFromApr = (apr: number, compounds: number): number =>
 export const BondSupply = () => {
   const { library, chainId } = useActiveWeb3React()
   const [error, setError] = useState<string | null>(null)
+  const [chainRefresh, setChainRefresh] = useState(false)
 
   const [tokens, setTokens] = useState<TokenInfo[]>([])
   const [bondBalances, setBondBalances] = useState<Record<string, string>>({})
@@ -90,6 +91,10 @@ export const BondSupply = () => {
   const [pollingInterval, setPollingInterval] = useState<ReturnType<typeof setInterval> | null>()
   const [triggerDataPoll, setTriggerDataPoll] = useState<boolean>(true)
   const [pendingTxhHash, setPendingTxhHash] = useState<string | null>()
+
+  useEffect(() => {
+    setChainRefresh(true)
+  }, [chainId])
 
   useEffect(() => {
     setTokens(tokensList.tokens.filter(t => t.chainId === chainId))
@@ -250,6 +255,8 @@ export const BondSupply = () => {
         {}
       )
     )
+
+    setChainRefresh(false)
   }
   /**
    * ^^^ END Get User MarginSwap Data ^^^
@@ -387,7 +394,13 @@ export const BondSupply = () => {
     return (totalAnnualEarnings / 365).toFixed(2)
   }, [tokens, bondAPRs, bondUSDCosts])
 
-  console.log('BOND USD COSTS', bondUSDCosts)
+  const bondUSDCostsAmount = () => {
+    if (chainRefresh) return 0
+
+    return `$${Object.keys(bondUSDCosts)
+      .reduce((acc, cur) => acc.add(bondUSDCosts[cur]), ZERO_DAI)
+      .toSignificant()}`
+  }
 
   return (
     <StyledWrapperDiv>
@@ -395,13 +408,7 @@ export const BondSupply = () => {
         {!account && <WarningBar>Wallet not connected</WarningBar>}
         {error && <ErrorBar>{error}</ErrorBar>}
         <StyledTableContainer>
-          <InfoCard
-            title="Total Bond"
-            amount={`$${Object.keys(bondUSDCosts)
-              .reduce((acc, cur) => acc.add(bondUSDCosts[cur]), ZERO_DAI)
-              .toSignificant()}`}
-            Icon={IconMoneyStackLocked}
-          />
+          <InfoCard title="Total Bond" amount={bondUSDCostsAmount()} Icon={IconMoneyStackLocked} />
           <InfoCard title="Average Yield" amount={`${averageYield}%`} ghost Icon={IconMoneyStackLocked} />
           <InfoCard
             title="Earnings per day"
