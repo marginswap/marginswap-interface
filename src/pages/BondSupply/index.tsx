@@ -93,7 +93,7 @@ export const BondSupply = () => {
 
   useEffect(() => {
     setTokens(tokensList.tokens.filter(t => t.chainId === chainId))
-  }, [])
+  }, [tokensList, chainId])
 
   const { account } = useWeb3React()
   const isTxnPending = useIsTransactionPending(pendingTxhHash || '')
@@ -102,6 +102,7 @@ export const BondSupply = () => {
     setPendingTxhHash(responseObject.hash)
   }
 
+  //TODO REVIEW WITH JORDAN THIS
   const delayedFetchUserData = () => {
     setTimeout(() => {
       getUserMarginswapData()
@@ -113,7 +114,7 @@ export const BondSupply = () => {
     if (!isTxnPending && pendingTxhHash) {
       setPendingTxhHash(null)
 
-      delayedFetchUserData()
+      //delayedFetchUserData()
     }
   }, [isTxnPending])
 
@@ -208,7 +209,7 @@ export const BondSupply = () => {
    *
    */
   const getUserMarginswapData = async () => {
-    if (!chainId || !account || !tokens?.length) return
+    if (!chainId || !account || !tokens?.length || chainId !== tokens[0].chainId) return
 
     // a big Promise.all to fetch all the data
     const [_balances, _allowances, _tokenBalances] = await Promise.all([

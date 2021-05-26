@@ -364,7 +364,7 @@ export const MarginAccount = () => {
    *
    */
   const getUserMarginswapData = async () => {
-    if (!chainId || !account || !tokens?.length) return
+    if (!chainId || !account || !tokens?.length || chainId !== tokens[0].chainId) return
 
     // a big Promise.all to fetch all the data
     const [
