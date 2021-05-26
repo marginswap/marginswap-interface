@@ -197,29 +197,6 @@ export const MarginAccount = () => {
   ]
 
   const ACCOUNT_ACTIONS: any = [
-    // {
-    //   name: 'Borrow',
-    //   onClick: async (token: AccountBalanceData, amount: number) => {
-    //     if (!amount || !chainId) return
-    //     try {
-    //       const res: any = await crossBorrow(
-    //         token.address,
-    //         utils.parseUnits(String(amount), token.decimals).toHexString(),
-    //         chainId,
-    //         provider
-    //       )
-    //       addTransaction(res, {
-    //         summary: `Borrow`
-    //       })
-    //       setTriggerDataPoll(true)
-    //       getUserMarginswapData()
-    //     } catch (e) {
-    //       toast.error('Borrow error', { position: 'bottom-right' })
-    //       console.error(error)
-    //     }
-    //   },
-    //   deriveMaxFrom: 'maxBorrow'
-    // },
     //
     // {
     //   name: 'Repay',
@@ -639,7 +616,7 @@ export const MarginAccount = () => {
           title="Account balance"
           data={data}
           columns={ACCOUNT_COLUMNS}
-          actions={chainId !== 1 ? ACCOUNT_ACTIONS.concat(BORROW_ACCOUNT_ACTION) : ACCOUNT_ACTIONS}
+          actions={chainId !== 1 ? [...ACCOUNT_ACTIONS, ...BORROW_ACCOUNT_ACTION] : ACCOUNT_ACTIONS}
           deriveEmptyFrom={['balance', 'borrowed']}
           idCol="coin"
           isTxnPending={!!pendingTxhHash}
