@@ -180,6 +180,8 @@ export const BondSupply = () => {
         {}
       )
     )
+
+    setChainRefresh(false)
   }
 
   // these next two useEffect hooks handle data polling
@@ -255,8 +257,6 @@ export const BondSupply = () => {
         {}
       )
     )
-
-    setChainRefresh(false)
   }
   /**
    * ^^^ END Get User MarginSwap Data ^^^
