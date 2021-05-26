@@ -102,7 +102,7 @@ export const BondSupply = () => {
     setPendingTxhHash(responseObject.hash)
   }
 
-  //TODO REVIEW WITH JORDAN THIS
+  //TODO: REVIEW WITH JORDAN THIS
   const delayedFetchUserData = () => {
     setTimeout(() => {
       getUserMarginswapData()
@@ -365,13 +365,13 @@ export const BondSupply = () => {
   }, [tokens, bondAPRs, bondUSDCosts])
 
   const earningsPerDay = useMemo(() => {
-    if (!Object.keys(bondUSDCosts).length || !Object.keys(bondAPRs).length) {
+    /*if (!Object.keys(bondUSDCosts).length || !Object.keys(bondAPRs).length) {
       return 0
-    }
+    }*/
 
     const totalAnnualEarnings = tokens.reduce((acc, cur) => {
       const apy = apyFromApr(bondAPRs[cur.address], 365 * 24)
-      const bondBalance = Number(bondUSDCosts[cur.address].toSignificant(4))
+      const bondBalance = Number(bondUSDCosts[cur.address]?.toSignificant(4))
 
       if (apy > 0 && bondBalance > 0) {
         return acc + (apy / 100) * bondBalance
@@ -386,6 +386,8 @@ export const BondSupply = () => {
 
     return (totalAnnualEarnings / 365).toFixed(2)
   }, [tokens, bondAPRs, bondUSDCosts])
+
+  console.log('BOND USD COSTS', bondUSDCosts)
 
   return (
     <StyledWrapperDiv>

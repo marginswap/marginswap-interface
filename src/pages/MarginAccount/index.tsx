@@ -277,6 +277,7 @@ export const MarginAccount = () => {
   useEffect(() => {
     const tokensToSet = tokensList.tokens.filter(t => t.chainId === chainId)
     setTokens(tokensToSet)
+    setHoldingTotal(new TokenAmount(getPegCurrency(chainId) ?? USDT_MAINNET, '0'))
   }, [tokensList, chainId])
 
   /**
@@ -476,8 +477,10 @@ export const MarginAccount = () => {
         {}
       )
     )
+
     // holding total (sum of all account balances)
     setHoldingTotal(_holdingTotal)
+
     // debt total (sum of all debt balances)
     setDebtTotal(_debtTotal)
   }
@@ -599,8 +602,8 @@ export const MarginAccount = () => {
               title="Equity"
               amount={
                 holdingTotal.greaterThan(debtTotal) || holdingTotal.equalTo(debtTotal)
-                  ? holdingTotal.subtract(debtTotal).toSignificant()
-                  : `- ${debtTotal.subtract(holdingTotal).toSignificant()}`
+                  ? holdingTotal?.subtract(debtTotal).toSignificant()
+                  : `- ${debtTotal?.subtract(holdingTotal).toSignificant()}`
               }
               color="secondary"
               small
