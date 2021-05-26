@@ -517,7 +517,7 @@ export const MarginAccount = () => {
           Deposit: () => (allowances[token.address] > 0 ? 'Confirm Transaction' : 'Approve')
         },
         customActions:
-          token.symbol === 'WETH' && eth === '1'
+          token.symbol === 'WETH' && (eth === '1' || chainId !== 1)
             ? ([
                 {
                   name: 'Deposit ETH',
