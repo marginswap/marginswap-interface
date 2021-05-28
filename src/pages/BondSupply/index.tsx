@@ -79,6 +79,7 @@ const apyFromApr = (apr: number, compounds: number): number =>
 export const BondSupply = () => {
   const { library, chainId } = useActiveWeb3React()
   const [error, setError] = useState<string | null>(null)
+  const [chainRefresh, setChainRefresh] = useState(false)
 
   const [tokens, setTokens] = useState<TokenInfo[]>([])
   const [bondBalances, setBondBalances] = useState<Record<string, string>>({})
@@ -92,8 +93,12 @@ export const BondSupply = () => {
   const [pendingTxhHash, setPendingTxhHash] = useState<string | null>()
 
   useEffect(() => {
+    setChainRefresh(true)
+  }, [chainId])
+
+  useEffect(() => {
     setTokens(tokensList.tokens.filter(t => t.chainId === chainId))
-  }, [])
+  }, [tokensList, chainId])
 
   const { account } = useWeb3React()
   const isTxnPending = useIsTransactionPending(pendingTxhHash || '')
@@ -102,6 +107,7 @@ export const BondSupply = () => {
     setPendingTxhHash(responseObject.hash)
   }
 
+  //TODO: REVIEW WITH JORDAN THIS
   const delayedFetchUserData = () => {
     setTimeout(() => {
       getUserMarginswapData()
@@ -174,6 +180,8 @@ export const BondSupply = () => {
         {}
       )
     )
+
+    setChainRefresh(false)
   }
 
   // these next two useEffect hooks handle data polling
@@ -208,7 +216,7 @@ export const BondSupply = () => {
    *
    */
   const getUserMarginswapData = async () => {
-    if (!chainId || !account || !tokens?.length) return
+    if (!chainId || !account || !tokens?.length || chainId !== tokens[0].chainId) return
 
     // a big Promise.all to fetch all the data
     const [_balances, _allowances, _tokenBalances] = await Promise.all([
@@ -364,13 +372,13 @@ export const BondSupply = () => {
   }, [tokens, bondAPRs, bondUSDCosts])
 
   const earningsPerDay = useMemo(() => {
-    if (!Object.keys(bondUSDCosts).length || !Object.keys(bondAPRs).length) {
+    /*if (!Object.keys(bondUSDCosts).length || !Object.keys(bondAPRs).length) {
       return 0
-    }
+    }*/
 
     const totalAnnualEarnings = tokens.reduce((acc, cur) => {
       const apy = apyFromApr(bondAPRs[cur.address], 365 * 24)
-      const bondBalance = Number(bondUSDCosts[cur.address].toSignificant(4))
+      const bondBalance = Number(bondUSDCosts[cur.address]?.toSignificant(4))
 
       if (apy > 0 && bondBalance > 0) {
         return acc + (apy / 100) * bondBalance
@@ -386,19 +394,21 @@ export const BondSupply = () => {
     return (totalAnnualEarnings / 365).toFixed(2)
   }, [tokens, bondAPRs, bondUSDCosts])
 
+  const bondUSDCostsAmount = () => {
+    if (chainRefresh) return 0
+
+    return `$${Object.keys(bondUSDCosts)
+      .reduce((acc, cur) => acc.add(bondUSDCosts[cur]), ZERO_DAI)
+      .toSignificant()}`
+  }
+
   return (
     <StyledWrapperDiv>
       <StyledSectionDiv>
         {!account && <WarningBar>Wallet not connected</WarningBar>}
         {error && <ErrorBar>{error}</ErrorBar>}
         <StyledTableContainer>
-          <InfoCard
-            title="Total Bond"
-            amount={`$${Object.keys(bondUSDCosts)
-              .reduce((acc, cur) => acc.add(bondUSDCosts[cur]), ZERO_DAI)
-              .toSignificant()}`}
-            Icon={IconMoneyStackLocked}
-          />
+          <InfoCard title="Total Bond" amount={bondUSDCostsAmount()} Icon={IconMoneyStackLocked} />
           <InfoCard title="Average Yield" amount={`${averageYield}%`} ghost Icon={IconMoneyStackLocked} />
           <InfoCard
             title="Earnings per day"
