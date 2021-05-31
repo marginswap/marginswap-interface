@@ -1,14 +1,10 @@
 import React from 'react'
 import { StyledSelect } from './styleds'
 
-type SelectOption = {
-  options: { value: string; label: string }[]
-}
-
-const Select = ({ options, ...props }: SelectOption) => {
+export function Select({ register, options, name, ...rest }: any) {
   return (
-    <StyledSelect {...props}>
-      {options.map(option => (
+    <StyledSelect {...register(name)} {...rest}>
+      {options.map((option: any) => (
         <option key={option.value} value={option.value}>
           {option.label}
         </option>

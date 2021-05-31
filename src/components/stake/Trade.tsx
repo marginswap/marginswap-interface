@@ -35,7 +35,7 @@ interface StakeProps {
 export default function TradeStake({ chainId, provider, address, account }: StakeProps) {
   const [mfiStake, setMfiStake] = useState(true)
 
-  const { control, watch, setValue } = useForm()
+  const { control, watch, setValue, register } = useForm()
 
   const amount = watch('amount', '0')
   const transactionType = watch('transactionType', 1)
@@ -123,18 +123,8 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
         </PaddedColumn>
         <Wrapper>
           <DropdownsContainer>
-            <Controller
-              name="transactionType"
-              defaultValue={1}
-              control={control}
-              render={({ field }) => <Select options={transactionTypeOptions} {...field} />}
-            />
-            <Controller
-              name="period"
-              defaultValue={1}
-              control={control}
-              render={({ field }) => <Select options={periodSelectOptions} {...field} />}
-            />
+            <Select name="transactionType" options={transactionTypeOptions} register={register} />
+            <Select name="period" options={periodSelectOptions} register={register} />
           </DropdownsContainer>
           {mfiStake ? (
             <MFIData chainId={chainId} provider={provider} address={address} period={period.value} />

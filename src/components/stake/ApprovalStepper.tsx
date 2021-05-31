@@ -4,7 +4,7 @@ import Column from '../../components/Column'
 import Loader from '../../components/Loader'
 import { RowBetween, AutoRow } from '../Row'
 import ProgressSteps from '../ProgressSteps'
-import { ButtonPrimary, ButtonConfirmed, ButtonError } from '../Button'
+import { ButtonPrimary, ButtonConfirmed } from '../Button'
 
 import { ApprovalState } from '../../hooks/useApproveCallback'
 
