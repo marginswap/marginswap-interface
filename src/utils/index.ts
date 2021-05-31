@@ -177,6 +177,15 @@ const builders = {
   }
 }
 
+export function getExplorerLink(
+  chainId: ChainId,
+  data: string,
+  type: 'transaction' | 'token' | 'address' | 'block'
+): string {
+  const chain = chains[chainId]
+  return chain.builder(chain.chainName, data, type)
+}
+
 interface ChainObject {
   [chainId: number]: {
     chainName: string
@@ -277,15 +286,6 @@ const chains: ChainObject = {
   //     chainName: '',
   //     builder: builders.okexTestnet
   // }
-}
-
-export function getExplorerLink(
-  chainId: ChainId,
-  data: string,
-  type: 'transaction' | 'token' | 'address' | 'block'
-): string {
-  const chain = chains[chainId]
-  return chain.builder(chain.chainName, data, type)
 }
 
 // shorten the checksummed version of the input address to have 0x + 4 characters at start and end
