@@ -64,9 +64,6 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
     const signedContract = getMFIStakingContract(chainId, provider, account)
     const tokenAmt = utils.parseUnits(amount, 18)
 
-    console.log(transactionType)
-    console.log(transactionTypeOptions[2].value.toString())
-
     if (signedContract) {
       if (transactionType.toString() === transactionTypeOptions[0].value) {
         stake(signedContract, tokenAmt.toHexString(), Duration.ONE_WEEK)
