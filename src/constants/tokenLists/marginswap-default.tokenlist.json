@@ -148,6 +148,46 @@
       "symbol": "USDT",
       "decimals": 6,
       "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/tether.png"
-    }
+    },
+    {
+      "address": "0xf20d962a6c8f70c731bd838a3a388D7d48fA6e15",
+      "chainId": 43114,
+      "name": "Wrapped ETH",
+      "symbol": "WETH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/marginswap/token-list/main/logo/ethereum.png"
+    },
+    {
+      "address": "0x408D4cD0ADb7ceBd1F1A1C33A0Ba2098E1295bAB",
+      "chainId": 43114,
+      "name": "Wrapped BTC",
+      "symbol": "WBTC",
+      "decimals": 8,
+      "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/wrapped-bitcoin.png"
+    },
+    {
+      "address": "0xde3A24028580884448a5397872046a019649b084",
+      "chainId": 43114,
+      "name": "Tether USD",
+      "symbol": "USDT",
+      "decimals": 6,
+      "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/tether.png"
+    },
+    {
+      "chainId": 43114,
+      "address": "0x60781C2586D68229fde47564546784ab3fACA982",
+      "decimals": 18,
+      "name": "Pangolin",
+      "symbol": "PNG",
+      "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/png.png"
+    },
+    {
+       "chainId": 43114,
+       "address": "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
+       "decimals": 18,
+       "name": "Wrapped AVAX",
+       "symbol": "WAVAX",
+       "logoURI": "https://github.com/marginswap/token-list/raw/main/logo/wavax.png"
+     }
   ]
 }

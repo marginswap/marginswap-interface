@@ -15,6 +15,7 @@ import { useDelegateCallback } from '../../state/governance/hooks'
 import { useTokenBalance } from '../../state/wallet/hooks'
 import { UNI } from '../../constants'
 import { LoadingView, SubmittedView } from '../ModalViews'
+import { ChainId } from '@marginswap/sdk'
 
 const ContentWrapper = styled(AutoColumn)`
   width: 100%;
@@ -55,7 +56,10 @@ export default function DelegateModal({ isOpen, onDismiss, title }: VoteModalPro
   const { address: parsedAddress } = useENS(activeDelegate)
 
   // get the number of votes available to delegate
-  const uniBalance = useTokenBalance(account ?? undefined, chainId ? UNI[chainId] : undefined)
+  const uniBalance = useTokenBalance(
+    account ?? undefined,
+    chainId === ChainId.MAINNET ? UNI[ChainId.MAINNET] : undefined
+  )
 
   const delegateCallback = useDelegateCallback()
 

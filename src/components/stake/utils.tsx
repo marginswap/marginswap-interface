@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon'
+
 export function getAPRPerPeriod(apr: any, period: string): number {
   switch (period) {
     case 'One month':
@@ -15,4 +17,9 @@ export function getNotificationMsn(isAble: boolean, isError: boolean): string {
   if (!isAble) return 'Enter Amount'
 
   return 'Ok'
+}
+
+export function getAvailableWithdrawalTime(seconds: number | undefined): string {
+  if (!seconds) return 'Unknow'
+  return DateTime.local().plus({ seconds }).toLocaleString(DateTime.DATETIME_SHORT)
 }

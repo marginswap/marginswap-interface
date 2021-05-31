@@ -1,53 +1,28 @@
-import React, { useState, ChangeEvent, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 
-import { useCurrency, useDefaultTokens, useAllTokens, useIsUserAddedToken } from '../../hooks/Tokens'
-import { useCurrencyBalance } from '../../state/wallet/hooks'
-import {
-  getMFIStaking,
-  getLiquidityMiningReward,
-  getMFIAPRPerWeight,
-  getLiquidityAPRPerWeight,
-  canWithdraw,
-  accruedReward,
-  ChainId,
-  getTimeUntilLockEnd,
-  withdrawReward,
-  withdrawStake,
-  TokenAmount,
-  stake,
-  getAccountHoldingTotal,
-  BigintIsh,
-  Duration,
-  Trade,
-  LeverageType
-} from '@marginswap/sdk'
+import MFIData from './MFIData'
+import LiquidityData from './LiquidityData'
 
-import {
-  useDefaultsFromURLSearch,
-  useDerivedSwapInfo,
-  useSwapActionHandlers,
-  useSwapState
-} from '../../state/swap/hooks'
-import { useTradeExactIn, useTradeExactOut } from '../../hooks/Trades'
-import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } from '../../state/user/hooks'
-import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
+import { useAllTokens } from '../../hooks/Tokens'
+import { ChainId, TokenAmount, stake, withdrawStake, withdrawReward, Duration, getTokenBalance } from '@marginswap/sdk'
+
+import { ApprovalState, useApproveCallbackFromStakeTrade } from '../../hooks/useApproveCallback'
 
 import AppBody from '../../pages/AppBody'
 import { TYPE, StyledButton } from '../../theme'
-import { RowBetween, AutoRow } from '../Row'
-import { ButtonPrimary, ButtonConfirmed, ButtonError } from '../Button'
+import { RowBetween } from '../Row'
 import Select from '../Select'
 import ToggleSelector from '../ToggleSelector'
 import { GreyCard } from '../../components/Card'
 import ApprovalStepper from './ApprovalStepper'
 
+import { getMFIStakingContract } from 'utils'
+import { getNotificationMsn } from './utils'
 import { utils } from 'ethers'
-import { getAPRPerPeriod, getNotificationMsn } from './utils'
-import { getMFIStakingContract } from '../../utils'
 
-import { DropdownsContainer, DataContainer, StyledOutlinedInput, StyledStakeHeader } from './styleds'
-import { PaddedColumn, BottomGrouping, Wrapper } from '../swap/styleds'
+import { DropdownsContainer, StyledOutlinedInput, StyledStakeHeader } from './styleds'
+import { PaddedColumn, Wrapper } from '../swap/styleds'
 import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
 
 interface StakeProps {
@@ -59,150 +34,85 @@ interface StakeProps {
 
 export default function TradeStake({ chainId, provider, address, account }: StakeProps) {
   const [mfiStake, setMfiStake] = useState(true)
-  const [withdrawRewardValue, setWithdrawRewardValue] = useState(0)
-  const [withdrawStakeValue, setWithdrawStakeValue] = useState(0)
-  const [estimatedAPR, setEstimatedAPR] = useState(0)
-  const [currentStakedBalance, setCurrentStakedBalance] = useState(0)
-  const [availableForWithdrawAfter, setAvailableForWithdrawAfter] = useState(undefined)
 
-  const { handleSubmit, control, watch, setValue } = useForm()
+  const { control, watch, setValue } = useForm()
 
-  const amount = watch('amount', '')
-  const transactionType = watch('transactionType', 'Deposit')
-  const period = watch('period', 'One Week')
+  const amount = watch('amount', '0')
+  const transactionType = watch('transactionType', 1)
+  const period = watch('period', 1)
 
   const allTokens = useAllTokens()
   const getMFIToken = allTokens['0xAa4e3edb11AFa93c41db59842b29de64b72E355B']
-  const customAdded = useIsUserAddedToken(getMFIToken)
-  const balance = useCurrencyBalance(account ?? undefined, getMFIToken)
 
+  //TODO: REVIEW WITH GABRIEL: IF AMOUNT IS FLOAT TYPE, RETURNS AN ERROR -> CANNOT CONVERT TO BIGINT
   // check whether the user has approved the router on the input token
-  const [approval, approveCallback] = useApproveCallback(new TokenAmount(getMFIToken, amount), getMFIToken.address)
+  const [approval, approveCallback] = useApproveCallbackFromStakeTrade(mfiStake, new TokenAmount(getMFIToken, amount))
+  console.log('🚀 ~ file: Trade.tsx ~ line 51 ~ TradeStake ~ approval', approval)
 
-  // check if user has gone through approval process, used to show two step buttons, reset on token change
-  const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false)
+  const approvalSubmitted = approval === ApprovalState.APPROVED || approval === ApprovalState.PENDING
 
-  // mark when a user has submitted an approval, reset onTokenSelection for input field
-  useEffect(() => {
-    if (approval === ApprovalState.PENDING) {
-      setApprovalSubmitted(true)
+  const handleMaxAmount = async () => {
+    if (provider) {
+      const balance = await getTokenBalance(address, getMFIToken.address, provider)
+      console.log('BALANCE ::', utils.formatUnits(balance, getMFIToken.decimals))
+      //TODO: REVIEW THE NUMBER().toFixed(0) TYPE WITH GABRIEL.
+      setValue('amount', Number(utils.formatUnits(balance, getMFIToken.decimals)).toFixed(0))
     }
-  }, [approval, approvalSubmitted])
+  }
 
-  const {
-    onSwitchTokens,
-    onCurrencySelection,
-    onUserInput,
-    onChangeRecipient,
-    onSwitchLeverageType
-  } = useSwapActionHandlers()
+  const handleStake = async () => {
+    const signedContract = getMFIStakingContract(chainId, provider, account)
+    const tokenAmt = utils.parseUnits(amount, 18)
 
-  // show approve flow when: no error on inputs, not approved or pending, or approved in current session
-  // never show if price impact is above threshold in non expert mode
-  const showApproveFlow =
-    approval === ApprovalState.NOT_APPROVED ||
-    approval === ApprovalState.PENDING ||
-    (approvalSubmitted && approval === ApprovalState.APPROVED)
+    console.log(transactionType)
+    console.log(transactionTypeOptions[2].value.toString())
 
-  let contract: any
-  let contract2: any
-
-  //console.log(`CHAIN ID: ${chainId}, PROVIDER: ${provider}, MFI STAKE: ${mfiStake}`)
-  //console.log(`TRANSITON TYPE: ${transactionType} PERIOD: ${period}`)
-
-  if (chainId && provider) {
-    if (mfiStake) {
-      contract = getMFIStaking(chainId, provider)
-      getMFIAPRPerWeight(contract, provider)
-        .then((aprData: any) => setEstimatedAPR(getAPRPerPeriod(aprData, period)))
-        .catch((e: any) => {
-          console.log('APR ERROR MESSAGE :::', e.message)
-        })
-    } else {
-      contract = getLiquidityMiningReward(chainId, provider)
-      getLiquidityAPRPerWeight(contract, provider)
-        .then((liquityData: any) => setEstimatedAPR(getAPRPerPeriod(liquityData, period)))
-        .catch((e: any) => {
-          console.log('LIQUITY ERROR MESSAGE :::', e.message)
-        })
-    }
-
-    if (contract && address) {
-      if (account) {
-        getAccountHoldingTotal(account, chainId, provider)
-          .then((accHolding: any) => {
-            console.log('account :::::::::::', accHolding.toString())
+    if (signedContract) {
+      if (transactionType.toString() === transactionTypeOptions[0].value) {
+        stake(signedContract, tokenAmt.toHexString(), Duration.ONE_WEEK)
+          .then((data: any) => {
+            console.log('Stake ::', data)
+            setValue('amount', '')
           })
-          .catch((e: any) => {
-            console.log('accHolding ERROR MESSAGE :::', e.message)
-          })
-
-        contract2 = getMFIStakingContract(chainId, provider, account)
-
-        /*withdrawReward(contract2)
-          .then((wdr: any) => console.log({ wdr }))
-          .catch((e: any) => {
-            console.log('WITHDRAW REWARD ERROR MESSAGE :::', e.message)
-          })
-
-        withdrawStake(contract2, new TokenAmount(getMFIToken, '1000'))
-          .then((ws: any) => console.log({ ws }))
-          .catch((e: any) => {
-            console.log('WITHDRAW STAKE ERROR MESSAGE :::', e.message)
-          })*/
+          .catch((err: any) => console.log('Upps error in stake :', err))
       }
 
-      accruedReward(contract, address)
-        .then((accruedReward: any) => {
-          setCurrentStakedBalance(accruedReward.toNumber())
-        })
-        .catch((e: any) => {
-          console.log('ACCRUED REWARD ERROR MESSAGE :::', e.message)
-        })
+      if (transactionType.toString() === transactionTypeOptions[1].value) {
+        withdrawStake(signedContract, tokenAmt.toHexString())
+          .then((data: any) => {
+            console.log('Withdraw Stake ::', data)
+            setValue('amount', '')
+          })
+          .catch((err: any) => console.log('Upps error in withdrawStake :', err))
+      }
 
-      getTimeUntilLockEnd(contract, address)
-        .then((withDrawAfter: any) => {
-          setAvailableForWithdrawAfter(withDrawAfter)
-        })
-        .catch((e: any) => {
-          console.log('ACCRUED REWARD ERROR MESSAGE :::', e.message)
-        })
-
-      /*canWithdraw(contract, address)
-        .then((canWithdrawData: any) => console.log({ canWithdrawData }))
-        .catch((e: any) => {
-          console.log('CAN WITHDRAW ERROR MESSAGE :::', e.message)
-        })*/
+      if (transactionType.toString() === transactionTypeOptions[2].value) {
+        withdrawReward(signedContract)
+          .then((data: any) => {
+            console.log('Withdraw Reward ::', data)
+            setValue('amount', '')
+          })
+          .catch((err: any) => console.log('Upps error in withdrawReward :', err))
+      }
     }
   }
 
-  const handleMaxAmount = () => {
-    console.log('BALANCE ::', balance?.toSignificant(4).toString())
-    setValue('amount', balance?.toSignificant(4).toString())
-  }
+  const periodSelectOptions = [
+    { value: '1', label: 'One week' },
+    { value: '2', label: 'One month' },
+    { value: '3', label: 'Three months' }
+  ]
 
-  const onSubmit = () => {
-    console.log('here ::')
-    try {
-      const tokenAmt = utils.parseUnits(amount, 18)
-      console.log('🚀 ~ file: Trade.tsx ~ line 162 ~ onSubmit ~ tokenAmt', tokenAmt)
-      console.log('tokenAmt ::', tokenAmt.toHexString())
-
-      stake(contract2, tokenAmt.toHexString(), Duration.ONE_WEEK)
-        .then((data: any) => console.log('STAKE RESULT ::', data))
-        .catch((e: any) => {
-          console.log('STAKE ACTION ERROR MESSAGE :::', e.message)
-        })
-    } catch (error: any) {
-      console.log('error :::', error)
-    }
-  }
-
+  const transactionTypeOptions = [
+    { value: '1', label: 'Deposit' },
+    { value: '2', label: 'Claim' },
+    { value: '3', label: 'Withdraw' }
+  ]
   const isAbleTransaction = Boolean(amount?.length) && Number(amount) > 0
 
   return (
     <AppBody>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form>
         <StyledStakeHeader>
           <RowBetween>
             <TYPE.black fontWeight={500}>Stake</TYPE.black>
@@ -215,33 +125,22 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
           <DropdownsContainer>
             <Controller
               name="transactionType"
-              defaultValue="Deposit"
+              defaultValue={1}
               control={control}
-              render={({ field }) => <Select options={['Deposit', 'Claim', 'Withdraw']} {...field} />}
+              render={({ field }) => <Select options={transactionTypeOptions} {...field} />}
             />
             <Controller
               name="period"
-              defaultValue="One week"
+              defaultValue={1}
               control={control}
-              render={({ field }) => <Select options={['One week', 'One month', 'Three months']} {...field} />}
+              render={({ field }) => <Select options={periodSelectOptions} {...field} />}
             />
           </DropdownsContainer>
-          <DataContainer>
-            <span>
-              Estimated APR: <strong>{`${estimatedAPR}%`}</strong>
-            </span>
-            <span>
-              Accrued reward: <strong>{`${currentStakedBalance} ${mfiStake ? 'MFI' : 'LIQUITY'}`}</strong>
-            </span>
-            <span></span>
-            <span>
-              Current staked balance: <strong>{`${currentStakedBalance} ${mfiStake ? 'MFI' : 'LIQUITY'}`}</strong>
-            </span>
-
-            <span>
-              Available for withdrawal after: <strong>{availableForWithdrawAfter}</strong>
-            </span>
-          </DataContainer>
+          {mfiStake ? (
+            <MFIData chainId={chainId} provider={provider} address={address} period={period.value} />
+          ) : (
+            <LiquidityData chainId={chainId} provider={provider} address={address} period={period.value} />
+          )}
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <div style={{ position: 'relative', width: '100%' }}>
               <Controller
@@ -270,8 +169,16 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
           </div>
           {isAbleTransaction ? (
             <ApprovalStepper
-              firstStepLabel={transactionType}
-              onClick={approveCallback}
+              firstStepLabel={transactionTypeOptions.find(tt => tt.value === transactionType)?.label || ''}
+              firstStepOnClick={e => {
+                e.preventDefault()
+                approveCallback()
+              }}
+              secondStepLabel="Stake"
+              secondStepOnClick={e => {
+                e.preventDefault()
+                handleStake()
+              }}
               approval={approval}
               approvalSubmitted={approvalSubmitted}
             />

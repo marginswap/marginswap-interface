@@ -1,6 +1,15 @@
 import { MaxUint256 } from '@ethersproject/constants'
 import { TransactionResponse } from '@ethersproject/providers'
-import { Trade, TokenAmount, CurrencyAmount, ETHER, LeverageType, getAddresses } from '@marginswap/sdk'
+import {
+  Trade,
+  TokenAmount,
+  CurrencyAmount,
+  ETHER,
+  LeverageType,
+  getAddresses,
+  getLiquidityMiningReward,
+  getMFIStaking
+} from '@marginswap/sdk'
 import { useCallback, useMemo } from 'react'
 import { useTokenAllowance } from '../data/Allowances'
 import { Field } from '../state/swap/actions'
@@ -27,7 +36,6 @@ export function useApproveCallback(
 
   const currentAllowance = useTokenAllowance(token, account ?? undefined, spender)
   const pendingApproval = useHasPendingApproval(token?.address, spender)
-  console.log('🚀 ~ file: useApproveCallback.ts ~ line 30 ~ pendingApproval', pendingApproval)
 
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
@@ -112,5 +120,17 @@ export function useApproveCallbackFromTrade(trade?: Trade | null, allowedSlippag
     const spotRouter = getAddresses(chainId!).SpotRouter
     approveAddress = leverageType === LeverageType.CROSS_MARGIN ? fund : spotRouter
   }
+  return useApproveCallback(amountToApprove, approveAddress)
+}
+
+// wraps useApproveCallback in the context of a stake
+export function useApproveCallbackFromStakeTrade(isMFI: boolean, amountToApprove: CurrencyAmount | undefined) {
+  let approveAddress: string | undefined
+  const { chainId, library } = useActiveWeb3React()
+
+  if (isMFI) approveAddress = getMFIStaking(chainId, library)?.address
+
+  if (!isMFI) approveAddress = getLiquidityMiningReward(chainId, library)?.address
+
   return useApproveCallback(amountToApprove, approveAddress)
 }

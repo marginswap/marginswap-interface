@@ -53,6 +53,10 @@ export const StyledTableCell = styled(TableCell)`
   border-bottom: ${({ style }) => style?.borderBottom ?? '1px solid #777777 !important'};
 `
 
+export const ActionsCell = styled.div<{ size: number }>`
+  width: ${({ size }) => `${size * 100}px`};
+`
+
 export const StyledFormControlLabel = styled(FormControlLabel)`
   color: white;
 

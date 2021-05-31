@@ -151,13 +151,15 @@ export default function CurrencyInputPanel({
   allowManualAddToken
 }: CurrencyInputPanelProps) {
   const [modalOpen, setModalOpen] = useState(false)
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
   const theme = useTheme()
 
   const handleDismissSearch = useCallback(() => {
     setModalOpen(false)
   }, [setModalOpen])
+
+  const currencySymbol = currency?.getSymbol(chainId)
 
   return (
     <InputPanel id={id}>
@@ -219,12 +221,12 @@ export default function CurrencyInputPanel({
                   {pair?.token0.symbol}:{pair?.token1.symbol}
                 </StyledTokenName>
               ) : (
-                <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
-                  {(currency && currency.symbol && currency.symbol.length > 20
-                    ? currency.symbol.slice(0, 4) +
+                <StyledTokenName className="token-symbol-container" active={Boolean(currency?.getSymbol(chainId))}>
+                  {(currencySymbol && currencySymbol.length > 20
+                    ? currencySymbol.slice(0, 4) +
                       '...' +
-                      currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
-                    : currency?.symbol) || 'Select Token'}
+                      currencySymbol.slice(currencySymbol.length - 5, currencySymbol.length)
+                    : currencySymbol) || 'Select Token'}
                 </StyledTokenName>
               )}
               {!disableCurrencySelect && <StyledDropDown selected={!!currency} />}

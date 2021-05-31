@@ -44,6 +44,14 @@ const EMPTY_LIST: TokenAddressMap = {
   [ChainId.ROPSTEN]: {},
   [ChainId.GÖRLI]: {},
   [ChainId.MAINNET]: {},
+  [ChainId.FUJI]: {},
+  [ChainId.MATIC]: {},
+  [ChainId.XDAI]: {},
+  [ChainId.HECO]: {},
+  [ChainId.HARMONY]: {},
+  [ChainId.FANTOM]: {},
+  [ChainId.AVALANCHE]: {},
+  [ChainId.BSC]: {},
   [ChainId.LOCAL]: {}
 }
 
@@ -100,7 +108,15 @@ function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): TokenAddress
     4: { ...map1[4], ...map2[4] },
     5: { ...map1[5], ...map2[5] },
     42: { ...map1[42], ...map2[42] },
-    31337: { ...map1[31337], ...map2[31337] }
+    137: { ...map1[137], ...map2[137] },
+    1666600000: { ...map1[1666600000], ...map2[1666600000] },
+    100: { ...map1[100], ...map2[100] },
+    128: { ...map1[128], ...map2[128] },
+    250: { ...map1[250], ...map2[250] },
+    56: { ...map1[56], ...map2[56] },
+    31337: { ...map1[31337], ...map2[31337] },
+    43114: { ...map1[43114], ...map2[43114] },
+    43113: { ...map1[43113], ...map2[43113] }
   }
 }
 

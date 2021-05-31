@@ -10,14 +10,18 @@ import { ApprovalState } from '../../hooks/useApproveCallback'
 
 interface ApprovalStepperProps {
   firstStepLabel: string
-  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void
+  firstStepOnClick: (event: React.MouseEvent<HTMLButtonElement>) => void
+  secondStepLabel: string
+  secondStepOnClick: (event: React.MouseEvent<HTMLButtonElement>) => void
   approval: ApprovalState
   approvalSubmitted: boolean
 }
 
 export default function ApprovalStepper({
   firstStepLabel,
-  onClick,
+  firstStepOnClick,
+  secondStepLabel,
+  secondStepOnClick,
   approval,
   approvalSubmitted
 }: ApprovalStepperProps) {
@@ -25,7 +29,7 @@ export default function ApprovalStepper({
     <>
       <RowBetween>
         <ButtonConfirmed
-          onClick={onClick}
+          onClick={firstStepOnClick}
           disabled={approvalSubmitted}
           width="48%"
           altDisabledStyle={approval === ApprovalState.PENDING} // show solid button while waiting
@@ -42,13 +46,14 @@ export default function ApprovalStepper({
           )}
         </ButtonConfirmed>
         <ButtonPrimary
-          onClick={() => false}
+          onClick={secondStepOnClick}
           width="48%"
+          height="63px"
           id="swap-button-1"
           disabled={approval !== ApprovalState.APPROVED}
         >
           <AutoRow gap="6px" justify="center">
-            Stake
+            {secondStepLabel}
           </AutoRow>
         </ButtonPrimary>
       </RowBetween>
