@@ -4,7 +4,16 @@ import { useForm, Controller } from 'react-hook-form'
 import MFIData from './MFIData'
 import LiquidityData from './LiquidityData'
 
-import { ChainId, TokenAmount, stake, withdrawStake, withdrawReward, Duration, getTokenBalance, Token } from '@marginswap/sdk'
+import {
+  ChainId,
+  TokenAmount,
+  stake,
+  withdrawStake,
+  withdrawReward,
+  Duration,
+  getTokenBalance,
+  Token
+} from '@marginswap/sdk'
 
 import { ApprovalState, useApproveCallbackFromStakeTrade } from '../../hooks/useApproveCallback'
 
@@ -36,7 +45,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
 
   const { control, watch, setValue, register } = useForm()
 
-  const amount:string = watch('amount', '0')
+  const amount: string = watch('amount', '0')
   const transactionType = watch('transactionType', 1)
   const period = watch('period', 1)
 
@@ -44,7 +53,10 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
 
   //TODO: REVIEW WITH GABRIEL: IF AMOUNT IS FLOAT TYPE, RETURNS AN ERROR -> CANNOT CONVERT TO BIGINT
   // check whether the user has approved the router on the input token
-  const [approval, approveCallback] = useApproveCallbackFromStakeTrade(mfiStake, new TokenAmount(getMFIToken, utils.parseUnits(amount || '0', getMFIToken.decimals).toBigInt()))
+  const [approval, approveCallback] = useApproveCallbackFromStakeTrade(
+    mfiStake,
+    new TokenAmount(getMFIToken, utils.parseUnits(amount || '0', getMFIToken.decimals).toBigInt())
+  )
   console.log('🚀 ~ file: Trade.tsx ~ line 51 ~ TradeStake ~ approval', approval)
 
   const approvalSubmitted = approval === ApprovalState.APPROVED || approval === ApprovalState.PENDING
