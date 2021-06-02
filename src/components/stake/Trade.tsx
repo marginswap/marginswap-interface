@@ -4,8 +4,7 @@ import { useForm, Controller } from 'react-hook-form'
 import MFIData from './MFIData'
 import LiquidityData from './LiquidityData'
 
-import { useAllTokens } from '../../hooks/Tokens'
-import { ChainId, TokenAmount, stake, withdrawStake, withdrawReward, Duration, getTokenBalance } from '@marginswap/sdk'
+import { ChainId, TokenAmount, stake, withdrawStake, withdrawReward, Duration, getTokenBalance, Token } from '@marginswap/sdk'
 
 import { ApprovalState, useApproveCallbackFromStakeTrade } from '../../hooks/useApproveCallback'
 
@@ -37,16 +36,15 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
 
   const { control, watch, setValue, register } = useForm()
 
-  const amount = watch('amount', '0')
+  const amount:string = watch('amount', '0')
   const transactionType = watch('transactionType', 1)
   const period = watch('period', 1)
 
-  const allTokens = useAllTokens()
-  const getMFIToken = allTokens['0xAa4e3edb11AFa93c41db59842b29de64b72E355B']
+  const getMFIToken = new Token(chainId ?? ChainId.MAINNET, '0xAa4e3edb11AFa93c41db59842b29de64b72E355B', 18, 'MFI')
 
   //TODO: REVIEW WITH GABRIEL: IF AMOUNT IS FLOAT TYPE, RETURNS AN ERROR -> CANNOT CONVERT TO BIGINT
   // check whether the user has approved the router on the input token
-  const [approval, approveCallback] = useApproveCallbackFromStakeTrade(mfiStake, new TokenAmount(getMFIToken, amount))
+  const [approval, approveCallback] = useApproveCallbackFromStakeTrade(mfiStake, new TokenAmount(getMFIToken, utils.parseUnits(amount || '0', getMFIToken.decimals).toBigInt()))
   console.log('🚀 ~ file: Trade.tsx ~ line 51 ~ TradeStake ~ approval', approval)
 
   const approvalSubmitted = approval === ApprovalState.APPROVED || approval === ApprovalState.PENDING
@@ -56,7 +54,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
       const balance = await getTokenBalance(address, getMFIToken.address, provider)
       console.log('BALANCE ::', utils.formatUnits(balance, getMFIToken.decimals))
       //TODO: REVIEW THE NUMBER().toFixed(0) TYPE WITH GABRIEL.
-      setValue('amount', Number(utils.formatUnits(balance, getMFIToken.decimals)).toFixed(0))
+      setValue('amount', utils.formatUnits(balance, getMFIToken.decimals))
     }
   }
 
@@ -69,7 +67,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
         stake(signedContract, tokenAmt.toHexString(), Duration.ONE_WEEK)
           .then((data: any) => {
             console.log('Stake ::', data)
-            setValue('amount', '')
+            setValue('amount', '0')
           })
           .catch((err: any) => console.log('Upps error in stake :', err))
       }
@@ -78,7 +76,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
         withdrawStake(signedContract, tokenAmt.toHexString())
           .then((data: any) => {
             console.log('Withdraw Stake ::', data)
-            setValue('amount', '')
+            setValue('amount', '0')
           })
           .catch((err: any) => console.log('Upps error in withdrawStake :', err))
       }
@@ -87,7 +85,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
         withdrawReward(signedContract)
           .then((data: any) => {
             console.log('Withdraw Reward ::', data)
-            setValue('amount', '')
+            setValue('amount', '0')
           })
           .catch((err: any) => console.log('Upps error in withdrawReward :', err))
       }
