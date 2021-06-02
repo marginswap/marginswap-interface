@@ -32,7 +32,7 @@ export const useMFIAPR = ({ chainId, provider, address, period }: StakingDataPro
 export const useLiquidityAPR = ({ chainId, provider, address, period }: StakingDataProps) => {
   const contract = getLiquidityMiningReward(chainId, provider)
 
-  const mfIStaking = useQuery('getMFIStaking', () => getLiquidityAPRPerWeight(contract, provider))
+  const mfIStaking = useQuery('getMFIStaking', () => getLiquidityAPRPerWeight(contract, period, provider))
   const accruedRewardRetrieved = useQuery('getAccruedReward', () => accruedReward(contract, address))
   const stakedBalance = useQuery('getStakeBalance', () => getStakedBalance(contract, address))
   const availableForWithdrawAfter = useQuery('getTimeUntilLockEnd', () => getTimeUntilLockEnd(contract, address))
