@@ -2038,15 +2038,15 @@
   dependencies:
     "@json-rpc-tools/types" "^1.6.1"
 
-"@marginswap/core-abi@^1.2.9":
-  version "1.2.9"
-  resolved "https://registry.yarnpkg.com/@marginswap/core-abi/-/core-abi-1.2.9.tgz#5556f32f4eba585da8e0150957201f68c680fb16"
-  integrity sha512-/onQqvS2aDlQLDA4/iHiiFwrKzM4qEsiJNXL5zVROQUkL561q3waNWIsGZXTnrZrMFsY7PVOeUvClNjzQx2ccg==
+"@marginswap/core-abi@^1.2.10":
+  version "1.2.10"
+  resolved "https://registry.yarnpkg.com/@marginswap/core-abi/-/core-abi-1.2.10.tgz#c623d4c016f9326122e1526f13efda506ee62d6e"
+  integrity sha512-/5wpfvYiShozNrx6nmJBkcTkf8IwH4WYYQVG6xoFrSQbCnGMZdsK2dCAP7M7zu3guUIjo/MHwJ2jstUBI1JzSQ==
 
-"@marginswap/sdk@^4.2.13":
-  version "4.2.13"
-  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.2.13.tgz#8492514026eb274d618d5b7da853bbf4ef70b98d"
-  integrity sha512-MjlTOsZERRSKLV5GjJh9w+V83Pzo3aQFZCIrsMcqHinJAsRjCKue1Ta6+izTGrYhPRs88GLQnKR9fM80OlhcsQ==
+"@marginswap/sdk@^4.2.15":
+  version "4.2.15"
+  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.2.15.tgz#a9e6a6fca6d9e1d5e7a25f34bbf75004a43c63f2"
+  integrity sha512-1xzfi1OzeGqtBf4GhVelmBOWutUrNWBOlBya+UF7pwUFo653hdG31+hXS5BjLw/tLlHLseFC6dq3ithDYrj8Zw==
   dependencies:
     "@ethersproject/abstract-provider" "^5.1.0"
     "@ethersproject/abstract-signer" "^5.1.0"
@@ -2057,7 +2057,7 @@
     "@ethersproject/networks" "^5.1.0"
     "@ethersproject/providers" "^5.1.0"
     "@ethersproject/solidity" "^5.1.0"
-    "@marginswap/core-abi" "^1.2.9"
+    "@marginswap/core-abi" "^1.2.10"
     "@uniswap/v2-core" "^1.0.0"
     big.js "^5.2.2"
     decimal.js-light "^2.5.0"
@@ -10231,11 +10231,6 @@ lodash.flatmap@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.flatmap/-/lodash.flatmap-4.5.0.tgz#ef8cbf408f6e48268663345305c6acc0b778702e"
   integrity sha1-74y/QI9uSCaGYzRTBcaswLd4cC4=
-
-lodash.isequal@^4.5.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
-  integrity sha1-QVxEePK8wwEgwizhDtMib30+GOA=
 
 lodash.isequal@^4.5.0:
   version "4.5.0"
