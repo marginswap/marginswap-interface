@@ -11,7 +11,7 @@ import Heco from '../assets/networks/heco-network.jpg'
 import Kovan from '../assets/networks/kovan-network.jpg'
 import Matic from '../assets/networks/matic-network.jpg'
 //import Moonbeam from '../assets/networks/moonbeam-network.jpg'
-//import Polygon from '../assets/networks/polygon-network.jpg'
+import Polygon from '../assets/networks/polygon-network.jpg'
 import Rinkeby from '../assets/networks/rinkeby-network.jpg'
 import Ropsten from '../assets/networks/ropsten-network.jpg'
 import Xdai from '../assets/networks/xdai-network.jpg'
@@ -26,7 +26,7 @@ export const NETWORK_ICON = {
   [ChainId.FANTOM]: Fantom,
   [ChainId.AVALANCHE]: Avalanche,
   [ChainId.BSC]: Bsc,
-  [ChainId.MATIC]: Matic,
+  [ChainId.MATIC]: Polygon,
   [ChainId.XDAI]: Xdai,
   [ChainId.HECO]: Heco,
   [ChainId.HARMONY]: Harmony,
@@ -42,7 +42,7 @@ export const NETWORK_LABEL: { [chainId in ChainId]?: string } = {
   [ChainId.KOVAN]: 'Kovan',
   [ChainId.FANTOM]: 'Fantom',
   [ChainId.AVALANCHE]: 'Avalanche',
-  [ChainId.MATIC]: 'Matic',
+  [ChainId.MATIC]: 'Polygon (Matic)',
   [ChainId.XDAI]: 'xDai',
   [ChainId.BSC]: 'BSC',
   [ChainId.HECO]: 'HECO',
