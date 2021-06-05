@@ -52,7 +52,7 @@ function getPegCurrency(chainId: ChainId | undefined) {
     [ChainId.LOCAL]: USDT_MAINNET,
     [ChainId.AVALANCHE]: USDT_AVALANCHE,
     [ChainId.FUJI]: USDT_AVALANCHE,
-    [ChainId.MATIC]: USDT_MATIC,
+    [ChainId.MATIC]: USDT_MATIC
   }
   if (chainId && chainId in pegCurrencyMap) {
     return (pegCurrencyMap as any)[chainId]
