@@ -209,8 +209,8 @@ const chains: ChainObject = {
     builder: builders.etherscan
   },
   [ChainId.MATIC]: {
-      chainName: 'mainnet',
-      builder: builders.matic
+    chainName: 'mainnet',
+    builder: builders.matic
   },
   // [ChainId.MATIC_TESTNET]: {
   //     chainName: 'mumbai',
