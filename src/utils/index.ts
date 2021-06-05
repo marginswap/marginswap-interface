@@ -208,10 +208,10 @@ const chains: ChainObject = {
     chainName: 'kovan',
     builder: builders.etherscan
   },
-  // [ChainId.MATIC]: {
-  //     chainName: 'mainnet',
-  //     builder: builders.matic
-  // },
+  [ChainId.MATIC]: {
+      chainName: 'mainnet',
+      builder: builders.matic
+  },
   // [ChainId.MATIC_TESTNET]: {
   //     chainName: 'mumbai',
   //     builder: builders.matic
