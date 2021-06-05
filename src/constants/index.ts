@@ -28,6 +28,14 @@ export const USDT_AVALANCHE = new Token(
   'USDT',
   'Tether USD'
 )
+
+export const USDT_MATIC = new Token(
+  ChainId.MATIC,
+  '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+  6,
+  'USDT',
+  'Tether USD'
+)
 export const COMP = new Token(ChainId.MAINNET, '0xc00e94Cb662C3520282E6f5717214004A7f26888', 18, 'COMP', 'Compound')
 export const MKR = new Token(ChainId.MAINNET, '0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2', 18, 'MKR', 'Maker')
 export const AMPL = new Token(ChainId.MAINNET, '0xD46bA6D942050d489DBd938a2C909A5d5039A161', 9, 'AMPL', 'Ampleforth')
@@ -43,7 +51,8 @@ function getPegCurrency(chainId: ChainId | undefined) {
     [ChainId.MAINNET]: USDT_MAINNET,
     [ChainId.LOCAL]: USDT_MAINNET,
     [ChainId.AVALANCHE]: USDT_AVALANCHE,
-    [ChainId.FUJI]: USDT_AVALANCHE
+    [ChainId.FUJI]: USDT_AVALANCHE,
+    [ChainId.MATIC]: USDT_MATIC,
   }
   if (chainId && chainId in pegCurrencyMap) {
     return (pegCurrencyMap as any)[chainId]
