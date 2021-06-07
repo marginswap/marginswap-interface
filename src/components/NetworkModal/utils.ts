@@ -21,7 +21,7 @@ export const PARAMS: {
       symbol: 'ETH',
       decimals: 18
     },
-    rpcUrls: ['https://mainnet.infura.io/v3'],
+    rpcUrls: ['https://mainnet.infura.io/v3/ae52aea5aa2b41e287d72e10b1175491'],
     blockExplorerUrls: ['https://etherscan.com']
   },
   /*[ChainId.ROPSTEN]: {
@@ -109,7 +109,7 @@ export const PARAMS: {
       symbol: 'MATIC',
       decimals: 18
     },
-    rpcUrls: ['https://polygon-mainnet.infura.io/v3'],
+    rpcUrls: ['https://polygon-mainnet.infura.io/v3/ae52aea5aa2b41e287d72e10b1175491'],
     blockExplorerUrls: ['https://explorer-mainnet.maticvigil.com']
   },
   [ChainId.HECO]: {
