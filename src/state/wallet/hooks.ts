@@ -35,9 +35,9 @@ import isEqual from 'lodash.isequal'
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.
  */
-export function useETHBalances(
-  uncheckedAddresses?: (string | undefined)[]
-): { [address: string]: CurrencyAmount | undefined } {
+export function useETHBalances(uncheckedAddresses?: (string | undefined)[]): {
+  [address: string]: CurrencyAmount | undefined
+} {
   const multicallContract = useMulticallContract()
 
   const addresses: string[] = useMemo(
@@ -222,9 +222,10 @@ export function useCurrencyBalances(
   account?: string,
   currencies?: (Currency | undefined)[]
 ): (CurrencyAmount | undefined)[] {
-  const tokens = useMemo(() => currencies?.filter((currency): currency is Token => currency instanceof Token) ?? [], [
-    currencies
-  ])
+  const tokens = useMemo(
+    () => currencies?.filter((currency): currency is Token => currency instanceof Token) ?? [],
+    [currencies]
+  )
 
   const tokenBalances = useTokenBalances(account, tokens)
   const containsETH: boolean = useMemo(() => currencies?.some(currency => currency === ETHER) ?? false, [currencies])

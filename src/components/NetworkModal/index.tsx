@@ -44,7 +44,7 @@ export default function NetworkModal(): JSX.Element | null {
                 onClick={() => {
                   toggleNetworkModal()
                   const params = PARAMS[key]
-                  library?.send('wallet_addEthereumChain', [params, account])
+                  library?.send('wallet_addEthereumChain', [params, account]).then(() => location.reload())
                 }}
               >
                 <NetworkContainer>
