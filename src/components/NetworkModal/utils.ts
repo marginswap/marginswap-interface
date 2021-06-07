@@ -109,7 +109,7 @@ export const PARAMS: {
       symbol: 'MATIC',
       decimals: 18
     },
-    rpcUrls: ['https://rpc-mainnet.maticvigil.com'],
+    rpcUrls: ['https://polygon-mainnet.infura.io/v3'],
     blockExplorerUrls: ['https://explorer-mainnet.maticvigil.com']
   },
   [ChainId.HECO]: {
