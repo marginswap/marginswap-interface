@@ -474,7 +474,7 @@ export const MarginAccount = () => {
       _tokenBalances.reduce(
         (acc, cur, index) => ({
           ...acc,
-          [tokens[index].address]: Number(utils.formatUnits(_tokenBalances[index].toString(), tokens[index].decimals))
+          [tokens[index].address]: Number(utils.formatUnits(_tokenBalances[index], tokens[index].decimals))
         }),
         {}
       )
