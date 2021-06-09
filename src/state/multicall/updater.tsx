@@ -1,5 +1,5 @@
 import { Contract } from '@ethersproject/contracts'
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useActiveWeb3React } from '../../hooks'
 import { useMulticallContract } from '../../hooks/useContract'
@@ -109,12 +109,19 @@ export function outdatedListeningKeys(
 }
 
 export default function Updater(): null {
+  const [currentChainId, setCurrentChainId] = useState<number>()
   const dispatch = useDispatch<AppDispatch>()
   const state = useSelector<AppState, AppState['multicall']>(state => state.multicall)
   // wait for listeners to settle before triggering updates
   const debouncedListeners = useDebounce(state.callListeners, 100)
   const latestBlockNumber = useBlockNumber()
   const { chainId } = useActiveWeb3React()
+
+  useEffect(() => {
+    if (chainId != currentChainId && currentChainId) location.reload()
+    if (!currentChainId) setCurrentChainId(chainId)
+  }, [chainId])
+
   const multicallContract = useMulticallContract()
   const cancellations = useRef<{ blockNumber: number; cancellations: (() => void)[] }>()
 

@@ -37,7 +37,9 @@ import isEqual from 'lodash.isequal'
  */
 export function useETHBalances(
   uncheckedAddresses?: (string | undefined)[]
-): { [address: string]: CurrencyAmount | undefined } {
+): {
+  [address: string]: CurrencyAmount | undefined
+} {
   const multicallContract = useMulticallContract()
 
   const addresses: string[] = useMemo(
