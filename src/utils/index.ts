@@ -45,6 +45,15 @@ const builders = {
         return `${prefix}/${type}/${data}`
     }
   },
+  polygonscan: (_: string, data: string, type: 'transaction' | 'token' | 'address' | 'block') => {
+    const prefix = `https://polygonscan.com`
+    switch (type) {
+      case 'transaction':
+        return `${prefix}/tx/${data}`
+      default:
+        return `${prefix}/${type}/${data}`
+    }
+  },
   fantom: (_: string, data: string, type: 'transaction' | 'token' | 'address' | 'block') => {
     const prefix = 'https://ftmscan.com'
     switch (type) {
@@ -210,8 +219,12 @@ const chains: ChainObject = {
   },
   [ChainId.MATIC]: {
     chainName: 'mainnet',
-    builder: builders.matic
+    builder: builders.polygonscan
   },
+  // [ChainId.MATIC]: {
+  //   chainName: 'mainnet',
+  //   builder: builders.matic
+  // },
   // [ChainId.MATIC_TESTNET]: {
   //     chainName: 'mumbai',
   //     builder: builders.matic
