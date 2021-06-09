@@ -59,7 +59,7 @@ function getPegCurrency(chainId: ChainId | undefined) {
   } else {
     return undefined
   }
-}q
+}
 
 export { getPegCurrency as getPegCurrency }
 
