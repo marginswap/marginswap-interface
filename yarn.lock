@@ -2001,15 +2001,15 @@
   dependencies:
     "@json-rpc-tools/types" "^1.6.1"
 
-"@marginswap/core-abi@^1.2.13":
-  version "1.2.13"
-  resolved "https://registry.yarnpkg.com/@marginswap/core-abi/-/core-abi-1.2.13.tgz#d48c4ccf459b77176dc9a8e3ebb0842474524550"
-  integrity sha512-AYpS+caDcBOoREL4KVzK62Nt0uZFSoThLCfokjzbLCQwbPR/xRI4N7OlJRqAYiHd4l0XeSc6tPghjDAR1qxW3Q==
+"@marginswap/core-abi@^1.2.11":
+  version "1.2.11"
+  resolved "https://registry.yarnpkg.com/@marginswap/core-abi/-/core-abi-1.2.11.tgz#eb07c629734a7929c9c883c0a24a74495739f159"
+  integrity sha512-sYiW5aXX2axJ6WYl2jg5Mvci9GWRqxxC1CCshE6M4ybOoXAjVY59I7nmPETxgrlfFCAv0GgKW63TyrgcrF16Ug==
 
-"@marginswap/sdk@^4.2.19":
-  version "4.2.19"
-  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.2.19.tgz#48756b4f60a5145c6587810fcb7ddaee62728c16"
-  integrity sha512-xE8fVmGndx4kdXVb5GXW/u8uZBlqDuJZogY4yYfZEE/QpqNSuu3FDcwMgfieYX0vdnK7/ivfq1CgrIY2S8QKEA==
+"@marginswap/sdk@^4.2.17":
+  version "4.2.17"
+  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.2.17.tgz#9cdfef76eaad07f8708b918da81a1f6e2f341161"
+  integrity sha512-sy0KOkpSQKhcLer1El8Ztb/VbbhFXV5DMieBrlRcQiK7VFKIde+gWoX2gG35zAqglQ010CNSFe6tdwG4fV8g0Q==
   dependencies:
     "@ethersproject/abstract-provider" "^5.1.0"
     "@ethersproject/abstract-signer" "^5.1.0"
@@ -2020,7 +2020,7 @@
     "@ethersproject/networks" "^5.1.0"
     "@ethersproject/providers" "^5.1.0"
     "@ethersproject/solidity" "^5.1.0"
-    "@marginswap/core-abi" "^1.2.13"
+    "@marginswap/core-abi" "^1.2.11"
     "@uniswap/v2-core" "^1.0.0"
     big.js "^5.2.2"
     decimal.js-light "^2.5.0"
