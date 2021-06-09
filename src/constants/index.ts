@@ -31,6 +31,7 @@ export const USDT_AVALANCHE = new Token(
 export const USDT_MATIC = new Token(
   ChainId.MATIC,
   '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+  6,
   'USDT',
   'Tether USD'
 )
@@ -58,7 +59,7 @@ function getPegCurrency(chainId: ChainId | undefined) {
   } else {
     return undefined
   }
-}
+}q
 
 export { getPegCurrency as getPegCurrency }
 
