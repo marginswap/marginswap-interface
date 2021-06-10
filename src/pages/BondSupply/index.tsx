@@ -30,99 +30,63 @@ import { getPegCurrency, USDT_MAINNET } from '../../constants'
 import { setInterval } from 'timers'
 import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 import { TransactionDetails } from '../../state/transactions/reducer'
-
-const DATA_POLLING_INTERVAL = 60 * 1000
-
-type BondRateData = {
-  img: string
-  coin: string
-  address: string
-  decimals: number
-  totalSupplied: number
-  apy: number
-  maturity: number
-  available: number
-}
-
-const BOND_RATES_COLUMNS = [
-  {
-    name: 'Coin',
-    id: 'coin',
-    // eslint-disable-next-line react/display-name
-    render: (token: BondRateData) => (
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <img src={token.img} alt={token.coin} height={30} />
-        <span style={{ marginLeft: '5px' }}>{token.coin}</span>
-      </div>
-    )
-  },
-  {
-    name: 'Total Supplied',
-    id: 'totalSupplied',
-    // eslint-disable-next-line react/display-name
-    render: ({ totalSupplied }: { totalSupplied: number }) => (
-      <span>{totalSupplied ? totalSupplied.toFixed(2) : 0}</span>
-    )
-  },
-  {
-    name: 'APY',
-    id: 'apy',
-    // eslint-disable-next-line react/display-name
-    render: ({ apy }: { apy: number }) => <span>{apy ? `${apy.toFixed(2)}%` : 0}</span>
-  },
-  { name: 'Maturity (minutes remaining)', id: 'maturity' }
-] as const
-
-const apyFromApr = (apr: number, compounds: number): number =>
-  (Math.pow(1 + apr / (compounds * 100), compounds) - 1) * 100
+import { BOND_RATES_COLUMNS, DATA_POLLING_INTERVAL, BondRateDataType, apyFromApr } from './utils'
+import { useMarketData } from './hooks'
 
 export const BondSupply = () => {
   const { library, chainId } = useActiveWeb3React()
-  const [error, setError] = useState<string | null>(null)
 
-  const [tokens, setTokens] = useState<TokenInfo[]>([])
+  const [error, setError] = useState<string | null>(null)
+  //const [tokens, setTokens] = useState<TokenInfo[]>([])
   const [bondBalances, setBondBalances] = useState<Record<string, string>>({})
-  const [bondAPRs, setBondAPRs] = useState<Record<string, number>>({})
-  const [bondMaturities, setBondMaturities] = useState<Record<string, number>>({})
-  const [bondUSDCosts, setBondUSDCosts] = useState<Record<string, TokenAmount>>({})
+  //const [bondAPRs, setBondAPRs] = useState<Record<string, number>>({})
+  //const [bondMaturities, setBondMaturities] = useState<Record<string, number>>({})
+  //const [bondUSDCosts, setBondUSDCosts] = useState<Record<string, TokenAmount>>({})
   const [allowances, setAllowances] = useState<Record<string, number>>({})
   const [tokenBalances, setTokenBalances] = useState<Record<string, number>>({})
   const [pollingInterval, setPollingInterval] = useState<ReturnType<typeof setInterval> | null>()
   const [triggerDataPoll, setTriggerDataPoll] = useState<boolean>(true)
   const [pendingTxhHash, setPendingTxhHash] = useState<string | null>()
-
-  useEffect(() => {
+  /*useEffect(() => {
     setTokens(tokensList.tokens.filter(t => t.chainId === chainId))
-  }, [])
-
+  }, [])*/
   const { account } = useWeb3React()
   const isTxnPending = useIsTransactionPending(pendingTxhHash || '')
 
   const addTransactionResponseCallback = (responseObject: TransactionDetails) => {
     setPendingTxhHash(responseObject.hash)
   }
-
-  const delayedFetchUserData = () => {
-    setTimeout(() => {
-      getUserMarginswapData()
-      getMarketData()
-    }, 2 * 1000)
-  }
-
-  useEffect(() => {
-    if (!isTxnPending && pendingTxhHash) {
-      setPendingTxhHash(null)
-
-      delayedFetchUserData()
-    }
-  }, [isTxnPending])
-
   const addTransaction = useTransactionAdder(addTransactionResponseCallback)
 
   let provider: any
   if (library && account) {
     provider = getProviderOrSigner(library, account)
   }
+  const tokens: TokenInfo[] = tokensList.tokens.filter(t => t.chainId === chainId)
+  const {
+    bondAPRs: bondAPRsRetrieve,
+    bondMaturities: bondMaturitiesRetrieve,
+    bondUSDCosts: bondUSDCostsRetreive
+  } = useMarketData({ chainId, provider, tokens, account })
+
+  const bondAPRs = (bondAPRsRetrieve?.data as Record<string, number>) || null
+  const bondMaturities = (bondMaturitiesRetrieve?.data as Record<string, number>) || null
+  const bondUSDCosts = (bondUSDCostsRetreive?.data as Record<string, TokenAmount>) || null
+
+  const delayedFetchUserData = () => {
+    setTimeout(() => {
+      getUserMarginswapData()
+      //getMarketData()
+    }, 2 * 1000)
+  }
+
+  //useEffect(() => {
+  if (!isTxnPending && pendingTxhHash) {
+    setPendingTxhHash(null)
+
+    delayedFetchUserData()
+  }
+  //}, [isTxnPending])
 
   /**
    *
@@ -131,7 +95,7 @@ export const BondSupply = () => {
    * @description fetches the data related to the MarginSwap market via polling
    *
    */
-  const getMarketData = async () => {
+  /*const getMarketData = async () => {
     const pegCurrency = getPegCurrency(chainId)
     if (!chainId || !account || !pegCurrency) return
 
@@ -153,10 +117,10 @@ export const BondSupply = () => {
         chainId,
         provider
       )
-    ])
+    ])*/
 
-    /*** now set the state for all that data ***/
-    setBondAPRs(
+  /*** now set the state for all that data ***/
+  /*setBondAPRs(
       Object.keys(_interestRates).reduce(
         (acc, cur) => ({ ...acc, [cur]: BigNumber.from(_interestRates[cur]).toNumber() / 100 }),
         {}
@@ -174,20 +138,20 @@ export const BondSupply = () => {
         {}
       )
     )
-  }
+  }*/
 
   // these next two useEffect hooks handle data polling
-  useEffect(() => {
-    if (triggerDataPoll && library && tokens.length) {
-      try {
-        setTriggerDataPoll(false)
-        getMarketData()
-      } catch (e) {
-        console.error(e)
-        setError('Failed to get account data')
-      }
+  //useEffect(() => {
+  if (triggerDataPoll && library && tokens.length) {
+    try {
+      setTriggerDataPoll(false)
+      //getMarketData()
+    } catch (e) {
+      console.error(e)
+      setError('Failed to get account data')
     }
-  }, [triggerDataPoll, library, tokens])
+  }
+  //}, [triggerDataPoll, library, tokens])
 
   useEffect(() => {
     const interval = setInterval(() => setTriggerDataPoll(true), DATA_POLLING_INTERVAL)
@@ -244,7 +208,7 @@ export const BondSupply = () => {
       _tokenBalances.reduce(
         (acc, cur, index) => ({
           ...acc,
-          [tokens[index].address]: Number(utils.formatUnits(_tokenBalances[index], tokens[index].decimals))
+          [tokens[index].address]: Number(utils.formatUnits(_tokenBalances[index].toString(), tokens[index].decimals))
         }),
         {}
       )
@@ -255,14 +219,14 @@ export const BondSupply = () => {
    */
 
   // call getUserMarginswapData when relevant things change
-  useEffect(() => {
+  /*useEffect(() => {
     getUserMarginswapData()
-  }, [account, tokens, chainId, provider?._address])
+  }, [account, tokens, chainId, provider?._address])*/
 
   const actions = [
     {
       name: 'Deposit',
-      onClick: async (token: BondRateData, amount: number) => {
+      onClick: async (token: BondRateDataType, amount: number) => {
         if (!amount || !chainId) return
         if (allowances[token.address] <= 0) {
           try {
@@ -302,7 +266,7 @@ export const BondSupply = () => {
     },
     {
       name: 'Withdraw',
-      onClick: async (token: BondRateData, amount: number) => {
+      onClick: async (token: BondRateDataType, amount: number) => {
         if (!amount) return
         try {
           const response: any = await withdrawHourlyBond(
@@ -324,7 +288,7 @@ export const BondSupply = () => {
     }
   ] as const
 
-  const data = useMemo(
+  /*const data = useMemo(
     () =>
       tokens.map(token => ({
         img: token.logoURI ?? '',
@@ -332,20 +296,37 @@ export const BondSupply = () => {
         decimals: token.decimals,
         coin: token.symbol,
         totalSupplied: Number(bondBalances[token.address] ?? 0) / Math.pow(10, token.decimals),
-        apy: apyFromApr(bondAPRs[token.address] ?? 0, 365 * 24),
-        maturity: bondMaturities[token.address] ?? 0,
+        apy: bondAPRs ? apyFromApr(bondAPRs[token.address] ?? 0, 365 * 24) : 0,
+        maturity: bondMaturities ? bondMaturities[token.address] ?? 0 : 0,
         available: tokenBalances[token.address],
         getActionNameFromAmount: {
           Deposit: () => (allowances[token.address] > 0 ? 'Confirm Transaction' : 'Approve')
         }
       })),
     [tokens, bondBalances, bondMaturities, allowances]
-  )
+  )*/
+
+  const getData = () =>
+    tokens.map(token => ({
+      img: token.logoURI ?? '',
+      address: token.address,
+      decimals: token.decimals,
+      coin: token.symbol,
+      totalSupplied: Number(bondBalances[token.address] ?? 0) / Math.pow(10, token.decimals),
+      apy: bondAPRs ? apyFromApr(bondAPRs[token.address] ?? 0, 365 * 24) : 0,
+      maturity: bondMaturities ? bondMaturities[token.address] ?? 0 : 0,
+      available: tokenBalances[token.address],
+      getActionNameFromAmount: {
+        Deposit: () => (allowances[token.address] > 0 ? 'Confirm Transaction' : 'Approve')
+      }
+    }))
+  const data = getData()
 
   const pegCurrency = getPegCurrency(chainId) ?? USDT_MAINNET
   const ZERO_DAI = new TokenAmount(pegCurrency, '0')
 
-  const averageYield = useMemo(() => {
+  const getAverageYield = () => {
+    if (!bondUSDCosts) return 0
     // get the total balance of all the user's bonds
     const bondCosts = tokens.reduce(
       (acc, cur) => acc + Number((bondUSDCosts[cur.address] ?? ZERO_DAI).toSignificant()),
@@ -361,9 +342,29 @@ export const BondSupply = () => {
       return acc + (apy * Number(bondUSDCosts[cur.address].toSignificant(4))) / bondCosts
     }, 0)
     return avgYield.toFixed(2)
-  }, [tokens, bondAPRs, bondUSDCosts])
+  }
+  const averageYield = getAverageYield()
+  /*const averageYield = useMemo(() => {
+    if (!bondUSDCosts) return 0
+    // get the total balance of all the user's bonds
+    const bondCosts = tokens.reduce(
+      (acc, cur) => acc + Number((bondUSDCosts[cur.address] ?? ZERO_DAI).toSignificant()),
+      0
+    )
+    if (bondCosts === 0) return 0
+    const avgYield = tokens.reduce((acc, cur) => {
+      const apy = apyFromApr(bondAPRs[cur.address], 365 * 24)
+      // Multiply the bond APRs by the number of dollars in that bond, then divide by the total of all bond balances.
+      // Don't think about this as percentages - we're just averaging numbers.
+      // Each dollar has an interest rate assigned to it, then we divide that by the total number of dollars
+      // to get the average interest rate for all dollars
+      return acc + (apy * Number(bondUSDCosts[cur.address].toSignificant(4))) / bondCosts
+    }, 0)
+    return avgYield.toFixed(2)
+  }, [tokens, bondAPRs, bondUSDCosts])*/
 
-  const earningsPerDay = useMemo(() => {
+  const getEarningsPerDay = () => {
+    if (!bondUSDCosts) return 0
     if (!Object.keys(bondUSDCosts).length || !Object.keys(bondAPRs).length) {
       return 0
     }
@@ -384,7 +385,32 @@ export const BondSupply = () => {
     }
 
     return (totalAnnualEarnings / 365).toFixed(2)
-  }, [tokens, bondAPRs, bondUSDCosts])
+  }
+  const earningsPerDay = getEarningsPerDay()
+
+  /*const earningsPerDay = useMemo(() => {
+    if (!bondUSDCosts) return 0
+    if (!Object.keys(bondUSDCosts).length || !Object.keys(bondAPRs).length) {
+      return 0
+    }
+
+    const totalAnnualEarnings = tokens.reduce((acc, cur) => {
+      const apy = apyFromApr(bondAPRs[cur.address], 365 * 24)
+      const bondBalance = Number(bondUSDCosts[cur.address].toSignificant(4))
+
+      if (apy > 0 && bondBalance > 0) {
+        return acc + (apy / 100) * bondBalance
+      }
+
+      return acc
+    }, 0)
+
+    if (totalAnnualEarnings === 0) {
+      return 0
+    }
+
+    return (totalAnnualEarnings / 365).toFixed(2)
+  }, [tokens, bondAPRs, bondUSDCosts])*/
 
   return (
     <StyledWrapperDiv>
@@ -394,9 +420,13 @@ export const BondSupply = () => {
         <StyledTableContainer>
           <InfoCard
             title="Total Bond"
-            amount={`$${Object.keys(bondUSDCosts)
-              .reduce((acc, cur) => acc.add(bondUSDCosts[cur]), ZERO_DAI)
-              .toSignificant()}`}
+            amount={
+              bondUSDCosts
+                ? `$${Object.keys(bondUSDCosts)
+                    .reduce((acc, cur) => acc.add(bondUSDCosts[cur]), ZERO_DAI)
+                    .toSignificant()}`
+                : 0
+            }
             Icon={IconMoneyStackLocked}
           />
           <InfoCard title="Average Yield" amount={`${averageYield}%`} ghost Icon={IconMoneyStackLocked} />
