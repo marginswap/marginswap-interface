@@ -2,6 +2,7 @@ import { useQuery } from 'react-query'
 import { getPegCurrency, USDT_MAINNET } from '../../constants'
 import { TokenInfo } from '@uniswap/token-lists'
 import { BigNumber } from '@ethersproject/bignumber'
+import { utils } from 'ethers'
 import {
   ChainId,
   getHourlyBondBalances,
@@ -23,6 +24,20 @@ interface MarketDataProps {
   account: string | null | undefined
 }
 
+interface UserMarginswapDataProps {
+  chainId?: ChainId | undefined
+  provider?: any | undefined
+  tokens?: TokenInfo[]
+  account: string | null | undefined
+}
+
+/**
+ *
+ *
+ * Get market data
+ * @description fetches the data related to the MarginSwap market via polling
+ *
+ */
 export const useMarketData = ({ chainId, tokens, provider, account }: MarketDataProps) => {
   const pegCurrency = getPegCurrency(chainId)
 
@@ -40,7 +55,6 @@ export const useMarketData = ({ chainId, tokens, provider, account }: MarketData
       {}
     )
   })
-  console.log('🚀 ~ file: hooks.ts ~ line 43 ~ bondAPRs ~ bondAPRs', bondAPRs.data)
 
   const bondMaturities = useQuery('getBondMaturities', async () => {
     if (!account || !tokens?.length || !provider) return null
@@ -75,4 +89,68 @@ export const useMarketData = ({ chainId, tokens, provider, account }: MarketData
   })
 
   return { bondAPRs, bondMaturities, bondUSDCosts }
+}
+
+/**
+ *
+ *
+ * Get User MarginSwap Data
+ * @description fetches the data that does not need to be polled because the app knows when it changes
+ *
+ */
+export const useUserMarginswapData = ({ chainId, tokens, provider, account }: UserMarginswapDataProps) => {
+  const bondBalances = useQuery('getBondBalances', async () => {
+    if (!tokens?.length || !provider || !account) return null
+
+    const balances = await getHourlyBondBalances(
+      account,
+      tokens.map(t => t.address),
+      chainId,
+      provider
+    )
+
+    return await Object.keys(balances).reduce(
+      (acc, cur) => ({ ...acc, [cur]: BigNumber.from(balances[cur]).toString() }),
+      {}
+    )
+  })
+
+  const allowances = useQuery('getAllowances', async () => {
+    if (!chainId || !tokens?.length || !provider || !account) return null
+
+    const allowancesTokens = await getTokenAllowances(
+      account,
+      tokens.map(t => t.address),
+      chainId,
+      provider
+    )
+
+    return await allowancesTokens.reduce(
+      (acc: any, cur: any, index: number) => ({
+        ...acc,
+        [tokens[index].address]: Number(BigNumber.from(cur).toString())
+      }),
+      {}
+    )
+  })
+
+  const tokenBalances = useQuery('getTokenBalances', async () => {
+    if (!chainId || !tokens?.length || !provider || !account) return null
+
+    const tokenBalancesRetrieve = await Promise.all(
+      tokens.map(token => getTokenBalance(account, token.address, provider))
+    )
+
+    return await tokenBalancesRetrieve.reduce(
+      (acc, cur, index) => ({
+        ...acc,
+        [tokens[index].address]: Number(
+          utils.formatUnits(tokenBalancesRetrieve[index].toString(), tokens[index].decimals)
+        )
+      }),
+      {}
+    )
+  })
+
+  return { bondBalances, allowances, tokenBalances }
 }
