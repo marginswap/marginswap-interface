@@ -47,6 +47,7 @@ export const BondSupply = () => {
 
   const {
     bondAPRs: bondAPRsRetrieve,
+    incentiveAPRs: incentiveAPRsRetrieve,
     bondMaturities: bondMaturitiesRetrieve,
     bondUSDCosts: bondUSDCostsRetreive
   } = useMarketData({ chainId, provider, tokens, account })
@@ -58,6 +59,7 @@ export const BondSupply = () => {
   } = useUserMarginswapData({ chainId, provider, tokens, account })
 
   const bondAPRs = (bondAPRsRetrieve?.data as Record<string, number>) || null
+  const incentiveAPRs = (incentiveAPRsRetrieve?.data as Record<string, number>) || null
   const bondMaturities = (bondMaturitiesRetrieve?.data as Record<string, number>) || null
   const bondUSDCosts = (bondUSDCostsRetreive?.data as Record<string, TokenAmount>) || null
 
@@ -166,6 +168,7 @@ export const BondSupply = () => {
       coin: token.symbol,
       totalSupplied: bondBalances ? Number(bondBalances[token.address] ?? 0) / Math.pow(10, token.decimals) : 0,
       apy: bondAPRs ? apyFromApr(bondAPRs[token.address] ?? 0, 365 * 24) : 0,
+      aprWithIncentive: incentiveAPRs ? apyFromApr(incentiveAPRs[token.address] ?? 0, 365 * 24) : 0,
       maturity: bondMaturities ? bondMaturities[token.address] ?? 0 : 0,
       available: tokenBalances ? tokenBalances[token.address] : 0,
       getActionNameFromAmount: {
