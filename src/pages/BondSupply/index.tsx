@@ -168,7 +168,7 @@ export const BondSupply = () => {
       coin: token.symbol,
       totalSupplied: bondBalances ? Number(bondBalances[token.address] ?? 0) / Math.pow(10, token.decimals) : 0,
       apy: bondAPRs ? apyFromApr(bondAPRs[token.address] ?? 0, 365 * 24) : 0,
-      aprWithIncentive: incentiveAPRs ? apyFromApr(incentiveAPRs[token.address] ?? 0, 365 * 24) : 0,
+      aprWithIncentive: bondAPRs && incentiveAPRs ? bondAPRs[token.address] + incentiveAPRs[token.address] : 0,
       maturity: bondMaturities ? bondMaturities[token.address] ?? 0 : 0,
       available: tokenBalances ? tokenBalances[token.address] : 0,
       getActionNameFromAmount: {
