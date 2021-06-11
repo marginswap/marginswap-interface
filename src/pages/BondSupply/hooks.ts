@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query'
-import { getPegCurrency, USDT_MAINNET } from '../../constants'
+import { getPegCurrency } from '../../constants'
 import { TokenInfo } from '@uniswap/token-lists'
 import { BigNumber } from '@ethersproject/bignumber'
 import { utils } from 'ethers'
@@ -8,10 +8,7 @@ import {
   getHourlyBondBalances,
   getHourlyBondInterestRates,
   getHourlyBondMaturities,
-  buyHourlyBondSubscription,
   getBondsCostInDollars,
-  withdrawHourlyBond,
-  approveToFund,
   TokenAmount,
   getTokenAllowances,
   getTokenBalance
@@ -39,8 +36,6 @@ interface UserMarginswapDataProps {
  *
  */
 export const useMarketData = ({ chainId, tokens, provider, account }: MarketDataProps) => {
-  const pegCurrency = getPegCurrency(chainId)
-
   const bondAPRs = useQuery('getBondAPRs', async () => {
     if (!tokens?.length || !provider) return null
 
@@ -74,7 +69,7 @@ export const useMarketData = ({ chainId, tokens, provider, account }: MarketData
 
   const bondUSDCosts = useQuery('getBondUSDCosts', async () => {
     if (!account || !tokens?.length || !provider) return null
-
+    const pegCurrency = getPegCurrency(chainId)
     const bondCosts = await getBondsCostInDollars(
       account,
       tokens.map(t => t.address),

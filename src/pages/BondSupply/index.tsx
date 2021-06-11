@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import TokensTable from '../../components/TokensTable'
 import InfoCard from '../../components/InfoCard'
 import VideoExplainerLink from '../../components/VideoExplainerLink'
@@ -22,6 +22,7 @@ import { BOND_RATES_COLUMNS, DATA_POLLING_INTERVAL, BondRateDataType, apyFromApr
 import { useMarketData, useUserMarginswapData } from './hooks'
 
 export const BondSupply = () => {
+  console.log('RENDER :::')
   const { library, chainId } = useActiveWeb3React()
 
   const [error, setError] = useState<string | null>(null)
@@ -87,6 +88,10 @@ export const BondSupply = () => {
       }
     }
   }, [])
+
+  useEffect(() => {
+    if (!isTxnPending && pendingTxhHash) setPendingTxhHash(null)
+  }, [isTxnPending])
 
   const actions = [
     {
