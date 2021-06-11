@@ -12,7 +12,7 @@ import {
   getBondsCostInDollars,
   TokenAmount,
   getTokenAllowances,
-  getTokenBalance,
+  getTokenBalance
 } from '@marginswap/sdk'
 
 interface MarketDataProps {
