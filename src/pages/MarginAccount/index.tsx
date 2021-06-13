@@ -8,15 +8,7 @@ import IconCoin from '../../icons/IconCoin'
 import RiskMeter from '../../components/Riskmeter'
 import VideoExplainerLink from '../../components/VideoExplainerLink'
 import { useWeb3React } from '@web3-react/core'
-import {
-  crossDeposit,
-  crossWithdraw,
-  approveToFund,
-  TokenAmount,
-  crossBorrow,
-  crossDepositETH,
-  crossWithdrawETH
-} from '@marginswap/sdk'
+import { crossDeposit, crossWithdraw, approveToFund, TokenAmount, crossBorrow } from '@marginswap/sdk'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { useActiveWeb3React } from '../../hooks'
 import { getProviderOrSigner } from '../../utils'
@@ -32,82 +24,9 @@ import { setInterval } from 'timers'
 import { useETHBalances } from 'state/wallet/hooks'
 import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 import { TransactionDetails } from '../../state/transactions/reducer'
+import { getData, AccountBalanceData, getRisk, DATA_POLLING_INTERVAL } from './utils'
 
 import { useMarketData, useUserMarginswapData } from './hooks'
-
-type AccountBalanceData = {
-  img: string
-  coin: string
-  decimals: number
-  address: string
-  balance: number
-  borrowed: number
-  borrowable: number
-  withdrawable: number
-  liquidity: number
-  maxBorrow: number
-  maxWithdraw: number
-  available: number
-  ir: number
-}
-
-const ACCOUNT_COLUMNS = [
-  {
-    name: 'Coin',
-    id: 'coin',
-    // eslint-disable-next-line react/display-name
-    render: (token: AccountBalanceData) => (
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <img src={token.img} alt={token.coin} height={30} />
-        <span style={{ marginLeft: '5px' }}>{token.coin}</span>
-      </div>
-    )
-  },
-  {
-    name: 'Total Balance',
-    id: 'balance',
-    // eslint-disable-next-line react/display-name
-    render: ({ balance }: { balance: number }) => <span>{balance ? balance.toFixed(2) : 0}</span>
-  },
-  {
-    name: 'Debt',
-    id: 'borrowed',
-    // eslint-disable-next-line react/display-name
-    render: ({ borrowed }: { borrowed: number }) => <span>{borrowed ? borrowed.toFixed(2) : 0}</span>
-  },
-  {
-    name: 'Interest',
-    id: 'ir',
-    // eslint-disable-next-line react/display-name
-    render: ({ ir }: { ir: number }) => <span>{ir ? `${ir.toFixed(2)}%` : 0}</span>,
-    tooltip: 'Interest will start accruing per block as soon as a token is borrowed for a margin trade'
-  },
-  {
-    name: 'Borrowable',
-    id: 'borrowable',
-    tooltip: 'This is the total amount you can borrow with your equity',
-    // eslint-disable-next-line react/display-name
-    render: ({ borrowable }: { borrowable: number }) => <span>{borrowable ? borrowable.toFixed(2) : 0}</span>
-  },
-  {
-    name: 'Liquidity',
-    id: 'liquidity',
-    tooltip: 'This is the total amount of an asset available to be borrowed for a trade',
-    // eslint-disable-next-line react/display-name
-    render: ({ liquidity }: { liquidity: number }) => <span>{liquidity ? liquidity.toFixed(2) : 0}</span>
-  }
-] as const
-
-const LIQUIDATION_RATIO = 1.15
-const SAFE_RATIO = 2.5
-
-const getRisk = (holding: number, debt: number): number => {
-  if (debt === 0) return 0
-  const marginLevel = Math.max(Math.min(holding / debt, SAFE_RATIO), LIQUIDATION_RATIO)
-  return 10 - 10 * ((marginLevel - LIQUIDATION_RATIO) / (SAFE_RATIO - LIQUIDATION_RATIO))
-}
-
-const DATA_POLLING_INTERVAL = 60 * 1000
 
 export const MarginAccount = () => {
   const { library, chainId } = useActiveWeb3React()
@@ -166,11 +85,61 @@ export const MarginAccount = () => {
   //const holdingTotal = (holdingTotalRetreived?.data as TokenAmount) || null
   //const debtTotal = (debtTotalRetrieved?.data as TokenAmount) || null
 
-  useEffect(() => {
-    if (!isTxnPending && pendingTxhHash) {
-      setPendingTxhHash(null)
+  if (triggerDataPoll && library && tokens.length) {
+    try {
+      setTriggerDataPoll(false)
+    } catch (e) {
+      console.error(e)
+      setError('Failed to get account data')
     }
-  }, [isTxnPending])
+  }
+
+  const ACCOUNT_COLUMNS = [
+    {
+      name: 'Coin',
+      id: 'coin',
+      // eslint-disable-next-line react/display-name
+      render: (token: AccountBalanceData) => (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <img src={token.img} alt={token.coin} height={30} />
+          <span style={{ marginLeft: '5px' }}>{token.coin}</span>
+        </div>
+      )
+    },
+    {
+      name: 'Total Balance',
+      id: 'balance',
+      // eslint-disable-next-line react/display-name
+      render: ({ balance }: { balance: number }) => <span>{balance ? balance.toFixed(2) : 0}</span>
+    },
+    {
+      name: 'Debt',
+      id: 'borrowed',
+      // eslint-disable-next-line react/display-name
+      render: ({ borrowed }: { borrowed: number }) => <span>{borrowed ? borrowed.toFixed(2) : 0}</span>
+    },
+    {
+      name: 'Interest',
+      id: 'ir',
+      // eslint-disable-next-line react/display-name
+      render: ({ ir }: { ir: number }) => <span>{ir ? `${ir.toFixed(2)}%` : 0}</span>,
+      tooltip: 'Interest will start accruing per block as soon as a token is borrowed for a margin trade'
+    },
+    {
+      name: 'Borrowable',
+      id: 'borrowable',
+      tooltip: 'This is the total amount you can borrow with your equity',
+      // eslint-disable-next-line react/display-name
+      render: ({ borrowable }: { borrowable: number }) => <span>{borrowable ? borrowable.toFixed(2) : 0}</span>
+    },
+    {
+      name: 'Liquidity',
+      id: 'liquidity',
+      tooltip: 'This is the total amount of an asset available to be borrowed for a trade',
+      // eslint-disable-next-line react/display-name
+      render: ({ liquidity }: { liquidity: number }) => <span>{liquidity ? liquidity.toFixed(2) : 0}</span>
+    }
+  ] as const
 
   const BORROW_ACCOUNT_ACTION = [
     {
@@ -279,14 +248,11 @@ export const MarginAccount = () => {
     }
   ] as const
 
-  if (triggerDataPoll && library && tokens.length) {
-    try {
-      setTriggerDataPoll(false)
-    } catch (e) {
-      console.error(e)
-      setError('Failed to get account data')
+  useEffect(() => {
+    if (!isTxnPending && pendingTxhHash) {
+      setPendingTxhHash(null)
     }
-  }
+  }, [isTxnPending])
 
   useEffect(() => {
     const interval = setInterval(() => setTriggerDataPoll(true), DATA_POLLING_INTERVAL)
@@ -299,92 +265,23 @@ export const MarginAccount = () => {
     }
   }, [])
 
-  // build an array of token data to display in the table
-  const data = tokens.map(token => ({
-    img: token.logoURI ?? '',
-    coin: token.symbol,
-    address: token.address,
-    decimals: token.decimals,
-    balance: holdingAmounts ? Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals) : 0,
-    borrowed: borrowingAmounts ? Number(borrowingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals) : 0,
-    borrowable:
-      borrowableAmounts && borrowableAmounts[token.address]
-        ? parseFloat(borrowableAmounts[token.address].toFixed())
-        : 0,
-    withdrawable:
-      withdrawableAmounts && withdrawableAmounts[token.address]
-        ? parseFloat(withdrawableAmounts[token.address].toFixed())
-        : 0,
-    liquidity: liquidities && liquidities[token.address] ? parseFloat(liquidities[token.address].toFixed()) : 0,
-    maxBorrow: Math.min(
-      borrowableAmounts && borrowableAmounts[token.address]
-        ? parseFloat(borrowableAmounts[token.address].toFixed())
-        : 0,
-      liquidities && liquidities[token.address] ? parseFloat(liquidities[token.address].toFixed()) : 0
-    ),
-    maxWithdraw: Math.min(
-      withdrawableAmounts && withdrawableAmounts[token.address]
-        ? parseFloat(withdrawableAmounts[token.address].toFixed())
-        : 0,
-      holdingAmounts ? Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals) : 0
-    ),
-    ir: borrowAPRs ? borrowAPRs[token.address] : 0,
-    available: (tokenBalances && tokenBalances[token.address]) ?? 0,
-    getActionNameFromAmount: {
-      Deposit: () => (allowances[token.address] > 0 ? 'Confirm Transaction' : 'Approve')
-    },
-    customActions:
-      token.symbol === 'WETH' && eth === '1'
-        ? ([
-            {
-              name: 'Deposit ETH',
-              onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
-                if (!amount || !chainId) return
-                try {
-                  const depositRes: any = await crossDepositETH(
-                    utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
-                    chainId,
-                    provider
-                  )
-                  addTransaction(depositRes, {
-                    summary: `Cross Deposit `
-                  })
-                  //delayedFetchUserData()
-                } catch (error) {
-                  toast.error('Deposit error', { position: 'bottom-right' })
-                  console.error(error)
-                }
-              },
-              max: Number(userEthBalance?.toSignificant(6)) || 0
-            },
-            {
-              name: 'Withdraw ETH',
-              onClick: async (tokenInfo: AccountBalanceData, amount: number) => {
-                if (!chainId) return
-                try {
-                  const response: any = await crossWithdrawETH(
-                    utils.parseUnits(String(amount), tokenInfo.decimals).toHexString(),
-                    chainId,
-                    provider
-                  )
-                  addTransaction(response, {
-                    summary: `Cross Withdraw ETH`
-                  })
-                  //delayedFetchUserData()
-                } catch (error) {
-                  toast.error('Withdrawal error', { position: 'bottom-right' })
-                  console.error(error)
-                }
-              },
-              deriveMaxFrom: 'balance',
-              disabled: (token: AccountBalanceData) => {
-                const date = localStorage.getItem(`${token.coin}_LAST_DEPOSIT`)
-                return !!date && new Date().getTime() - new Date(date).getTime() < 300000
-              }
-            }
-          ] as const)
-        : undefined
-  }))
+  const data = getData({
+    chainId,
+    provider,
+    tokens,
+    eth,
+    holdingAmounts,
+    borrowingAmounts,
+    borrowableAmounts,
+    withdrawableAmounts,
+    liquidities,
+    borrowAPRs,
+    tokenBalances,
+    allowances,
+    addTransaction,
+    toast,
+    userEthBalance
+  })
 
   return (
     <StyledWrapperDiv>
@@ -416,7 +313,7 @@ export const MarginAccount = () => {
         </StyledTableContainer>
         <TokensTable
           title="Account balance"
-          data={data}
+          data={data ?? []}
           columns={ACCOUNT_COLUMNS}
           actions={chainId !== 1 ? [...ACCOUNT_ACTIONS, ...BORROW_ACCOUNT_ACTION] : ACCOUNT_ACTIONS}
           deriveEmptyFrom={['balance', 'borrowed']}
