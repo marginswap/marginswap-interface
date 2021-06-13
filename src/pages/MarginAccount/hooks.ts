@@ -23,7 +23,6 @@ interface MarketDataProps {
   chainId?: ChainId | undefined
   provider?: any | undefined
   tokens?: TokenInfo[]
-  account: string | null | undefined
 }
 
 interface UserMarginswapDataProps {
@@ -40,7 +39,7 @@ interface UserMarginswapDataProps {
  * @description fetches the data related to the MarginSwap market via polling
  *
  */
-export const useMarketData = ({ chainId, tokens, provider, account }: MarketDataProps) => {
+export const useMarketData = ({ chainId, tokens, provider }: MarketDataProps) => {
   // interest rates by token
   const borrowAPRs = useQuery('getBorrowAPRs', async () => {
     if (!tokens?.length || !provider) return null
@@ -74,27 +73,7 @@ export const useMarketData = ({ chainId, tokens, provider, account }: MarketData
     return liquiditiesRetreived.reduce((acc, cur, index) => ({ ...acc, [tokens[index].address]: cur }), {})
   })
 
-  // holding total (sum of all account balances)
-  const holdingTotal = useQuery('getHoldingTotal', async () => {
-    if (!account || !chainId || !provider) return null
-
-    return new TokenAmount(
-      getPegCurrency(chainId) ?? USDT_MAINNET,
-      (await getAccountHoldingTotal(account, chainId, provider)).toString()
-    )
-  })
-
-  // debt total (sum of all debt balances)
-  const debtTotal = useQuery('getDebtTotal', async () => {
-    if (!account || !chainId || !provider) return null
-
-    return new TokenAmount(
-      getPegCurrency(chainId) ?? USDT_MAINNET,
-      (await getAccountBorrowTotal(account, chainId, provider)).toString()
-    )
-  })
-
-  return { borrowAPRs, liquidities, holdingTotal, debtTotal }
+  return { borrowAPRs, liquidities }
 }
 
 /**

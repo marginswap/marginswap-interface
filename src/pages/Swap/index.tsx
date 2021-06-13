@@ -212,8 +212,8 @@ export default function Swap() {
   }, [approval, approvalSubmitted])
 
   let provider: any
-  if (library && account) {
-    provider = getProviderOrSigner(library, account)
+  if (library) {
+    provider = getProviderOrSigner(library, account || undefined)
   }
 
   const borrowableBalance = useBorrowable(currencies[Field.INPUT] ?? undefined)

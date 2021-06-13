@@ -52,12 +52,11 @@ export const MarginAccount = () => {
   }
   const tokens = tokensList.tokens.filter(t => t.chainId === chainId)
 
-  const {
-    borrowAPRs: borrowAPRsRetrieved,
-    liquidities: liquiditiesRetrieved,
-    holdingTotal: holdingTotalRetrieved,
-    debtTotal: debtTotalRetrieved
-  } = useMarketData({ chainId, provider, tokens, account })
+  const { borrowAPRs: borrowAPRsRetrieved, liquidities: liquiditiesRetrieved } = useMarketData({
+    chainId,
+    provider,
+    tokens
+  })
 
   const {
     amounts: amountsRetrieved,
@@ -72,9 +71,9 @@ export const MarginAccount = () => {
   const borrowAPRs = (borrowAPRsRetrieved?.data as Record<string, number>) || null
   const liquidities = (liquiditiesRetrieved?.data as Record<string, number>) || null
   const holdingTotal =
-    (holdingTotalRetrieved?.data as TokenAmount) || new TokenAmount(getPegCurrency(chainId) ?? USDT_MAINNET, '0')
+    (holdingTotalRetreived?.data as TokenAmount) || new TokenAmount(getPegCurrency(chainId) ?? USDT_MAINNET, '0')
   const debtTotal =
-    (debtTotalRetrieved?.data as TokenAmount) || new TokenAmount(getPegCurrency(chainId) ?? USDT_MAINNET, '0')
+    (debtTotalRetreived?.data as TokenAmount) || new TokenAmount(getPegCurrency(chainId) ?? USDT_MAINNET, '0')
 
   const holdingAmounts = (amountsRetrieved?.data?.holdingAmounts as Record<string, number>) || null
   const borrowingAmounts = (amountsRetrieved?.data?.borrowingAmounts as Record<string, number>) || null
@@ -82,8 +81,6 @@ export const MarginAccount = () => {
   const borrowableAmounts = (borrowableAmountsRetrieved?.data as Record<string, number>) || null
   const withdrawableAmounts = (withdrawableAmountsRetrieved?.data as Record<string, TokenAmount>) || null
   const tokenBalances = (tokenBalancesRetrieved?.data as Record<string, number>) || null
-  //const holdingTotal = (holdingTotalRetreived?.data as TokenAmount) || null
-  //const debtTotal = (debtTotalRetrieved?.data as TokenAmount) || null
 
   if (triggerDataPoll && library && tokens.length) {
     try {
