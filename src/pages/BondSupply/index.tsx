@@ -22,7 +22,6 @@ import { BOND_RATES_COLUMNS, DATA_POLLING_INTERVAL, BondRateDataType, apyFromApr
 import { useMarketData, useUserMarginswapData } from './hooks'
 
 export const BondSupply = () => {
-  console.log('RENDER :::')
   const { library, chainId } = useActiveWeb3React()
 
   const [error, setError] = useState<string | null>(null)
