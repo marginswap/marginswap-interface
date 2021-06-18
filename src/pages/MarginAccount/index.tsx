@@ -32,7 +32,7 @@ import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { useActiveWeb3React } from '../../hooks'
 import { getProviderOrSigner } from '../../utils'
 import { BigNumber } from '@ethersproject/bignumber'
-import { getDefaultProvider, BaseProvider } from '@ethersproject/providers'
+import { getDefaultProvider } from '@ethersproject/providers'
 import { StyledTableContainer } from './styled'
 import { StyledMobileOnlyRow } from './styled'
 import { StyledWrapperDiv } from './styled'
@@ -172,11 +172,7 @@ export const MarginAccount = () => {
     provider = getProviderOrSigner(library, account)
   }
 
-  let queryProvider: BaseProvider
-
-  if (chainId) {
-    queryProvider = getDefaultProvider(NETWORK_URLS[chainId])
-  }
+  const queryProvider = getDefaultProvider(chainId && NETWORK_URLS[chainId])
 
   const BORROW_ACCOUNT_ACTION = [
     {
@@ -300,7 +296,7 @@ export const MarginAccount = () => {
   const getMarketData = async () => {
     if (!chainId || !account) return
 
-    const [_interestRates, _liquidities, _holdingTotal, _debtTotal] = await Promise.all([
+    const [_interestRates, _liquidities] = await Promise.all([
       // interest rates by token
       getBorrowInterestRates(
         tokens.map(token => token.address),
@@ -316,16 +312,6 @@ export const MarginAccount = () => {
             ((await totalLendingAvailable(token.address, chainId, queryProvider)) ?? utils.parseUnits('0')).toString()
           )
         })
-      ),
-      // holding total (sum of all account balances)
-      new TokenAmount(
-        getPegCurrency(chainId) ?? USDT_MAINNET,
-        (await getAccountHoldingTotal(account, chainId, queryProvider)).toString()
-      ),
-      // debt total (sum of all debt balances)
-      new TokenAmount(
-        getPegCurrency(chainId) ?? USDT_MAINNET,
-        (await getAccountBorrowTotal(account, chainId, queryProvider)).toString()
       )
     ])
     // interest rates by token
@@ -337,10 +323,6 @@ export const MarginAccount = () => {
     )
     // liquidities (max lending available by token)
     setLiquidities(_liquidities.reduce((acc, cur, index) => ({ ...acc, [tokens[index].address]: cur }), {}))
-    // holding total (sum of all account balances)
-    setHoldingTotal(_holdingTotal)
-    // debt total (sum of all debt balances)
-    setDebtTotal(_debtTotal)
   }
 
   // these next two useEffect hooks handle data polling
