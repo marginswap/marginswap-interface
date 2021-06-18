@@ -45,6 +45,7 @@ import { setInterval } from 'timers'
 import { valueInPeg2token, useETHBalances } from 'state/wallet/hooks'
 import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 import { TransactionDetails } from '../../state/transactions/reducer'
+import { NETWORK_URLS } from '../../constants/networks'
 
 type AccountBalanceData = {
   img: string
@@ -171,18 +172,10 @@ export const MarginAccount = () => {
     provider = getProviderOrSigner(library, account)
   }
 
-  const queryNodeUrls: { [key: number]: string } = {
-    1: 'https://mainnet.infura.io/v3/ae52aea5aa2b41e287d72e10b1175491',
-    42: 'https://kovan.infura.io/v3/ae52aea5aa2b41e287d72e10b1175491',
-    43114: 'https://api.avax.network/ext/bc/C/rpc',
-    31337: 'http://localhost:8545',
-    137: 'https://rpc-mainnet.maticvigil.com/v1/b0858bc7aa27b1333df19546c12718235bd11785'
-  }
-
   let queryProvider: BaseProvider
 
   if (chainId) {
-    queryProvider = getDefaultProvider(queryNodeUrls[chainId])
+    queryProvider = getDefaultProvider(NETWORK_URLS[chainId])
   }
 
   const BORROW_ACCOUNT_ACTION = [
