@@ -12,9 +12,9 @@ import {
 import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
 
 interface StakingDataProps {
-  chainId?: ChainId
-  provider?: Web3Provider
-  address?: string
+  chainId?: ChainId | undefined
+  provider?: Web3Provider | undefined
+  address?: string | undefined
   period: number
 }
 

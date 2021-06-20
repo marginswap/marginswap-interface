@@ -4,53 +4,71 @@ import { ChainId } from '@marginswap/sdk'
 import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
 
 import Skeleton from '@material-ui/lab/Skeleton'
+import Parameters from './Parameters'
+import { CustomLightSpinner } from '../../theme'
+import Circle from '../../assets/images/blue-loader.svg'
+import { useStyles, DetailsFooter, LoadingDataContainer } from './styleds'
 
 import { getAvailableWithdrawalTime } from './utils'
 
-import { DataContainer } from './styleds'
-import { useMFIAPR } from './hooks'
+import { useLiquidityAPR } from './hooks'
 
 interface StakingData {
-  chainId?: ChainId
-  provider?: Web3Provider
-  address?: string
+  chainId?: ChainId | undefined
+  provider?: Web3Provider | undefined
+  address?: string | undefined
   period: number
 }
 
 const LiquidityData = ({ chainId, provider, address, period }: StakingData) => {
-  const { mfIStaking, accruedRewardRetrieved, stakedBalance, availableForWithdrawAfter } = useMFIAPR({
+  const classes = useStyles()
+  const { mfIStaking, accruedRewardRetrieved, stakedBalance, availableForWithdrawAfter } = useLiquidityAPR({
     chainId,
     provider,
     address,
     period
   })
-  return (
-    <DataContainer>
-      <span>
-        Estimated APR: {mfIStaking.isLoading ? <Skeleton variant="text" /> : <strong>{`${mfIStaking.data}%`}</strong>}
-      </span>
-      <span>
-        Accrued reward:{' '}
-        {accruedRewardRetrieved.isLoading ? (
-          <Skeleton variant="text" />
-        ) : (
-          <strong>{`${accruedRewardRetrieved.data} MFI`}</strong>
-        )}
-      </span>
-      <span>
-        Current staked balance:
-        {stakedBalance.isLoading ? <Skeleton variant="text" /> : <strong>{`${stakedBalance.data} Liquidity`}</strong>}
-      </span>
 
-      <span>
-        Available for withdrawal after:{' '}
-        {availableForWithdrawAfter.isLoading ? (
-          <Skeleton variant="text" />
-        ) : (
-          <strong>{getAvailableWithdrawalTime(availableForWithdrawAfter.data)}</strong>
-        )}
-      </span>
-    </DataContainer>
+  if (
+    mfIStaking.isLoading ||
+    accruedRewardRetrieved.isLoading ||
+    stakedBalance.isLoading ||
+    availableForWithdrawAfter.isLoading
+  ) {
+    return (
+      <LoadingDataContainer>
+        <CustomLightSpinner src={Circle} alt="loader" size={'25px'} />
+      </LoadingDataContainer>
+    )
+  }
+
+  return (
+    <DetailsFooter>
+      <div className={classes.parameters + ' ' + classes.fullWidthPair}>
+        <Parameters
+          title="Estimated APR"
+          value={mfIStaking.isError ? 'Error!' : mfIStaking.data || 0}
+          hint="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed"
+        />
+        <Parameters
+          title="Accrued reward"
+          value={accruedRewardRetrieved.isError ? 'Error!' : `${accruedRewardRetrieved.data} MFI`}
+          hint="The difference between the market price and estimated price due to trade size"
+        />
+        <Parameters
+          title="Current staked Balance"
+          value={stakedBalance.isError ? 'Error!' : `${stakedBalance.data} Liquidity`}
+          hint={`A portion of each trade XXX goes to liquidity providers as a protocol incentive`}
+        />
+        <Parameters
+          title="Available for withdrawal after"
+          value={
+            availableForWithdrawAfter.isError ? 'Error!' : getAvailableWithdrawalTime(availableForWithdrawAfter.data)
+          }
+          hint="Mock stuff!"
+        />
+      </div>
+    </DetailsFooter>
   )
 }
 

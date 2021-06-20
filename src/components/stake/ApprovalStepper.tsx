@@ -42,7 +42,7 @@ export default function ApprovalStepper({
           ) : approvalSubmitted && approval === ApprovalState.APPROVED ? (
             'Approved'
           ) : (
-            `Approve ${firstStepLabel}`
+            `Approve`
           )}
         </ButtonConfirmed>
         <ButtonPrimary

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
+import styled from 'styled-components'
 
 import MFIData from './MFIData'
 import LiquidityData from './LiquidityData'
@@ -18,20 +19,40 @@ import {
 import { ApprovalState, useApproveCallbackFromStakeTrade } from '../../hooks/useApproveCallback'
 
 import AppBody from '../../pages/AppBody'
-import { TYPE, StyledButton } from '../../theme'
+import { TYPE } from '../../theme'
 import { RowBetween } from '../Row'
 import Select from '../Select'
 import ToggleSelector from '../ToggleSelector'
 import { GreyCard } from '../../components/Card'
 import ApprovalStepper from './ApprovalStepper'
+import Parameters from './Parameters'
 
 import { getMFIStakingContract } from 'utils'
 import { getNotificationMsn } from './utils'
 import { utils } from 'ethers'
 
-import { DropdownsContainer, StyledOutlinedInput, StyledStakeHeader } from './styleds'
+import {
+  DropdownsContainer,
+  StyledOutlinedInput,
+  StyledStakeHeader,
+  StyledBalanceMax,
+  useStyles,
+  DetailsFooter
+} from './styleds'
 import { PaddedColumn, Wrapper } from '../swap/styleds'
 import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
+
+const GreyCardStyled = styled(GreyCard)`
+  background-color: ${({ theme }) => theme.bg3};
+  color: ${({ theme }) => theme.text3};
+  cursor: auto;
+  box-shadow: none;
+  border: 1px solid transparent;
+  outline: none;
+  opacity: 1;
+  font-size: 20px;
+  text-align: center;
+`
 
 interface StakeProps {
   chainId?: ChainId
@@ -41,6 +62,7 @@ interface StakeProps {
 }
 
 export default function TradeStake({ chainId, provider, address, account }: StakeProps) {
+  const classes = useStyles()
   const [mfiStake, setMfiStake] = useState(true)
 
   const { control, watch, setValue, register } = useForm()
@@ -117,75 +139,88 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
   ]
   const isAbleTransaction = Boolean(amount?.length) && Number(amount) > 0
 
+  const bottomParameters = (
+    <DetailsFooter>
+      <div className={classes.parameters + ' ' + classes.fullWidthPair}>
+        <Parameters
+          title="Estimated APR"
+          value="0"
+          hint="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed"
+        />
+        <Parameters
+          title="Accrued reward"
+          value="0 MFI"
+          hint="The difference between the market price and estimated price due to trade size"
+        />
+        <Parameters
+          title="Current staked Balance"
+          value="0 MFI"
+          hint={`A portion of each trade XXX goes to liquidity providers as a protocol incentive`}
+        />
+        <Parameters title="Available for withdrawal after" value="05/07/2021" hint="Mock stuff!" />
+      </div>
+    </DetailsFooter>
+  )
+
   return (
-    <AppBody>
-      <form>
-        <StyledStakeHeader>
-          <RowBetween>
-            <TYPE.black fontWeight={500}>Stake</TYPE.black>
-          </RowBetween>
-        </StyledStakeHeader>
-        <PaddedColumn>
-          <ToggleSelector options={['MFI', 'LIQUIDITY TOKEN']} state={mfiStake} setState={setMfiStake} />
-        </PaddedColumn>
-        <Wrapper>
-          <DropdownsContainer>
-            <Select name="transactionType" options={transactionTypeOptions} register={register} />
-            <Select name="period" options={periodSelectOptions} register={register} />
-          </DropdownsContainer>
-          {mfiStake ? (
-            <MFIData chainId={chainId} provider={provider} address={address} period={period.value} />
-          ) : (
-            <LiquidityData chainId={chainId} provider={provider} address={address} period={period.value} />
-          )}
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div style={{ position: 'relative', width: '100%' }}>
-              <Controller
-                name="amount"
-                defaultValue=""
-                control={control}
-                render={({ field }) => (
-                  <StyledOutlinedInput
-                    {...field}
-                    type="number"
-                    endAdornment={
-                      <StyledButton
-                        color="primary"
-                        style={{
-                          maxWidth: 20
-                        }}
-                        onClick={handleMaxAmount}
-                      >
-                        MAX
-                      </StyledButton>
-                    }
-                  />
-                )}
-              />
+    <>
+      <AppBody>
+        <form>
+          <StyledStakeHeader>
+            <RowBetween>
+              <TYPE.black fontWeight={500}>Stake</TYPE.black>
+            </RowBetween>
+          </StyledStakeHeader>
+          <PaddedColumn>
+            <ToggleSelector options={['MFI', 'LIQUIDITY TOKEN']} state={mfiStake} setState={setMfiStake} />
+          </PaddedColumn>
+          <Wrapper>
+            <DropdownsContainer>
+              <Select name="transactionType" options={transactionTypeOptions} register={register} />
+              <Select name="period" options={periodSelectOptions} register={register} />
+            </DropdownsContainer>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ position: 'relative', width: '100%' }}>
+                <Controller
+                  name="amount"
+                  defaultValue=""
+                  control={control}
+                  render={({ field }) => (
+                    <StyledOutlinedInput
+                      {...field}
+                      type="number"
+                      endAdornment={<StyledBalanceMax onClick={handleMaxAmount}>MAX</StyledBalanceMax>}
+                    />
+                  )}
+                />
+              </div>
             </div>
-          </div>
-          {isAbleTransaction ? (
-            <ApprovalStepper
-              firstStepLabel={transactionTypeOptions.find(tt => tt.value === transactionType)?.label || ''}
-              firstStepOnClick={e => {
-                e.preventDefault()
-                approveCallback()
-              }}
-              secondStepLabel="Stake"
-              secondStepOnClick={e => {
-                e.preventDefault()
-                handleStake()
-              }}
-              approval={approval}
-              approvalSubmitted={approvalSubmitted}
-            />
-          ) : (
-            <GreyCard style={{ textAlign: 'center' }}>
-              <TYPE.main mb="4px">{getNotificationMsn(isAbleTransaction, false)}</TYPE.main>
-            </GreyCard>
-          )}
-        </Wrapper>
-      </form>
-    </AppBody>
+            {isAbleTransaction ? (
+              <ApprovalStepper
+                firstStepLabel={transactionTypeOptions.find(tt => tt.value === transactionType)?.label || ''}
+                firstStepOnClick={e => {
+                  e.preventDefault()
+                  approveCallback()
+                }}
+                secondStepLabel="Stake"
+                secondStepOnClick={e => {
+                  e.preventDefault()
+                  handleStake()
+                }}
+                approval={approval}
+                approvalSubmitted={approvalSubmitted}
+              />
+            ) : (
+              <GreyCardStyled>{getNotificationMsn(isAbleTransaction, false)}</GreyCardStyled>
+            )}
+          </Wrapper>
+        </form>
+      </AppBody>
+      {mfiStake ? (
+        <MFIData chainId={chainId} provider={provider} address={address} period={period} />
+      ) : (
+        <LiquidityData chainId={chainId} provider={provider} address={address} period={period} />
+      )}
+    </>
   )
 }

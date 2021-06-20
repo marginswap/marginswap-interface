@@ -76,8 +76,6 @@ const MobileMenu = ({ stake }: MobileMenuProps) => {
       {open && (
         <MobileMenuList id="mob" open={open}>
           {headerLinks.map(link => {
-            if (stake !== '1' && link.name === 'Stake') return null
-
             return (
               <Link
                 to={link.path}
@@ -134,8 +132,6 @@ export default function Header() {
       <HeaderRow>
         <HeaderLinks id="desk">
           {headerLinks.map(link => {
-            if (stake !== '1' && link.name === 'Stake') return null
-
             return (
               <StyledNavLink key={link.path} id={`swap-nav-link`} to={link.path}>
                 {link.name}
