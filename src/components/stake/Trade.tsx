@@ -25,22 +25,15 @@ import Select from '../Select'
 import ToggleSelector from '../ToggleSelector'
 import { GreyCard } from '../../components/Card'
 import ApprovalStepper from './ApprovalStepper'
-import Parameters from './Parameters'
 
 import { getMFIStakingContract } from 'utils'
 import { getNotificationMsn } from './utils'
 import { utils } from 'ethers'
 
-import {
-  DropdownsContainer,
-  StyledOutlinedInput,
-  StyledStakeHeader,
-  StyledBalanceMax,
-  useStyles,
-  DetailsFooter
-} from './styleds'
+import { DropdownsContainer, StyledOutlinedInput, StyledStakeHeader, StyledBalanceMax } from './styleds'
 import { PaddedColumn, Wrapper } from '../swap/styleds'
 import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
+import { useCanWithdraw } from './hooks'
 
 const GreyCardStyled = styled(GreyCard)`
   background-color: ${({ theme }) => theme.bg3};
@@ -62,7 +55,6 @@ interface StakeProps {
 }
 
 export default function TradeStake({ chainId, provider, address, account }: StakeProps) {
-  const classes = useStyles()
   const [mfiStake, setMfiStake] = useState(true)
 
   const { control, watch, setValue, register } = useForm()
@@ -72,7 +64,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
   const period = watch('period', 1)
 
   const getMFIToken = new Token(chainId ?? ChainId.MAINNET, '0xAa4e3edb11AFa93c41db59842b29de64b72E355B', 18, 'MFI')
-
+  const canWithdraw = useCanWithdraw({ chainId, provider, address, account })
   //TODO: REVIEW WITH GABRIEL: IF AMOUNT IS FLOAT TYPE, RETURNS AN ERROR -> CANNOT CONVERT TO BIGINT
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallbackFromStakeTrade(
@@ -138,29 +130,6 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
     { value: '3', label: 'Withdraw' }
   ]
   const isAbleTransaction = Boolean(amount?.length) && Number(amount) > 0
-
-  const bottomParameters = (
-    <DetailsFooter>
-      <div className={classes.parameters + ' ' + classes.fullWidthPair}>
-        <Parameters
-          title="Estimated APR"
-          value="0"
-          hint="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed"
-        />
-        <Parameters
-          title="Accrued reward"
-          value="0 MFI"
-          hint="The difference between the market price and estimated price due to trade size"
-        />
-        <Parameters
-          title="Current staked Balance"
-          value="0 MFI"
-          hint={`A portion of each trade XXX goes to liquidity providers as a protocol incentive`}
-        />
-        <Parameters title="Available for withdrawal after" value="05/07/2021" hint="Mock stuff!" />
-      </div>
-    </DetailsFooter>
-  )
 
   return (
     <>

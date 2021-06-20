@@ -3,7 +3,6 @@ import React from 'react'
 import { ChainId } from '@marginswap/sdk'
 import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
 
-import Skeleton from '@material-ui/lab/Skeleton'
 import Parameters from './Parameters'
 import { CustomLightSpinner } from '../../theme'
 import Circle from '../../assets/images/blue-loader.svg'
@@ -40,6 +39,8 @@ const MFIData = ({ chainId, provider, address, period }: StakingData) => {
       </LoadingDataContainer>
     )
   }
+
+  if (mfIStaking.isError) console.log('Error ::', mfIStaking.error)
 
   return (
     <DetailsFooter>
