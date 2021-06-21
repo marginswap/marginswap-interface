@@ -481,7 +481,7 @@ export const MarginAccount = () => {
   // call getUserMarginswapData when relevant things change
   useEffect(() => {
     getUserMarginswapData()
-  }, [account, tokens, chainId, provider?._address])
+  }, [account, tokens, chainId])
 
   // build an array of token data to display in the table
   const data = useMemo(
