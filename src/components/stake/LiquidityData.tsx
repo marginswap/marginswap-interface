@@ -60,9 +60,9 @@ const LiquidityData = ({ chainId, provider, address, period }: StakingData) => {
               : `${new TokenAmount(
                   getPegCurrency(chainId),
                   accruedRewardRetrieved?.data?.toString() || '0'
-                ).toSignificant(3)} Liquidity`
+                ).toSignificant(3)} MFI`
           }
-          hint="The amount of liquidity token you have accrued by staking"
+          hint="The amount of MFI you have accrued by staking. To withdraw it, select 'Claim' and then click 'Max'"
         />
         <Parameters
           title="Current staked Balance"
