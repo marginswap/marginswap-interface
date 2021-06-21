@@ -35,6 +35,8 @@ export default function SwapModalHeader({
 
   const theme = useContext(ThemeContext)
 
+  console.log('LOGO :::', trade.inputAmount.currency)
+
   return (
     <AutoColumn gap={'md'} style={{ marginTop: '20px' }}>
       <RowBetween align="flex-end">

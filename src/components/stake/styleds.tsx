@@ -1,5 +1,6 @@
 import Tabs from '@material-ui/core/Tabs'
 import OutlinedInput from '@material-ui/core/OutlinedInput'
+import { Text } from 'rebass'
 import styled from 'styled-components'
 import { makeStyles } from '@material-ui/core'
 
@@ -238,7 +239,7 @@ export const DetailsFooter = styled.div`
   border-bottom-right-radius: 20px;
   color: ${({ theme }) => theme.text2};
   background-color: ${({ theme }) => theme.advancedBG};
-  z-index: -1;
+  z-index: 1;
   opacity: 1;
   transition: opacity 0.3s linear;
 `
@@ -251,6 +252,12 @@ export const ParameterResult = styled.span`
   font-size: 14px;
   color: #fff;
   font-weight: 400;
+`
+
+export const TruncatedText = styled(Text)`
+  text-overflow: ellipsis;
+  width: 220px;
+  overflow: hidden;
 `
 
 export const useStyles = makeStyles(() => ({

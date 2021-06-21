@@ -28,38 +28,33 @@ export default function ApprovalStepper({
   return (
     <>
       <RowBetween>
-        <ButtonConfirmed
-          onClick={firstStepOnClick}
-          disabled={approvalSubmitted}
-          width="48%"
-          altDisabledStyle={approval === ApprovalState.PENDING} // show solid button while waiting
-          confirmed={approval === ApprovalState.APPROVED}
-        >
-          {approval === ApprovalState.PENDING ? (
+        {approval !== ApprovalState.APPROVED ? (
+          <ButtonPrimary
+            onClick={firstStepOnClick}
+            disabled={approvalSubmitted}
+            altDisabledStyle={approval === ApprovalState.PENDING} // show solid button while waiting
+          >
+            {approval === ApprovalState.PENDING ? (
+              <AutoRow gap="6px" justify="center">
+                Approving <Loader stroke="white" />
+              </AutoRow>
+            ) : (
+              `Approve`
+            )}
+          </ButtonPrimary>
+        ) : (
+          <ButtonPrimary
+            onClick={secondStepOnClick}
+            height="63px"
+            id="swap-button-1"
+            disabled={approval !== ApprovalState.APPROVED}
+          >
             <AutoRow gap="6px" justify="center">
-              Approving <Loader stroke="white" />
+              {secondStepLabel}
             </AutoRow>
-          ) : approvalSubmitted && approval === ApprovalState.APPROVED ? (
-            'Approved'
-          ) : (
-            `Approve`
-          )}
-        </ButtonConfirmed>
-        <ButtonPrimary
-          onClick={secondStepOnClick}
-          width="48%"
-          height="63px"
-          id="swap-button-1"
-          disabled={approval !== ApprovalState.APPROVED}
-        >
-          <AutoRow gap="6px" justify="center">
-            {secondStepLabel}
-          </AutoRow>
-        </ButtonPrimary>
+          </ButtonPrimary>
+        )}
       </RowBetween>
-      <Column style={{ marginTop: '1rem' }}>
-        <ProgressSteps steps={[approval === ApprovalState.APPROVED]} />
-      </Column>
     </>
   )
 }

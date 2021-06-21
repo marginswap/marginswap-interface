@@ -4,6 +4,7 @@ import styled from 'styled-components'
 
 import MFIData from './MFIData'
 import LiquidityData from './LiquidityData'
+import ConfirmStakeModal from './ConfirmStakeModal'
 
 import {
   ChainId,
@@ -56,6 +57,7 @@ interface StakeProps {
 
 export default function TradeStake({ chainId, provider, address, account }: StakeProps) {
   const [mfiStake, setMfiStake] = useState(true)
+  const [confirmStakeModal, setConfirmStakeModal] = useState(false)
 
   const { control, watch, setValue, register } = useForm()
 
@@ -80,12 +82,13 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
       const balance = await getTokenBalance(address, getMFIToken.address, provider)
       console.log('BALANCE ::', utils.formatUnits(balance, getMFIToken.decimals))
       //TODO: REVIEW THE NUMBER().toFixed(0) TYPE WITH GABRIEL.
-      setValue('amount', utils.formatUnits(balance, getMFIToken.decimals))
+      setValue('amount', utils.formatUnits(balance, getMFIToken.decimals).toString())
     }
   }
 
   const handleStake = async () => {
-    const signedContract = getMFIStakingContract(chainId, provider, account)
+    setConfirmStakeModal(true)
+    /*const signedContract = getMFIStakingContract(chainId, provider, account)
     const tokenAmt = utils.parseUnits(amount, 18)
 
     if (signedContract) {
@@ -115,7 +118,11 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
           })
           .catch((err: any) => console.log('Upps error in withdrawReward :', err))
       }
-    }
+    }*/
+  }
+
+  const handleDismissModal = () => {
+    setConfirmStakeModal(false)
   }
 
   const periodSelectOptions = [
@@ -158,7 +165,16 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
                     <StyledOutlinedInput
                       {...field}
                       type="number"
-                      endAdornment={<StyledBalanceMax onClick={handleMaxAmount}>MAX</StyledBalanceMax>}
+                      endAdornment={
+                        <StyledBalanceMax
+                          onClick={e => {
+                            e.preventDefault()
+                            handleMaxAmount()
+                          }}
+                        >
+                          MAX
+                        </StyledBalanceMax>
+                      }
                     />
                   )}
                 />
@@ -190,6 +206,21 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
       ) : (
         <LiquidityData chainId={chainId} provider={provider} address={address} period={period} />
       )}
+      <ConfirmStakeModal
+        token={getMFIToken}
+        chainId={chainId}
+        provider={provider}
+        address={address}
+        period={period}
+        mfiStake={mfiStake}
+        amount={amount}
+        attemptingTxn={false}
+        txHash=""
+        onConfirm={() => null}
+        onDismiss={handleDismissModal}
+        isOpen={confirmStakeModal}
+        stakeErrorMsn=""
+      />
     </>
   )
 }
