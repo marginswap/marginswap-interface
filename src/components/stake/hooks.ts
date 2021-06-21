@@ -31,7 +31,7 @@ interface CanWithdrawDataProps {
 export const useMFIAPR = ({ chainId, provider, address, period }: StakingDataProps) => {
   const contract = getMFIStaking(chainId, provider)
 
-  const mfIStaking = useQuery('getMFIStaking', () => getMFIAPRPerWeight(contract, Number(period)))
+  const mfIStaking = useQuery('getMFIStaking', () => getMFIAPRPerWeight(contract, period))
   const accruedRewardRetrieved = useQuery('getAccruedMFIReward', () => accruedReward(contract, address))
   const stakedBalance = useQuery('getMFIStakeBalance', () => getStakedBalance(contract, address))
   const availableForWithdrawAfter = useQuery('getMFITimeUntilLockEnd', () => getTimeUntilLockEnd(contract, address))

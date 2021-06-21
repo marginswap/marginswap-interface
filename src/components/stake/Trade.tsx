@@ -275,16 +275,16 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
         </form>
       </AppBody>
       {mfiStake ? (
-        <MFIData chainId={chainId} provider={provider} address={address} period={period} />
+        <MFIData chainId={chainId} provider={provider} address={address} period={Number(period)} />
       ) : (
-        <LiquidityData chainId={chainId} provider={provider} address={address} period={period} />
+        <LiquidityData chainId={chainId} provider={provider} address={address} period={Number(period)} />
       )}
       <ConfirmStakeModal
         token={getMFIToken}
         chainId={chainId}
         provider={provider}
         address={address}
-        period={period}
+        period={Number(period)}
         mfiStake={mfiStake}
         amount={amount}
         attemptingTxn={attemptingTxn}
