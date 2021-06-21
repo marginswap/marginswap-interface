@@ -6,6 +6,7 @@ import IconMoneyStackLocked from '../../icons/IconMoneyStackLocked'
 import IconMoneyStack from '../../icons/IconMoneyStack'
 import { TokenInfo } from '@uniswap/token-lists'
 import { useWeb3React } from '@web3-react/core'
+import { getDefaultProvider } from '@ethersproject/providers'
 import { useActiveWeb3React } from '../../hooks'
 import { getProviderOrSigner } from '../../utils'
 import {
@@ -30,6 +31,7 @@ import { getPegCurrency, USDT_MAINNET } from '../../constants'
 import { setInterval } from 'timers'
 import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 import { TransactionDetails } from '../../state/transactions/reducer'
+import { NETWORK_URLS } from '../../constants/networks'
 
 const DATA_POLLING_INTERVAL = 60 * 1000
 
@@ -124,6 +126,8 @@ export const BondSupply = () => {
     provider = getProviderOrSigner(library, account)
   }
 
+  const queryProvider = getDefaultProvider(chainId && NETWORK_URLS[chainId])
+
   /**
    *
    *
@@ -139,19 +143,19 @@ export const BondSupply = () => {
       getHourlyBondInterestRates(
         tokens.map(t => t.address),
         chainId,
-        provider
+        queryProvider
       ),
       getHourlyBondMaturities(
         account,
         tokens.map(t => t.address),
         chainId,
-        provider
+        queryProvider
       ),
       getBondsCostInDollars(
         account,
         tokens.map(t => t.address),
         chainId,
-        provider
+        queryProvider
       )
     ])
 
@@ -216,15 +220,15 @@ export const BondSupply = () => {
         account,
         tokens.map(t => t.address),
         chainId,
-        provider
+        queryProvider
       ),
       getTokenAllowances(
         account,
         tokens.map(t => t.address),
         chainId,
-        provider
+        queryProvider
       ),
-      Promise.all(tokens.map(token => getTokenBalance(account, token.address, provider)))
+      Promise.all(tokens.map(token => getTokenBalance(account, token.address, queryProvider)))
     ])
 
     /*** now set the state for all that data ***/
@@ -257,7 +261,7 @@ export const BondSupply = () => {
   // call getUserMarginswapData when relevant things change
   useEffect(() => {
     getUserMarginswapData()
-  }, [account, tokens, chainId, provider?._address])
+  }, [account, tokens, chainId])
 
   const actions = [
     {

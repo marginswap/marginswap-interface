@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import EthereumLogo from '../../assets/images/ethereum-logo.png'
 // import BinanceCoinLogo from '../../assets/images/binance-coin-logo.png'
 // import FantomLogo from '../../assets/images/fantom-logo.png'
-// import MaticLogo from '../../assets/images/matic-logo.png'
+import MaticLogo from '../../assets/images/matic-coin-logo.png'
 // import xDaiLogo from '../../assets/images/xdai-logo.png'
 // import MoonbeamLogo from '../../assets/images/moonbeam-logo.png'
 import AvalancheLogo from '../../assets/images/avalanche-logo.png'
@@ -37,7 +37,7 @@ const logo: { readonly [chainId in ChainId]?: string } = {
   [ChainId.MAINNET]: EthereumLogo,
   // [ChainId.FANTOM]: FantomLogo,
   // [ChainId.FANTOM_TESTNET]: FantomLogo,
-  // [ChainId.MATIC]: MaticLogo,
+  [ChainId.MATIC]: MaticLogo,
   // [ChainId.MATIC_TESTNET]: MaticLogo,
   // [ChainId.XDAI]: xDaiLogo,
   // [ChainId.BSC]: BinanceCoinLogo,

@@ -5,7 +5,8 @@ import {
   StyledTableRow,
   StyledTableSortLabel,
   StyledTableWrapper,
-  StyledInfoIcon
+  StyledInfoIcon,
+  ActionsCell
 } from './styled'
 import {
   Box,
@@ -216,17 +217,21 @@ const TokensTable: <T extends { [key: string]: string | boolean | number }>(prop
                       ))}
                       {allActions.length > 0 && (
                         <StyledTableCell align="left">
-                          {allActions.map((action, actionIndex) => (
-                            <StyledButton
-                              key={actionIndex}
-                              onClick={() => {
-                                handleActionOpen(actionIndex, rowIndex)
-                              }}
-                              disabled={typeof action.disabled === 'function' ? action.disabled(row) : action.disabled}
-                            >
-                              {action.name}
-                            </StyledButton>
-                          ))}
+                          <ActionsCell size={allActions.length}>
+                            {allActions.map((action, actionIndex) => (
+                              <StyledButton
+                                key={actionIndex}
+                                onClick={() => {
+                                  handleActionOpen(actionIndex, rowIndex)
+                                }}
+                                disabled={
+                                  typeof action.disabled === 'function' ? action.disabled(row) : action.disabled
+                                }
+                              >
+                                {action.name}
+                              </StyledButton>
+                            ))}
+                          </ActionsCell>
                         </StyledTableCell>
                       )}
                       <StyledTableCell width={24} style={{ borderBottom: 'none' }} />

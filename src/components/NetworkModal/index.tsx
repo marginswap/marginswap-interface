@@ -36,7 +36,7 @@ export default function NetworkModal(): JSX.Element | null {
         </HeaderRow>
 
         <ContentWrapper>
-          {[ChainId.MAINNET, ChainId.AVALANCHE].map((key: ChainId, i: number) => {
+          {[ChainId.MAINNET, ChainId.AVALANCHE, ChainId.MATIC].map((key: ChainId, i: number) => {
             if (chainId === key) return null
             return (
               <NetworkOption
@@ -44,7 +44,7 @@ export default function NetworkModal(): JSX.Element | null {
                 onClick={() => {
                   toggleNetworkModal()
                   const params = PARAMS[key]
-                  library?.send('wallet_addEthereumChain', [params, account])
+                  library?.send('wallet_addEthereumChain', [params, account]).then(() => location.reload())
                 }}
               >
                 <NetworkContainer>
