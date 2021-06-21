@@ -5,7 +5,7 @@ import { fortmatic, injected, portis, walletconnect, walletlink } from '../conne
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 export const MFI_ADDRESS = '0xAa4e3edb11AFa93c41db59842b29de64b72E355B'
-export const MFI_USDC_ADDRESS = '0x9d640080af7c81911d87632a7d09cc4ab6b133ac'
+export const MFI_USDC_ADDRESS = '0x9D640080AF7c81911D87632a7d09Cc4Ab6b133AC'
 
 export { PRELOADED_PROPOSALS } from './proposals'
 

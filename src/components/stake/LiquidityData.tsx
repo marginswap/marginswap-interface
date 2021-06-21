@@ -50,7 +50,7 @@ const LiquidityData = ({ chainId, provider, address, period }: StakingData) => {
         <Parameters
           title="Estimated APR"
           value={liquidityStaking.isError ? 'Error!' : liquidityStaking.data || 0}
-          hint="The estimated yield APR that is paid out on your staked balances"
+          hint="The estimated yield APR that is paid out on your staked balance"
         />
         <Parameters
           title="Accrued reward"
@@ -71,16 +71,16 @@ const LiquidityData = ({ chainId, provider, address, period }: StakingData) => {
               ? 'Error!'
               : `${new TokenAmount(getPegCurrency(chainId), stakedBalance?.data?.toString() || '0').toSignificant(
                   3
-                )} Liquidity`
+                )} USDC/MFI`
           }
-          hint="The liquidity token balance you currently have staked"
+          hint="The USDC/MFI token balance you currently have staked"
         />
         <Parameters
           title="Available for withdrawal after"
           value={
             availableForWithdrawAfter.isError ? 'Error!' : getAvailableWithdrawalTime(availableForWithdrawAfter.data)
           }
-          hint="The date after which your staked liquidity token will be available for withdrawal"
+          hint="The date after which your staked USDC/MFI token will be available for withdrawal"
         />
       </div>
     </DetailsFooter>

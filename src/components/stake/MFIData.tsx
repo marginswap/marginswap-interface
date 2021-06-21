@@ -49,7 +49,7 @@ const MFIData = ({ chainId, provider, address, period }: StakingData) => {
         <Parameters
           title="Estimated APR"
           value={mfIStaking.isError ? 'Error!' : mfIStaking.data || 0}
-          hint="The estimated yield APR that is paid out on your staked balances"
+          hint="The estimated yield APR that is paid out on your staked balance"
         />
         <Parameters
           title="Accrued reward"
