@@ -42,13 +42,15 @@ const LiquidityData = ({ chainId, provider, address, period }: StakingData) => {
     )
   }
 
+  if (liquidityStaking.isError) console.error('Error ::', liquidityStaking.error)
+
   return (
     <DetailsFooter>
       <div className={classes.parameters + ' ' + classes.fullWidthPair}>
         <Parameters
           title="Estimated APR"
           value={liquidityStaking.isError ? 'Error!' : liquidityStaking.data || 0}
-          hint="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed"
+          hint="The estimated yield APR that is paid out on your staked balances"
         />
         <Parameters
           title="Accrued reward"
@@ -60,7 +62,7 @@ const LiquidityData = ({ chainId, provider, address, period }: StakingData) => {
                   accruedRewardRetrieved?.data?.toString() || '0'
                 ).toSignificant(3)} Liquidity`
           }
-          hint="The difference between the market price and estimated price due to trade size"
+          hint="The amount of liquidity token you have accrued by staking"
         />
         <Parameters
           title="Current staked Balance"
@@ -71,14 +73,14 @@ const LiquidityData = ({ chainId, provider, address, period }: StakingData) => {
                   3
                 )} Liquidity`
           }
-          hint={`A portion of each trade XXX goes to liquidity providers as a protocol incentive`}
+          hint="The liquidity token balance you currently have staked"
         />
         <Parameters
           title="Available for withdrawal after"
           value={
             availableForWithdrawAfter.isError ? 'Error!' : getAvailableWithdrawalTime(availableForWithdrawAfter.data)
           }
-          hint="Mock stuff!"
+          hint="The date after which your staked liquidity token will be available for withdrawal"
         />
       </div>
     </DetailsFooter>
