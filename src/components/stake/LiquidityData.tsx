@@ -22,7 +22,7 @@ interface StakingData {
 
 const LiquidityData = ({ chainId, provider, address, period }: StakingData) => {
   const classes = useStyles()
-  const { mfIStaking, accruedRewardRetrieved, stakedBalance, availableForWithdrawAfter } = useLiquidityAPR({
+  const { liquidityStaking, accruedRewardRetrieved, stakedBalance, availableForWithdrawAfter } = useLiquidityAPR({
     chainId,
     provider,
     address,
@@ -30,7 +30,7 @@ const LiquidityData = ({ chainId, provider, address, period }: StakingData) => {
   })
 
   if (
-    mfIStaking.isLoading ||
+    liquidityStaking.isLoading ||
     accruedRewardRetrieved.isLoading ||
     stakedBalance.isLoading ||
     availableForWithdrawAfter.isLoading
@@ -47,12 +47,19 @@ const LiquidityData = ({ chainId, provider, address, period }: StakingData) => {
       <div className={classes.parameters + ' ' + classes.fullWidthPair}>
         <Parameters
           title="Estimated APR"
-          value={mfIStaking.isError ? 'Error!' : mfIStaking.data || 0}
+          value={liquidityStaking.isError ? 'Error!' : liquidityStaking.data || 0}
           hint="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed"
         />
         <Parameters
           title="Accrued reward"
-          value={accruedRewardRetrieved.isError ? 'Error!' : `${accruedRewardRetrieved.data} MFI`}
+          value={
+            accruedRewardRetrieved.isError
+              ? 'Error!'
+              : `${new TokenAmount(
+                  getPegCurrency(chainId),
+                  accruedRewardRetrieved?.data?.toString() || '0'
+                ).toSignificant(3)} Liquidity`
+          }
           hint="The difference between the market price and estimated price due to trade size"
         />
         <Parameters

@@ -53,7 +53,14 @@ const MFIData = ({ chainId, provider, address, period }: StakingData) => {
         />
         <Parameters
           title="Accrued reward"
-          value={accruedRewardRetrieved.isError ? 'Error!' : `${accruedRewardRetrieved.data} MFI`}
+          value={
+            accruedRewardRetrieved.isError
+              ? 'Error!'
+              : `${new TokenAmount(
+                  getPegCurrency(chainId),
+                  accruedRewardRetrieved?.data?.toString() || '0'
+                ).toSignificant(3)} MFI`
+          }
           hint="The difference between the market price and estimated price due to trade size"
         />
         <Parameters
