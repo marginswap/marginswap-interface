@@ -79,6 +79,8 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
     new TokenAmount(getMFIToken, utils.parseUnits(amount || '0', getMFIToken.decimals).toBigInt())
   )
 
+  console.log('🚀 ~ file: Trade.tsx ~ line 78 ~ TradeStake ~ approval', approval)
+
   const approvalSubmitted = approval === ApprovalState.APPROVED || approval === ApprovalState.PENDING
 
   const handleMaxAmount = async () => {
