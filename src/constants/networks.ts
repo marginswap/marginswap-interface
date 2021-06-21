@@ -17,6 +17,14 @@ import Ropsten from '../assets/networks/ropsten-network.jpg'
 import Xdai from '../assets/networks/xdai-network.jpg'
 import Mainnet from '../assets/networks/mainnet-network.jpg'
 
+export const NETWORK_URLS: { [key: number]: string } = {
+  1: 'https://mainnet.infura.io/v3/ae52aea5aa2b41e287d72e10b1175491',
+  42: 'https://kovan.infura.io/v3/ae52aea5aa2b41e287d72e10b1175491',
+  43114: 'https://api.avax.network/ext/bc/C/rpc',
+  31337: 'http://localhost:8545',
+  137: 'https://rpc-mainnet.maticvigil.com/v1/b0858bc7aa27b1333df19546c12718235bd11785'
+}
+
 export const NETWORK_ICON = {
   [ChainId.MAINNET]: Mainnet,
   [ChainId.ROPSTEN]: Ropsten,
