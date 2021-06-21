@@ -78,7 +78,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
   const getMFIToken = new Token(chainId ?? ChainId.MAINNET, MFI_ADDRESS, 18, 'MFI')
   const getLiquidityToken = new Token(chainId ?? ChainId.MAINNET, MFI_USDC_ADDRESS, 18, 'MFI/USDC')
   const canWithdraw = useCanWithdraw({ chainId, provider, address, account })
-  //TODO: REVIEW WITH GABRIEL: IF AMOUNT IS FLOAT TYPE, RETURNS AN ERROR -> CANNOT CONVERT TO BIGINT
+
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallbackFromStakeTrade(
     mfiStake,
