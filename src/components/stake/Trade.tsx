@@ -83,8 +83,9 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
 
   const handleMaxAmount = async () => {
     if (provider) {
+      // TODO - set max differently based on whether Deposit, Claim, or Withdraw is selected
       const balance = await getTokenBalance(address, getMFIToken.address, provider)
-      setValue('amount', utils.formatUnits(balance, 2).toString())
+      setValue('amount', Number(utils.formatEther(balance)).toFixed(6))
     }
   }
 

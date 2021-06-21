@@ -22,6 +22,6 @@ export function getNotificationMsn(isAble: boolean, canWithdraw: boolean, isErro
 }
 
 export function getAvailableWithdrawalTime(seconds: number | undefined): string {
-  if (!seconds) return 'Unknow'
+  if (!seconds) return 'N/A'
   return DateTime.local().plus({ seconds }).toLocaleString(DateTime.DATETIME_SHORT)
 }
