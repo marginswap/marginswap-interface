@@ -15,7 +15,11 @@ import {
   withdrawReward,
   Duration,
   getTokenBalance,
-  Token
+  Token,
+  accruedReward,
+  getStakedBalance,
+  getMFIStaking,
+  getLiquidityMiningReward
 } from '@marginswap/sdk'
 
 import { ApprovalState, useApproveCallbackFromStakeTrade } from '../../hooks/useApproveCallback'
@@ -28,7 +32,7 @@ import ToggleSelector from '../ToggleSelector'
 import { GreyCard } from '../../components/Card'
 import ApprovalStepper from './ApprovalStepper'
 
-import { getMFIStakingContract } from 'utils'
+import { getMFIStakingContract, getLiquidityStakingContract } from 'utils'
 import { getNotificationMsn } from './utils'
 import { utils } from 'ethers'
 
@@ -36,6 +40,7 @@ import { DropdownsContainer, StyledOutlinedInput, StyledStakeHeader, StyledBalan
 import { PaddedColumn, Wrapper } from '../swap/styleds'
 import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
 import { useCanWithdraw } from './hooks'
+import { MFI_ADDRESS, MFI_USDC_ADDRESS } from '../../constants'
 
 const GreyCardStyled = styled(GreyCard)`
   background-color: ${({ theme }) => theme.bg3};
@@ -70,9 +75,10 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
   const transactionType = watch('transactionType', 1)
   const period = watch('period', 1)
 
-  const getMFIToken = new Token(chainId ?? ChainId.MAINNET, '0xAa4e3edb11AFa93c41db59842b29de64b72E355B', 18, 'MFI')
+  const getMFIToken = new Token(chainId ?? ChainId.MAINNET, MFI_ADDRESS, 18, 'MFI')
+  const getLiquidityToken = new Token(chainId ?? ChainId.MAINNET, MFI_USDC_ADDRESS, 18, 'MFI/USDC')
   const canWithdraw = useCanWithdraw({ chainId, provider, address, account })
-  //TODO: REVIEW WITH GABRIEL: IF AMOUNT IS FLOAT TYPE, RETURNS AN ERROR -> CANNOT CONVERT TO BIGINT
+
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallbackFromStakeTrade(
     mfiStake,
@@ -85,9 +91,37 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
 
   const handleMaxAmount = async () => {
     if (provider) {
-      // TODO - set max differently based on whether Deposit, Claim, or Withdraw is selected
-      const balance = await getTokenBalance(address, getMFIToken.address, provider)
-      setValue('amount', Number(utils.formatEther(balance)).toFixed(6))
+      let contract
+
+      if (mfiStake) {
+        contract = getMFIStaking(chainId, provider)
+      } else {
+        contract = getLiquidityMiningReward(chainId, provider)
+      }
+
+      const txnType = transactionType.toString()
+      let balance
+
+      // Deposit
+      if (txnType === transactionTypeOptions[0].value) {
+        if (mfiStake) {
+          balance = await getTokenBalance(address, getMFIToken.address, provider)
+        } else {
+          balance = await getTokenBalance(address, getLiquidityToken.address, provider)
+        }
+      }
+
+      // Claim
+      if (txnType === transactionTypeOptions[1].value) {
+        balance = await accruedReward(contract, address)
+      }
+
+      // Withdraw
+      if (txnType === transactionTypeOptions[2].value) {
+        balance = await getStakedBalance(contract, address)
+      }
+
+      setValue('amount', balance ? Number(utils.formatEther(balance)).toFixed(6) : '0')
     }
   }
 
@@ -98,14 +132,34 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
     setStakeErrorMsn(error)
   }
 
+  const getDuration = () => {
+    switch (period) {
+      case periodSelectOptions[0].value:
+        return Duration.ONE_WEEK
+      case periodSelectOptions[1].value:
+        return Duration.ONE_MONTH
+      case periodSelectOptions[2].value:
+        return Duration.THREE_MONTHS
+      default:
+        return Duration.ONE_WEEK
+    }
+  }
+
   const handleStake = async () => {
-    const signedContract = getMFIStakingContract(chainId, provider, account)
+    let signedContract
+
+    if (mfiStake) {
+      signedContract = getMFIStakingContract(chainId, provider, account)
+    } else {
+      signedContract = getLiquidityStakingContract(chainId, provider, account)
+    }
+
     const tokenAmt = utils.parseUnits(amount, 18)
 
     if (signedContract) {
       setAttemptingTxn(true)
       if (transactionType.toString() === transactionTypeOptions[0].value) {
-        stake(signedContract, tokenAmt.toHexString(), Duration.ONE_WEEK)
+        stake(signedContract, tokenAmt.toHexString(), getDuration())
           .then((data: any) => {
             setAttemptingTxn(false)
             setTxHash(data.hash)
@@ -223,16 +277,16 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
         </form>
       </AppBody>
       {mfiStake ? (
-        <MFIData chainId={chainId} provider={provider} address={address} period={period} />
+        <MFIData chainId={chainId} provider={provider} address={address} period={Number(period)} />
       ) : (
-        <LiquidityData chainId={chainId} provider={provider} address={address} period={period} />
+        <LiquidityData chainId={chainId} provider={provider} address={address} period={Number(period)} />
       )}
       <ConfirmStakeModal
         token={getMFIToken}
         chainId={chainId}
         provider={provider}
         address={address}
-        period={period}
+        period={Number(period)}
         mfiStake={mfiStake}
         amount={amount}
         attemptingTxn={attemptingTxn}

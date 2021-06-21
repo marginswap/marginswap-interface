@@ -1,5 +1,4 @@
 import { useQuery } from 'react-query'
-import { utils } from 'ethers'
 import {
   ChainId,
   getMFIStaking,
@@ -9,7 +8,8 @@ import {
   getStakedBalance,
   getLiquidityMiningReward,
   getLiquidityAPRPerWeight,
-  canWithdraw
+  canWithdraw,
+  Duration
 } from '@marginswap/sdk'
 import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
 import { getMFIStakingContract } from 'utils'
@@ -29,21 +29,19 @@ interface CanWithdrawDataProps {
   account?: string | undefined
 }
 
+const durations:Record<number, Duration> = {
+  1: Duration.ONE_WEEK,
+  2: Duration.ONE_MONTH,
+  3: Duration.THREE_MONTHS
+}
+
 export const useMFIAPR = ({ chainId, provider, address, period }: StakingDataProps) => {
   const contract = getMFIStaking(chainId, provider)
 
-  const mfIStaking = useQuery('getMFIStaking', () => getMFIAPRPerWeight(contract, Number(period)))
-  const accruedRewardRetrieved = useQuery('getAccruedReward', async () => {
-    const reward = await accruedReward(contract, address)
-    return reward ? Number(utils.formatEther(reward)).toFixed(6) : '0'
-  })
-  const stakedBalance = useQuery('getStakeBalance', () => getStakedBalance(contract, address))
-  // TODO - the below throws "SyntaxError: Cannot convert 0.000000 to a BigInt" but I'm not sure why
-  // const stakedBalance = useQuery('getStakeBalance', async () => {
-  //   const staked = await getStakedBalance(contract, address)
-  //   return staked ? Number(utils.formatEther(staked)).toFixed(6) : '0'
-  // })
-  const availableForWithdrawAfter = useQuery('getTimeUntilLockEnd', () => getTimeUntilLockEnd(contract, address))
+  const mfIStaking = useQuery('getMFIStaking', () => getMFIAPRPerWeight(contract, durations[period]))
+  const accruedRewardRetrieved = useQuery('getAccruedMFIReward', () => accruedReward(contract, address))
+  const stakedBalance = useQuery('getMFIStakeBalance', () => getStakedBalance(contract, address))
+  const availableForWithdrawAfter = useQuery('getMFITimeUntilLockEnd', () => getTimeUntilLockEnd(contract, address))
 
   return { mfIStaking, accruedRewardRetrieved, stakedBalance, availableForWithdrawAfter }
 }
@@ -51,12 +49,14 @@ export const useMFIAPR = ({ chainId, provider, address, period }: StakingDataPro
 export const useLiquidityAPR = ({ chainId, provider, address, period }: StakingDataProps) => {
   const contract = getLiquidityMiningReward(chainId, provider)
 
-  const mfIStaking = useQuery('getMFIStaking', () => getLiquidityAPRPerWeight(contract, period, provider))
-  const accruedRewardRetrieved = useQuery('getAccruedReward', () => accruedReward(contract, address))
-  const stakedBalance = useQuery('getStakeBalance', () => getStakedBalance(contract, address))
-  const availableForWithdrawAfter = useQuery('getTimeUntilLockEnd', () => getTimeUntilLockEnd(contract, address))
+  const liquidityStaking = useQuery('getLiquidityStaking', () => getLiquidityAPRPerWeight(contract, durations[period], provider))
+  const accruedRewardRetrieved = useQuery('getLiquidityAccruedReward', () => accruedReward(contract, address))
+  const stakedBalance = useQuery('getLiquidityStakeBalance', () => getStakedBalance(contract, address))
+  const availableForWithdrawAfter = useQuery('getLiquidityTimeUntilLockEnd', () =>
+    getTimeUntilLockEnd(contract, address)
+  )
 
-  return { mfIStaking, accruedRewardRetrieved, stakedBalance, availableForWithdrawAfter }
+  return { liquidityStaking, accruedRewardRetrieved, stakedBalance, availableForWithdrawAfter }
 }
 
 export const useCanWithdraw = ({ chainId, provider, address, account }: CanWithdrawDataProps) => {

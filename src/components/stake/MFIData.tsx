@@ -41,7 +41,7 @@ const MFIData = ({ chainId, provider, address, period }: StakingData) => {
     )
   }
 
-  if (mfIStaking.isError) console.log('Error ::', mfIStaking.error)
+  if (mfIStaking.isError) console.error('Error ::', mfIStaking.error)
 
   return (
     <DetailsFooter>
@@ -49,12 +49,19 @@ const MFIData = ({ chainId, provider, address, period }: StakingData) => {
         <Parameters
           title="Estimated APR"
           value={mfIStaking.isError ? 'Error!' : mfIStaking.data || 0}
-          hint="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed"
+          hint="The estimated yield APR that is paid out on your staked balance"
         />
         <Parameters
           title="Accrued reward"
-          value={accruedRewardRetrieved.isError ? 'Error!' : `${accruedRewardRetrieved.data} MFI`}
-          hint="The difference between the market price and estimated price due to trade size"
+          value={
+            accruedRewardRetrieved.isError
+              ? 'Error!'
+              : `${new TokenAmount(
+                  getPegCurrency(chainId),
+                  accruedRewardRetrieved?.data?.toString() || '0'
+                ).toSignificant(3)} MFI`
+          }
+          hint="The amount of MFI you have accrued by staking. To withdraw it, select 'Claim' and then click 'Max'"
         />
         <Parameters
           title="Current staked Balance"
@@ -65,14 +72,14 @@ const MFIData = ({ chainId, provider, address, period }: StakingData) => {
                   3
                 )} MFI`
           }
-          hint={`A portion of each trade XXX goes to liquidity providers as a protocol incentive`}
+          hint="The MFI balance you currently have staked"
         />
         <Parameters
           title="Available for withdrawal after"
           value={
             availableForWithdrawAfter.isError ? 'Error!' : getAvailableWithdrawalTime(availableForWithdrawAfter.data)
           }
-          hint="Mock stuff!"
+          hint="The date after which your staked MFI will be available for withdrawal"
         />
       </div>
     </DetailsFooter>
