@@ -9,7 +9,6 @@ import Circle from '../../assets/images/blue-loader.svg'
 
 import { getAvailableWithdrawalTime } from './utils'
 import { getPegCurrency } from '../../constants'
-import { utils } from 'ethers'
 
 import { useStyles, DetailsFooter, LoadingDataContainer } from './styleds'
 import { useMFIAPR } from './hooks'

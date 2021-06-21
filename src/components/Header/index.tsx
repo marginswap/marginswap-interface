@@ -56,11 +56,7 @@ const headerLinks = [
   [ChainId.BSC]: 'Binance'
 }*/
 
-type MobileMenuProps = {
-  stake: any
-}
-
-const MobileMenu = ({ stake }: MobileMenuProps) => {
+const MobileMenu = () => {
   const [open, setOpen] = useState(false)
   const ref = useClickOutside<HTMLDivElement>(() => {
     setOpen(false)

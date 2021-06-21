@@ -1,10 +1,8 @@
 import React from 'react'
 
-import Column from '../../components/Column'
 import Loader from '../../components/Loader'
 import { RowBetween, AutoRow } from '../Row'
-import ProgressSteps from '../ProgressSteps'
-import { ButtonPrimary, ButtonConfirmed } from '../Button'
+import { ButtonPrimary } from '../Button'
 
 import { ApprovalState } from '../../hooks/useApproveCallback'
 
@@ -18,7 +16,6 @@ interface ApprovalStepperProps {
 }
 
 export default function ApprovalStepper({
-  firstStepLabel,
   firstStepOnClick,
   secondStepLabel,
   secondStepOnClick,
