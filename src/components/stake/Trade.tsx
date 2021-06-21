@@ -130,6 +130,19 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
     setStakeErrorMsn(error)
   }
 
+  const getDuration = () => {
+    switch (period) {
+      case periodSelectOptions[0].value:
+        return Duration.ONE_WEEK
+      case periodSelectOptions[1].value:
+        return Duration.ONE_MONTH
+      case periodSelectOptions[2].value:
+        return Duration.THREE_MONTHS
+      default:
+        return Duration.ONE_WEEK
+    }
+  }
+
   const handleStake = async () => {
     let signedContract
 
@@ -144,7 +157,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
     if (signedContract) {
       setAttemptingTxn(true)
       if (transactionType.toString() === transactionTypeOptions[0].value) {
-        stake(signedContract, tokenAmt.toHexString(), Duration.ONE_WEEK)
+        stake(signedContract, tokenAmt.toHexString(), getDuration())
           .then((data: any) => {
             setAttemptingTxn(false)
             setTxHash(data.hash)
