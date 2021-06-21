@@ -16,6 +16,7 @@ import { Field } from '../state/swap/actions'
 import { useTransactionAdder, useHasPendingApproval } from '../state/transactions/hooks'
 import { computeSlippageAdjustedAmounts } from '../utils/prices'
 import { calculateGasMargin } from '../utils'
+import { toast } from 'react-toastify'
 import { useTokenContract } from './useContract'
 import { useActiveWeb3React } from './index'
 
@@ -99,6 +100,7 @@ export function useApproveCallback(
       })
       .catch((error: Error) => {
         console.debug('Failed to approve token', error)
+        toast.error('Approve error', { position: 'bottom-right' })
         throw error
       })
   }, [approvalState, token, tokenContract, amountToApprove, spender, addTransaction])

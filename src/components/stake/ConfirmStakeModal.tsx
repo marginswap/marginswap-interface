@@ -67,7 +67,7 @@ export default function ConfirmStakeModal({
   const pendingText = `Staking ${amount} MFI`
 
   const confirmationContent = () =>
-    stakeErrorMsn ? (
+    stakeErrorMsn && stakeErrorMsn?.length > 0 ? (
       <TransactionErrorContent onDismiss={onDismiss} message={stakeErrorMsn} />
     ) : (
       <ConfirmationModalContent

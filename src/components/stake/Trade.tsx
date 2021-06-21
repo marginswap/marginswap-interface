@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
+import { useQueryClient } from 'react-query'
 import styled from 'styled-components'
 
 import MFIData from './MFIData'
@@ -57,9 +58,13 @@ interface StakeProps {
 
 export default function TradeStake({ chainId, provider, address, account }: StakeProps) {
   const [mfiStake, setMfiStake] = useState(true)
+  const [attemptingTxn, setAttemptingTxn] = useState(false)
   const [confirmStakeModal, setConfirmStakeModal] = useState(false)
+  const [stakeErrorMsn, setStakeErrorMsn] = useState('')
+  const [txHash, setTxHash] = useState('')
 
   const { control, watch, setValue, register } = useForm()
+  const queryClient = useQueryClient()
 
   const amount: string = watch('amount', '0')
   const transactionType = watch('transactionType', 1)
@@ -73,56 +78,67 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
     mfiStake,
     new TokenAmount(getMFIToken, utils.parseUnits(amount || '0', getMFIToken.decimals).toBigInt())
   )
-  console.log('🚀 ~ file: Trade.tsx ~ line 51 ~ TradeStake ~ approval', approval)
 
   const approvalSubmitted = approval === ApprovalState.APPROVED || approval === ApprovalState.PENDING
 
   const handleMaxAmount = async () => {
     if (provider) {
       const balance = await getTokenBalance(address, getMFIToken.address, provider)
-      console.log('BALANCE ::', utils.formatUnits(balance, getMFIToken.decimals))
-      //TODO: REVIEW THE NUMBER().toFixed(0) TYPE WITH GABRIEL.
-      setValue('amount', utils.formatUnits(balance, getMFIToken.decimals).toString())
+      setValue('amount', utils.formatUnits(balance, 2).toString())
     }
   }
 
+  const handleError = (error: string) => {
+    setAttemptingTxn(false)
+    setTxHash('')
+    setStakeErrorMsn('')
+    setStakeErrorMsn(error)
+  }
+
   const handleStake = async () => {
-    setConfirmStakeModal(true)
-    /*const signedContract = getMFIStakingContract(chainId, provider, account)
+    const signedContract = getMFIStakingContract(chainId, provider, account)
     const tokenAmt = utils.parseUnits(amount, 18)
 
     if (signedContract) {
+      setAttemptingTxn(true)
       if (transactionType.toString() === transactionTypeOptions[0].value) {
         stake(signedContract, tokenAmt.toHexString(), Duration.ONE_WEEK)
           .then((data: any) => {
-            console.log('Stake ::', data)
+            setAttemptingTxn(false)
+            setTxHash(data.hash)
             setValue('amount', '0')
           })
-          .catch((err: any) => console.log('Upps error in stake :', err))
+          .catch((err: any) => handleError(err.data.message))
       }
 
       if (transactionType.toString() === transactionTypeOptions[1].value) {
         withdrawStake(signedContract, tokenAmt.toHexString())
           .then((data: any) => {
-            console.log('Withdraw Stake ::', data)
+            setAttemptingTxn(false)
+            setTxHash(data.hash)
             setValue('amount', '0')
           })
-          .catch((err: any) => console.log('Upps error in withdrawStake :', err))
+          .catch((err: any) => handleError(err.data.message))
       }
 
       if (transactionType.toString() === transactionTypeOptions[2].value) {
         withdrawReward(signedContract)
           .then((data: any) => {
-            console.log('Withdraw Reward ::', data)
+            setAttemptingTxn(false)
+            setTxHash(data.hash)
             setValue('amount', '0')
           })
-          .catch((err: any) => console.log('Upps error in withdrawReward :', err))
+          .catch((err: any) => handleError(err.data.message))
       }
-    }*/
+    }
   }
 
   const handleDismissModal = () => {
     setConfirmStakeModal(false)
+    setAttemptingTxn(false)
+    setTxHash('')
+    setStakeErrorMsn('')
+    queryClient.refetchQueries()
   }
 
   const periodSelectOptions = [
@@ -136,7 +152,9 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
     { value: '2', label: 'Claim' },
     { value: '3', label: 'Withdraw' }
   ]
+
   const isAbleTransaction = Boolean(amount?.length) && Number(amount) > 0
+  const isAbleToWithdraw = transactionType === '1' || (canWithdraw.data && transactionType !== '1')
 
   return (
     <>
@@ -180,7 +198,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
                 />
               </div>
             </div>
-            {isAbleTransaction ? (
+            {isAbleTransaction && isAbleToWithdraw ? (
               <ApprovalStepper
                 firstStepLabel={transactionTypeOptions.find(tt => tt.value === transactionType)?.label || ''}
                 firstStepOnClick={e => {
@@ -190,13 +208,13 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
                 secondStepLabel="Stake"
                 secondStepOnClick={e => {
                   e.preventDefault()
-                  handleStake()
+                  setConfirmStakeModal(true)
                 }}
                 approval={approval}
                 approvalSubmitted={approvalSubmitted}
               />
             ) : (
-              <GreyCardStyled>{getNotificationMsn(isAbleTransaction, false)}</GreyCardStyled>
+              <GreyCardStyled>{getNotificationMsn(isAbleTransaction, canWithdraw.data || false, false)}</GreyCardStyled>
             )}
           </Wrapper>
         </form>
@@ -214,12 +232,12 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
         period={period}
         mfiStake={mfiStake}
         amount={amount}
-        attemptingTxn={false}
-        txHash=""
-        onConfirm={() => null}
+        attemptingTxn={attemptingTxn}
+        txHash={txHash}
+        onConfirm={handleStake}
         onDismiss={handleDismissModal}
         isOpen={confirmStakeModal}
-        stakeErrorMsn=""
+        stakeErrorMsn={stakeErrorMsn}
       />
     </>
   )

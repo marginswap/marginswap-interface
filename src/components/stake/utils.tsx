@@ -11,10 +11,12 @@ export function getAPRPerPeriod(apr: any, period: string): number {
   }
 }
 
-export function getNotificationMsn(isAble: boolean, isError: boolean): string {
+export function getNotificationMsn(isAble: boolean, canWithdraw: boolean, isError: boolean): string {
   if (isError) return 'Not Approved Transaction'
 
   if (!isAble) return 'Enter an amount'
+
+  if (!canWithdraw) return 'You are not able to withdraw'
 
   return 'Ok'
 }

@@ -31,18 +31,10 @@ interface CanWithdrawDataProps {
 export const useMFIAPR = ({ chainId, provider, address, period }: StakingDataProps) => {
   const contract = getMFIStaking(chainId, provider)
 
-  const mfIStaking = useQuery('getMFIStaking', () => getMFIAPRPerWeight(contract, Number(period)), {
-    refetchOnWindowFocus: false
-  })
-  const accruedRewardRetrieved = useQuery('getAccruedReward', () => accruedReward(contract, address), {
-    refetchOnWindowFocus: false
-  })
-  const stakedBalance = useQuery('getStakeBalance', () => getStakedBalance(contract, address), {
-    refetchOnWindowFocus: false
-  })
-  const availableForWithdrawAfter = useQuery('getTimeUntilLockEnd', () => getTimeUntilLockEnd(contract, address), {
-    refetchOnWindowFocus: false
-  })
+  const mfIStaking = useQuery('getMFIStaking', () => getMFIAPRPerWeight(contract, Number(period)))
+  const accruedRewardRetrieved = useQuery('getAccruedReward', () => accruedReward(contract, address))
+  const stakedBalance = useQuery('getStakeBalance', () => getStakedBalance(contract, address))
+  const availableForWithdrawAfter = useQuery('getTimeUntilLockEnd', () => getTimeUntilLockEnd(contract, address))
 
   return { mfIStaking, accruedRewardRetrieved, stakedBalance, availableForWithdrawAfter }
 }
@@ -50,18 +42,10 @@ export const useMFIAPR = ({ chainId, provider, address, period }: StakingDataPro
 export const useLiquidityAPR = ({ chainId, provider, address, period }: StakingDataProps) => {
   const contract = getLiquidityMiningReward(chainId, provider)
 
-  const mfIStaking = useQuery('getMFIStaking', () => getLiquidityAPRPerWeight(contract, period, provider), {
-    refetchOnWindowFocus: false
-  })
-  const accruedRewardRetrieved = useQuery('getAccruedReward', () => accruedReward(contract, address), {
-    refetchOnWindowFocus: false
-  })
-  const stakedBalance = useQuery('getStakeBalance', () => getStakedBalance(contract, address), {
-    refetchOnWindowFocus: false
-  })
-  const availableForWithdrawAfter = useQuery('getTimeUntilLockEnd', () => getTimeUntilLockEnd(contract, address), {
-    refetchOnWindowFocus: false
-  })
+  const mfIStaking = useQuery('getMFIStaking', () => getLiquidityAPRPerWeight(contract, period, provider))
+  const accruedRewardRetrieved = useQuery('getAccruedReward', () => accruedReward(contract, address))
+  const stakedBalance = useQuery('getStakeBalance', () => getStakedBalance(contract, address))
+  const availableForWithdrawAfter = useQuery('getTimeUntilLockEnd', () => getTimeUntilLockEnd(contract, address))
 
   return { mfIStaking, accruedRewardRetrieved, stakedBalance, availableForWithdrawAfter }
 }

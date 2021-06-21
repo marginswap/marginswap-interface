@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { ChainId } from '@marginswap/sdk'
+import { ChainId, TokenAmount } from '@marginswap/sdk'
 import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
 
 import Parameters from './Parameters'
@@ -8,6 +8,8 @@ import { CustomLightSpinner } from '../../theme'
 import Circle from '../../assets/images/blue-loader.svg'
 
 import { getAvailableWithdrawalTime } from './utils'
+import { getPegCurrency } from '../../constants'
+import { utils } from 'ethers'
 
 import { useStyles, DetailsFooter, LoadingDataContainer } from './styleds'
 import { useMFIAPR } from './hooks'
@@ -57,7 +59,13 @@ const MFIData = ({ chainId, provider, address, period }: StakingData) => {
         />
         <Parameters
           title="Current staked Balance"
-          value={stakedBalance.isError ? 'Error!' : `${stakedBalance.data} MFI`}
+          value={
+            stakedBalance.isError
+              ? 'Error!'
+              : `${new TokenAmount(getPegCurrency(chainId), stakedBalance?.data?.toString() || '0').toSignificant(
+                  3
+                )} MFI`
+          }
           hint={`A portion of each trade XXX goes to liquidity providers as a protocol incentive`}
         />
         <Parameters

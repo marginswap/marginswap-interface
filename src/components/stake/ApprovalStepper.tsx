@@ -25,6 +25,7 @@ export default function ApprovalStepper({
   approval,
   approvalSubmitted
 }: ApprovalStepperProps) {
+  console.log('🚀 ~ file: ApprovalStepper.tsx ~ line 28 ~ approval', approval)
   return (
     <>
       <RowBetween>
