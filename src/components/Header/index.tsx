@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import useParsedQueryString from 'hooks/useParsedQueryString'
 import Logo from '../../assets/images/Union.svg'
 import { useActiveWeb3React } from '../../hooks'
 import { useETHBalances } from '../../state/wallet/hooks'
@@ -91,7 +90,6 @@ const MobileMenu = () => {
 }
 
 export default function Header() {
-  const { stake } = useParsedQueryString()
   const { account, chainId } = useActiveWeb3React()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
@@ -135,7 +133,7 @@ export default function Header() {
             )
           })}
         </HeaderLinks>
-        <MobileMenu stake={stake} />
+        <MobileMenu />
       </HeaderRow>
       <HeaderControls>
         <HeaderElement style={{ marginRight: 10 }}>
