@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { ChainId, TokenAmount } from '@marginswap/sdk'
+import { ChainId, TokenAmount, Token } from '@marginswap/sdk'
 import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
 
 import Parameters from './Parameters'
@@ -8,7 +8,7 @@ import { CustomLightSpinner } from '../../theme'
 import Circle from '../../assets/images/blue-loader.svg'
 
 import { getAvailableWithdrawalTime } from './utils'
-import { getPegCurrency } from '../../constants'
+import { getPegCurrency, MFI_ADDRESS } from '../../constants'
 
 import { useStyles, DetailsFooter, LoadingDataContainer } from './styleds'
 import { useMFIAPR } from './hooks'
@@ -17,9 +17,10 @@ interface StakingData {
   provider?: Web3Provider | undefined
   address?: string | undefined
   period: number
+  pendingTxhHash?: string | null | undefined
 }
 
-const MFIData = ({ chainId, provider, address, period }: StakingData) => {
+const MFIData = ({ chainId, provider, address, period, pendingTxhHash }: StakingData) => {
   const classes = useStyles()
   const { mfIStaking, accruedRewardRetrieved, stakedBalance, availableForWithdrawAfter } = useMFIAPR({
     chainId,
@@ -32,7 +33,8 @@ const MFIData = ({ chainId, provider, address, period }: StakingData) => {
     mfIStaking.isLoading ||
     accruedRewardRetrieved.isLoading ||
     stakedBalance.isLoading ||
-    availableForWithdrawAfter.isLoading
+    availableForWithdrawAfter.isLoading ||
+    pendingTxhHash
   ) {
     return (
       <LoadingDataContainer>
@@ -57,9 +59,9 @@ const MFIData = ({ chainId, provider, address, period }: StakingData) => {
             accruedRewardRetrieved.isError
               ? 'Error!'
               : `${new TokenAmount(
-                  getPegCurrency(chainId),
-                  accruedRewardRetrieved?.data?.toString() || '0'
-                ).toSignificant(3)} MFI`
+                new Token(chainId ?? 1, MFI_ADDRESS, 18),
+                accruedRewardRetrieved?.data?.toString() || '0'
+              ).toSignificant(3)} MFI`
           }
           hint="The amount of MFI you have accrued by staking. To withdraw it, select 'Claim' and then click 'Max'"
         />
@@ -68,9 +70,10 @@ const MFIData = ({ chainId, provider, address, period }: StakingData) => {
           value={
             stakedBalance.isError
               ? 'Error!'
-              : `${new TokenAmount(getPegCurrency(chainId), stakedBalance?.data?.toString() || '0').toSignificant(
-                  3
-                )} MFI`
+              : `${new TokenAmount(
+                new Token(chainId ?? 1, MFI_ADDRESS, 18),
+                stakedBalance?.data?.toString() || '0'
+              ).toSignificant(3)} MFI`
           }
           hint="The MFI balance you currently have staked"
         />

@@ -29,7 +29,7 @@ interface CanWithdrawDataProps {
   account?: string | undefined
 }
 
-const durations:Record<number, Duration> = {
+const durations: Record<number, Duration> = {
   1: Duration.ONE_WEEK,
   2: Duration.ONE_MONTH,
   3: Duration.THREE_MONTHS
@@ -49,7 +49,9 @@ export const useMFIAPR = ({ chainId, provider, address, period }: StakingDataPro
 export const useLiquidityAPR = ({ chainId, provider, address, period }: StakingDataProps) => {
   const contract = getLiquidityMiningReward(chainId, provider)
 
-  const liquidityStaking = useQuery('getLiquidityStaking', () => getLiquidityAPRPerWeight(contract, durations[period], provider))
+  const liquidityStaking = useQuery('getLiquidityStaking', () =>
+    getLiquidityAPRPerWeight(contract, durations[period], provider)
+  )
   const accruedRewardRetrieved = useQuery('getLiquidityAccruedReward', () => accruedReward(contract, address))
   const stakedBalance = useQuery('getLiquidityStakeBalance', () => getStakedBalance(contract, address))
   const availableForWithdrawAfter = useQuery('getLiquidityTimeUntilLockEnd', () =>

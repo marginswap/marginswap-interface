@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { useQueryClient } from 'react-query'
 import styled from 'styled-components'
@@ -23,6 +23,7 @@ import {
 } from '@marginswap/sdk'
 
 import { ApprovalState, useApproveCallbackFromStakeTrade } from '../../hooks/useApproveCallback'
+import { useIsTransactionPending, useTransactionAdder } from '../../state/transactions/hooks'
 
 import AppBody from '../../pages/AppBody'
 import { TYPE } from '../../theme'
@@ -41,6 +42,7 @@ import { PaddedColumn, Wrapper } from '../swap/styleds'
 import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
 import { useCanWithdraw } from './hooks'
 import { MFI_ADDRESS, MFI_USDC_ADDRESS } from '../../constants'
+import { TransactionDetails } from '../../state/transactions/reducer'
 
 const GreyCardStyled = styled(GreyCard)`
   background-color: ${({ theme }) => theme.bg3};
@@ -67,6 +69,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
   const [confirmStakeModal, setConfirmStakeModal] = useState(false)
   const [stakeErrorMsn, setStakeErrorMsn] = useState('')
   const [txHash, setTxHash] = useState('')
+  const [pendingTxhHash, setPendingTxhHash] = useState<string | null>()
 
   const { control, watch, setValue, register } = useForm()
   const queryClient = useQueryClient()
@@ -74,20 +77,29 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
   const amount: string = watch('amount', '0')
   const transactionType = watch('transactionType', 1)
   const period = watch('period', 1)
+  const addTransactionResponseCallback = (responseObject: TransactionDetails) => {
+    setPendingTxhHash(responseObject.hash)
+  }
 
   const getMFIToken = new Token(chainId ?? ChainId.MAINNET, MFI_ADDRESS, 18, 'MFI')
   const getLiquidityToken = new Token(chainId ?? ChainId.MAINNET, MFI_USDC_ADDRESS, 18, 'MFI/USDC')
   const canWithdraw = useCanWithdraw({ chainId, provider, address, account })
-
+  const addTransaction = useTransactionAdder(addTransactionResponseCallback)
+  const isTxnPending = useIsTransactionPending(pendingTxhHash || '')
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallbackFromStakeTrade(
     mfiStake,
     new TokenAmount(getMFIToken, utils.parseUnits(amount || '0', getMFIToken.decimals).toBigInt())
   )
 
-  console.log('🚀 ~ file: Trade.tsx ~ line 78 ~ TradeStake ~ approval', approval)
-
   const approvalSubmitted = approval === ApprovalState.APPROVED || approval === ApprovalState.PENDING
+
+  useEffect(() => {
+    if (!isTxnPending && pendingTxhHash) {
+      setPendingTxhHash(null)
+      queryClient.refetchQueries()
+    }
+  }, [isTxnPending])
 
   const handleMaxAmount = async () => {
     if (provider) {
@@ -161,6 +173,9 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
       if (transactionType.toString() === transactionTypeOptions[0].value) {
         stake(signedContract, tokenAmt.toHexString(), getDuration())
           .then((data: any) => {
+            addTransaction(data, {
+              summary: `Deposit Stake`
+            })
             setAttemptingTxn(false)
             setTxHash(data.hash)
             setValue('amount', '0')
@@ -169,8 +184,11 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
       }
 
       if (transactionType.toString() === transactionTypeOptions[1].value) {
-        withdrawStake(signedContract, tokenAmt.toHexString())
+        withdrawReward(signedContract)
           .then((data: any) => {
+            addTransaction(data, {
+              summary: `Claim Stake`
+            })
             setAttemptingTxn(false)
             setTxHash(data.hash)
             setValue('amount', '0')
@@ -179,8 +197,11 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
       }
 
       if (transactionType.toString() === transactionTypeOptions[2].value) {
-        withdrawReward(signedContract)
+        withdrawStake(signedContract, tokenAmt.toHexString())
           .then((data: any) => {
+            addTransaction(data, {
+              summary: `Withdraw Stake`
+            })
             setAttemptingTxn(false)
             setTxHash(data.hash)
             setValue('amount', '0')
@@ -262,7 +283,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
                   e.preventDefault()
                   approveCallback()
                 }}
-                secondStepLabel="Stake"
+                secondStepLabel={transactionTypeOptions.find(tt => tt.value === transactionType)?.label || ''}
                 secondStepOnClick={e => {
                   e.preventDefault()
                   setConfirmStakeModal(true)
@@ -277,9 +298,21 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
         </form>
       </AppBody>
       {mfiStake ? (
-        <MFIData chainId={chainId} provider={provider} address={address} period={Number(period)} />
+        <MFIData
+          chainId={chainId}
+          provider={provider}
+          address={address}
+          period={Number(period)}
+          pendingTxhHash={pendingTxhHash}
+        />
       ) : (
-        <LiquidityData chainId={chainId} provider={provider} address={address} period={Number(period)} />
+        <LiquidityData
+          chainId={chainId}
+          provider={provider}
+          address={address}
+          period={Number(period)}
+          pendingTxhHash={pendingTxhHash}
+        />
       )}
       <ConfirmStakeModal
         token={getMFIToken}

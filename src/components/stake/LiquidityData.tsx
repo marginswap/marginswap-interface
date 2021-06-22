@@ -18,9 +18,10 @@ interface StakingData {
   provider?: Web3Provider | undefined
   address?: string | undefined
   period: number
+  pendingTxhHash?: string | null | undefined
 }
 
-const LiquidityData = ({ chainId, provider, address, period }: StakingData) => {
+const LiquidityData = ({ chainId, provider, address, period, pendingTxhHash }: StakingData) => {
   const classes = useStyles()
   const { liquidityStaking, accruedRewardRetrieved, stakedBalance, availableForWithdrawAfter } = useLiquidityAPR({
     chainId,
@@ -33,7 +34,8 @@ const LiquidityData = ({ chainId, provider, address, period }: StakingData) => {
     liquidityStaking.isLoading ||
     accruedRewardRetrieved.isLoading ||
     stakedBalance.isLoading ||
-    availableForWithdrawAfter.isLoading
+    availableForWithdrawAfter.isLoading ||
+    pendingTxhHash
   ) {
     return (
       <LoadingDataContainer>
@@ -58,9 +60,9 @@ const LiquidityData = ({ chainId, provider, address, period }: StakingData) => {
             accruedRewardRetrieved.isError
               ? 'Error!'
               : `${new TokenAmount(
-                  getPegCurrency(chainId),
-                  accruedRewardRetrieved?.data?.toString() || '0'
-                ).toSignificant(3)} MFI`
+                getPegCurrency(chainId),
+                accruedRewardRetrieved?.data?.toString() || '0'
+              ).toSignificant(3)} MFI`
           }
           hint="The amount of MFI you have accrued by staking. To withdraw it, select 'Claim' and then click 'Max'"
         />
@@ -70,8 +72,8 @@ const LiquidityData = ({ chainId, provider, address, period }: StakingData) => {
             stakedBalance.isError
               ? 'Error!'
               : `${new TokenAmount(getPegCurrency(chainId), stakedBalance?.data?.toString() || '0').toSignificant(
-                  3
-                )} USDC/MFI`
+                3
+              )} USDC/MFI`
           }
           hint="The USDC/MFI token balance you currently have staked"
         />
