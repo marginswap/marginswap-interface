@@ -22,7 +22,10 @@ export const breakpoints: Breakpoints = {
   largeUp: `(min-width: ${breakpointVals.large + 1}px)`
 }
 
-const mq = (breakpoint: string) => (content: string): string => `
+const mq =
+  (breakpoint: string) =>
+  (content: string): string =>
+    `
     @media ${breakpoint} {
       ${content}
     }
