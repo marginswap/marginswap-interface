@@ -134,7 +134,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
         balance = await getStakedBalance(contract, address)
       }
 
-      setValue('amount', balance ? Number(utils.formatEther(balance)).toFixed(6) : '0')
+      setValue('amount', balance ? utils.formatEther(balance) : '0')
     }
   }
 
