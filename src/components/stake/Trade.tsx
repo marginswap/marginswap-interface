@@ -83,13 +83,14 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
 
   const getMFIToken = new Token(chainId ?? ChainId.MAINNET, MFI_ADDRESS, 18, 'MFI')
   const getLiquidityToken = new Token(chainId ?? ChainId.MAINNET, MFI_USDC_ADDRESS, 18, 'MFI/USDC')
+  const currentToken = mfiStake ? getMFIToken : getLiquidityToken;
   const canWithdraw = useCanWithdraw({ chainId, provider, address, account })
   const addTransaction = useTransactionAdder(addTransactionResponseCallback)
   const isTxnPending = useIsTransactionPending(pendingTxhHash || '')
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallbackFromStakeTrade(
     mfiStake,
-    new TokenAmount(getMFIToken, utils.parseUnits(amount || '0', getMFIToken.decimals).toBigInt())
+    new TokenAmount(currentToken, utils.parseUnits(amount || '0', currentToken.decimals).toBigInt())
   )
 
   const approvalSubmitted = approval === ApprovalState.APPROVED || approval === ApprovalState.PENDING
@@ -315,7 +316,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
         />
       )}
       <ConfirmStakeModal
-        token={getMFIToken}
+        token={currentToken}
         chainId={chainId}
         provider={provider}
         address={address}
