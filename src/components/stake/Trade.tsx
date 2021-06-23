@@ -32,6 +32,7 @@ import Select from '../Select'
 // import ToggleSelector from '../ToggleSelector'
 import { GreyCard } from '../../components/Card'
 import ApprovalStepper from './ApprovalStepper'
+import { WarningBar } from '../../components/Placeholders'
 
 import { getMFIStakingContract, getLiquidityStakingContract } from 'utils'
 import { getNotificationMsn } from './utils'
@@ -57,10 +58,10 @@ const GreyCardStyled = styled(GreyCard)`
 `
 
 interface StakeProps {
-  chainId?: ChainId
-  provider?: Web3Provider
-  address: string
-  account?: string
+  chainId?: ChainId | undefined
+  provider?: Web3Provider | undefined
+  address?: string | undefined | null
+  account?: string | undefined | null
 }
 
 export default function TradeStake({ chainId, provider, address, account }: StakeProps) {
@@ -117,20 +118,22 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
 
       // Deposit
       if (txnType === transactionTypeOptions[0].value) {
-        if (mfiStake) {
+        if (mfiStake && address) {
           balance = await getTokenBalance(address, getMFIToken.address, provider)
         } else {
-          balance = await getTokenBalance(address, getLiquidityToken.address, provider)
+          if (address) {
+            balance = await getTokenBalance(address, getLiquidityToken.address, provider)
+          }
         }
       }
 
       // Claim
-      if (txnType === transactionTypeOptions[1].value) {
+      if (txnType === transactionTypeOptions[1].value && address) {
         balance = await accruedReward(contract, address)
       }
 
       // Withdraw
-      if (txnType === transactionTypeOptions[2].value) {
+      if (txnType === transactionTypeOptions[2].value && address) {
         balance = await getStakedBalance(contract, address)
       }
 
@@ -161,10 +164,12 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
   const handleStake = async () => {
     let signedContract
 
-    if (mfiStake) {
+    if (mfiStake && account) {
       signedContract = getMFIStakingContract(chainId, provider, account)
     } else {
-      signedContract = getLiquidityStakingContract(chainId, provider, account)
+      if (account) {
+        signedContract = getLiquidityStakingContract(chainId, provider, account)
+      }
     }
 
     const tokenAmt = utils.parseUnits(amount, 18)
@@ -236,7 +241,8 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
   const isAbleToWithdraw = transactionType === '1' || (canWithdraw.data && transactionType !== '1')
 
   return (
-    <>
+    <div style={{ maxWidth: 420 }}>
+      {!account && <WarningBar>Wallet not connected</WarningBar>}
       <AppBody>
         <form>
           <StyledStakeHeader>
@@ -261,6 +267,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
                   render={({ field }) => (
                     <StyledOutlinedInput
                       {...field}
+                      disabled={!account}
                       type="number"
                       endAdornment={
                         <StyledBalanceMax
@@ -302,7 +309,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
         <MFIData
           chainId={chainId}
           provider={provider}
-          address={address}
+          address={address ?? undefined}
           period={Number(period)}
           pendingTxhHash={pendingTxhHash}
         />
@@ -310,7 +317,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
         <LiquidityData
           chainId={chainId}
           provider={provider}
-          address={address}
+          address={address ?? undefined}
           period={Number(period)}
           pendingTxhHash={pendingTxhHash}
         />
@@ -319,7 +326,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
         token={currentToken}
         chainId={chainId}
         provider={provider}
-        address={address}
+        address={address ?? undefined}
         period={Number(period)}
         mfiStake={mfiStake}
         amount={amount}
@@ -330,6 +337,6 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
         isOpen={confirmStakeModal}
         stakeErrorMsn={stakeErrorMsn}
       />
-    </>
+    </div>
   )
 }

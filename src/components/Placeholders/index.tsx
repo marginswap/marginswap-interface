@@ -11,6 +11,7 @@ export const ErrorBar = styled.div`
 export const WarningBar = styled.div`
   padding: 20px;
   color: orange;
+  width: 100%;
   border: 1px solid yellow;
   border-radius: 10px;
   margin-bottom: 20px;
