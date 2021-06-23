@@ -38,6 +38,8 @@ export const StyledOutlinedInput = styled(OutlinedInput)`
 export const DropdownsContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  /* TODO - remove this top padding once liquidity staking is enabled */
+  padding-top: 0.5em;
 `
 
 export const StakingWrapper = styled.div`
