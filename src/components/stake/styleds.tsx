@@ -1,5 +1,44 @@
-import { Tabs } from '@material-ui/core'
+import Tabs from '@material-ui/core/Tabs'
+import OutlinedInput from '@material-ui/core/OutlinedInput'
+import { Text } from 'rebass'
 import styled from 'styled-components'
+import { makeStyles } from '@material-ui/core'
+
+export const LoadingDataContainer = styled.div`
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+export const StyledStakeHeader = styled.div`
+  padding: 1.5em 1rem 0px 1.5rem;
+  margin-bottom: -4px;
+  width: 100%;
+  max-width: 420px;
+  color: ${({ theme }) => theme.text2};
+`
+
+export const StyledOutlinedInput = styled(OutlinedInput)`
+  width: 100%;
+  height: 50px;
+  color: ${({ theme }) => theme.white} !important;
+  border: 1px solid ${({ theme }) => theme.bg5};
+  border-radius: 10px !important;
+  padding: 0.5em;
+  margin: 1em 0;
+  font-size: 24px !important;
+  font-weight: 500 !important;
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+`
+
+export const DropdownsContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
 
 export const StakingWrapper = styled.div`
   margin: auto;
@@ -165,3 +204,90 @@ export const Balance = styled.div`
     line-height: 16px;
   }
 `
+
+export const StyledBalanceMax = styled.button`
+  height: 28px;
+  background-color: ${({ theme }) => theme.primary5};
+  border: 1px solid ${({ theme }) => theme.primary5};
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  color: ${({ theme }) => theme.primaryText1};
+  :hover {
+    border: 1px solid ${({ theme }) => theme.primary1};
+  }
+  :focus {
+    border: 1px solid ${({ theme }) => theme.primary1};
+    outline: none;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    margin-right: 0.5rem;
+  `};
+`
+
+export const DetailsFooter = styled.div`
+  padding-top: calc(16px + 2rem);
+  padding-bottom: 16px;
+  margin-top: -2rem;
+  width: 100%;
+  max-width: 400px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  color: ${({ theme }) => theme.text2};
+  background-color: ${({ theme }) => theme.advancedBG};
+  z-index: 1;
+  opacity: 1;
+  transition: opacity 0.3s linear;
+`
+export const ParameterTitle = styled.span`
+  font-size: 14px;
+  color: #d0d0d0;
+  font-weight: 400;
+`
+export const ParameterResult = styled.span`
+  font-size: 14px;
+  color: #fff;
+  font-weight: 400;
+`
+
+export const TruncatedText = styled(Text)`
+  text-overflow: ellipsis;
+  width: 220px;
+  overflow: hidden;
+`
+
+export const useStyles = makeStyles(() => ({
+  parameters: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+    padding: '0 8px',
+    justifyContent: 'space-evenly',
+    marginBottom: '18px'
+  },
+  fullWidthPair: {
+    '& p > span:nth-child(odd)': {
+      float: 'left',
+      '& img': {
+        margin: '0 0 -3px 11px'
+      }
+    },
+    '& > p > span:nth-child(even)': {
+      float: 'right'
+    },
+    '& > p': {
+      margin: '0',
+      fontSize: '0.8em',
+      fontWeight: '600'
+    }
+  },
+  tooltip: {
+    maxWidth: '120px',
+    background: '#181818',
+    border: '0.4px solid #777777'
+  }
+}))

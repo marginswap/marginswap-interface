@@ -1,6 +1,7 @@
 import { createWeb3ReactRoot, Web3ReactProvider } from '@web3-react/core'
 import 'inter-ui'
 import React, { StrictMode } from 'react'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { isMobile } from 'react-device-detect'
 import ReactDOM from 'react-dom'
 import ReactGA from 'react-ga'
@@ -17,6 +18,7 @@ import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from './theme'
 import getLibrary from './utils/getLibrary'
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
+const queryClient = new QueryClient()
 
 if ('ethereum' in window) {
   ;(window.ethereum as any).autoRefreshOnNetworkChange = false
@@ -64,17 +66,19 @@ ReactDOM.render(
       <FixedGlobalStyle />
       <Web3ReactProvider getLibrary={getLibrary}>
         <Web3ProviderNetwork getLibrary={getLibrary}>
-          <Blocklist>
-            <Provider store={store}>
-              <Updaters />
-              <ThemeProvider>
-                <ThemedGlobalStyle />
-                <BrowserRouter>
-                  <App />
-                </BrowserRouter>
-              </ThemeProvider>
-            </Provider>
-          </Blocklist>
+          <QueryClientProvider client={queryClient}>
+            <Blocklist>
+              <Provider store={store}>
+                <Updaters />
+                <ThemeProvider>
+                  <ThemedGlobalStyle />
+                  <BrowserRouter>
+                    <App />
+                  </BrowserRouter>
+                </ThemeProvider>
+              </Provider>
+            </Blocklist>
+          </QueryClientProvider>
         </Web3ProviderNetwork>
       </Web3ReactProvider>
     </StrictMode>
