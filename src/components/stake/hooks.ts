@@ -11,6 +11,7 @@ import {
   canWithdraw,
   Duration
 } from '@marginswap/sdk'
+import { Contract } from '@ethersproject/contracts'
 import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
 import { getMFIStakingContract } from 'utils'
 
@@ -27,6 +28,7 @@ interface CanWithdrawDataProps {
   provider?: Web3Provider | undefined
   address?: string | undefined
   account?: string | undefined
+  mfiStake: boolean
 }
 
 const durations: Record<number, Duration> = {
@@ -61,11 +63,15 @@ export const useLiquidityAPR = ({ chainId, provider, address, period }: StakingD
   return { liquidityStaking, accruedRewardRetrieved, stakedBalance, availableForWithdrawAfter }
 }
 
-export const useCanWithdraw = ({ chainId, provider, address, account }: CanWithdrawDataProps) => {
+export const useCanWithdraw = ({ chainId, provider, address, account, mfiStake }: CanWithdrawDataProps) => {
   return useQuery('canWithdraw', async () => {
     if (!chainId || !provider || !address || !account) return false
 
-    const signedContract = await getMFIStakingContract(chainId, provider, account)
+    let signedContract: Contract | undefined
+
+    if (mfiStake) signedContract = await getMFIStakingContract(chainId, provider, account)
+
+    if (!mfiStake) signedContract = await getLiquidityMiningReward(chainId, provider)
 
     if (!signedContract) return false
 

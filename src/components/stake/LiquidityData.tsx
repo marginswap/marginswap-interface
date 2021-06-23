@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { ChainId, TokenAmount } from '@marginswap/sdk'
+import { ChainId, TokenAmount, Token } from '@marginswap/sdk'
 import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
 
 import Parameters from './Parameters'
@@ -9,7 +9,7 @@ import Circle from '../../assets/images/blue-loader.svg'
 import { useStyles, DetailsFooter, LoadingDataContainer } from './styleds'
 
 import { getAvailableWithdrawalTime } from './utils'
-import { getPegCurrency } from '../../constants'
+import { MFI_ADDRESS } from '../../constants'
 
 import { useLiquidityAPR } from './hooks'
 
@@ -51,7 +51,7 @@ const LiquidityData = ({ chainId, provider, address, period, pendingTxhHash }: S
       <div className={classes.parameters + ' ' + classes.fullWidthPair}>
         <Parameters
           title="Estimated APR"
-          value={liquidityStaking.isError ? 'Error!' : liquidityStaking.data || 0}
+          value={liquidityStaking.isError ? '0' : liquidityStaking.data || 0}
           hint="The estimated yield APR that is paid out on your staked balance"
         />
         <Parameters
@@ -60,9 +60,9 @@ const LiquidityData = ({ chainId, provider, address, period, pendingTxhHash }: S
             accruedRewardRetrieved.isError
               ? 'Error!'
               : `${new TokenAmount(
-                getPegCurrency(chainId),
-                accruedRewardRetrieved?.data?.toString() || '0'
-              ).toSignificant(3)} MFI`
+                  new Token(chainId ?? 1, MFI_ADDRESS, 18),
+                  accruedRewardRetrieved?.data?.toString() || '0'
+                ).toSignificant(3)} MFI`
           }
           hint="The amount of MFI you have accrued by staking. To withdraw it, select 'Claim' and then click 'Max'"
         />
@@ -71,9 +71,10 @@ const LiquidityData = ({ chainId, provider, address, period, pendingTxhHash }: S
           value={
             stakedBalance.isError
               ? 'Error!'
-              : `${new TokenAmount(getPegCurrency(chainId), stakedBalance?.data?.toString() || '0').toSignificant(
-                3
-              )} USDC/MFI`
+              : `${new TokenAmount(
+                  new Token(chainId ?? 1, MFI_ADDRESS, 18),
+                  stakedBalance?.data?.toString() || '0'
+                ).toSignificant(3)} MFI`
           }
           hint="The USDC/MFI token balance you currently have staked"
         />

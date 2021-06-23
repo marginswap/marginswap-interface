@@ -8,7 +8,7 @@ import { CustomLightSpinner } from '../../theme'
 import Circle from '../../assets/images/blue-loader.svg'
 
 import { getAvailableWithdrawalTime } from './utils'
-import { getPegCurrency, MFI_ADDRESS } from '../../constants'
+import { MFI_ADDRESS } from '../../constants'
 
 import { useStyles, DetailsFooter, LoadingDataContainer } from './styleds'
 import { useMFIAPR } from './hooks'
@@ -50,7 +50,7 @@ const MFIData = ({ chainId, provider, address, period, pendingTxhHash }: Staking
       <div className={classes.parameters + ' ' + classes.fullWidthPair}>
         <Parameters
           title="Estimated APR"
-          value={mfIStaking.isError ? 'Error!' : mfIStaking.data || 0}
+          value={mfIStaking.isError ? '0' : mfIStaking.data || 0}
           hint="The estimated yield APR that is paid out on your staked balance"
         />
         <Parameters
@@ -59,9 +59,9 @@ const MFIData = ({ chainId, provider, address, period, pendingTxhHash }: Staking
             accruedRewardRetrieved.isError
               ? 'Error!'
               : `${new TokenAmount(
-                new Token(chainId ?? 1, MFI_ADDRESS, 18),
-                accruedRewardRetrieved?.data?.toString() || '0'
-              ).toSignificant(3)} MFI`
+                  new Token(chainId ?? 1, MFI_ADDRESS, 18),
+                  accruedRewardRetrieved?.data?.toString() || '0'
+                ).toSignificant(3)} MFI`
           }
           hint="The amount of MFI you have accrued by staking. To withdraw it, select 'Claim' and then click 'Max'"
         />
@@ -71,9 +71,9 @@ const MFIData = ({ chainId, provider, address, period, pendingTxhHash }: Staking
             stakedBalance.isError
               ? 'Error!'
               : `${new TokenAmount(
-                new Token(chainId ?? 1, MFI_ADDRESS, 18),
-                stakedBalance?.data?.toString() || '0'
-              ).toSignificant(3)} MFI`
+                  new Token(chainId ?? 1, MFI_ADDRESS, 18),
+                  stakedBalance?.data?.toString() || '0'
+                ).toSignificant(3)} MFI`
           }
           hint="The MFI balance you currently have staked"
         />
