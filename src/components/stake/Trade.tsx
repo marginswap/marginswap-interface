@@ -322,6 +322,10 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
           pendingTxhHash={pendingTxhHash}
         />
       )}
+      <WarningBar>
+        Use different wallets if you intend to stake for multiple timeframes. All stakes from the same wallet will be
+        locked up for the longest selected timeframe
+      </WarningBar>
       <ConfirmStakeModal
         token={currentToken}
         chainId={chainId}
