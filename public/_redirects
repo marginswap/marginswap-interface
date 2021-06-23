@@ -1,1 +1,3 @@
+http://beta.marginswap.exchange/* https://app.marginswap.exchange/:splat 301!
+https://beta.marginswap.exchange/* https://app.marginswap.exchange/:splat 301!
 /*    /index.html   200
