@@ -19,15 +19,15 @@ interface StakingDataProps {
   chainId?: ChainId | undefined
   provider?: Web3Provider | undefined
   address?: string | undefined
-  account?: string | undefined
+  account?: string | undefined | null
   period: number
 }
 
 interface CanWithdrawDataProps {
   chainId?: ChainId | undefined
   provider?: Web3Provider | undefined
-  address?: string | undefined
-  account?: string | undefined
+  address?: string | undefined | null
+  account?: string | undefined | null
   mfiStake: boolean
 }
 
