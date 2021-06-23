@@ -29,7 +29,7 @@ import AppBody from '../../pages/AppBody'
 import { TYPE } from '../../theme'
 import { RowBetween } from '../Row'
 import Select from '../Select'
-import ToggleSelector from '../ToggleSelector'
+// import ToggleSelector from '../ToggleSelector'
 import { GreyCard } from '../../components/Card'
 import ApprovalStepper from './ApprovalStepper'
 
@@ -38,7 +38,7 @@ import { getNotificationMsn } from './utils'
 import { utils } from 'ethers'
 
 import { DropdownsContainer, StyledOutlinedInput, StyledStakeHeader, StyledBalanceMax } from './styleds'
-import { PaddedColumn, Wrapper } from '../swap/styleds'
+import { /*PaddedColumn,*/ Wrapper } from '../swap/styleds'
 import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
 import { useCanWithdraw } from './hooks'
 import { MFI_ADDRESS, MFI_USDC_ADDRESS } from '../../constants'
@@ -64,7 +64,7 @@ interface StakeProps {
 }
 
 export default function TradeStake({ chainId, provider, address, account }: StakeProps) {
-  const [mfiStake, setMfiStake] = useState(true)
+  const [mfiStake /*, setMfiStake*/] = useState(true)
   const [attemptingTxn, setAttemptingTxn] = useState(false)
   const [confirmStakeModal, setConfirmStakeModal] = useState(false)
   const [stakeErrorMsn, setStakeErrorMsn] = useState('')
@@ -244,9 +244,9 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
               <TYPE.black fontWeight={500}>Stake</TYPE.black>
             </RowBetween>
           </StyledStakeHeader>
-          <PaddedColumn>
+          {/* <PaddedColumn>
             <ToggleSelector options={['MFI', 'LIQUIDITY TOKEN']} state={mfiStake} setState={setMfiStake} />
-          </PaddedColumn>
+          </PaddedColumn> */}
           <Wrapper>
             <DropdownsContainer>
               <Select name="transactionType" options={transactionTypeOptions} register={register} />
