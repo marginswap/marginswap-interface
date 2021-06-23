@@ -56,6 +56,7 @@ const headerLinks = [
 }*/
 
 const MobileMenu = () => {
+  const { chainId } = useActiveWeb3React()
   const [open, setOpen] = useState(false)
   const ref = useClickOutside<HTMLDivElement>(() => {
     setOpen(false)
@@ -71,6 +72,7 @@ const MobileMenu = () => {
       {open && (
         <MobileMenuList id="mob" open={open}>
           {headerLinks.map(link => {
+            if (chainId !== 1 && chainId !== 31337 && link.name === 'Stake') return null
             return (
               <Link
                 to={link.path}
@@ -126,6 +128,7 @@ export default function Header() {
       <HeaderRow>
         <HeaderLinks id="desk">
           {headerLinks.map(link => {
+            if (chainId !== 1 && chainId !== 31337 && link.name === 'Stake') return null
             return (
               <StyledNavLink key={link.path} id={`swap-nav-link`} to={link.path}>
                 {link.name}
