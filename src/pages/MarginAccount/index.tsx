@@ -436,7 +436,7 @@ export const MarginAccount = () => {
       Object.keys(_balances.holdingAmounts).reduce(
         (acc, cur) => ({
           ...acc,
-          [cur]: new TokenAmount(getPegCurrency(chainId) ?? USDT_MAINNET, _balances.holdingAmounts[cur].toString())
+          [cur]: BigNumber.from(_balances.holdingAmounts[cur]).toString()
         }),
         {}
       )
@@ -446,7 +446,7 @@ export const MarginAccount = () => {
       Object.keys(_balances.borrowingAmounts).reduce(
         (acc, cur) => ({
           ...acc,
-          [cur]: new TokenAmount(getPegCurrency(chainId) ?? USDT_MAINNET, _balances.borrowingAmounts[cur].toString())
+          [cur]: BigNumber.from(_balances.borrowingAmounts[cur]).toString()
         }),
         {}
       )
@@ -499,8 +499,8 @@ export const MarginAccount = () => {
         coin: token.symbol,
         address: token.address,
         decimals: token.decimals,
-        balance: holdingAmounts[token.address] ? parseFloat(holdingAmounts[token.address].toFixed(6)) : 0,
-        borrowed: borrowingAmounts[token.address] ? parseFloat(borrowingAmounts[token.address].toFixed(6)) : 0,
+        balance: Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals), // 6 decimals
+        borrowed: Number(borrowingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals), // 6 decimals
         borrowable: borrowableAmounts[token.address] ? parseFloat(borrowableAmounts[token.address].toFixed(6)) : 0,
         withdrawable: withdrawableAmounts[token.address]
           ? parseFloat(withdrawableAmounts[token.address].toFixed(6))
@@ -512,7 +512,7 @@ export const MarginAccount = () => {
         ),
         maxWithdraw: Math.min(
           withdrawableAmounts[token.address] ? parseFloat(withdrawableAmounts[token.address].toFixed(6)) : 0,
-          holdingAmounts[token.address] ? parseFloat(holdingAmounts[token.address].toFixed(6)) : 0
+          Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals)
         ),
         ir: borrowAPRs[token.address],
         available: tokenBalances[token.address] ? parseFloat(tokenBalances[token.address].toFixed(6)) : 0,
