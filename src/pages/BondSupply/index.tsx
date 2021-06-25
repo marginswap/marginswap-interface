@@ -62,9 +62,7 @@ const BOND_RATES_COLUMNS = [
     name: 'Total Supplied',
     id: 'totalSupplied',
     // eslint-disable-next-line react/display-name
-    render: ({ totalSupplied }: { totalSupplied: string }) => (
-      <span>{totalSupplied ? utils.commify(totalSupplied) : 0}</span>
-    )
+    render: ({ totalSupplied }: { totalSupplied: string }) => <span>{totalSupplied ? totalSupplied : 0}</span>
   },
   {
     name: 'APY',
@@ -386,7 +384,7 @@ export const BondSupply = () => {
       return 0
     }
 
-    return utils.commify((totalAnnualEarnings / 365).toFixed(2))
+    return (totalAnnualEarnings / 365).toFixed(2)
   }, [tokens, bondAPRs, bondUSDCosts])
 
   return (

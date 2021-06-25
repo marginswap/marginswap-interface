@@ -79,13 +79,13 @@ const ACCOUNT_COLUMNS = [
     name: 'Total Balance',
     id: 'balance',
     // eslint-disable-next-line react/display-name
-    render: ({ balance }: { balance: number }) => <span>{balance ? utils.commify(balance.toFixed(6)) : 0}</span>
+    render: ({ balance }: { balance: number }) => <span>{balance ? balance.toFixed(6) : 0}</span>
   },
   {
     name: 'Debt',
     id: 'borrowed',
     // eslint-disable-next-line react/display-name
-    render: ({ borrowed }: { borrowed: number }) => <span>{borrowed ? utils.commify(borrowed.toFixed(6)) : 0}</span>
+    render: ({ borrowed }: { borrowed: number }) => <span>{borrowed ? borrowed.toFixed(6) : 0}</span>
   },
   {
     name: 'Interest',
@@ -99,16 +99,14 @@ const ACCOUNT_COLUMNS = [
     id: 'borrowable',
     tooltip: 'This is the total amount you can borrow with your equity',
     // eslint-disable-next-line react/display-name
-    render: ({ borrowable }: { borrowable: number }) => (
-      <span>{borrowable ? utils.commify(borrowable.toFixed(6)) : 0}</span>
-    )
+    render: ({ borrowable }: { borrowable: number }) => <span>{borrowable ? borrowable.toFixed(6) : 0}</span>
   },
   {
     name: 'Liquidity',
     id: 'liquidity',
     tooltip: 'This is the total amount of an asset available to be borrowed for a trade',
     // eslint-disable-next-line react/display-name
-    render: ({ liquidity }: { liquidity: number }) => <span>{liquidity ? utils.commify(liquidity.toFixed(6)) : 0}</span>
+    render: ({ liquidity }: { liquidity: number }) => <span>{liquidity ? liquidity.toFixed(6) : 0}</span>
   }
 ] as const
 
