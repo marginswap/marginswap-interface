@@ -483,7 +483,7 @@ export const MarginAccount = () => {
     setDebtTotal(_debtTotal)
   }
   /**
-   * ^^^ END Get User MarginSwap Data ^^^
+   * ^^^  END Get User MarginSwap Data  ^^^
    */
 
   // call getUserMarginswapData when relevant things change
