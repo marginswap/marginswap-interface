@@ -1,12 +1,22 @@
 import { MaxUint256 } from '@ethersproject/constants'
 import { TransactionResponse } from '@ethersproject/providers'
-import { Trade, TokenAmount, CurrencyAmount, ETHER, LeverageType, getAddresses } from '@marginswap/sdk'
+import {
+  Trade,
+  TokenAmount,
+  CurrencyAmount,
+  ETHER,
+  LeverageType,
+  getAddresses,
+  getLiquidityMiningReward,
+  getMFIStaking
+} from '@marginswap/sdk'
 import { useCallback, useMemo } from 'react'
 import { useTokenAllowance } from '../data/Allowances'
 import { Field } from '../state/swap/actions'
 import { useTransactionAdder, useHasPendingApproval } from '../state/transactions/hooks'
 import { computeSlippageAdjustedAmounts } from '../utils/prices'
 import { calculateGasMargin } from '../utils'
+import { toast } from 'react-toastify'
 import { useTokenContract } from './useContract'
 import { useActiveWeb3React } from './index'
 
@@ -24,6 +34,7 @@ export function useApproveCallback(
 ): [ApprovalState, () => Promise<void>] {
   const { account } = useActiveWeb3React()
   const token = amountToApprove instanceof TokenAmount ? amountToApprove.token : undefined
+
   const currentAllowance = useTokenAllowance(token, account ?? undefined, spender)
   const pendingApproval = useHasPendingApproval(token?.address, spender)
 
@@ -89,6 +100,7 @@ export function useApproveCallback(
       })
       .catch((error: Error) => {
         console.debug('Failed to approve token', error)
+        toast.error('Approve error', { position: 'bottom-right' })
         throw error
       })
   }, [approvalState, token, tokenContract, amountToApprove, spender, addTransaction])
@@ -97,7 +109,7 @@ export function useApproveCallback(
 }
 
 // wraps useApproveCallback in the context of a swap
-export function useApproveCallbackFromTrade(trade?: Trade, allowedSlippage = 0, leverageType?: LeverageType) {
+export function useApproveCallbackFromTrade(trade?: Trade | null, allowedSlippage = 0, leverageType?: LeverageType) {
   const amountToApprove = useMemo(
     () => (trade ? computeSlippageAdjustedAmounts(trade, allowedSlippage)[Field.INPUT] : undefined),
     [trade, allowedSlippage]
@@ -110,5 +122,17 @@ export function useApproveCallbackFromTrade(trade?: Trade, allowedSlippage = 0, 
     const spotRouter = getAddresses(chainId!).SpotRouter
     approveAddress = leverageType === LeverageType.CROSS_MARGIN ? fund : spotRouter
   }
+  return useApproveCallback(amountToApprove, approveAddress)
+}
+
+// wraps useApproveCallback in the context of a stake
+export function useApproveCallbackFromStakeTrade(isMFI: boolean, amountToApprove: CurrencyAmount | undefined) {
+  let approveAddress: string | undefined
+  const { chainId, library } = useActiveWeb3React()
+
+  if (isMFI) approveAddress = getMFIStaking(chainId, library)?.address
+
+  if (!isMFI) approveAddress = getLiquidityMiningReward(chainId, library)?.address
+
   return useApproveCallback(amountToApprove, approveAddress)
 }

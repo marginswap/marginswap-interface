@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import useParsedQueryString from 'hooks/useParsedQueryString'
 import Logo from '../../assets/images/Union.svg'
 import { useActiveWeb3React } from '../../hooks'
 import { useETHBalances } from '../../state/wallet/hooks'
@@ -56,11 +55,8 @@ const headerLinks = [
   [ChainId.BSC]: 'Binance'
 }*/
 
-type MobileMenuProps = {
-  stake: any
-}
-
-const MobileMenu = ({ stake }: MobileMenuProps) => {
+const MobileMenu = () => {
+  const { chainId } = useActiveWeb3React()
   const [open, setOpen] = useState(false)
   const ref = useClickOutside<HTMLDivElement>(() => {
     setOpen(false)
@@ -76,8 +72,7 @@ const MobileMenu = ({ stake }: MobileMenuProps) => {
       {open && (
         <MobileMenuList id="mob" open={open}>
           {headerLinks.map(link => {
-            if (stake !== '1' && link.name === 'Stake') return null
-
+            if (chainId !== 1 && chainId !== 31337 && link.name === 'Stake') return null
             return (
               <Link
                 to={link.path}
@@ -97,7 +92,6 @@ const MobileMenu = ({ stake }: MobileMenuProps) => {
 }
 
 export default function Header() {
-  const { stake } = useParsedQueryString()
   const { account, chainId } = useActiveWeb3React()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
@@ -134,8 +128,7 @@ export default function Header() {
       <HeaderRow>
         <HeaderLinks id="desk">
           {headerLinks.map(link => {
-            if (stake !== '1' && link.name === 'Stake') return null
-
+            if (chainId !== 1 && chainId !== 31337 && link.name === 'Stake') return null
             return (
               <StyledNavLink key={link.path} id={`swap-nav-link`} to={link.path}>
                 {link.name}
@@ -143,7 +136,7 @@ export default function Header() {
             )
           })}
         </HeaderLinks>
-        <MobileMenu stake={stake} />
+        <MobileMenu />
       </HeaderRow>
       <HeaderControls>
         <HeaderElement style={{ marginRight: 10 }}>

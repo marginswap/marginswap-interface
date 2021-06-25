@@ -154,7 +154,7 @@ export const Separator = styled.div`
 `
 
 export const PaddedColumn = styled(AutoColumn)`
-  padding: 20px;
+  padding: 1em;
 `
 
 export const ToggleWrapper = styled(RowBetween)`

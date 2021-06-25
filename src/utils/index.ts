@@ -6,6 +6,8 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER, getAddresses } from '@marginswap/sdk'
 import MarginRouter from '@marginswap/core-abi/artifacts/contracts/MarginRouter.sol/MarginRouter.json'
 import SpotRouter from '@marginswap/core-abi/artifacts/contracts/SpotRouter.sol/SpotRouter.json'
+import MFIStaking from '@marginswap/core-abi/artifacts/contracts/MFIStaking.sol/MFIStaking.json'
+import LiquidityStaking from '@marginswap/core-abi/artifacts/contracts/LiquidityMiningReward.sol/LiquidityMiningReward.json'
 
 import { TokenAddressMap } from '../state/lists/hooks'
 
@@ -185,6 +187,15 @@ const builders = {
   }
 }
 
+export function getExplorerLink(
+  chainId: ChainId,
+  data: string,
+  type: 'transaction' | 'token' | 'address' | 'block'
+): string {
+  const chain = chains[chainId]
+  return chain.builder(chain.chainName, data, type)
+}
+
 interface ChainObject {
   [chainId: number]: {
     chainName: string
@@ -291,15 +302,6 @@ const chains: ChainObject = {
   // }
 }
 
-export function getExplorerLink(
-  chainId: ChainId,
-  data: string,
-  type: 'transaction' | 'token' | 'address' | 'block'
-): string {
-  const chain = chains[chainId]
-  return chain.builder(chain.chainName, data, type)
-}
-
 // shorten the checksummed version of the input address to have 0x + 4 characters at start and end
 export function shortenAddress(address: string, chars = 4): string {
   const parsed = isAddress(address)
@@ -365,4 +367,24 @@ export function getSpotRouterContract(chainId: ChainId, library: Web3Provider, a
 // account is optional
 export function getMarginRouterContract(chainId: ChainId, library: Web3Provider, account?: string): Contract {
   return getContract(getAddresses(chainId).MarginRouter, MarginRouter.abi, library, account)
+}
+
+// account is optional
+export function getMFIStakingContract(
+  chainId: ChainId | undefined,
+  library: Web3Provider | undefined,
+  account: string | undefined
+): Contract | undefined {
+  if (!chainId || !library || !account) return undefined
+  return getContract(getAddresses(chainId).MFIStaking, MFIStaking.abi, library, account)
+}
+
+// account is optional
+export function getLiquidityStakingContract(
+  chainId: ChainId | undefined,
+  library: Web3Provider | undefined,
+  account: string | undefined
+): Contract | undefined {
+  if (!chainId || !library || !account) return undefined
+  return getContract(getAddresses(chainId).LiquidityMiningReward, LiquidityStaking.abi, library, account)
 }
