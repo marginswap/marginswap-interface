@@ -40,10 +40,10 @@ type BondRateData = {
   coin: string
   address: string
   decimals: number
-  totalSupplied: number
+  totalSupplied: string
   apy: number
   maturity: number
-  available: number
+  available: string
 }
 
 const BOND_RATES_COLUMNS = [
@@ -62,8 +62,8 @@ const BOND_RATES_COLUMNS = [
     name: 'Total Supplied',
     id: 'totalSupplied',
     // eslint-disable-next-line react/display-name
-    render: ({ totalSupplied }: { totalSupplied: number }) => (
-      <span>{totalSupplied ? totalSupplied.toFixed(2) : 0}</span>
+    render: ({ totalSupplied }: { totalSupplied: string }) => (
+      <span>{totalSupplied ? utils.commify(totalSupplied) : 0}</span>
     )
   },
   {
@@ -335,10 +335,12 @@ export const BondSupply = () => {
         address: token.address,
         decimals: token.decimals,
         coin: token.symbol,
-        totalSupplied: Number(bondBalances[token.address] ?? 0) / Math.pow(10, token.decimals),
+        totalSupplied: bondBalances[token.address]
+          ? (Number(bondBalances[token.address] ?? 0) / Math.pow(10, token.decimals)).toFixed(6)
+          : '0',
         apy: apyFromApr(bondAPRs[token.address] ?? 0, 365 * 24),
         maturity: bondMaturities[token.address] ?? 0,
-        available: tokenBalances[token.address],
+        available: tokenBalances[token.address] ? tokenBalances[token.address].toFixed(6) : '0',
         getActionNameFromAmount: {
           Deposit: () => (allowances[token.address] > 0 ? 'Confirm Transaction' : 'Approve')
         }
@@ -351,10 +353,7 @@ export const BondSupply = () => {
 
   const averageYield = useMemo(() => {
     // get the total balance of all the user's bonds
-    const bondCosts = tokens.reduce(
-      (acc, cur) => acc + Number((bondUSDCosts[cur.address] ?? ZERO_DAI).toSignificant()),
-      0
-    )
+    const bondCosts = tokens.reduce((acc, cur) => acc + Number((bondUSDCosts[cur.address] ?? ZERO_DAI).toFixed(6)), 0)
     if (bondCosts === 0) return 0
     const avgYield = tokens.reduce((acc, cur) => {
       const apy = apyFromApr(bondAPRs[cur.address], 365 * 24)
@@ -362,7 +361,7 @@ export const BondSupply = () => {
       // Don't think about this as percentages - we're just averaging numbers.
       // Each dollar has an interest rate assigned to it, then we divide that by the total number of dollars
       // to get the average interest rate for all dollars
-      return acc + (apy * Number(bondUSDCosts[cur.address].toSignificant(4))) / bondCosts
+      return acc + (apy * Number(bondUSDCosts[cur.address].toFixed(2))) / bondCosts
     }, 0)
     return avgYield.toFixed(2)
   }, [tokens, bondAPRs, bondUSDCosts])
@@ -374,7 +373,7 @@ export const BondSupply = () => {
 
     const totalAnnualEarnings = tokens.reduce((acc, cur) => {
       const apy = apyFromApr(bondAPRs[cur.address], 365 * 24)
-      const bondBalance = Number(bondUSDCosts[cur.address].toSignificant(4))
+      const bondBalance = Number(bondUSDCosts[cur.address].toFixed(6))
 
       if (apy > 0 && bondBalance > 0) {
         return acc + (apy / 100) * bondBalance
@@ -387,7 +386,7 @@ export const BondSupply = () => {
       return 0
     }
 
-    return (totalAnnualEarnings / 365).toFixed(2)
+    return utils.commify((totalAnnualEarnings / 365).toFixed(2))
   }, [tokens, bondAPRs, bondUSDCosts])
 
   return (
@@ -400,7 +399,7 @@ export const BondSupply = () => {
             title="Total Bond"
             amount={`$${Object.keys(bondUSDCosts)
               .reduce((acc, cur) => acc.add(bondUSDCosts[cur]), ZERO_DAI)
-              .toSignificant()}`}
+              .toFixed(2)}`}
             Icon={IconMoneyStackLocked}
           />
           <InfoCard title="Average Yield" amount={`${averageYield}%`} ghost Icon={IconMoneyStackLocked} />
