@@ -36,7 +36,7 @@ export default function NetworkModal(): JSX.Element | null {
         </HeaderRow>
 
         <ContentWrapper>
-          {[ChainId.MAINNET, ChainId.AVALANCHE, ChainId.MATIC].map((key: ChainId, i: number) => {
+          {[ChainId.MAINNET, ChainId.AVALANCHE, ChainId.MATIC, ChainId.BSC].map((key: ChainId, i: number) => {
             if (chainId === key) return null
             return (
               <NetworkOption
