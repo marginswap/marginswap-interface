@@ -12,7 +12,8 @@ import {
   getBondsCostInDollars,
   TokenAmount,
   getTokenAllowances,
-  getTokenBalance
+  getTokenBalance,
+  Token
 } from '@marginswap/sdk'
 
 interface MarketDataProps {
@@ -53,10 +54,10 @@ export const useMarketData = ({ chainId, tokens, provider, account }: MarketData
   })
 
   const incentiveAPRs = useQuery('getIncentiveAPRs', async () => {
-    if (!tokens?.length || !provider) return null
+    if (!tokens?.length || !provider || !chainId) return null
 
     const interestRates = await getHourlyBondIncentiveInterestRates(
-      tokens.map(t => t.address),
+      tokens.map(t => new Token(chainId, t.address, t.decimals)),
       chainId,
       provider
     )
