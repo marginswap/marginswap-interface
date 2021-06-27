@@ -4,10 +4,9 @@ import InfoCard from '../../components/InfoCard'
 import VideoExplainerLink from '../../components/VideoExplainerLink'
 import IconMoneyStackLocked from '../../icons/IconMoneyStackLocked'
 import IconMoneyStack from '../../icons/IconMoneyStack'
-import { TokenInfo } from '@uniswap/token-lists'
 import { useWeb3React } from '@web3-react/core'
 import { useActiveWeb3React } from '../../hooks'
-import { getProviderOrSigner } from '../../utils'
+import { getProviderOrSigner, TokenInfoWithCoingeckoId } from '../../utils'
 import { buyHourlyBondSubscription, withdrawHourlyBond, approveToFund, TokenAmount } from '@marginswap/sdk'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { StyledTableContainer, StyledWrapperDiv, StyledSectionDiv } from './styled'
@@ -22,7 +21,6 @@ import { BOND_RATES_COLUMNS, DATA_POLLING_INTERVAL, BondRateDataType, apyFromApr
 import { useMarketData, useUserMarginswapData } from './hooks'
 
 export const BondSupply = () => {
-  console.log('RENDER :::')
   const { library, chainId } = useActiveWeb3React()
 
   const [error, setError] = useState<string | null>(null)
@@ -43,7 +41,7 @@ export const BondSupply = () => {
   if (library && account) {
     provider = getProviderOrSigner(library, account)
   }
-  const tokens: TokenInfo[] = tokensList.tokens.filter(t => t.chainId === chainId)
+  const tokens: TokenInfoWithCoingeckoId[] = tokensList.tokens.filter(t => t.chainId === chainId)
 
   const {
     bondAPRs: bondAPRsRetrieve,

@@ -6,8 +6,13 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER, getAddresses } from '@marginswap/sdk'
 import MarginRouter from '@marginswap/core-abi/artifacts/contracts/MarginRouter.sol/MarginRouter.json'
 import SpotRouter from '@marginswap/core-abi/artifacts/contracts/SpotRouter.sol/SpotRouter.json'
+import { TokenInfo } from '@uniswap/token-lists'
 
 import { TokenAddressMap } from '../state/lists/hooks'
+
+export interface TokenInfoWithCoingeckoId extends TokenInfo {
+  coingeckoId?: string
+}
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {

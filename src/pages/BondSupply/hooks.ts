@@ -3,6 +3,7 @@ import { getPegCurrency } from '../../constants'
 import { TokenInfo } from '@uniswap/token-lists'
 import { BigNumber } from '@ethersproject/bignumber'
 import { utils } from 'ethers'
+import { TokenInfoWithCoingeckoId } from '../../utils'
 import {
   ChainId,
   getHourlyBondBalances,
@@ -19,7 +20,7 @@ import {
 interface MarketDataProps {
   chainId?: ChainId | undefined
   provider?: any | undefined
-  tokens?: TokenInfo[]
+  tokens?: TokenInfoWithCoingeckoId[]
   account: string | null | undefined
 }
 
@@ -57,9 +58,10 @@ export const useMarketData = ({ chainId, tokens, provider, account }: MarketData
     if (!tokens?.length || !provider || !chainId) return null
 
     const interestRates = await getHourlyBondIncentiveInterestRates(
-      tokens.map(t => new Token(chainId, t.address, t.decimals)),
+      tokens.map(t => new Token(chainId, t.address, t.decimals, t.symbol, t.name, t.coingeckoId)),
       chainId,
-      provider
+      provider,
+
     )
 
     return await Object.keys(interestRates).reduce(
