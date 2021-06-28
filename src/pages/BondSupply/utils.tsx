@@ -7,7 +7,8 @@ export type BondRateDataType = {
   decimals: number
   totalSupplied: number
   apy: number
-  aprWithIncentive: number
+  aprInToken: number
+  aprInMfi: number
   maturity: number
   available: number
 }
@@ -41,11 +42,11 @@ export const BOND_RATES_COLUMNS = [
     render: ({ apy }: { apy: number }) => <span>{apy ? `${apy.toFixed(2)}%` : 0}</span>
   },
   {
-    name: 'APR Including Incentive',
-    id: 'aprWithIncentive',
+    name: 'APR With Incentive',
+    id: 'aprInToken',
     // eslint-disable-next-line react/display-name
-    render: ({ aprWithIncentive }: { aprWithIncentive: number }) => (
-      <span>{aprWithIncentive ? `${aprWithIncentive.toFixed(2)}%` : 0}</span>
+    render: ({ aprInToken, aprInMfi }: { aprInToken: number; aprInMfi: number }) => (
+      <span>{`${aprInToken.toFixed(2)}% token + ${aprInMfi.toFixed(2)}% MFI`}</span>
     )
   },
   { name: 'Maturity (minutes remaining)', id: 'maturity' }

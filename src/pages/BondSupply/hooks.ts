@@ -60,8 +60,7 @@ export const useMarketData = ({ chainId, tokens, provider, account }: MarketData
     const interestRates = await getHourlyBondIncentiveInterestRates(
       tokens.map(t => new Token(chainId, t.address, t.decimals, t.symbol, t.name, t.coingeckoId)),
       chainId,
-      provider,
-
+      provider
     )
 
     return await Object.keys(interestRates).reduce(
