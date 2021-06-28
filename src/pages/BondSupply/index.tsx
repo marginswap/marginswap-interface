@@ -4,22 +4,23 @@ import InfoCard from '../../components/InfoCard'
 import VideoExplainerLink from '../../components/VideoExplainerLink'
 import IconMoneyStackLocked from '../../icons/IconMoneyStackLocked'
 import IconMoneyStack from '../../icons/IconMoneyStack'
-import { TokenInfo } from '@uniswap/token-lists'
 import { useWeb3React } from '@web3-react/core'
 import { getDefaultProvider } from '@ethersproject/providers'
 import { useActiveWeb3React } from '../../hooks'
-import { getProviderOrSigner } from '../../utils'
+import { getProviderOrSigner, TokenInfoWithCoingeckoId } from '../../utils'
 import {
   getHourlyBondBalances,
   getHourlyBondInterestRates,
   getHourlyBondMaturities,
   buyHourlyBondSubscription,
+  getHourlyBondIncentiveInterestRates,
   getBondsCostInDollars,
   withdrawHourlyBond,
   approveToFund,
   TokenAmount,
   getTokenAllowances,
-  getTokenBalance
+  getTokenBalance,
+  Token
 } from '@marginswap/sdk'
 import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { BigNumber } from '@ethersproject/bignumber'
@@ -42,6 +43,8 @@ type BondRateData = {
   decimals: number
   totalSupplied: string
   apy: number
+  aprInToken: number
+  aprInMfi: number
   maturity: number
   available: string
 }
@@ -72,6 +75,14 @@ const BOND_RATES_COLUMNS = [
     // eslint-disable-next-line react/display-name
     render: ({ apy }: { apy: number }) => <span>{apy ? `${apy.toFixed(2)}%` : 0}</span>
   },
+  {
+    name: 'APR With Incentive',
+    id: 'aprInToken',
+    // eslint-disable-next-line react/display-name
+    render: ({ aprInToken, aprInMfi }: { aprInToken: number; aprInMfi: number }) => (
+      <span>{`${aprInToken.toFixed(2)}% token + ${aprInMfi.toFixed(2)}% MFI`}</span>
+    )
+  },
   { name: 'Maturity (minutes remaining)', id: 'maturity' }
 ] as const
 
@@ -82,9 +93,10 @@ export const BondSupply = () => {
   const { library, chainId } = useActiveWeb3React()
   const [error, setError] = useState<string | null>(null)
 
-  const [tokens, setTokens] = useState<TokenInfo[]>([])
+  const [tokens, setTokens] = useState<TokenInfoWithCoingeckoId[]>([])
   const [bondBalances, setBondBalances] = useState<Record<string, string>>({})
   const [bondAPRs, setBondAPRs] = useState<Record<string, number>>({})
+  const [incentiveAPRs, setIncentiveAPRs] = useState<Record<string, number>>({})
   const [bondMaturities, setBondMaturities] = useState<Record<string, number>>({})
   const [bondUSDCosts, setBondUSDCosts] = useState<Record<string, TokenAmount>>({})
   const [allowances, setAllowances] = useState<Record<string, number>>({})
@@ -139,7 +151,7 @@ export const BondSupply = () => {
     const pegCurrency = getPegCurrency(chainId)
     if (!chainId || !account || !pegCurrency) return
 
-    const [_interestRates, _maturities, _bondCosts] = await Promise.all([
+    const [_interestRates, _maturities, _bondCosts, _incentiveRates] = await Promise.all([
       getHourlyBondInterestRates(
         tokens.map(t => t.address),
         chainId,
@@ -154,6 +166,11 @@ export const BondSupply = () => {
       getBondsCostInDollars(
         account,
         tokens.map(t => t.address),
+        chainId,
+        queryProvider
+      ),
+      getHourlyBondIncentiveInterestRates(
+        tokens.map(t => new Token(chainId, t.address, t.decimals, t.symbol, t.name, t.coingeckoId)),
         chainId,
         queryProvider
       )
@@ -175,6 +192,12 @@ export const BondSupply = () => {
     setBondUSDCosts(
       Object.keys(_bondCosts).reduce(
         (acc, cur) => ({ ...acc, [cur]: new TokenAmount(pegCurrency, _bondCosts[cur].toString()) }),
+        {}
+      )
+    )
+    setIncentiveAPRs(
+      Object.keys(_incentiveRates).reduce(
+        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(_incentiveRates[cur]).toNumber() / 100 }),
         {}
       )
     )
@@ -339,6 +362,8 @@ export const BondSupply = () => {
           ? (Number(bondBalances[token.address] ?? 0) / Math.pow(10, token.decimals)).toFixed(6)
           : '0',
         apy: apyFromApr(bondAPRs[token.address] ?? 0, 365 * 24),
+        aprInToken: bondAPRs[token.address] ? bondAPRs[token.address] : 0,
+        aprInMfi: incentiveAPRs[token.address] ? incentiveAPRs[token.address] : 0,
         maturity: bondMaturities[token.address] ?? 0,
         available: tokenBalances[token.address] ? tokenBalances[token.address].toFixed(6) : '0',
         getActionNameFromAmount: {

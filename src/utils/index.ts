@@ -3,6 +3,7 @@ import { getAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
+import { TokenInfo } from '@uniswap/token-lists'
 import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER, getAddresses } from '@marginswap/sdk'
 import MarginRouter from '@marginswap/core-abi/artifacts/contracts/MarginRouter.sol/MarginRouter.json'
 import SpotRouter from '@marginswap/core-abi/artifacts/contracts/SpotRouter.sol/SpotRouter.json'
@@ -10,6 +11,10 @@ import MFIStaking from '@marginswap/core-abi/artifacts/contracts/MFIStaking.sol/
 import LiquidityStaking from '@marginswap/core-abi/artifacts/contracts/LiquidityMiningReward.sol/LiquidityMiningReward.json'
 
 import { TokenAddressMap } from '../state/lists/hooks'
+
+export interface TokenInfoWithCoingeckoId extends TokenInfo {
+  coingeckoId?: string
+}
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
