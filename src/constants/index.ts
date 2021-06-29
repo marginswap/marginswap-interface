@@ -38,13 +38,7 @@ export const USDT_MATIC = new Token(
   'Tether USD'
 )
 
-export const USDT_BSC = new Token(
-  ChainId.BSC,
-  '0x55d398326f99059fF775485246999027B3197955',
-  18,
-  'USDT',
-  'Tether USD'
-)
+export const USDT_BSC = new Token(ChainId.BSC, '0x55d398326f99059fF775485246999027B3197955', 18, 'USDT', 'Tether USD')
 
 export const COMP = new Token(ChainId.MAINNET, '0xc00e94Cb662C3520282E6f5717214004A7f26888', 18, 'COMP', 'Compound')
 export const MKR = new Token(ChainId.MAINNET, '0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2', 18, 'MKR', 'Maker')

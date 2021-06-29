@@ -114,11 +114,11 @@ export default function Swap() {
     currencies,
     inputError: swapInputError
   } = useDerivedSwapInfo()
-  const {
-    wrapType,
-    execute: onWrap,
-    inputError: wrapInputError
-  } = useWrapCallback(currencies[Field.INPUT], currencies[Field.OUTPUT], typedValue)
+  const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
+    currencies[Field.INPUT],
+    currencies[Field.OUTPUT],
+    typedValue
+  )
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
   const { address: recipientAddress } = useENSAddress(recipient)
 
@@ -136,8 +136,13 @@ export default function Swap() {
         [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount
       }
 
-  const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient, onSwitchLeverageType } =
-    useSwapActionHandlers()
+  const {
+    onSwitchTokens,
+    onCurrencySelection,
+    onUserInput,
+    onChangeRecipient,
+    onSwitchLeverageType
+  } = useSwapActionHandlers()
   const isValid = !swapInputError
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT
 
@@ -335,10 +340,9 @@ export default function Swap() {
     maxAmountInput && onUserInput(Field.INPUT, maxAmountInput.toExact())
   }, [maxAmountInput, onUserInput])
 
-  const handleOutputSelect = useCallback(
-    outputCurrency => onCurrencySelection(Field.OUTPUT, outputCurrency),
-    [onCurrencySelection]
-  )
+  const handleOutputSelect = useCallback(outputCurrency => onCurrencySelection(Field.OUTPUT, outputCurrency), [
+    onCurrencySelection
+  ])
 
   const swapIsUnsupported = useIsTransactionUnsupported(currencies?.INPUT, currencies?.OUTPUT)
 
