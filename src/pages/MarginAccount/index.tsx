@@ -79,13 +79,13 @@ const ACCOUNT_COLUMNS = [
     name: 'Total Balance',
     id: 'balance',
     // eslint-disable-next-line react/display-name
-    render: ({ balance }: { balance: number }) => <span>{balance ? balance.toFixed(2) : 0}</span>
+    render: ({ balance }: { balance: number }) => <span>{balance ? utils.commify(balance.toFixed(6)) : 0}</span>
   },
   {
     name: 'Debt',
     id: 'borrowed',
     // eslint-disable-next-line react/display-name
-    render: ({ borrowed }: { borrowed: number }) => <span>{borrowed ? borrowed.toFixed(2) : 0}</span>
+    render: ({ borrowed }: { borrowed: number }) => <span>{borrowed ? utils.commify(borrowed.toFixed(6)) : 0}</span>
   },
   {
     name: 'Interest',
@@ -99,14 +99,16 @@ const ACCOUNT_COLUMNS = [
     id: 'borrowable',
     tooltip: 'This is the total amount you can borrow with your equity',
     // eslint-disable-next-line react/display-name
-    render: ({ borrowable }: { borrowable: number }) => <span>{borrowable ? borrowable.toFixed(2) : 0}</span>
+    render: ({ borrowable }: { borrowable: number }) => (
+      <span>{borrowable ? utils.commify(borrowable.toFixed(6)) : 0}</span>
+    )
   },
   {
     name: 'Liquidity',
     id: 'liquidity',
     tooltip: 'This is the total amount of an asset available to be borrowed for a trade',
     // eslint-disable-next-line react/display-name
-    render: ({ liquidity }: { liquidity: number }) => <span>{liquidity ? liquidity.toFixed(2) : 0}</span>
+    render: ({ liquidity }: { liquidity: number }) => <span>{liquidity ? utils.commify(liquidity.toFixed(6)) : 0}</span>
   }
 ] as const
 
@@ -432,23 +434,29 @@ export const MarginAccount = () => {
     // margin account equity balances
     setHoldingAmounts(
       Object.keys(_balances.holdingAmounts).reduce(
-        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(_balances.holdingAmounts[cur]).toString() }),
+        (acc, cur) => ({
+          ...acc,
+          [cur]: BigNumber.from(_balances.holdingAmounts[cur]).toString()
+        }),
         {}
       )
     )
     // margin account debt balances
     setBorrowingAmounts(
       Object.keys(_balances.borrowingAmounts).reduce(
-        (acc, cur) => ({ ...acc, [cur]: BigNumber.from(_balances.borrowingAmounts[cur]).toString() }),
+        (acc, cur) => ({
+          ...acc,
+          [cur]: BigNumber.from(_balances.borrowingAmounts[cur]).toString()
+        }),
         {}
       )
     )
     // which tokens have approved the marginswap contract
     setAllowances(
       _allowances.reduce(
-        (acc: any, cur: any, index: number) => ({
+        (acc: any, cur: number, index: number) => ({
           ...acc,
-          [tokens[index].address]: Number(BigNumber.from(cur).toString())
+          [tokens[index].address]: cur
         }),
         {}
       )
@@ -475,7 +483,7 @@ export const MarginAccount = () => {
     setDebtTotal(_debtTotal)
   }
   /**
-   * ^^^ END Get User MarginSwap Data ^^^
+   * ^^^  END Get User MarginSwap Data  ^^^
    */
 
   // call getUserMarginswapData when relevant things change
@@ -491,21 +499,23 @@ export const MarginAccount = () => {
         coin: token.symbol,
         address: token.address,
         decimals: token.decimals,
-        balance: Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
-        borrowed: Number(borrowingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals),
-        borrowable: borrowableAmounts[token.address] ? parseFloat(borrowableAmounts[token.address].toFixed()) : 0,
-        withdrawable: withdrawableAmounts[token.address] ? parseFloat(withdrawableAmounts[token.address].toFixed()) : 0,
-        liquidity: liquidities[token.address] ? parseFloat(liquidities[token.address].toFixed()) : 0,
+        balance: Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals), // 6 decimals
+        borrowed: Number(borrowingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals), // 6 decimals
+        borrowable: borrowableAmounts[token.address] ? parseFloat(borrowableAmounts[token.address].toFixed(6)) : 0,
+        withdrawable: withdrawableAmounts[token.address]
+          ? parseFloat(withdrawableAmounts[token.address].toFixed(6))
+          : 0,
+        liquidity: liquidities[token.address] ? parseFloat(liquidities[token.address].toFixed(6)) : 0,
         maxBorrow: Math.min(
-          borrowableAmounts[token.address] ? parseFloat(borrowableAmounts[token.address].toFixed()) : 0,
+          borrowableAmounts[token.address] ? parseFloat(borrowableAmounts[token.address].toFixed(6)) : 0,
           liquidities[token.address] ? parseFloat(liquidities[token.address].toFixed()) : 0
         ),
         maxWithdraw: Math.min(
-          withdrawableAmounts[token.address] ? parseFloat(withdrawableAmounts[token.address].toFixed()) : 0,
+          withdrawableAmounts[token.address] ? parseFloat(withdrawableAmounts[token.address].toFixed(6)) : 0,
           Number(holdingAmounts[token.address] ?? 0) / Math.pow(10, token.decimals)
         ),
         ir: borrowAPRs[token.address],
-        available: tokenBalances[token.address] ?? 0,
+        available: tokenBalances[token.address] ? parseFloat(tokenBalances[token.address].toFixed(6)) : 0,
         getActionNameFromAmount: {
           Deposit: () => (allowances[token.address] > 0 ? 'Confirm Transaction' : 'Approve')
         },
@@ -531,7 +541,7 @@ export const MarginAccount = () => {
                       console.error(error)
                     }
                   },
-                  max: Number(userEthBalance?.toSignificant(6)) || 0
+                  max: Number(userEthBalance?.toFixed(6)) || 0
                 },
                 {
                   name: 'Withdraw ETH',
@@ -582,25 +592,25 @@ export const MarginAccount = () => {
         <StyledTableContainer>
           <InfoCard
             title="Total Account Balance"
-            amount={holdingTotal.toSignificant()}
+            amount={`$${holdingTotal.toFixed(2)}`}
             withUnderlyingCard
             Icon={IconBanknotes}
           />
           <StyledMobileOnlyRow>
-            <InfoCard title="Debt" amount={debtTotal.toSignificant()} small Icon={IconScales} />
+            <InfoCard title="Debt" amount={`$${debtTotal.toFixed(2)}`} small Icon={IconScales} />
             <InfoCard
               title="Equity"
               amount={
                 holdingTotal.greaterThan(debtTotal) || holdingTotal.equalTo(debtTotal)
-                  ? holdingTotal.subtract(debtTotal).toSignificant()
-                  : `- ${debtTotal.subtract(holdingTotal).toSignificant()}`
+                  ? `$${holdingTotal.subtract(debtTotal).toFixed(2)}`
+                  : `- $${debtTotal.subtract(holdingTotal).toFixed(2)}`
               }
               color="secondary"
               small
               Icon={IconCoin}
             />
           </StyledMobileOnlyRow>
-          <RiskMeter risk={getRisk(Number(holdingTotal.toSignificant()), Number(debtTotal.toSignificant()))} />
+          <RiskMeter risk={getRisk(Number(holdingTotal.toFixed(6)), Number(debtTotal.toFixed(6)))} />
         </StyledTableContainer>
         <TokensTable
           title="Account balance"
