@@ -252,10 +252,10 @@ const chains: ChainObject = {
   //     chainName: 'xdai',
   //     builder: builders.xdai
   // },
-  // [ChainId.BSC]: {
-  //     chainName: '',
-  //     builder: builders.bscscan
-  // },
+  [ChainId.BSC]: {
+    chainName: '',
+    builder: builders.bscscan
+  },
   // [ChainId.BSC_TESTNET]: {
   //     chainName: 'testnet',
   //     builder: builders.bscscan
