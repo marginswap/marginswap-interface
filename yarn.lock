@@ -2039,15 +2039,15 @@
   dependencies:
     "@json-rpc-tools/types" "^1.6.1"
 
-"@marginswap/core-abi@^1.3.8", "@marginswap/core-abi@^1.3.9":
-  version "1.3.9"
-  resolved "https://registry.yarnpkg.com/@marginswap/core-abi/-/core-abi-1.3.9.tgz#d0d2c910e6f29857586d7e18f4448e0a0c601df8"
-  integrity sha512-aWB8kHbxdejXd/qOKFnfZkaZNxIHvPOCXW0Eeg3XKBdPM9Fv5rMkKwqZvm0EsqoLuunitCd3ZyHiV8suLyLeZA==
+"@marginswap/core-abi@^1.3.10":
+  version "1.3.10"
+  resolved "https://registry.yarnpkg.com/@marginswap/core-abi/-/core-abi-1.3.10.tgz#0b6b9ee96d12de3f0bc730469fdcbf1958e120a3"
+  integrity sha512-/Uuc5zIoWiCxIFNkK2jhosd+oIh6oadljuiZyKDGFEt5DoaHXu+j0Ybo/HgbkdGLQYAZXIn+pGBjqEX1X4KjRQ==
 
-"@marginswap/sdk@^4.3.14":
-  version "4.3.14"
-  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.3.14.tgz#4cc3f4f64aeb080054872eb4fbf2db3845d4b93c"
-  integrity sha512-1NWRlcOujgaOmFHeezZ/7O+i6wt0/O+5xm42XgECLkfRSJTsDx1y/LLOi5cGhjFlo2z1QEkg9Vf6JEBccmvb1A==
+"@marginswap/sdk@^4.3.15":
+  version "4.3.15"
+  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.3.15.tgz#67be31f39858c296224fe305fc8350d9c438f6e0"
+  integrity sha512-CF4IdTWbzHuhLHA/KoLautsEnZ/BBPRmoEhqFbejiyyjbKjoCQwrm9q0/rGJK7kmVh5Fiorqgcfi28dDUIHfEQ==
   dependencies:
     "@ethersproject/abstract-provider" "^5.1.0"
     "@ethersproject/abstract-signer" "^5.1.0"
@@ -2058,8 +2058,9 @@
     "@ethersproject/networks" "^5.1.0"
     "@ethersproject/providers" "^5.1.0"
     "@ethersproject/solidity" "^5.1.0"
-    "@marginswap/core-abi" "^1.3.9"
+    "@marginswap/core-abi" "^1.3.10"
     "@uniswap/v2-core" "^1.0.0"
+    axios "^0.21.1"
     big.js "^5.2.2"
     decimal.js-light "^2.5.0"
     jsbi "^3.1.1"
@@ -3909,6 +3910,13 @@ axios@^0.18.0:
   dependencies:
     follow-redirects "1.5.10"
     is-buffer "^2.0.2"
+
+axios@^0.21.1:
+  version "0.21.1"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.1.tgz#22563481962f4d6bde9a76d516ef0e5d3c09b2b8"
+  integrity sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==
+  dependencies:
+    follow-redirects "^1.10.0"
 
 axobject-query@^2.2.0:
   version "2.2.0"
@@ -7810,7 +7818,7 @@ follow-redirects@1.5.10:
   dependencies:
     debug "=3.1.0"
 
-follow-redirects@^1.0.0:
+follow-redirects@^1.0.0, follow-redirects@^1.10.0:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.1.tgz#d9114ded0a1cfdd334e164e6662ad02bfd91ff43"
   integrity sha512-HWqDgT7ZEkqRzBvc2s64vSZ/hfOceEol3ac/7tKwzuvEyWx3/4UegXh5oBOIotkGsObyk3xznnSRVADBgWSQVg==
