@@ -24,7 +24,8 @@ export const network = new NetworkConnector({
     42: 'https://kovan.infura.io/v3/ae52aea5aa2b41e287d72e10b1175491',
     43114: 'https://api.avax.network/ext/bc/C/rpc',
     31337: 'http://localhost:8545',
-    137: 'https://rpc-mainnet.maticvigil.com/v1/b0858bc7aa27b1333df19546c12718235bd11785'
+    137: 'https://rpc-mainnet.maticvigil.com/v1/b0858bc7aa27b1333df19546c12718235bd11785',
+    56: 'https://bsc-dataseed.binance.org/'
   },
   defaultChainId: 1
 })
@@ -35,7 +36,7 @@ export function getNetworkLibrary(): Web3Provider {
 }
 
 export const injected = new InjectedConnector({
-  supportedChainIds: [1, 3, 4, 5, 42, 43114, 31337, 137]
+  supportedChainIds: [1, 3, 4, 5, 42, 43114, 31337, 137, 56]
 })
 
 // mainnet only
