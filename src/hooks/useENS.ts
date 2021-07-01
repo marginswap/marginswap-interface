@@ -11,11 +11,8 @@ export default function useENS(nameOrAddress?: string | null): {
   address: string | null
   name: string | null
 } {
-  console.log('🚀 ~ file: useENS.ts ~ line 10 ~ useENS ~ nameOrAddress', nameOrAddress)
   const validated = isAddress(nameOrAddress)
-  console.log('🚀 ~ file: useENS.ts ~ line 16 ~ useENS ~ validated', validated)
   const reverseLookup = useENSName(validated ? validated : undefined)
-  console.log('🚀 ~ file: useENS.ts ~ line 18 ~ useENS ~ reverseLookup', reverseLookup)
   const lookup = useENSAddress(nameOrAddress)
 
   return {

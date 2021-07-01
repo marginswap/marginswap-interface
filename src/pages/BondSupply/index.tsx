@@ -351,6 +351,8 @@ export const BondSupply = () => {
     }
   ] as const
 
+  const sumAPRs = (bondAPR: number, incentiveAPR: number) => bondAPR ?? 0 + incentiveAPR ?? 0
+
   const data = useMemo(
     () =>
       tokens.map(token => ({
@@ -361,7 +363,7 @@ export const BondSupply = () => {
         totalSupplied: bondBalances[token.address]
           ? (Number(bondBalances[token.address] ?? 0) / Math.pow(10, token.decimals)).toFixed(6)
           : '0',
-        apy: apyFromApr(bondAPRs[token.address] ?? 0, 365 * 24),
+        apy: apyFromApr(sumAPRs(bondAPRs[token.address], incentiveAPRs[token.address]) ?? 0, 365 * 24),
         aprInToken: bondAPRs[token.address] ? bondAPRs[token.address] : 0,
         aprInMfi: incentiveAPRs[token.address] ? incentiveAPRs[token.address] : 0,
         maturity: bondMaturities[token.address] ?? 0,
@@ -381,7 +383,7 @@ export const BondSupply = () => {
     const bondCosts = tokens.reduce((acc, cur) => acc + Number((bondUSDCosts[cur.address] ?? ZERO_DAI).toFixed(6)), 0)
     if (bondCosts === 0) return 0
     const avgYield = tokens.reduce((acc, cur) => {
-      const apy = apyFromApr(bondAPRs[cur.address], 365 * 24)
+      const apy = apyFromApr(sumAPRs(bondAPRs[cur.address], incentiveAPRs[cur.address]), 365 * 24)
       // Multiply the bond APRs by the number of dollars in that bond, then divide by the total of all bond balances.
       // Don't think about this as percentages - we're just averaging numbers.
       // Each dollar has an interest rate assigned to it, then we divide that by the total number of dollars
@@ -397,7 +399,7 @@ export const BondSupply = () => {
     }
 
     const totalAnnualEarnings = tokens.reduce((acc, cur) => {
-      const apy = apyFromApr(bondAPRs[cur.address], 365 * 24)
+      const apy = apyFromApr(sumAPRs(bondAPRs[cur.address], incentiveAPRs[cur.address]), 365 * 24)
       const bondBalance = Number(bondUSDCosts[cur.address].toFixed(6))
 
       if (apy > 0 && bondBalance > 0) {
