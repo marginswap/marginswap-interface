@@ -6,7 +6,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER, getAddresses } from '@marginswap/sdk'
 import MarginRouter from '@marginswap/core-abi/artifacts/contracts/MarginRouter.sol/MarginRouter.json'
 import SpotRouter from '@marginswap/core-abi/artifacts/contracts/SpotRouter.sol/SpotRouter.json'
-import MFIStaking from '@marginswap/core-abi/artifacts/contracts/MFIStaking.sol/MFIStaking.json'
+import Staking from '@marginswap/core-abi/artifacts/contracts/Staking.sol/Staking.json'
 import LiquidityStaking from '@marginswap/core-abi/artifacts/contracts/LiquidityMiningReward.sol/LiquidityMiningReward.json'
 
 import { TokenAddressMap } from '../state/lists/hooks'
@@ -376,7 +376,7 @@ export function getMFIStakingContract(
   account: string | undefined
 ): Contract | undefined {
   if (!chainId || !library || !account) return undefined
-  return getContract(getAddresses(chainId).MFIStaking, MFIStaking.abi, library, account)
+  return getContract(getAddresses(chainId).Staking, Staking.abi, library, account)
 }
 
 // account is optional
