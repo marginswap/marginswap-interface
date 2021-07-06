@@ -8,8 +8,7 @@ import {
   getStakedBalance,
   getLiquidityMiningReward,
   getLiquidityAPRPerWeight,
-  canWithdraw,
-  Duration
+  canWithdraw
 } from '@marginswap/sdk'
 import { Contract } from '@ethersproject/contracts'
 import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
@@ -20,7 +19,6 @@ interface StakingDataProps {
   provider?: Web3Provider | undefined
   address?: string | undefined
   account?: string | undefined | null
-  period: number
 }
 
 interface CanWithdrawDataProps {
@@ -31,16 +29,10 @@ interface CanWithdrawDataProps {
   mfiStake: boolean
 }
 
-const durations: Record<number, Duration> = {
-  1: Duration.ONE_WEEK,
-  2: Duration.ONE_MONTH,
-  3: Duration.THREE_MONTHS
-}
-
-export const useMFIAPR = ({ chainId, provider, address, period }: StakingDataProps) => {
+export const useMFIAPR = ({ chainId, provider, address }: StakingDataProps) => {
   const contract = getMFIStaking(chainId, provider)
 
-  const mfIStaking = useQuery('getMFIStaking', () => getMFIAPRPerWeight(contract, durations[period]))
+  const mfIStaking = useQuery('getMFIStaking', () => getMFIAPRPerWeight(contract))
   const accruedRewardRetrieved = useQuery('getAccruedMFIReward', () => accruedReward(contract, address))
   const stakedBalance = useQuery('getMFIStakeBalance', () => getStakedBalance(contract, address))
   const availableForWithdrawAfter = useQuery('getMFITimeUntilLockEnd', () => getTimeUntilLockEnd(contract, address))
@@ -48,11 +40,11 @@ export const useMFIAPR = ({ chainId, provider, address, period }: StakingDataPro
   return { mfIStaking, accruedRewardRetrieved, stakedBalance, availableForWithdrawAfter }
 }
 
-export const useLiquidityAPR = ({ chainId, provider, address, period }: StakingDataProps) => {
+export const useLiquidityAPR = ({ chainId, provider, address }: StakingDataProps) => {
   const contract = getLiquidityMiningReward(chainId, provider)
 
   const liquidityStaking = useQuery('getLiquidityStaking', () =>
-    getLiquidityAPRPerWeight(contract, durations[period], provider)
+    getLiquidityAPRPerWeight(contract, provider)
   )
   const accruedRewardRetrieved = useQuery('getLiquidityAccruedReward', () => accruedReward(contract, address))
   const stakedBalance = useQuery('getLiquidityStakeBalance', () => getStakedBalance(contract, address))

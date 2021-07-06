@@ -12,14 +12,15 @@ import {
   TokenAmount,
   stake,
   withdrawStake,
+  exitLegacyStake,
   withdrawReward,
-  Duration,
   getTokenBalance,
   Token,
   accruedReward,
   getStakedBalance,
   getMFIStaking,
-  getLiquidityMiningReward
+  getLiquidityMiningReward,
+  isMigrated
 } from '@marginswap/sdk'
 
 import { ApprovalState, useApproveCallbackFromStakeTrade } from '../../hooks/useApproveCallback'
@@ -77,7 +78,6 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
 
   const amount: string = watch('amount', '0')
   const transactionType = watch('transactionType', 1)
-  const period = watch('period', 1)
   const addTransactionResponseCallback = (responseObject: TransactionDetails) => {
     setPendingTxhHash(responseObject.hash)
   }
@@ -148,19 +148,6 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
     setStakeErrorMsn(error)
   }
 
-  const getDuration = () => {
-    switch (period) {
-      case periodSelectOptions[0].value:
-        return Duration.ONE_WEEK
-      case periodSelectOptions[1].value:
-        return Duration.ONE_MONTH
-      case periodSelectOptions[2].value:
-        return Duration.THREE_MONTHS
-      default:
-        return Duration.ONE_WEEK
-    }
-  }
-
   const handleStake = async () => {
     let signedContract
 
@@ -177,7 +164,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
     if (signedContract) {
       setAttemptingTxn(true)
       if (transactionType.toString() === transactionTypeOptions[0].value) {
-        stake(signedContract, tokenAmt.toHexString(), getDuration())
+        stake(signedContract, tokenAmt.toHexString())
           .then((data: any) => {
             addTransaction(data, {
               summary: `Deposit Stake`
@@ -203,6 +190,18 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
       }
 
       if (transactionType.toString() === transactionTypeOptions[2].value) {
+        if (chainId && provider && account && await isMigrated(signedContract, chainId, provider, account)) {
+          exitLegacyStake(account, chainId, provider)
+          .then((data: any) => {
+            addTransaction(data, {
+              summary: `Migrate stake`
+            })
+            setAttemptingTxn(false)
+            setTxHash(data.hash)
+            setValue('amount', '0')
+          })
+          .catch((err: any) => handleError(err.data.message))
+        }
         withdrawStake(signedContract, tokenAmt.toHexString())
           .then((data: any) => {
             addTransaction(data, {
@@ -224,12 +223,6 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
     setStakeErrorMsn('')
     queryClient.refetchQueries()
   }
-
-  const periodSelectOptions = [
-    { value: '1', label: 'One week' },
-    { value: '2', label: 'One month' },
-    { value: '3', label: 'Three months' }
-  ]
 
   const transactionTypeOptions = [
     { value: '1', label: 'Deposit' },
@@ -256,7 +249,6 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
           <Wrapper>
             <DropdownsContainer>
               <Select name="transactionType" options={transactionTypeOptions} register={register} />
-              <Select name="period" options={periodSelectOptions} register={register} />
             </DropdownsContainer>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <div style={{ position: 'relative', width: '100%' }}>
@@ -310,7 +302,6 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
           chainId={chainId}
           provider={provider}
           address={address ?? undefined}
-          period={Number(period)}
           pendingTxhHash={pendingTxhHash}
         />
       ) : (
@@ -318,7 +309,6 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
           chainId={chainId}
           provider={provider}
           address={address ?? undefined}
-          period={Number(period)}
           pendingTxhHash={pendingTxhHash}
         />
       )}
@@ -331,7 +321,6 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
         chainId={chainId}
         provider={provider}
         address={address ?? undefined}
-        period={Number(period)}
         mfiStake={mfiStake}
         amount={amount}
         attemptingTxn={attemptingTxn}

@@ -16,17 +16,15 @@ interface StakingData {
   chainId?: ChainId | undefined
   provider?: Web3Provider | undefined
   address?: string | undefined
-  period: number
   pendingTxhHash?: string | null | undefined
 }
 
-const MFIData = ({ chainId, provider, address, period, pendingTxhHash }: StakingData) => {
+const MFIData = ({ chainId, provider, address, pendingTxhHash }: StakingData) => {
   const classes = useStyles()
   const { mfIStaking, accruedRewardRetrieved, stakedBalance, availableForWithdrawAfter } = useMFIAPR({
     chainId,
     provider,
-    address,
-    period
+    address
   })
 
   if (
