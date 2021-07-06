@@ -48,7 +48,7 @@ const MFIData = ({ chainId, provider, address, pendingTxhHash }: StakingData) =>
       <div className={classes.parameters + ' ' + classes.fullWidthPair}>
         <Parameters
           title="Estimated APR"
-          value={mfIStaking.isError ? '0' : mfIStaking.data || 0}
+          value={`${mfIStaking.isError ? '0' : mfIStaking.data || 0}%`}
           hint="The estimated yield APR that is paid out on your staked balance"
         />
         <Parameters

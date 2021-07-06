@@ -190,17 +190,17 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
       }
 
       if (transactionType.toString() === transactionTypeOptions[2].value) {
-        if (chainId && provider && account && await isMigrated(signedContract, chainId, provider, account)) {
+        if (chainId && provider && account && (await isMigrated(signedContract, chainId, provider, account))) {
           exitLegacyStake(account, chainId, provider)
-          .then((data: any) => {
-            addTransaction(data, {
-              summary: `Migrate stake`
+            .then((data: any) => {
+              addTransaction(data, {
+                summary: `Migrate stake`
+              })
+              setAttemptingTxn(false)
+              setTxHash(data.hash)
+              setValue('amount', '0')
             })
-            setAttemptingTxn(false)
-            setTxHash(data.hash)
-            setValue('amount', '0')
-          })
-          .catch((err: any) => handleError(err.data.message))
+            .catch((err: any) => handleError(err.data.message))
         }
         withdrawStake(signedContract, tokenAmt.toHexString())
           .then((data: any) => {
@@ -298,12 +298,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
         </form>
       </AppBody>
       {mfiStake ? (
-        <MFIData
-          chainId={chainId}
-          provider={provider}
-          address={address ?? undefined}
-          pendingTxhHash={pendingTxhHash}
-        />
+        <MFIData chainId={chainId} provider={provider} address={address ?? undefined} pendingTxhHash={pendingTxhHash} />
       ) : (
         <LiquidityData
           chainId={chainId}
@@ -312,10 +307,6 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
           pendingTxhHash={pendingTxhHash}
         />
       )}
-      <WarningBar>
-        Use different wallets if you intend to stake for multiple timeframes. All stakes from the same wallet will be
-        locked up for the longest selected timeframe
-      </WarningBar>
       <ConfirmStakeModal
         token={currentToken}
         chainId={chainId}

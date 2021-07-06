@@ -49,7 +49,7 @@ const LiquidityData = ({ chainId, provider, address, pendingTxhHash }: StakingDa
       <div className={classes.parameters + ' ' + classes.fullWidthPair}>
         <Parameters
           title="Estimated APR"
-          value={liquidityStaking.isError ? '0' : liquidityStaking.data || 0}
+          value={liquidityStaking.isError ? '0' : `${liquidityStaking.data || 0}%`}
           hint="The estimated yield APR that is paid out on your staked balance"
         />
         <Parameters
