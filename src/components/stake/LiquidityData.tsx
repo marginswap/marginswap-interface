@@ -17,17 +17,15 @@ interface StakingData {
   chainId?: ChainId | undefined
   provider?: Web3Provider | undefined
   address?: string | undefined
-  period: number
   pendingTxhHash?: string | null | undefined
 }
 
-const LiquidityData = ({ chainId, provider, address, period, pendingTxhHash }: StakingData) => {
+const LiquidityData = ({ chainId, provider, address, pendingTxhHash }: StakingData) => {
   const classes = useStyles()
   const { liquidityStaking, accruedRewardRetrieved, stakedBalance, availableForWithdrawAfter } = useLiquidityAPR({
     chainId,
     provider,
-    address,
-    period
+    address
   })
 
   if (
@@ -51,7 +49,7 @@ const LiquidityData = ({ chainId, provider, address, period, pendingTxhHash }: S
       <div className={classes.parameters + ' ' + classes.fullWidthPair}>
         <Parameters
           title="Estimated APR"
-          value={liquidityStaking.isError ? '0' : liquidityStaking.data || 0}
+          value={liquidityStaking.isError ? '0' : `${liquidityStaking.data || 0}%`}
           hint="The estimated yield APR that is paid out on your staked balance"
         />
         <Parameters
