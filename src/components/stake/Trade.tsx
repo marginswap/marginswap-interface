@@ -307,6 +307,12 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
           pendingTxhHash={pendingTxhHash}
         />
       )}
+      <WarningBar>
+        To support continuous staking, all stake will be locked for 30 days, after which it can be withdrawn. If you
+        previously staked in the system that supported multiple stake durations, you will have to migrate your stake
+        before you withdraw it. In this case the withdraw button will pop up two transactions in your wallet, be sure to
+        confirm both.
+      </WarningBar>
       <ConfirmStakeModal
         token={currentToken}
         chainId={chainId}
