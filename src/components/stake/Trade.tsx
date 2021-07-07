@@ -35,7 +35,7 @@ import { GreyCard } from '../../components/Card'
 import ApprovalStepper from './ApprovalStepper'
 import { WarningBar } from '../../components/Placeholders'
 
-import { getMFIStakingContract, getLiquidityStakingContract } from 'utils'
+import { getMFIStakingContract, getLiquidityStakingContract, getLegacyStakingContract } from 'utils'
 import { getNotificationMsn } from './utils'
 import { utils } from 'ethers'
 
@@ -190,8 +190,9 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
       }
 
       if (transactionType.toString() === transactionTypeOptions[2].value) {
-        if (chainId && provider && account && (await isMigrated(signedContract, chainId, provider, account))) {
-          exitLegacyStake(account, chainId, provider)
+        const legacy = getLegacyStakingContract(chainId, provider, account ?? undefined) 
+        if (legacy && account) && (await isMigrated(signedContract, chainId, provider, account))) {
+          exitLegacyStake(legacy, account)
             .then((data: any) => {
               addTransaction(data, {
                 summary: `Migrate stake`
@@ -200,7 +201,10 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
               setTxHash(data.hash)
               setValue('amount', '0')
             })
-            .catch((err: any) => handleError(err.data.message))
+            .catch((err: any) => {
+              console.error(err)
+              handleError(err.data.message)
+            })
         }
         withdrawStake(signedContract, tokenAmt.toHexString())
           .then((data: any) => {
