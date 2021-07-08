@@ -7,6 +7,7 @@ import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER, getAddr
 import MarginRouter from '@marginswap/core-abi/artifacts/contracts/MarginRouter.sol/MarginRouter.json'
 import SpotRouter from '@marginswap/core-abi/artifacts/contracts/SpotRouter.sol/SpotRouter.json'
 import Staking from '@marginswap/core-abi/artifacts/contracts/Staking.sol/Staking.json'
+import MFIStaking from '@marginswap/core-abi/artifacts/contracts/MFIStaking.sol/MFIStaking.json'
 import LiquidityStaking from '@marginswap/core-abi/artifacts/contracts/LiquidityMiningReward.sol/LiquidityMiningReward.json'
 
 import { TokenAddressMap } from '../state/lists/hooks'
@@ -387,4 +388,13 @@ export function getLiquidityStakingContract(
 ): Contract | undefined {
   if (!chainId || !library || !account) return undefined
   return getContract(getAddresses(chainId).LiquidityMiningReward, LiquidityStaking.abi, library, account)
+}
+
+export function getLegacyStakingContract(
+  chainId: ChainId | undefined,
+  library: Web3Provider | undefined,
+  account: string | undefined
+): Contract | undefined {
+  if (!chainId || !library || !account) return undefined
+  return getContract(getAddresses(chainId).MFIStaking, MFIStaking.abi, library, account)
 }

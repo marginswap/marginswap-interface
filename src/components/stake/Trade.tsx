@@ -19,8 +19,7 @@ import {
   accruedReward,
   getStakedBalance,
   getMFIStaking,
-  getLiquidityMiningReward,
-  isMigrated
+  getLiquidityMiningReward
 } from '@marginswap/sdk'
 
 import { ApprovalState, useApproveCallbackFromStakeTrade } from '../../hooks/useApproveCallback'
@@ -33,16 +32,17 @@ import Select from '../Select'
 // import ToggleSelector from '../ToggleSelector'
 import { GreyCard } from '../../components/Card'
 import ApprovalStepper from './ApprovalStepper'
+import MigrateStepper from './MigrateStepper'
 import { WarningBar } from '../../components/Placeholders'
 
-import { getMFIStakingContract, getLiquidityStakingContract } from 'utils'
+import { getLegacyStakingContract } from 'utils'
 import { getNotificationMsn } from './utils'
 import { utils } from 'ethers'
 
 import { DropdownsContainer, StyledOutlinedInput, StyledStakeHeader, StyledBalanceMax } from './styleds'
 import { /*PaddedColumn,*/ Wrapper } from '../swap/styleds'
 import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
-import { useCanWithdraw } from './hooks'
+import { useCanWithdraw, useSignedContract } from './hooks'
 import { MFI_ADDRESS, MFI_USDC_ADDRESS } from '../../constants'
 import { TransactionDetails } from '../../state/transactions/reducer'
 
@@ -69,6 +69,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
   const [mfiStake /*, setMfiStake*/] = useState(true)
   const [attemptingTxn, setAttemptingTxn] = useState(false)
   const [confirmStakeModal, setConfirmStakeModal] = useState(false)
+  const [migratedDone, setMigratedDone] = useState(false)
   const [stakeErrorMsn, setStakeErrorMsn] = useState('')
   const [txHash, setTxHash] = useState('')
   const [pendingTxhHash, setPendingTxhHash] = useState<string | null>()
@@ -85,7 +86,14 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
   const getMFIToken = new Token(chainId ?? ChainId.MAINNET, MFI_ADDRESS, 18, 'MFI')
   const getLiquidityToken = new Token(chainId ?? ChainId.MAINNET, MFI_USDC_ADDRESS, 18, 'MFI/USDC')
   const currentToken = mfiStake ? getMFIToken : getLiquidityToken
-  const canWithdraw = useCanWithdraw({ chainId, provider, address, account, mfiStake })
+  const signedContract = useSignedContract({ chainId, provider, account, mfiStake })
+  const { canWithdrawStatus: canWithdraw, isMigratedStatus: isMigrated } = useCanWithdraw({
+    chainId,
+    provider,
+    address,
+    account,
+    signedContract
+  })
   const addTransaction = useTransactionAdder(addTransactionResponseCallback)
   const isTxnPending = useIsTransactionPending(pendingTxhHash || '')
   // check whether the user has approved the router on the input token
@@ -95,6 +103,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
   )
 
   const approvalSubmitted = approval === ApprovalState.APPROVED || approval === ApprovalState.PENDING
+  const migrated = isMigrated && transactionType !== '1'
 
   useEffect(() => {
     if (!isTxnPending && pendingTxhHash) {
@@ -148,17 +157,29 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
     setStakeErrorMsn(error)
   }
 
-  const handleStake = async () => {
-    let signedContract
+  const handleMigrate = async () => {
+    const legacy = await getLegacyStakingContract(chainId, provider, account ?? undefined)
 
-    if (mfiStake && account) {
-      signedContract = getMFIStakingContract(chainId, provider, account)
+    if (legacy && account) {
+      exitLegacyStake(legacy, account)
+        .then((data: any) => {
+          addTransaction(data, {
+            summary: `Migrate stake`
+          })
+          setAttemptingTxn(false)
+          setTxHash(data.hash)
+          setMigratedDone(true)
+        })
+        .catch((err: any) => {
+          console.error(err)
+          handleError(err?.data?.message)
+        })
     } else {
-      if (account) {
-        signedContract = getLiquidityStakingContract(chainId, provider, account)
-      }
+      console.log('Error with legacy contract')
     }
+  }
 
+  const handleStake = async () => {
     const tokenAmt = utils.parseUnits(amount, 18)
 
     if (signedContract) {
@@ -173,7 +194,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
             setTxHash(data.hash)
             setValue('amount', '0')
           })
-          .catch((err: any) => handleError(err.data.message))
+          .catch((err: any) => handleError(err?.data?.message))
       }
 
       if (transactionType.toString() === transactionTypeOptions[1].value) {
@@ -190,18 +211,6 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
       }
 
       if (transactionType.toString() === transactionTypeOptions[2].value) {
-        if (chainId && provider && account && (await isMigrated(signedContract, chainId, provider, account))) {
-          exitLegacyStake(account, chainId, provider)
-            .then((data: any) => {
-              addTransaction(data, {
-                summary: `Migrate stake`
-              })
-              setAttemptingTxn(false)
-              setTxHash(data.hash)
-              setValue('amount', '0')
-            })
-            .catch((err: any) => handleError(err.data.message))
-        }
         withdrawStake(signedContract, tokenAmt.toHexString())
           .then((data: any) => {
             addTransaction(data, {
@@ -276,7 +285,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
                 />
               </div>
             </div>
-            {isAbleTransaction && isAbleToWithdraw ? (
+            {!migrated && isAbleTransaction && isAbleToWithdraw ? (
               <ApprovalStepper
                 firstStepLabel={transactionTypeOptions.find(tt => tt.value === transactionType)?.label || ''}
                 firstStepOnClick={e => {
@@ -290,6 +299,19 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
                 }}
                 approval={approval}
                 approvalSubmitted={approvalSubmitted}
+              />
+            ) : migrated ? (
+              <MigrateStepper
+                firstStepOnClick={e => {
+                  e.preventDefault()
+                  handleMigrate()
+                }}
+                secondStepLabel={transactionTypeOptions.find(tt => tt.value === transactionType)?.label || ''}
+                secondStepOnClick={e => {
+                  e.preventDefault()
+                  setConfirmStakeModal(true)
+                }}
+                migrated={migratedDone}
               />
             ) : (
               <GreyCardStyled>{getNotificationMsn(isAbleTransaction, canWithdraw.data || false, false)}</GreyCardStyled>

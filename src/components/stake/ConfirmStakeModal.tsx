@@ -69,7 +69,7 @@ export default function ConfirmStakeModal({
       <TransactionErrorContent onDismiss={onDismiss} message={stakeErrorMsn} />
     ) : (
       <ConfirmationModalContent
-        title="Confirm Stake"
+        title="Confirm transaction"
         onDismiss={onDismiss}
         topContent={modalHeader}
         bottomContent={modalBottom}

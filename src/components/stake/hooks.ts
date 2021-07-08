@@ -8,7 +8,8 @@ import {
   getStakedBalance,
   getLiquidityMiningReward,
   getLiquidityAPRPerWeight,
-  canWithdraw
+  canWithdraw,
+  isMigrated
 } from '@marginswap/sdk'
 import { Contract } from '@ethersproject/contracts'
 import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
@@ -22,6 +23,14 @@ interface StakingDataProps {
 }
 
 interface CanWithdrawDataProps {
+  chainId?: ChainId | undefined
+  provider?: Web3Provider | undefined
+  address?: string | undefined | null
+  account?: string | undefined | null
+  signedContract: Contract | undefined
+}
+
+interface SignedContractDataProps {
   chainId?: ChainId | undefined
   provider?: Web3Provider | undefined
   address?: string | undefined | null
@@ -53,18 +62,29 @@ export const useLiquidityAPR = ({ chainId, provider, address }: StakingDataProps
   return { liquidityStaking, accruedRewardRetrieved, stakedBalance, availableForWithdrawAfter }
 }
 
-export const useCanWithdraw = ({ chainId, provider, address, account, mfiStake }: CanWithdrawDataProps) => {
-  return useQuery('canWithdraw', async () => {
-    if (!chainId || !provider || !address || !account) return false
-
+export const useSignedContract = ({ chainId, provider, account, mfiStake }: SignedContractDataProps) => {
+  const contract = useQuery('getSignedContract', async () => {
+    if (!chainId || !provider || !account) return undefined
     let signedContract: Contract | undefined
-
     if (mfiStake) signedContract = await getMFIStakingContract(chainId, provider, account)
-
     if (!mfiStake) signedContract = await getLiquidityMiningReward(chainId, provider)
 
-    if (!signedContract) return false
-
-    return canWithdraw(signedContract, address)
+    return signedContract
   })
+
+  return contract.data
+}
+
+export const useCanWithdraw = ({ chainId, provider, address, account, signedContract }: CanWithdrawDataProps) => {
+  const canWithdrawStatus = useQuery('canWithdraw', async () => {
+    if (!address || !signedContract) return undefined
+    return await canWithdraw(signedContract, address)
+  })
+
+  const isMigratedStatus = useQuery('isMigrated', async () => {
+    if (!chainId || !provider || !account || !signedContract) return undefined
+    return await isMigrated(signedContract, chainId, provider, account)
+  })
+
+  return { canWithdrawStatus, isMigratedStatus }
 }
