@@ -28,7 +28,7 @@ export default function MigrateStepper({
           Migrate
         </ButtonPrimary>
 
-        <ButtonPrimary onClick={secondStepOnClick} width="48%" height="63px" id="swap-button-1" disabled={!migrated}>
+        <ButtonPrimary onClick={secondStepOnClick} width="48%" height="63px" id="swap-button-1" disabled={migrated}>
           <AutoRow gap="6px" justify="center">
             {secondStepLabel}
           </AutoRow>
