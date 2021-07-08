@@ -22,8 +22,8 @@ export default function MigrateStepper({
         <ButtonPrimary
           width="48%"
           onClick={firstStepOnClick}
-          disabled={!migrated}
-          altDisabledStyle={!migrated} // show solid button while waiting
+          disabled={migrated}
+          altDisabledStyle={migrated} // show solid button while waiting
         >
           Migrate
         </ButtonPrimary>
