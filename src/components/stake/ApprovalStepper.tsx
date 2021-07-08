@@ -16,6 +16,7 @@ interface ApprovalStepperProps {
 }
 
 export default function ApprovalStepper({
+  firstStepLabel,
   firstStepOnClick,
   secondStepLabel,
   secondStepOnClick,
@@ -25,7 +26,7 @@ export default function ApprovalStepper({
   return (
     <>
       <RowBetween>
-        {approval !== ApprovalState.APPROVED ? (
+        {approval !== ApprovalState.APPROVED && firstStepLabel === 'Deposit' ? (
           <ButtonPrimary
             onClick={firstStepOnClick}
             disabled={approvalSubmitted}
@@ -44,7 +45,7 @@ export default function ApprovalStepper({
             onClick={secondStepOnClick}
             height="63px"
             id="swap-button-1"
-            disabled={approval !== ApprovalState.APPROVED}
+            disabled={approval !== ApprovalState.APPROVED && firstStepLabel === 'Deposit'}
           >
             <AutoRow gap="6px" justify="center">
               {secondStepLabel}
