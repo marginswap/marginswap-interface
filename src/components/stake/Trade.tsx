@@ -300,7 +300,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
                 approval={approval}
                 approvalSubmitted={approvalSubmitted}
               />
-            ) : migrated ? (
+            ) : migrated && canWithdraw ? (
               <MigrateStepper
                 firstStepOnClick={e => {
                   e.preventDefault()
