@@ -1,6 +1,5 @@
 import React from 'react'
 
-import Loader from '../../components/Loader'
 import { RowBetween, AutoRow } from '../Row'
 import { ButtonPrimary } from '../Button'
 
@@ -26,7 +25,7 @@ export default function MigrateStepper({
           disabled={migrated}
           altDisabledStyle={migrated} // show solid button while waiting
         >
-          Approve
+          Migrate
         </ButtonPrimary>
 
         <ButtonPrimary onClick={secondStepOnClick} width="48%" height="63px" id="swap-button-1" disabled={!migrated}>

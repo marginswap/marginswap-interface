@@ -35,9 +35,9 @@ import ApprovalStepper from './ApprovalStepper'
 import MigrateStepper from './MigrateStepper'
 import { WarningBar } from '../../components/Placeholders'
 
-import { getMFIStakingContract, getLiquidityStakingContract, getLegacyStakingContract } from 'utils'
+import { getLegacyStakingContract } from 'utils'
 import { getNotificationMsn } from './utils'
-import { Contract, utils } from 'ethers'
+import { utils } from 'ethers'
 
 import { DropdownsContainer, StyledOutlinedInput, StyledStakeHeader, StyledBalanceMax } from './styleds'
 import { /*PaddedColumn,*/ Wrapper } from '../swap/styleds'
