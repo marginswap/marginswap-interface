@@ -332,8 +332,8 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
       <WarningBar>
         To support continuous staking, all stake will be locked for 30 days, after which it can be withdrawn. If you
         previously staked in the system that supported multiple stake durations, you will have to migrate your stake
-        after your staking period ends, in order to withdraw it. When you migrate your stake will not be locked up again,
-        you can withdraw immediately if you like.
+        after your staking period ends, in order to withdraw it. When you migrate your stake will not be locked up
+        again, you can withdraw immediately if you like.
       </WarningBar>
       <ConfirmStakeModal
         token={currentToken}
