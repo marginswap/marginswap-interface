@@ -69,7 +69,6 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
   const [mfiStake /*, setMfiStake*/] = useState(true)
   const [attemptingTxn, setAttemptingTxn] = useState(false)
   const [confirmStakeModal, setConfirmStakeModal] = useState(false)
-  const [migratedDone, setMigratedDone] = useState(false)
   const [stakeErrorMsn, setStakeErrorMsn] = useState('')
   const [txHash, setTxHash] = useState('')
   const [pendingTxhHash, setPendingTxhHash] = useState<string | null>()
@@ -103,7 +102,8 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
   )
 
   const approvalSubmitted = approval === ApprovalState.APPROVED || approval === ApprovalState.PENDING
-  const migrated = isMigrated && transactionType !== '1'
+  const migrated = isMigrated.data && transactionType !== '1'
+
 
   useEffect(() => {
     if (!isTxnPending && pendingTxhHash) {
@@ -168,7 +168,6 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
           })
           setAttemptingTxn(false)
           setTxHash(data.hash)
-          setMigratedDone(true)
         })
         .catch((err: any) => {
           console.error(err)
@@ -300,7 +299,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
                 approval={approval}
                 approvalSubmitted={approvalSubmitted}
               />
-            ) : migrated && canWithdraw ? (
+            ) : migrated && isAbleToWithdraw ? (
               <MigrateStepper
                 firstStepOnClick={e => {
                   e.preventDefault()
@@ -311,7 +310,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
                   e.preventDefault()
                   setConfirmStakeModal(true)
                 }}
-                migrated={migratedDone}
+                migrated={migrated}
               />
             ) : (
               <GreyCardStyled>{getNotificationMsn(isAbleTransaction, canWithdraw.data || false, false)}</GreyCardStyled>
