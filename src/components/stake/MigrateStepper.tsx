@@ -22,13 +22,13 @@ export default function MigrateStepper({
         <ButtonPrimary
           width="48%"
           onClick={firstStepOnClick}
-          disabled={migrated}
-          altDisabledStyle={migrated} // show solid button while waiting
+          disabled={!migrated}
+          altDisabledStyle={!migrated} // show solid button while waiting
         >
           Migrate
         </ButtonPrimary>
 
-        <ButtonPrimary onClick={secondStepOnClick} width="48%" height="63px" id="swap-button-1" disabled={!migrated}>
+        <ButtonPrimary onClick={secondStepOnClick} width="48%" height="63px" id="swap-button-1" disabled={migrated}>
           <AutoRow gap="6px" justify="center">
             {secondStepLabel}
           </AutoRow>

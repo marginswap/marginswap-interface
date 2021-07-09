@@ -54,7 +54,7 @@ export default function ConfirmStakeModal({
         )}
         <ButtonPrimary onClick={onConfirm} height="63px" id="swap-button-1">
           <AutoRow gap="6px" justify="center">
-            Confirm Stake
+            Confirm transaction
           </AutoRow>
         </ButtonPrimary>
       </>
