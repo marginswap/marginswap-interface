@@ -110,7 +110,6 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
 
   const approvalSubmitted = approval === ApprovalState.APPROVED || approval === ApprovalState.PENDING
   const migrated = isMigrated && transactionType === '3'
-  console.log('🚀 ~ file: Trade.tsx ~ line 106 ~ TradeStake ~ isMigrated', isMigrated)
 
   useEffect(() => {
     if (!isTxnPending && pendingTxhHash) {
@@ -174,7 +173,6 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
             summary: `Migrate stake`
           })
           setAttemptingTxn(false)
-          console.log('DATA HASH ::::', data.hash)
           setTxHash(data.hash)
         })
         .catch((err: any) => {
@@ -248,7 +246,6 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
 
   const isAbleTransaction = Boolean(amount?.length) && Number(amount) > 0
   const isAbleToWithdraw = transactionType === '1' || (canWithdraw && transactionType !== '1')
-  console.log('canWithdraw ::', canWithdraw)
 
   return (
     <div style={{ maxWidth: 420 }}>

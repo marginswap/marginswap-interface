@@ -70,7 +70,6 @@ export const useSignedContract = ({ chainId, provider, account, mfiStake }: Sign
       let signedContract: Contract | undefined
       if (mfiStake) signedContract = await getMFIStakingContract(chainId, provider, account)
       if (!mfiStake) signedContract = await getLiquidityMiningReward(chainId, provider)
-      console.log('🚀 ~ file: hooks.ts ~ line 76 ~ getSignedContract ~ signedContract', signedContract)
       setContract(signedContract)
     }
 
@@ -109,7 +108,6 @@ export const useIsMigrated = ({ chainId, provider, account, signedContract }: Ca
       account: string
     ) => {
       const migrateStatus = await isMigrated(signedContract, chainId, provider, account)
-      console.log('🚀 ~ file: hooks.ts ~ line 96 ~ useEffect ~ migrateStatus', migrateStatus)
       setMigrate(migrateStatus)
     }
 
