@@ -42,7 +42,7 @@ import { utils } from 'ethers'
 import { DropdownsContainer, StyledOutlinedInput, StyledStakeHeader, StyledBalanceMax } from './styleds'
 import { /*PaddedColumn,*/ Wrapper } from '../swap/styleds'
 import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
-import { useCanWithdraw, useSignedContract } from './hooks'
+import { useCanWithdraw, useIsMigrated, useSignedContract } from './hooks'
 import { MFI_ADDRESS, MFI_USDC_ADDRESS } from '../../constants'
 import { TransactionDetails } from '../../state/transactions/reducer'
 
@@ -86,7 +86,14 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
   const getLiquidityToken = new Token(chainId ?? ChainId.MAINNET, MFI_USDC_ADDRESS, 18, 'MFI/USDC')
   const currentToken = mfiStake ? getMFIToken : getLiquidityToken
   const signedContract = useSignedContract({ chainId, provider, account, mfiStake })
-  const { canWithdrawStatus: canWithdraw, isMigratedStatus: isMigrated } = useCanWithdraw({
+  const canWithdraw = useCanWithdraw({
+    chainId,
+    provider,
+    address,
+    account,
+    signedContract
+  })
+  const isMigrated = useIsMigrated({
     chainId,
     provider,
     address,
@@ -102,8 +109,8 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
   )
 
   const approvalSubmitted = approval === ApprovalState.APPROVED || approval === ApprovalState.PENDING
-  const migrated = isMigrated.data && transactionType !== '1'
-
+  const migrated = isMigrated && transactionType !== '1'
+  console.log('🚀 ~ file: Trade.tsx ~ line 106 ~ TradeStake ~ isMigrated', isMigrated)
 
   useEffect(() => {
     if (!isTxnPending && pendingTxhHash) {
@@ -167,6 +174,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
             summary: `Migrate stake`
           })
           setAttemptingTxn(false)
+          console.log('DATA HASH ::::', data.hash)
           setTxHash(data.hash)
         })
         .catch((err: any) => {
@@ -219,7 +227,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
             setTxHash(data.hash)
             setValue('amount', '0')
           })
-          .catch((err: any) => handleError(err.data.message))
+          .catch((err: any) => handleError(err?.data?.message))
       }
     }
   }
@@ -239,7 +247,8 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
   ]
 
   const isAbleTransaction = Boolean(amount?.length) && Number(amount) > 0
-  const isAbleToWithdraw = transactionType === '1' || (canWithdraw.data && transactionType !== '1')
+  const isAbleToWithdraw = transactionType === '1' || (canWithdraw && transactionType !== '1')
+  console.log('canWithdraw ::', canWithdraw)
 
   return (
     <div style={{ maxWidth: 420 }}>
@@ -313,7 +322,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
                 migrated={migrated}
               />
             ) : (
-              <GreyCardStyled>{getNotificationMsn(isAbleTransaction, canWithdraw.data || false, false)}</GreyCardStyled>
+              <GreyCardStyled>{getNotificationMsn(isAbleTransaction, canWithdraw || false, false)}</GreyCardStyled>
             )}
           </Wrapper>
         </form>

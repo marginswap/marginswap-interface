@@ -14,6 +14,7 @@ import {
 import { Contract } from '@ethersproject/contracts'
 import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
 import { getMFIStakingContract } from 'utils'
+import { useEffect, useState } from 'react'
 
 interface StakingDataProps {
   chainId?: ChainId | undefined
@@ -63,28 +64,59 @@ export const useLiquidityAPR = ({ chainId, provider, address }: StakingDataProps
 }
 
 export const useSignedContract = ({ chainId, provider, account, mfiStake }: SignedContractDataProps) => {
-  const contract = useQuery('getSignedContract', async () => {
-    if (!chainId || !provider || !account) return undefined
-    let signedContract: Contract | undefined
-    if (mfiStake) signedContract = await getMFIStakingContract(chainId, provider, account)
-    if (!mfiStake) signedContract = await getLiquidityMiningReward(chainId, provider)
+  const [contract, setContract] = useState<Contract>()
+  useEffect(() => {
+    const getSignedContract = async (chainId: ChainId, provider: Web3Provider, account: string) => {
+      let signedContract: Contract | undefined
+      if (mfiStake) signedContract = await getMFIStakingContract(chainId, provider, account)
+      if (!mfiStake) signedContract = await getLiquidityMiningReward(chainId, provider)
+      console.log('🚀 ~ file: hooks.ts ~ line 76 ~ getSignedContract ~ signedContract', signedContract)
+      setContract(signedContract)
+    }
 
-    return signedContract
-  })
+    if (chainId && provider && account) {
+      getSignedContract(chainId, provider, account)
+    }
+  }, [chainId, provider, account, mfiStake])
 
-  return contract.data
+  return contract
 }
 
-export const useCanWithdraw = ({ chainId, provider, address, account, signedContract }: CanWithdrawDataProps) => {
-  const canWithdrawStatus = useQuery('canWithdraw', async () => {
-    if (!address || !signedContract) return undefined
-    return await canWithdraw(signedContract, address)
-  })
+export const useCanWithdraw = ({ address, signedContract }: CanWithdrawDataProps) => {
+  const [canWithdrawData, setCanWithdrawData] = useState(false)
 
-  const isMigratedStatus = useQuery('isMigrated', async () => {
-    if (!chainId || !provider || !account || !signedContract) return undefined
-    return await isMigrated(signedContract, chainId, provider, account)
-  })
+  useEffect(() => {
+    const canWithdrawAmount = async (address: string, signedContract: Contract) => {
+      const canDoIt = await canWithdraw(signedContract, address)
+      setCanWithdrawData(canDoIt)
+    }
 
-  return { canWithdrawStatus, isMigratedStatus }
+    if (address && signedContract) {
+      canWithdrawAmount(address, signedContract)
+    }
+  }, [address, signedContract])
+
+  return canWithdrawData
+}
+
+export const useIsMigrated = ({ chainId, provider, account, signedContract }: CanWithdrawDataProps) => {
+  const [migrate, setMigrate] = useState(false)
+  useEffect(() => {
+    const callIsMigrate = async (
+      signedContract: Contract,
+      chainId: ChainId,
+      provider: Web3Provider,
+      account: string
+    ) => {
+      const migrateStatus = await isMigrated(signedContract, chainId, provider, account)
+      console.log('🚀 ~ file: hooks.ts ~ line 96 ~ useEffect ~ migrateStatus', migrateStatus)
+      setMigrate(migrateStatus)
+    }
+
+    if (chainId && provider && account && signedContract) {
+      callIsMigrate(signedContract, chainId, provider, account)
+    }
+  }, [chainId, provider, account, signedContract])
+
+  return migrate
 }
