@@ -109,7 +109,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
   )
 
   const approvalSubmitted = approval === ApprovalState.APPROVED || approval === ApprovalState.PENDING
-  const migrated = isMigrated && transactionType !== '1'
+  const migrated = isMigrated && transactionType === '3'
   console.log('🚀 ~ file: Trade.tsx ~ line 106 ~ TradeStake ~ isMigrated', isMigrated)
 
   useEffect(() => {
