@@ -61,7 +61,7 @@ const MFIData = ({ chainId, provider, address, pendingTxhHash }: StakingData) =>
                   accruedRewardRetrieved?.data?.toString() || '0'
                 ).toSignificant(3)} MFI`
           }
-          hint="The amount of MFI you have accrued by staking. To withdraw it, select 'Claim' and then click 'Max'"
+          hint="The amount of MFI you have accrued by staking, including from legacy contracts. To withdraw it, select 'Claim' and then click 'Max' (which will not include legacy balance)"
         />
         <Parameters
           title="Current staked Balance"
