@@ -144,7 +144,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
 
       // Claim
       if (txnType === transactionTypeOptions[1].value && address) {
-        balance = await accruedReward(contract, address)
+        balance = await accruedReward(contract, undefined, address)
       }
 
       // Withdraw

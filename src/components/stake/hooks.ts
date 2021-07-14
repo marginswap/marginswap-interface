@@ -1,6 +1,7 @@
 import { useQuery } from 'react-query'
 import {
   ChainId,
+  getLegacyStaking,
   getMFIStaking,
   getMFIAPRPerWeight,
   accruedReward,
@@ -41,9 +42,10 @@ interface SignedContractDataProps {
 
 export const useMFIAPR = ({ chainId, provider, address }: StakingDataProps) => {
   const contract = getMFIStaking(chainId, provider)
+  const legacyContract = getLegacyStaking(chainId, provider)
 
   const mfIStaking = useQuery('getMFIStaking', () => getMFIAPRPerWeight(contract))
-  const accruedRewardRetrieved = useQuery('getAccruedMFIReward', () => accruedReward(contract, address))
+  const accruedRewardRetrieved = useQuery('getAccruedMFIReward', () => accruedReward(contract, legacyContract, address))
   const stakedBalance = useQuery('getMFIStakeBalance', () => getStakedBalance(contract, address))
   const availableForWithdrawAfter = useQuery('getMFITimeUntilLockEnd', () => getTimeUntilLockEnd(contract, address))
 
@@ -54,7 +56,9 @@ export const useLiquidityAPR = ({ chainId, provider, address }: StakingDataProps
   const contract = getLiquidityMiningReward(chainId, provider)
 
   const liquidityStaking = useQuery('getLiquidityStaking', () => getLiquidityAPRPerWeight(contract, provider))
-  const accruedRewardRetrieved = useQuery('getLiquidityAccruedReward', () => accruedReward(contract, address))
+  const accruedRewardRetrieved = useQuery('getLiquidityAccruedReward', () =>
+    accruedReward(contract, undefined, address)
+  )
   const stakedBalance = useQuery('getLiquidityStakeBalance', () => getStakedBalance(contract, address))
   const availableForWithdrawAfter = useQuery('getLiquidityTimeUntilLockEnd', () =>
     getTimeUntilLockEnd(contract, address)
