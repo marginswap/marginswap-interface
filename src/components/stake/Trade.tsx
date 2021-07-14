@@ -339,6 +339,9 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
         previously staked in the system that supported multiple stake durations, you will have to migrate your stake
         after your staking period ends, in order to withdraw it. When you migrate your stake will not be locked up
         again, you can withdraw immediately if you like.
+
+        Accrued reward balance for migrated 90 day stakers includes a pre-applied bonus to make up for longer staking
+        period.
       </WarningBar>
       <ConfirmStakeModal
         token={currentToken}
