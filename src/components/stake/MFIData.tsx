@@ -59,7 +59,7 @@ const MFIData = ({ chainId, provider, address, pendingTxhHash }: StakingData) =>
               : `${new TokenAmount(
                   new Token(chainId ?? 1, MFI_ADDRESS, 18),
                   accruedRewardRetrieved?.data?.toString() || '0'
-                ).toSignificant(3)} MFI`
+                ).toSignificant(5)} MFI`
           }
           hint="The amount of MFI you have accrued by staking, including from legacy contracts. To withdraw it, select 'Claim' and then click 'Max' (which will not include legacy balance)"
         />
@@ -71,7 +71,7 @@ const MFIData = ({ chainId, provider, address, pendingTxhHash }: StakingData) =>
               : `${new TokenAmount(
                   new Token(chainId ?? 1, MFI_ADDRESS, 18),
                   stakedBalance?.data?.toString() || '0'
-                ).toSignificant(3)} MFI`
+                ).toSignificant(7)} MFI`
           }
           hint="The MFI balance you currently have staked"
         />
