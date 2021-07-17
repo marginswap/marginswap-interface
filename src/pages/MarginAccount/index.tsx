@@ -616,7 +616,7 @@ export const MarginAccount = () => {
           title="Account balance"
           data={data}
           columns={ACCOUNT_COLUMNS}
-          actions={chainId !== 1 ? [...ACCOUNT_ACTIONS, ...BORROW_ACCOUNT_ACTION] : ACCOUNT_ACTIONS}
+          actions={[...ACCOUNT_ACTIONS, ...BORROW_ACCOUNT_ACTION]}
           deriveEmptyFrom={['balance', 'borrowed']}
           idCol="coin"
           isTxnPending={!!pendingTxhHash}
