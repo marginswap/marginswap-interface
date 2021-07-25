@@ -6,6 +6,7 @@ import { Wallets } from './Wallets'
 import { TokenInfo } from '@uniswap/token-lists'
 import { useFetchListCallback } from 'hooks/useFetchListCallback'
 import { useAllLists } from 'state/lists/hooks'
+import { useSwapsQuery } from '../../graphql/queries/analytics'
 
 const useStyles = makeStyles(() => ({
   wrapper: {
@@ -64,7 +65,7 @@ export const Analytics = () => {
         <Stats title={'Total Bond Lending'} value={'0.5m'} />
         <Stats title={'Total Borrowed'} value={'0.5m'} />
       </div>
-      <Wallets tokens={tokens} />
+      <Wallets />
     </div>
   )
 }

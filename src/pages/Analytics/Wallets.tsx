@@ -3,7 +3,11 @@ import Collapse from '@material-ui/core/Collapse'
 import { makeStyles, Paper } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
+import { CustomLightSpinner } from '../../theme'
 import IconButton from '@material-ui/core/IconButton'
+import Circle from '../../assets/images/blue-loader.svg'
+
+import { useSwapsQuery } from '../../graphql/queries/analytics'
 
 export const useStyles = makeStyles(() => ({
   root: {
@@ -67,7 +71,7 @@ function createWalletData(address: number, volume: number): WalletData {
   }
 }
 
-const Wallet = ({ wallet }: { wallet: WalletData; index: number }) => {
+const Wallet = (wallet: WalletData) => {
   const numberFormat = new Intl.NumberFormat()
   const { address, volume } = wallet
 
@@ -79,15 +83,20 @@ const Wallet = ({ wallet }: { wallet: WalletData; index: number }) => {
   )
 }
 
-export const Wallets = ({ tokens }: any) => {
+export const Wallets = () => {
   const classes = useStyles()
 
   const [checked, setChecked] = useState(false)
 
-  const [wallets, setWallets] = useState<WalletData[]>([createWalletData(0, 0)])
-  const [renderedWallets, setRenderedWallets] = useState<JSX.Element[] | undefined>()
+  //const [wallets, setWallets] = useState<WalletData[]>([createWalletData(0, 0)])
+  //const [renderedWallets, setRenderedWallets] = useState<JSX.Element[] | undefined>()
 
-  useEffect(() => {
+  const { loading, error, data } = useSwapsQuery()
+  console.log('🚀 ~ file: index.tsx ~ line 44 ~ Analytics ~ data', data)
+  console.log('🚀 ~ file: index.tsx ~ line 44 ~ Analytics ~ error', error)
+  console.log('🚀 ~ file: index.tsx ~ line 44 ~ Analytics ~ loading', loading)
+
+  /*useEffect(() => {
     const unique: string[] = []
     const newTokens = tokens
       .filter(({ symbol, logoURI }: any) => {
@@ -99,13 +108,13 @@ export const Wallets = ({ tokens }: any) => {
       })
       .map(({ address }: any) => createWalletData(address, Math.random() * 10000))
     setWallets(newTokens)
-  }, [tokens])
+  }, [tokens])*/
 
-  useEffect(() => {
+  /*useEffect(() => {
     const renderResult: JSX.Element[] = []
     wallets.map((wallet, index) => renderResult.push(Wallet({ wallet, index })))
     setRenderedWallets(renderResult)
-  }, [wallets])
+  }, [wallets])*/
 
   const handleChange = () => {
     setChecked(prev => !prev)
@@ -119,13 +128,24 @@ export const Wallets = ({ tokens }: any) => {
           <span>Wallet</span>
           <span>Volume (24hrs)</span>
         </div>
-        <div className={classes.walletsList}>{renderedWallets && renderedWallets.slice(0, 5)}</div>
-        <Collapse in={checked}>
-          <div className={classes.walletsList}>{renderedWallets && renderedWallets.slice(5)}</div>
-        </Collapse>
-        <IconButton className={classes.expand} onClick={handleChange}>
-          {checked ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-        </IconButton>
+        {loading ? (
+          <CustomLightSpinner src={Circle} alt="loader" size={'90px'} />
+        ) : error ? (
+          <div> Error! </div>
+        ) : (
+          <>
+            <Collapse in={checked}>
+              {data.swaps.map((swap: any) => (
+                <div key={swap.id} className={classes.walletsList}>
+                  <Wallet address={swap.trader} volume={swap.fromAmount} />
+                </div>
+              ))}
+            </Collapse>
+            <IconButton className={classes.expand} onClick={handleChange}>
+              {checked ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            </IconButton>
+          </>
+        )}
       </div>
     </Paper>
   )
