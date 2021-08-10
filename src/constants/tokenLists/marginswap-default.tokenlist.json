@@ -14,6 +14,15 @@
   ],
   "tokens": [
     {
+      "chainId": 1,
+      "address": "0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e",
+      "name": "yearn finance",
+      "symbol": "YFI",
+      "decimals": 18,
+      "both": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/11849/thumb/yfi-192x192.png?1598325330"
+    },
+	  {
       "address": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
       "chainId": 1,
       "name": "Wrapped BTC",
