@@ -23,6 +23,14 @@
       "logoURI": "https://assets.coingecko.com/coins/images/11849/thumb/yfi-192x192.png?1598325330"
     },
 	  {
+		  "address": "0x853d955aCEf822Db058eb8505911ED77F175b99e",
+  		"chainId": 1,
+	  	"name": "Frax",
+		  "symbol": "FRAX",
+		  "decimals": 18,
+		  "logoURI": "https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/ethereum/assets/0x853d955aCEf822Db058eb8505911ED77F175b99e/logo.png"
+	  },
+    {
       "address": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
       "chainId": 1,
       "name": "Wrapped BTC",
