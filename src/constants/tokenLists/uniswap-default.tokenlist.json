@@ -15,6 +15,14 @@
   "tokens": [
     {
       "chainId": 43114,
+      "address": "0x49D5c2BdFfac6CE2BFdB6640F4F80f226bc10bAB",
+      "decimals": 18,
+      "name": "Wrapped ETH (new bridge)",
+      "symbol": "WETH.e",
+      "logoURI": "https://raw.githubusercontent.com/ava-labs/avalanche-bridge-resources/main/tokens/WETH/logo.png"
+    },
+    {
+      "chainId": 43114,
       "address": "0x60781C2586D68229fde47564546784ab3fACA982",
       "decimals": 18,
       "name": "Pangolin",
