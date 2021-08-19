@@ -1,6 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core'
-import { Graphic } from 'components/Graphic'
+import Graphic from 'components/Graphic'
 import { firstChartState, secondChartState } from './constants'
 
 const useStyles = makeStyles(() => ({
@@ -14,13 +14,17 @@ const useStyles = makeStyles(() => ({
   }
 }))
 
-export const Graphics = () => {
+type GraphicProps = {
+  series: { time: string; value: number }[]
+}
+
+export const Graphics = ({ series }: GraphicProps) => {
   const classes = useStyles()
 
   return (
     <div className={classes.graphics}>
-      <Graphic state={firstChartState} />
-      <Graphic state={secondChartState} />
+      <Graphic series={series} />
+      <Graphic series={series} />
     </div>
   )
 }

@@ -6,6 +6,9 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 import { CustomLightSpinner } from '../../theme'
 import IconButton from '@material-ui/core/IconButton'
 import Circle from '../../assets/images/blue-loader.svg'
+import { polygonClient as apolloClient } from '../../config/apollo-config'
+
+import { getTopTraders } from './utils'
 
 import { useSwapsQuery } from '../../graphql/queries/analytics'
 
@@ -64,13 +67,6 @@ interface WalletData {
   volume: number
 }
 
-function createWalletData(address: number, volume: number): WalletData {
-  return {
-    address,
-    volume
-  }
-}
-
 const Wallet = (wallet: WalletData) => {
   const numberFormat = new Intl.NumberFormat()
   const { address, volume } = wallet
@@ -83,38 +79,40 @@ const Wallet = (wallet: WalletData) => {
   )
 }
 
+type TopTradersProps = {
+  trader: string
+  volume: number
+}
+
 export const Wallets = () => {
   const classes = useStyles()
-
   const [checked, setChecked] = useState(false)
+  const [topTraders, setTopTraders] = useState<TopTradersProps[]>([])
 
   //const [wallets, setWallets] = useState<WalletData[]>([createWalletData(0, 0)])
   //const [renderedWallets, setRenderedWallets] = useState<JSX.Element[] | undefined>()
 
-  const { loading, error, data } = useSwapsQuery()
-  console.log('🚀 ~ file: index.tsx ~ line 44 ~ Analytics ~ data', data)
-  console.log('🚀 ~ file: index.tsx ~ line 44 ~ Analytics ~ error', error)
-  console.log('🚀 ~ file: index.tsx ~ line 44 ~ Analytics ~ loading', loading)
+  const { loading, error, data } = useSwapsQuery({
+    client: apolloClient,
+    notifyOnNetworkStatusChange: true
+  })
 
-  /*useEffect(() => {
-    const unique: string[] = []
-    const newTokens = tokens
-      .filter(({ symbol, logoURI }: any) => {
-        if (!unique.includes(symbol) && logoURI) {
-          unique.push(symbol)
-          return true
-        }
-        return false
-      })
-      .map(({ address }: any) => createWalletData(address, Math.random() * 10000))
-    setWallets(newTokens)
-  }, [tokens])*/
+  console.log('🚀 ~ file: Wallets.tsx ~ line 96 ~ Wallets ~ data', data)
+  console.log('🚀 ~ file: Wallets.tsx ~ line 96 ~ Wallets ~ error', error)
+  console.log('🚀 ~ file: Wallets.tsx ~ line 96 ~ Wallets ~ loading', loading)
 
-  /*useEffect(() => {
-    const renderResult: JSX.Element[] = []
-    wallets.map((wallet, index) => renderResult.push(Wallet({ wallet, index })))
-    setRenderedWallets(renderResult)
-  }, [wallets])*/
+  useEffect(() => {
+    if (data) {
+      const getTraderData = async (data: {
+        swaps: { fromAmount: string; fromToken: string; id: string; trader: string }[]
+      }) => {
+        const tradersData = await getTopTraders(data)
+        setTopTraders(tradersData)
+      }
+
+      getTraderData(data)
+    }
+  }, [data])
 
   const handleChange = () => {
     setChecked(prev => !prev)
@@ -135,9 +133,9 @@ export const Wallets = () => {
         ) : (
           <>
             <Collapse in={checked}>
-              {data.swaps.map((swap: any) => (
-                <div key={swap.id} className={classes.walletsList}>
-                  <Wallet address={swap.trader} volume={swap.fromAmount} />
+              {topTraders.map((trader: any) => (
+                <div key={trader.trader} className={classes.walletsList}>
+                  <Wallet address={trader.trader} volume={trader.volume} />
                 </div>
               ))}
             </Collapse>

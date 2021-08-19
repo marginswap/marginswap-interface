@@ -1,4 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
+
 // Daily Volume for all available dates (this will get too heavy to do on the client at some point)
 // Convert createdAt to a javascript date like this:
 // New Date(createdAt * 1000)
@@ -13,9 +14,9 @@ import { gql, useQuery } from '@apollo/client'
 // Sum up all of the token volumes to get totaly daily volume
 
 // Change the value of "type" to SPOT to get daily volume of spot trades
-export const dailySwapVolumesGQL = gql`
-  query dailySwapVolumes {
-    dailySwapVolumes(where: { type: MARGIN }, orderBy: createdAt) {
+export const swapVolumesGQL = gql`
+  query swapVolumes($gte: Int, $lte: Int) {
+    dailySwapVolumes(where: { type: MARGIN, createdAt_gte: $gte, createdAt_lte: $lte }, orderBy: createdAt) {
       id
       token
       volume
@@ -26,7 +27,7 @@ export const dailySwapVolumesGQL = gql`
 
 // =========================================================
 
-// Daily Volme by Month
+// Daily Volume by Month
 // 1. Calculate the javascript date of the first and last days of the month
 // 2. Call the getTime() method on the javascript date class and divide it by 1000
 //    to get the subgraph createdAt timestamp, for example:
@@ -96,7 +97,7 @@ export const aggregatedBalancesGQL = gql`
   }
 `
 
-export const useDailySwapVolumesQuery = (options = {}) => useQuery(dailySwapVolumesGQL, options)
+export const useSwapVolumesQuery = (options = {}) => useQuery(swapVolumesGQL, options)
 export const useDailySwapVolumesByMonthQuery = (options = {}) => useQuery(dailySwapVolumesByMonthGQL, options)
 export const useSwapsQuery = (options = {}) => useQuery(swapsGQL, options)
 export const useAggregatedBalancesQuery = (options = {}) => useQuery(aggregatedBalancesGQL, options)
