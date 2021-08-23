@@ -139,9 +139,9 @@ export const Analytics = () => {
 
   return (
     <div className={classes.wrapper}>
-      <h2>MarginSwap Analytics</h2>
+      <h2>Marginswap Analytics</h2>
       <Graphic
-        title={'MFI Volume'}
+        title={'Marginswap Volume'}
         time={'Last Month'}
         value={montlySwap?.totalDailyVolume || 0}
         series={montlySwap?.dailySwap || []}
@@ -155,7 +155,7 @@ export const Analytics = () => {
           series={[]}
         />
         <Stats
-          title={'MFI Volume'}
+          title={'Marginswap Volume'}
           time={'Last 24 hrs'}
           value={Number(dailySwap?.totalDailyVolume.toFixed(2)) || 0}
           chartColor={'#94F572'}
