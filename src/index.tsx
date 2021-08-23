@@ -16,8 +16,6 @@ import MulticallUpdater from './state/multicall/updater'
 import TransactionUpdater from './state/transactions/updater'
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from './theme'
 import getLibrary from './utils/getLibrary'
-import { ApolloProvider } from '@apollo/client'
-import { polygonClient as client } from './config/apollo-config'
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
 const queryClient = new QueryClient()

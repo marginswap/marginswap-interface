@@ -207,6 +207,38 @@ export interface WalletInfo {
   mobileOnly?: true
 }
 
+export interface AvalancheTokenInfo {
+  token: string
+  type: string
+}
+
+export const AVALANCHE_TOKENS_LIST: AvalancheTokenInfo[] = [
+  {
+    token: '0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7',
+    type: 'wrapped-avax'
+  },
+  {
+    token: '0xc7198437980c041c805a1edcba50c1ce5db95118',
+    type: 'tether'
+  },
+  {
+    token: '0xde3a24028580884448a5397872046a019649b084',
+    type: 'tether'
+  },
+  {
+    token: '0x60781c2586d68229fde47564546784ab3faca982',
+    type: 'pangolin'
+  },
+  {
+    token: '0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15',
+    type: 'ethereum'
+  },
+  {
+    token: '0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab',
+    type: 'ethereum'
+  }
+]
+
 export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
   INJECTED: {
     connector: injected,

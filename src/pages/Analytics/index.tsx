@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core'
-import { Graphics } from './Graphics'
+import Graphic from 'components/Graphic'
 import { Stats } from './Stats'
 import { Wallets } from './Wallets'
-import { TokenInfo } from '@uniswap/token-lists'
-import { useFetchListCallback } from 'hooks/useFetchListCallback'
-import { useAllLists } from 'state/lists/hooks'
 import { getDailyVolume } from './utils'
 import { DateTime } from 'luxon'
 import { useSwapVolumesQuery } from '../../graphql/queries/analytics'
-import { polygonClient as apolloClient } from '../../config/apollo-config'
+import { avalancheClient } from '../../config/apollo-config'
+import { polygonClient } from '../../config/apollo-config'
+import { bscClient } from '../../config/apollo-config'
 
 const useStyles = makeStyles(() => ({
   wrapper: {
@@ -36,111 +35,143 @@ const useStyles = makeStyles(() => ({
   }
 }))
 
+type ChartData = {
+  time: string
+  value: number
+}
+
 type StatsProps = {
-  totalDailyVolume: string
-  dailySwap: { time: string; value: number }[]
+  totalDailyVolume: number
+  dailySwap: ChartData[]
 }
 
 export const Analytics = () => {
   const classes = useStyles()
+  const [montlySwap, setMonlySwap] = useState<StatsProps>()
   const [dailySwap, setDailySwap] = useState<StatsProps>()
-  const [montlySwap, setMontlySwap] = useState<StatsProps>()
+  const [montlyFees, setMontlyFees] = useState<number>()
+  const gteValue = Math.round(
+    DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
+      .set({ hour: 0 })
+      .set({ minute: 1 })
+      .minus({ month: 1 })
+      .minus({ day: 1 })
+      .toSeconds()
+  )
+  const lteValue = Math.round(DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' }).toSeconds())
 
-  console.log('one day before ::', Math.round(DateTime.now().minus({ day: 1 }).toSeconds()))
-  console.log('today ::', Math.round(DateTime.now().toSeconds()))
+  console.log('one day before ::', gteValue)
+  console.log('today ::', lteValue)
+
   //dsv -> Dialy Swap Volume
+  // Avalanche
   const {
-    loading: dsvLoading,
-    error: dsvError,
-    data: dsvData
+    loading: avalancheDsvLoading,
+    error: avalancheDsvError,
+    data: avalancheDsvData
   } = useSwapVolumesQuery({
     variables: {
-      gte: Math.round(DateTime.now().minus({ day: 1 }).toSeconds()),
-      lte: Math.round(DateTime.now().toSeconds())
+      gte: gteValue,
+      lte: lteValue
     },
-    client: apolloClient
+    client: avalancheClient
   })
 
-  //mv -> Mountly Volume
+  //dsv -> Dialy Swap Volume
+  // Polygon
   const {
-    loading: mvLoading,
-    error: mvError,
-    data: mvData
+    loading: polygonDsvLoading,
+    error: polygonDsvError,
+    data: polygonDsvData
   } = useSwapVolumesQuery({
     variables: {
-      gte: Math.round(DateTime.now().minus({ day: 1 }).toSeconds()),
-      lte: Math.round(DateTime.now().toSeconds())
+      gte: gteValue,
+      lte: lteValue
     },
-    client: apolloClient
+    client: polygonClient
   })
-  /*console.log('🚀 ~ file: index.tsx ~ line 44 ~ Analytics ~ data', dsvData)
-  console.log('🚀 ~ file: index.tsx ~ line 44 ~ Analytics ~ error', dsvError)
-  console.log('🚀 ~ file: index.tsx ~ line 44 ~ Analytics ~ loading', dsvLoading)*/
+
+  //dsv -> Dialy Swap Volume
+  // Binance Smart Contract
+  const {
+    loading: bscDsvLoading,
+    error: bscDsvError,
+    data: bscDsvData
+  } = useSwapVolumesQuery({
+    variables: {
+      gte: gteValue,
+      lte: lteValue
+    },
+    client: bscClient
+  })
+
+  const avalancheDsv = avalancheDsvData?.dailySwapVolumes || []
+  const polygonDsv = polygonDsvData?.dailySwapVolumes || []
+  const bscDsv = bscDsvData?.dailySwapVolumes || []
 
   useEffect(() => {
-    if (dsvData) {
-      const getDailyVolumeData = async (dsvData: {
-        dailySwapVolumes: { id: string; createdAt: string; token: string; volume: string }[]
-      }) => {
-        const dailySwapFormatted = await getDailyVolume(dsvData)
-        setDailySwap(dailySwapFormatted)
-      }
-      getDailyVolumeData(dsvData)
-    }
-  }, [dsvData])
-
-  /*useEffect(() => {
-    if (mvData) {
-      const getDailyVolumeData = async (mvData: {
-        dailySwapVolumes: { id: string; createdAt: string; token: string; volume: string }[]
-      }) => {
-        const dailySwapFormatted = await getDailyVolume(mvData)
-        setDailySwap(dailySwapFormatted)
-      }
-      getDailyVolumeData(mvData)
-    }
-  }, [mvData])*/
-
-  //const fetchList = useFetchListCallback()
-
-  /*useEffect(() => {
-    const url = Object.keys(lists)[0]
-    if (url) {
-      fetchList(url, false)
-        .then(({ tokens }) => {
-          setTokens(tokens)
+    if (avalancheDsv.length && polygonDsv.length && bscDsv.length) {
+      const getMontlyVolumeData = async (avalancheDsv: any, polygonDsv: any, bscDsv: any) => {
+        const dailySwapFormatted = await getDailyVolume({
+          dailyAvalancheSwapVolumes: avalancheDsv,
+          dailyPolygonSwapVolumes: polygonDsv,
+          dailyBscSwapVolumes: bscDsv
         })
-        .catch(error => console.error('interval list fetching error', error))
+
+        setMonlySwap(dailySwapFormatted)
+      }
+      getMontlyVolumeData(avalancheDsv, polygonDsv, bscDsv)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])*/
+  }, [avalancheDsv, polygonDsv, bscDsv])
+
+  useEffect(() => {
+    async function getDailyVolume(montlySwap: ChartData[]) {
+      const yesterday = DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
+        .set({ hour: 0 })
+        .set({ minute: 1 })
+        .minus({ day: 2 })
+        .toMillis()
+
+      const last24HSwaps = await montlySwap.filter(ds => DateTime.fromISO(ds.time.toString()).toMillis() > yesterday)
+      const last24hVol = await last24HSwaps.map(s => Number(s.value)).reduce((acc, cur) => acc + cur, 0)
+
+      setDailySwap({ totalDailyVolume: last24hVol, dailySwap: last24HSwaps })
+
+      const montlyFees = last24hVol * (0.1 / 100)
+
+      setMontlyFees(Number(montlyFees.toFixed(2)))
+    }
+
+    if (montlySwap?.dailySwap.length) {
+      getDailyVolume(montlySwap?.dailySwap || [])
+    }
+  }, [montlySwap?.dailySwap])
 
   return (
     <div className={classes.wrapper}>
       <h2>MarginSwap Analytics</h2>
-      <Graphics series={dailySwap?.dailySwap || []} />
+      <Graphic
+        title={'MFI Volume'}
+        time={'Last Month'}
+        value={montlySwap?.totalDailyVolume || 0}
+        series={montlySwap?.dailySwap || []}
+      />
       <div className={classes.stats}>
+        <Stats
+          title={'Total Fees'}
+          time={'Fees paid past month'}
+          value={montlyFees}
+          chartColor={'#BE72F3'}
+          series={[]}
+        />
         <Stats
           title={'MFI Price'}
           time={'Last 24 hrs'}
-          value={dailySwap?.totalDailyVolume}
-          chartColor={'#BE72F3'}
-          series={dailySwap?.dailySwap || []}
-        />
-        {/*<Stats
-          title={'MFI Price'}
-          time={'Last Month'}
-          value={mvData?.totalDailyVolume}
-          chartColor={'#BE72F3'}
-          series={dailySwap?.dailySwap || []}
-        />
-        <Stats
-          title={'Total Fees'}
-          time={'Ever Collected'}
-          value={mvData?.totalDailyVolume}
+          value={Number(dailySwap?.totalDailyVolume.toFixed(2)) || 0}
           chartColor={'#94F572'}
-          series={dailySwap?.dailySwap || []}
+          series={[]}
         />
+        {/*
         <Stats
           title={'Fees'}
           time={'Last 24 hrs'}

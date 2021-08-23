@@ -9,29 +9,63 @@ const useStyles = makeStyles(() => ({
     backdropFilter: 'blur(10px)',
     border: '1px solid #777777',
     borderRadius: '12px'
+  },
+  stats: {
+    display: 'flex',
+    flexDirection: 'column',
+    margin: '40px 0',
+    '& span': {
+      height: '90px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '10px',
+      '& div': {
+        gap: '8px'
+      },
+      '& h3': {
+        margin: '0',
+        fontSize: '15px',
+        lineHeight: '18px'
+      },
+      '& p': {
+        margin: '0',
+        fontWeight: '300',
+        fontSize: '14px',
+        lineHeight: '17px',
+        color: '#D0D0D0'
+      },
+      '& h4': {
+        margin: '0',
+        fontWeight: 'normal',
+        fontSize: '22px',
+        lineHeight: '27px'
+      }
+    }
   }
 }))
 
 type GraphicProps = {
+  title: string
+  time?: string
+  value: number
   series: { time: string; value: number }[]
 }
 
-export default function Graphic({ series }: GraphicProps) {
-  console.log('🚀 ~ file: index.tsx ~ line 20 ~ Graphic ~ series', series)
+export default function Graphic({ title, time, value, series }: GraphicProps) {
   const classes = useStyles()
   const ref = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
     if (ref.current && series.length) {
       const chart = createChart(ref.current, {
-        width: 505,
+        width: 1024,
         height: 338,
         layout: {
           backgroundColor: 'transparent',
-          textColor: 'black'
+          textColor: 'white'
         },
         rightPriceScale: {
           scaleMargins: {
-            top: 0.32,
+            top: 0.15,
             bottom: 0
           },
           borderVisible: false
@@ -59,7 +93,7 @@ export default function Graphic({ series }: GraphicProps) {
             style: 0,
             width: 2,
             color: 'rgba(32, 38, 46, 0.1)',
-            labelVisible: false
+            labelVisible: true
           }
         }
       })
@@ -69,13 +103,22 @@ export default function Graphic({ series }: GraphicProps) {
         lineColor: '#ff007a',
         lineWidth: 3
       })
-      lineSeries.setData(series)
+      lineSeries.setData(series.filter(s => s.value > 1000))
     }
   }, [series.length])
 
   return (
-    <Paper className={classes.graphic}>
-      <div id="chart" ref={ref} />
-    </Paper>
+    <div className={classes.stats}>
+      <span>
+        <div>
+          <h4>{title}</h4>
+          {time && <p>{time}</p>}
+        </div>
+        <h3>{`$${new Intl.NumberFormat().format(value)}`}</h3>
+      </span>
+      <Paper className={classes.graphic}>
+        <div id="chart" ref={ref} />
+      </Paper>
+    </div>
   )
 }

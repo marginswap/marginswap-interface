@@ -6,7 +6,9 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 import { CustomLightSpinner } from '../../theme'
 import IconButton from '@material-ui/core/IconButton'
 import Circle from '../../assets/images/blue-loader.svg'
-import { polygonClient as apolloClient } from '../../config/apollo-config'
+import { polygonClient } from '../../config/apollo-config'
+import { avalancheClient } from '../../config/apollo-config'
+import { bscClient } from '../../config/apollo-config'
 
 import { getTopTraders } from './utils'
 
@@ -86,33 +88,48 @@ type TopTradersProps = {
 
 export const Wallets = () => {
   const classes = useStyles()
-  const [checked, setChecked] = useState(false)
+  const [checked, setChecked] = useState(true)
   const [topTraders, setTopTraders] = useState<TopTradersProps[]>([])
 
-  //const [wallets, setWallets] = useState<WalletData[]>([createWalletData(0, 0)])
-  //const [renderedWallets, setRenderedWallets] = useState<JSX.Element[] | undefined>()
-
-  const { loading, error, data } = useSwapsQuery({
-    client: apolloClient,
+  const {
+    loading: avaLoading,
+    error: avaError,
+    data: avalancheData
+  } = useSwapsQuery({
+    client: avalancheClient,
     notifyOnNetworkStatusChange: true
   })
 
-  console.log('🚀 ~ file: Wallets.tsx ~ line 96 ~ Wallets ~ data', data)
-  console.log('🚀 ~ file: Wallets.tsx ~ line 96 ~ Wallets ~ error', error)
-  console.log('🚀 ~ file: Wallets.tsx ~ line 96 ~ Wallets ~ loading', loading)
+  const {
+    loading: polyLoading,
+    error: polyError,
+    data: polygonData
+  } = useSwapsQuery({
+    client: polygonClient,
+    notifyOnNetworkStatusChange: true
+  })
+
+  const {
+    loading: bscLoading,
+    error: bscError,
+    data: bscData
+  } = useSwapsQuery({
+    client: bscClient,
+    notifyOnNetworkStatusChange: true
+  })
 
   useEffect(() => {
-    if (data) {
-      const getTraderData = async (data: {
-        swaps: { fromAmount: string; fromToken: string; id: string; trader: string }[]
-      }) => {
-        const tradersData = await getTopTraders(data)
-        setTopTraders(tradersData)
-      }
-
-      getTraderData(data)
+    const getTraderData = async (polygonData: any, avalancheData: any, bscData: any) => {
+      const tradersData = await getTopTraders({
+        polygonSwaps: polygonData || [],
+        avalancheSwaps: avalancheData || [],
+        bscSwaps: bscData || []
+      })
+      setTopTraders(tradersData)
     }
-  }, [data])
+
+    getTraderData(polygonData?.swaps || [], avalancheData?.swaps || [], bscData?.swaps || [])
+  }, [polygonData, avalancheData, bscData])
 
   const handleChange = () => {
     setChecked(prev => !prev)
@@ -126,18 +143,21 @@ export const Wallets = () => {
           <span>Wallet</span>
           <span>Volume (24hrs)</span>
         </div>
-        {loading ? (
+        {polyLoading || avaLoading || bscLoading ? (
           <CustomLightSpinner src={Circle} alt="loader" size={'90px'} />
-        ) : error ? (
+        ) : polyError || avaError || bscError ? (
           <div> Error! </div>
         ) : (
           <>
             <Collapse in={checked}>
-              {topTraders.map((trader: any) => (
-                <div key={trader.trader} className={classes.walletsList}>
-                  <Wallet address={trader.trader} volume={trader.volume} />
-                </div>
-              ))}
+              {topTraders.map(
+                (trader: any) =>
+                  trader.volume > 0 && (
+                    <div key={trader.trader} className={classes.walletsList}>
+                      <Wallet address={trader.trader} volume={trader.volume} />
+                    </div>
+                  )
+              )}
             </Collapse>
             <IconButton className={classes.expand} onClick={handleChange}>
               {checked ? <ExpandLessIcon /> : <ExpandMoreIcon />}

@@ -40,7 +40,7 @@ const useStyles = makeStyles(() => ({
 interface StatsProps {
   title: string
   time?: string
-  value?: string
+  value?: number
   chartColor?: string
   series: { time: string; value: number }[]
 }
@@ -48,6 +48,7 @@ interface StatsProps {
 export const Stats: FC<StatsProps> = ({ title, time, value, chartColor, series }: StatsProps) => {
   const classes = useStyles()
   const ref = useRef<HTMLDivElement | null>(null)
+
   useEffect(() => {
     if (ref.current && series.length) {
       const chart = createChart(ref.current, {
@@ -103,7 +104,7 @@ export const Stats: FC<StatsProps> = ({ title, time, value, chartColor, series }
       })
       lineSeries.setData(series)
     }
-  }, [series])
+  }, [series.length])
 
   return (
     <div className={classes.stats}>
@@ -112,7 +113,7 @@ export const Stats: FC<StatsProps> = ({ title, time, value, chartColor, series }
           <h4>{title}</h4>
           {time && <p>{time}</p>}
         </div>
-        <h3>{value}</h3>
+        <h3>{`$${value}`}</h3>
       </span>
       {chartColor && <div id="chart" ref={ref} />}
     </div>
