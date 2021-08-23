@@ -49,6 +49,7 @@ export const Analytics = () => {
   const classes = useStyles()
   const [montlySwap, setMonlySwap] = useState<StatsProps>()
   const [dailySwap, setDailySwap] = useState<StatsProps>()
+  console.log('🚀 ~ file: index.tsx ~ line 52 ~ Analytics ~ dailySwap', dailySwap)
   const [montlyFees, setMontlyFees] = useState<number>()
   const gteValue = Math.round(
     DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
@@ -65,11 +66,7 @@ export const Analytics = () => {
 
   //dsv -> Dialy Swap Volume
   // Avalanche
-  const {
-    loading: avalancheDsvLoading,
-    error: avalancheDsvError,
-    data: avalancheDsvData
-  } = useSwapVolumesQuery({
+  const { data: avalancheDsvData } = useSwapVolumesQuery({
     variables: {
       gte: gteValue,
       lte: lteValue
@@ -79,11 +76,7 @@ export const Analytics = () => {
 
   //dsv -> Dialy Swap Volume
   // Polygon
-  const {
-    loading: polygonDsvLoading,
-    error: polygonDsvError,
-    data: polygonDsvData
-  } = useSwapVolumesQuery({
+  const { data: polygonDsvData } = useSwapVolumesQuery({
     variables: {
       gte: gteValue,
       lte: lteValue
@@ -93,11 +86,7 @@ export const Analytics = () => {
 
   //dsv -> Dialy Swap Volume
   // Binance Smart Contract
-  const {
-    loading: bscDsvLoading,
-    error: bscDsvError,
-    data: bscDsvData
-  } = useSwapVolumesQuery({
+  const { data: bscDsvData } = useSwapVolumesQuery({
     variables: {
       gte: gteValue,
       lte: lteValue
@@ -126,6 +115,7 @@ export const Analytics = () => {
 
   useEffect(() => {
     async function getDailyVolume(montlySwap: ChartData[]) {
+      console.log('🚀 ~ file: index.tsx ~ line 117 ~ getDailyVolume ~ montlySwap', montlySwap)
       const yesterday = DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
         .set({ hour: 0 })
         .set({ minute: 1 })
