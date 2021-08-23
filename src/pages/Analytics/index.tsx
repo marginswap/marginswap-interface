@@ -160,12 +160,12 @@ export const Analytics = () => {
         <Stats
           title={'Total Fees'}
           time={'Fees paid past month'}
-          value={montlyFees}
+          value={montlyFees || 0}
           chartColor={'#BE72F3'}
           series={[]}
         />
         <Stats
-          title={'MFI Price'}
+          title={'MFI Volume'}
           time={'Last 24 hrs'}
           value={Number(dailySwap?.totalDailyVolume.toFixed(2)) || 0}
           chartColor={'#94F572'}

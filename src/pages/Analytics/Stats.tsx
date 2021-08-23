@@ -113,7 +113,7 @@ export const Stats: FC<StatsProps> = ({ title, time, value, chartColor, series }
           <h4>{title}</h4>
           {time && <p>{time}</p>}
         </div>
-        <h3>{`$${value}`}</h3>
+        <h3>{`$${new Intl.NumberFormat().format(Number(value))}`}</h3>
       </span>
       {chartColor && <div id="chart" ref={ref} />}
     </div>
