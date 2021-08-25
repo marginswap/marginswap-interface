@@ -49,7 +49,6 @@ export const Analytics = () => {
   const classes = useStyles()
   const [montlySwap, setMonlySwap] = useState<StatsProps>()
   const [dailySwap, setDailySwap] = useState<StatsProps>()
-  console.log('🚀 ~ file: index.tsx ~ line 52 ~ Analytics ~ dailySwap', dailySwap)
   const [montlyFees, setMontlyFees] = useState<number>()
   const gteValue = Math.round(
     DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
@@ -61,8 +60,8 @@ export const Analytics = () => {
   )
   const lteValue = Math.round(DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' }).toSeconds())
 
-  console.log('one day before ::', gteValue)
-  console.log('today ::', lteValue)
+  //console.log('one day before ::', gteValue)
+  //console.log('today ::', lteValue)
 
   //dsv -> Dialy Swap Volume
   // Avalanche
@@ -107,6 +106,10 @@ export const Analytics = () => {
           dailyBscSwapVolumes: bscDsv
         })
 
+        const montlyFees = dailySwapFormatted?.totalDailyVolume * (0.1 / 100)
+
+        setMontlyFees(Number(montlyFees.toFixed(2)))
+
         setMonlySwap(dailySwapFormatted)
       }
       getMontlyVolumeData(avalancheDsv, polygonDsv, bscDsv)
@@ -126,10 +129,6 @@ export const Analytics = () => {
       const last24hVol = await last24HSwaps.map(s => Number(s.value)).reduce((acc, cur) => acc + cur, 0)
 
       setDailySwap({ totalDailyVolume: last24hVol, dailySwap: last24HSwaps })
-
-      const montlyFees = last24hVol * (0.1 / 100)
-
-      setMontlyFees(Number(montlyFees.toFixed(2)))
     }
 
     if (montlySwap?.dailySwap.length) {

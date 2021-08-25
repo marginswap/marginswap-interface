@@ -66,7 +66,7 @@ export const dailySwapVolumesByMonthGQL = gql`
 // - display the trader addresses and USD trading volume in order from greatest to least
 export const swapsGQL = gql`
   query swaps {
-    swaps(where: { type: MARGIN }) {
+    swaps(where: { type: MARGIN, createdAt_gte: $gte, createdAt_lte: $lte }, orderBy: createdAt) {
       id
       trader
       fromAmount

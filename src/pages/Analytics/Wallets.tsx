@@ -3,6 +3,7 @@ import Collapse from '@material-ui/core/Collapse'
 import { makeStyles, Paper } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
+import { DateTime } from 'luxon'
 import { CustomLightSpinner } from '../../theme'
 import IconButton from '@material-ui/core/IconButton'
 import Circle from '../../assets/images/blue-loader.svg'
@@ -91,13 +92,27 @@ export const Wallets = () => {
   const [checked, setChecked] = useState(true)
   const [topTraders, setTopTraders] = useState<TopTradersProps[]>([])
 
+  const gteValue = Math.round(
+    DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
+      .set({ hour: 0 })
+      .set({ minute: 1 })
+      .minus({ day: 2 })
+      .toSeconds()
+  )
+  console.log('🚀 ~ file: Wallets.tsx ~ line 102 ~ Wallets ~ gteValue', gteValue)
+  const lteValue = Math.round(DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' }).toSeconds())
+  console.log('🚀 ~ file: Wallets.tsx ~ line 103 ~ Wallets ~ lteValue', lteValue)
+
   const {
     loading: avaLoading,
     error: avaError,
     data: avalancheData
   } = useSwapsQuery({
     client: avalancheClient,
-    notifyOnNetworkStatusChange: true
+    variables: {
+      gte: gteValue,
+      lte: lteValue
+    }
   })
 
   const {
@@ -106,7 +121,10 @@ export const Wallets = () => {
     data: polygonData
   } = useSwapsQuery({
     client: polygonClient,
-    notifyOnNetworkStatusChange: true
+    variables: {
+      gte: gteValue,
+      lte: lteValue
+    }
   })
 
   const {
@@ -115,7 +133,10 @@ export const Wallets = () => {
     data: bscData
   } = useSwapsQuery({
     client: bscClient,
-    notifyOnNetworkStatusChange: true
+    variables: {
+      gte: gteValue,
+      lte: lteValue
+    }
   })
 
   useEffect(() => {
