@@ -103,7 +103,7 @@ export default function Graphic({ title, time, value, series }: GraphicProps) {
         lineColor: '#ff007a',
         lineWidth: 3
       })
-      lineSeries.setData(series.filter(s => s.value > 1000))
+      lineSeries.setData(series.filter(s => s.value > 10000))
     }
   }, [series.length])
 

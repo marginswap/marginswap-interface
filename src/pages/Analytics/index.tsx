@@ -149,6 +149,7 @@ export const Analytics = () => {
           dailyPolygonSwapVolumes: polygonDsv || []
           /*dailyBscSwapVolumes: bscDsv || []*/
         })
+        console.log('🚀 ~ file: index.tsx ~ line 152 ~ getMontlyVolumeData ~ dailySwapFormatted', dailySwapFormatted)
 
         const montlyFees = dailySwapFormatted?.totalDailyVolume * (0.1 / 100)
 

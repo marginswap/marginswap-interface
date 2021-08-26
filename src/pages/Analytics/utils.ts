@@ -138,13 +138,10 @@ GetDailyVolumeProps) {
   const dailySwap = [...dailyPolygonSwapVolumes, ...dailyAvalancheSwapVolumes /*...dailyBscSwapVolumes*/].map(
     (token: SwapVolumeProps) => {
       let formattedVolume = 0
-      try {
-        formattedVolume =
-          Number(new BigNumber(token.volume).shiftedBy(-18).toFixed(2, BigNumber.ROUND_HALF_UP)) *
-          tokensPrice[token.token].usd
-      } catch (err) {
-        console.log('Token nf ::', token.token)
-      }
+
+      formattedVolume =
+        Number(new BigNumber(token.volume).shiftedBy(-17).toFixed(2, BigNumber.ROUND_HALF_UP)) *
+        tokensPrice[token.token].usd
 
       dailyVolume += formattedVolume
       return {
@@ -202,7 +199,7 @@ GetAggregateBalancesProps) {
   aggregateBalances.forEach((aggBal: AggregateBalances) => {
     try {
       const formattedBalance =
-        Number(new BigNumber(aggBal.balance).shiftedBy(-18).toFixed(2, BigNumber.ROUND_HALF_UP)) *
+        Number(new BigNumber(aggBal.balance).shiftedBy(-17).toFixed(2, BigNumber.ROUND_HALF_UP)) *
         tokensPrice[aggBal.token].usd
 
       tvl += formattedBalance
