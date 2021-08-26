@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core'
-import Graphic from 'components/Graphic'
+//import Graphic from 'components/Graphic'
 import { Stats } from './Stats'
 import { Wallets } from './Wallets'
 import { getAggregateBalances, getDailyVolume, GetAggregateBalancesProps } from './utils'
@@ -213,13 +213,14 @@ export const Analytics = () => {
   return (
     <div className={classes.wrapper}>
       <h2>Marginswap Analytics</h2>
-      <Graphic
+      {/*<Graphic
         title={'Marginswap Volume'}
         time={'Last Month'}
         value={montlySwap?.totalDailyVolume || 0}
         series={montlySwap?.dailySwap || []}
-      />
+      />*/}
       <div className={classes.stats}>
+        <Stats title={'Marginswap Volume'} time={'Last Month'} value={montlySwap?.totalDailyVolume || 0} series={[]} />
         <Stats title={'Total Fees'} time={'Fees paid past month'} value={montlyFees || 0} series={[]} />
         <Stats
           title={'Marginswap Volume'}
