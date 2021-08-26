@@ -99,9 +99,9 @@ export const Wallets = () => {
       .minus({ day: 2 })
       .toSeconds()
   )
-  console.log('🚀 ~ file: Wallets.tsx ~ line 102 ~ Wallets ~ gteValue', gteValue)
+  //console.log('🚀 ~ file: Wallets.tsx ~ line 102 ~ Wallets ~ gteValue', gteValue)
   const lteValue = Math.round(DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' }).toSeconds())
-  console.log('🚀 ~ file: Wallets.tsx ~ line 103 ~ Wallets ~ lteValue', lteValue)
+  //console.log('🚀 ~ file: Wallets.tsx ~ line 103 ~ Wallets ~ lteValue', lteValue)
 
   const {
     loading: avaLoading,

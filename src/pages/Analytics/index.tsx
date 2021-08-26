@@ -3,9 +3,9 @@ import { makeStyles } from '@material-ui/core'
 import Graphic from 'components/Graphic'
 import { Stats } from './Stats'
 import { Wallets } from './Wallets'
-import { getDailyVolume } from './utils'
+import { getAggregateBalances, getDailyVolume, GetAggregateBalancesProps } from './utils'
 import { DateTime } from 'luxon'
-import { useSwapVolumesQuery } from '../../graphql/queries/analytics'
+import { useSwapVolumesQuery, useAggregatedBalancesQuery } from '../../graphql/queries/analytics'
 import { avalancheClient } from '../../config/apollo-config'
 import { polygonClient } from '../../config/apollo-config'
 import { bscClient } from '../../config/apollo-config'
@@ -23,10 +23,10 @@ const useStyles = makeStyles(() => ({
     }
   },
   stats: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '30px',
-    width: '1040px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '1024px',
     '& p': {
       margin: '10px 0',
       fontWeight: 600,
@@ -50,6 +50,8 @@ export const Analytics = () => {
   const [montlySwap, setMonlySwap] = useState<StatsProps>()
   const [dailySwap, setDailySwap] = useState<StatsProps>()
   const [montlyFees, setMontlyFees] = useState<number>()
+  const [aggregateBalances, setAggregateBalances] = useState<number>()
+
   const gteValue = Math.round(
     DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
       .set({ hour: 0 })
@@ -93,6 +95,36 @@ export const Analytics = () => {
     client: bscClient
   })
 
+  // Binance Smart Contract
+  const {
+    data: bscAggreateBalancesData,
+    loading: bscAggBalLoading,
+    error: bscAggBalError
+  } = useAggregatedBalancesQuery({
+    client: bscClient
+  })
+
+  // Polygon Smart Contract
+  const {
+    data: polygonAggreateBalancesData,
+    loading: polygonAggBalLoading,
+    error: polygonAggBalError
+  } = useAggregatedBalancesQuery({
+    client: polygonClient
+  })
+
+  // Avalanche Smart Contract
+  const {
+    data: avalancheAggreateBalancesData,
+    loading: avalancheAggBalLoading,
+    error: avalancheAggBalError
+  } = useAggregatedBalancesQuery({
+    client: avalancheClient
+  })
+
+  const aggregateBalancesLoading = bscAggBalLoading && polygonAggBalLoading && avalancheAggBalLoading
+  const aggregateBalancesError = bscAggBalError && polygonAggBalError && avalancheAggBalError
+
   const avalancheDsv = avalancheDsvData?.dailySwapVolumes || []
   const polygonDsv = polygonDsvData?.dailySwapVolumes || []
   const bscDsv = bscDsvData?.dailySwapVolumes || []
@@ -118,7 +150,6 @@ export const Analytics = () => {
 
   useEffect(() => {
     async function getDailyVolume(montlySwap: ChartData[]) {
-      console.log('🚀 ~ file: index.tsx ~ line 117 ~ getDailyVolume ~ montlySwap', montlySwap)
       const yesterday = DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
         .set({ hour: 0 })
         .set({ minute: 1 })
@@ -136,6 +167,35 @@ export const Analytics = () => {
     }
   }, [montlySwap?.dailySwap])
 
+  useEffect(() => {
+    async function getTlv({
+      aggregateBalancesBsc,
+      aggregateBalancesAvalanche,
+      aggregateBalancesPolygon
+    }: GetAggregateBalancesProps) {
+      const tvl = await getAggregateBalances({
+        aggregateBalancesBsc,
+        aggregateBalancesAvalanche,
+        aggregateBalancesPolygon
+      })
+      setAggregateBalances(tvl)
+    }
+
+    if (!aggregateBalancesLoading && !aggregateBalancesError) {
+      getTlv({
+        aggregateBalancesBsc: bscAggreateBalancesData?.aggregatedBalances || [],
+        aggregateBalancesPolygon: polygonAggreateBalancesData?.aggregatedBalances || [],
+        aggregateBalancesAvalanche: avalancheAggreateBalancesData?.aggregatedBalances || []
+      })
+    }
+  }, [
+    aggregateBalancesLoading,
+    aggregateBalancesError,
+    bscAggreateBalancesData,
+    polygonAggreateBalancesData,
+    avalancheAggreateBalancesData
+  ])
+
   return (
     <div className={classes.wrapper}>
       <h2>Marginswap Analytics</h2>
@@ -146,20 +206,14 @@ export const Analytics = () => {
         series={montlySwap?.dailySwap || []}
       />
       <div className={classes.stats}>
-        <Stats
-          title={'Total Fees'}
-          time={'Fees paid past month'}
-          value={montlyFees || 0}
-          chartColor={'#BE72F3'}
-          series={[]}
-        />
+        <Stats title={'Total Fees'} time={'Fees paid past month'} value={montlyFees || 0} series={[]} />
         <Stats
           title={'Marginswap Volume'}
           time={'Last 24 hrs'}
           value={Number(dailySwap?.totalDailyVolume.toFixed(2)) || 0}
-          chartColor={'#94F572'}
           series={[]}
         />
+        <Stats title={'Total Value Locked'} time={'Last 24 hrs'} value={Number(aggregateBalances) || 0} series={[]} />
         {/*
         <Stats
           title={'Fees'}

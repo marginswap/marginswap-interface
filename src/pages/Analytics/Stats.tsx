@@ -4,8 +4,6 @@ import { createChart } from 'lightweight-charts'
 
 const useStyles = makeStyles(() => ({
   stats: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
     margin: '40px 0',
     '& span': {
       height: '90px',
