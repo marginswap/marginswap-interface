@@ -1,7 +1,6 @@
 import axiosInstance from '../../config/axios-config'
 import { DateTime } from 'luxon'
 import groupby from 'lodash.groupby'
-import { utils } from 'ethers'
 import { BigNumber } from 'bignumber.js'
 import { AVALANCHE_TOKENS_LIST } from '../../constants'
 
@@ -87,7 +86,9 @@ VolumeSwaps): Promise<TopTradersProps[]> {
 
   const swapWithTokensUsdValue = await swaps.map(swap => ({
     ...swap,
-    usdTokenValue: Number(utils.formatUnits(swap.fromAmount)) * tokensPrice[swap.fromToken].usd
+    usdTokenValue:
+      Number(new BigNumber(swap.fromAmount).shiftedBy(-17).toFixed(2, BigNumber.ROUND_HALF_UP)) *
+      tokensPrice[swap.fromToken].usd
   }))
 
   const tradersInfo = await groupby(swapWithTokensUsdValue, (swap: { trader: any }) => swap.trader)
