@@ -66,32 +66,24 @@ type TopTradersProps = {
 type VolumeSwaps = {
   polygonSwaps: DataProps[]
   avalancheSwaps: DataProps[]
-  bscSwaps: DataProps[]
+  /*bscSwaps: DataProps[]*/
 }
 
 export async function getTopTraders({
   polygonSwaps,
-  avalancheSwaps,
-  bscSwaps
-}: VolumeSwaps): Promise<TopTradersProps[]> {
+  avalancheSwaps
+}: /*bscSwaps*/
+VolumeSwaps): Promise<TopTradersProps[]> {
   const polygonTokenAddresses = await Promise.all(polygonSwaps.map(swap => swap.fromToken))
-  const bscTokenAddresses = await Promise.all(bscSwaps.map(swap => swap.fromToken))
+  //const bscTokenAddresses = await Promise.all(bscSwaps.map(swap => swap.fromToken))
 
   const polygonTokensPrice = await getPolygonTokenUSDPrice(polygonTokenAddresses)
-  //console.log('🚀 ~ file: utils.ts ~ line 80 ~ polygonTokensPrice', polygonTokensPrice)
   const avalancheTokensPrice = await getAvalancheTokenUSDPrice()
-  //console.log('🚀 ~ file: utils.ts ~ line 82 ~ avalancheTokensPrice', avalancheTokensPrice)
-  const bscTokensPrice = await getBscTokenUSDPrice(bscTokenAddresses)
+  //const bscTokensPrice = await getBscTokenUSDPrice(bscTokenAddresses)
 
   let swaps = []
-  swaps = [...polygonSwaps, ...avalancheSwaps, ...bscSwaps]
-  const tokensPrice = { ...polygonTokensPrice, ...avalancheTokensPrice, ...bscTokensPrice }
-  //console.log('🚀 ~ file: utils.ts ~ line 85 ~ tokensPrice', tokensPrice)
-
-  /*console.log('🚀 ~ file: utils.ts ~ line 76 ~ avalancheSwaps', avalancheSwaps)
-  console.log('🚀 ~ file: utils.ts ~ line 76 ~ polygonSwaps', polygonSwaps)
-  console.log('🚀 ~ file: utils.ts ~ line 76 ~ bscSwaps', bscSwaps)
-  console.log('🚀 ~ file: utils.ts ~ line 91 ~ Swaps', swaps)*/
+  swaps = [...polygonSwaps, ...avalancheSwaps /*...bscSwaps*/]
+  const tokensPrice = { ...polygonTokensPrice, ...avalancheTokensPrice /*...bscTokensPrice*/ }
 
   const swapWithTokensUsdValue = await swaps.map(swap => ({
     ...swap,
@@ -124,30 +116,36 @@ export type SwapVolumeProps = {
 export type GetDailyVolumeProps = {
   dailyPolygonSwapVolumes: SwapVolumeProps[]
   dailyAvalancheSwapVolumes: SwapVolumeProps[]
-  dailyBscSwapVolumes: SwapVolumeProps[]
+  //dailyBscSwapVolumes: SwapVolumeProps[]
 }
 
 export async function getDailyVolume({
   dailyPolygonSwapVolumes,
-  dailyAvalancheSwapVolumes,
-  dailyBscSwapVolumes
-}: GetDailyVolumeProps) {
+  dailyAvalancheSwapVolumes
+}: /*dailyBscSwapVolumes*/
+GetDailyVolumeProps) {
   // avalancheTokenAddresses ->  WE ARE GETTING THIS FROM A STATIC FILE
   const polygonTokenAddresses = dailyPolygonSwapVolumes.map(dsv => dsv.token)
-  const bscTokenAddresses = dailyBscSwapVolumes.map(dsv => dsv.token)
+  //const bscTokenAddresses = dailyBscSwapVolumes.map(dsv => dsv.token)
 
   const tokensAvalanchePrice = await getAvalancheTokenUSDPrice()
   const tokensPolygonPrice = await getPolygonTokenUSDPrice(polygonTokenAddresses)
-  const tokensBscPrice = await getBscTokenUSDPrice(bscTokenAddresses)
+  //const tokensBscPrice = await getBscTokenUSDPrice(bscTokenAddresses)
 
-  const tokensPrice = { ...tokensAvalanchePrice, ...tokensPolygonPrice, ...tokensBscPrice }
+  const tokensPrice = { ...tokensAvalanchePrice, ...tokensPolygonPrice /*...tokensBscPrice*/ }
 
   let dailyVolume = 0
-  const dailySwap = [...dailyPolygonSwapVolumes, ...dailyAvalancheSwapVolumes, ...dailyBscSwapVolumes].map(
+  const dailySwap = [...dailyPolygonSwapVolumes, ...dailyAvalancheSwapVolumes /*...dailyBscSwapVolumes*/].map(
     (token: SwapVolumeProps) => {
-      const formattedVolume =
-        Number(new BigNumber(token.volume).shiftedBy(-18).toFixed(2, BigNumber.ROUND_HALF_UP)) *
-        tokensPrice[token.token].usd
+      let formattedVolume = 0
+      try {
+        formattedVolume =
+          Number(new BigNumber(token.volume).shiftedBy(-18).toFixed(2, BigNumber.ROUND_HALF_UP)) *
+          tokensPrice[token.token].usd
+      } catch (err) {
+        console.log('Token nf ::', token.token)
+      }
+
       dailyVolume += formattedVolume
       return {
         time: DateTime.fromSeconds(Number(token.createdAt)).toFormat('yyyy-MM-dd').toString(),
@@ -181,26 +179,26 @@ interface AggregateBalances {
 export type GetAggregateBalancesProps = {
   aggregateBalancesPolygon: AggregateBalances[]
   aggregateBalancesAvalanche: AggregateBalances[]
-  aggregateBalancesBsc: AggregateBalances[]
+  /*aggregateBalancesBsc: AggregateBalances[]*/
 }
 
 export async function getAggregateBalances({
   aggregateBalancesPolygon,
-  aggregateBalancesAvalanche,
-  aggregateBalancesBsc
-}: GetAggregateBalancesProps) {
+  aggregateBalancesAvalanche
+}: /*aggregateBalancesBsc*/
+GetAggregateBalancesProps) {
   // avalancheTokenAddresses ->  WE ARE GETTING THIS FROM A STATIC FILE
   const polygonTokenAddresses = aggregateBalancesPolygon.map(dsv => dsv.token)
-  const bscTokenAddresses = aggregateBalancesBsc.map(dsv => dsv.token)
+  //const bscTokenAddresses = aggregateBalancesBsc.map(dsv => dsv.token)
 
   const tokensAvalanchePrice = await getAvalancheTokenUSDPrice()
   const tokensPolygonPrice = await getPolygonTokenUSDPrice(polygonTokenAddresses)
-  const tokensBscPrice = await getBscTokenUSDPrice(bscTokenAddresses)
+  //const tokensBscPrice = await getBscTokenUSDPrice(bscTokenAddresses)
 
-  const tokensPrice = { ...tokensAvalanchePrice, ...tokensPolygonPrice, ...tokensBscPrice }
+  const tokensPrice = { ...tokensAvalanchePrice, ...tokensPolygonPrice /*...tokensBscPrice*/ }
 
   let tvl = 0
-  const aggregateBalances = [...aggregateBalancesPolygon, ...aggregateBalancesAvalanche, ...aggregateBalancesBsc]
+  const aggregateBalances = [...aggregateBalancesPolygon, ...aggregateBalancesAvalanche /*...aggregateBalancesBsc*/]
   aggregateBalances.forEach((aggBal: AggregateBalances) => {
     try {
       const formattedBalance =

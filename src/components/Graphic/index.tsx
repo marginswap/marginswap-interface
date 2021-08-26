@@ -65,8 +65,8 @@ export default function Graphic({ title, time, value, series }: GraphicProps) {
         },
         rightPriceScale: {
           scaleMargins: {
-            top: 0.15,
-            bottom: 0
+            top: 0.1,
+            bottom: 0.5
           },
           borderVisible: false
         },
