@@ -202,10 +202,15 @@ export async function getAggregateBalances({
   let tvl = 0
   const aggregateBalances = [...aggregateBalancesPolygon, ...aggregateBalancesAvalanche, ...aggregateBalancesBsc]
   aggregateBalances.forEach((aggBal: AggregateBalances) => {
-    const formattedBalance =
-      Number(new BigNumber(aggBal.balance).shiftedBy(-18).toFixed(2, BigNumber.ROUND_HALF_UP)) *
-      tokensPrice[aggBal.token].usd
-    tvl += formattedBalance
+    try {
+      const formattedBalance =
+        Number(new BigNumber(aggBal.balance).shiftedBy(-18).toFixed(2, BigNumber.ROUND_HALF_UP)) *
+        tokensPrice[aggBal.token].usd
+
+      tvl += formattedBalance
+    } catch (err) {
+      console.log('Token not found ::', aggBal.token)
+    }
   })
 
   return tvl

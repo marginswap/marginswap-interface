@@ -236,6 +236,10 @@ export const AVALANCHE_TOKENS_LIST: AvalancheTokenInfo[] = [
   {
     token: '0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab',
     type: 'ethereum'
+  },
+  {
+    token: '0x408d4cd0adb7cebd1f1a1c33a0ba2098e1295bab',
+    type: 'binance-wrapped-btc'
   }
 ]
 
