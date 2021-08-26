@@ -132,8 +132,6 @@ export async function getDailyVolume({
   dailyAvalancheSwapVolumes,
   dailyBscSwapVolumes
 }: GetDailyVolumeProps) {
-  const eithTeenCeroDecimals = 100000000000000000
-
   // avalancheTokenAddresses ->  WE ARE GETTING THIS FROM A STATIC FILE
   const polygonTokenAddresses = dailyPolygonSwapVolumes.map(dsv => dsv.token)
   const bscTokenAddresses = dailyBscSwapVolumes.map(dsv => dsv.token)
@@ -147,7 +145,9 @@ export async function getDailyVolume({
   let dailyVolume = 0
   const dailySwap = [...dailyPolygonSwapVolumes, ...dailyAvalancheSwapVolumes, ...dailyBscSwapVolumes].map(
     (token: SwapVolumeProps) => {
-      const formattedVolume = (Number(token.volume) / eithTeenCeroDecimals) * tokensPrice[token.token].usd
+      const formattedVolume =
+        Number(new BigNumber(token.volume).shiftedBy(-18).toFixed(2, BigNumber.ROUND_HALF_UP)) *
+        tokensPrice[token.token].usd
       dailyVolume += formattedVolume
       return {
         time: DateTime.fromSeconds(Number(token.createdAt)).toFormat('yyyy-MM-dd').toString(),
