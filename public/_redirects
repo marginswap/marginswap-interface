@@ -1,3 +1,5 @@
 http://beta.marginswap.exchange/* https://app.marginswap.exchange/:splat 301!
 https://beta.marginswap.exchange/* https://app.marginswap.exchange/:splat 301!
+http://legacy.marginswap.exchange/* https://legacy.app.marginswap.exchange/:splat 301!
+https://legacy.marginswap.exchange/* https://legacy.marginswap.exchange/:splat 301!
 /*    /index.html   200
