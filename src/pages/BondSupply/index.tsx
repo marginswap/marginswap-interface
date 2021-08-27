@@ -33,6 +33,7 @@ import { setInterval } from 'timers'
 import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 import { TransactionDetails } from '../../state/transactions/reducer'
 import { NETWORK_URLS } from '../../constants/networks'
+import Tooltip from '@material-ui/core/Tooltip'
 
 const DATA_POLLING_INTERVAL = 60 * 1000
 
@@ -79,8 +80,10 @@ const BOND_RATES_COLUMNS = [
     name: 'APR With Incentive',
     id: 'aprInToken',
     // eslint-disable-next-line react/display-name
-    render: ({ aprInToken, aprInMfi }: { aprInToken: number; aprInMfi: number }) => (
-      <span>{`${aprInToken.toFixed(2)}% token + ${aprInMfi.toFixed(2)}% MFI`}</span>
+    render: ({ coin, aprInToken, aprInMfi }: { coin: string; aprInToken: number; aprInMfi: number }) => (
+      <Tooltip title={`${aprInToken.toFixed(2)}% ${coin} + ${aprInMfi.toFixed(2)}% MFI`} placement="right" arrow>
+        <span>{`${(aprInToken + aprInMfi).toFixed(2)}%`}</span>
+      </Tooltip>
     )
   },
   { name: 'Maturity (minutes remaining)', id: 'maturity' }
