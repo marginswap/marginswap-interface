@@ -16,7 +16,6 @@ interface ModalStakeData {
   chainId?: ChainId | undefined
   provider?: Web3Provider | undefined
   address?: string | undefined
-  period: number
   mfiStake: boolean
   amount: string
   attemptingTxn: boolean
@@ -32,7 +31,6 @@ export default function ConfirmStakeModal({
   chainId,
   provider,
   address,
-  period,
   mfiStake,
   amount,
   attemptingTxn,
@@ -50,13 +48,13 @@ export default function ConfirmStakeModal({
     return (
       <>
         {mfiStake ? (
-          <MFIData chainId={chainId} provider={provider} address={address} period={period} />
+          <MFIData chainId={chainId} provider={provider} address={address} />
         ) : (
-          <LiquidityData chainId={chainId} provider={provider} address={address} period={period} />
+          <LiquidityData chainId={chainId} provider={provider} address={address} />
         )}
         <ButtonPrimary onClick={onConfirm} height="63px" id="swap-button-1">
           <AutoRow gap="6px" justify="center">
-            Confirm Stake
+            Confirm transaction
           </AutoRow>
         </ButtonPrimary>
       </>
@@ -71,7 +69,7 @@ export default function ConfirmStakeModal({
       <TransactionErrorContent onDismiss={onDismiss} message={stakeErrorMsn} />
     ) : (
       <ConfirmationModalContent
-        title="Confirm Stake"
+        title="Confirm transaction"
         onDismiss={onDismiss}
         topContent={modalHeader}
         bottomContent={modalBottom}

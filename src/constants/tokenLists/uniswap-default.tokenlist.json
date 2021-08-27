@@ -14,6 +14,38 @@
   ],
   "tokens": [
     {
+      "name": "MAI",
+      "address": "0xa3Fa99A148fA48D14Ed51d610c367C61876997F1",
+      "symbol": "miMATIC",
+      "decimals": 18,
+      "chainId": 137,
+      "logoURI": "https://raw.githubusercontent.com/0xlaozi/qidao/main/images/mimatic-red.png"
+    },
+    {
+      "name": "Quickswap",
+      "address": "0x831753DD7087CaC61aB5644b308642cc1c33Dc13",
+      "symbol": "QUICK",
+      "decimals": 18,
+      "chainId": 137,
+      "logoURI": "https://raw.githubusercontent.com/sameepsi/quickswap-interface/master/public/favicon.jpeg"
+    },
+    {
+      "chainId": 43114,
+      "address": "0xc7198437980c041c805A1EDcbA50c1Ce5db95118",
+      "decimals": 6,
+      "name": "Tether USD",
+      "symbol": "USDT.e",
+      "logoURI": "https://raw.githubusercontent.com/ava-labs/avalanche-bridge-resources/main/tokens/USDT/logo.png"
+    },
+    {
+      "chainId": 43114,
+      "address": "0x49D5c2BdFfac6CE2BFdB6640F4F80f226bc10bAB",
+      "decimals": 18,
+      "name": "Wrapped ETH (new bridge)",
+      "symbol": "WETH.e",
+      "logoURI": "https://raw.githubusercontent.com/ava-labs/avalanche-bridge-resources/main/tokens/WETH/logo.png"
+    },
+    {
       "chainId": 43114,
       "address": "0x60781C2586D68229fde47564546784ab3fACA982",
       "decimals": 18,

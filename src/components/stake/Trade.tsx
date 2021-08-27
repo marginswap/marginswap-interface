@@ -12,8 +12,8 @@ import {
   TokenAmount,
   stake,
   withdrawStake,
+  exitLegacyStake,
   withdrawReward,
-  Duration,
   getTokenBalance,
   Token,
   accruedReward,
@@ -32,16 +32,17 @@ import Select from '../Select'
 // import ToggleSelector from '../ToggleSelector'
 import { GreyCard } from '../../components/Card'
 import ApprovalStepper from './ApprovalStepper'
+import MigrateStepper from './MigrateStepper'
 import { WarningBar } from '../../components/Placeholders'
 
-import { getMFIStakingContract, getLiquidityStakingContract } from 'utils'
+import { getLegacyStakingContract } from 'utils'
 import { getNotificationMsn } from './utils'
 import { utils } from 'ethers'
 
 import { DropdownsContainer, StyledOutlinedInput, StyledStakeHeader, StyledBalanceMax } from './styleds'
 import { /*PaddedColumn,*/ Wrapper } from '../swap/styleds'
 import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
-import { useCanWithdraw } from './hooks'
+import { useCanWithdraw, useIsMigrated, useSignedContract } from './hooks'
 import { MFI_ADDRESS, MFI_USDC_ADDRESS } from '../../constants'
 import { TransactionDetails } from '../../state/transactions/reducer'
 
@@ -77,7 +78,6 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
 
   const amount: string = watch('amount', '0')
   const transactionType = watch('transactionType', 1)
-  const period = watch('period', 1)
   const addTransactionResponseCallback = (responseObject: TransactionDetails) => {
     setPendingTxhHash(responseObject.hash)
   }
@@ -85,7 +85,21 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
   const getMFIToken = new Token(chainId ?? ChainId.MAINNET, MFI_ADDRESS, 18, 'MFI')
   const getLiquidityToken = new Token(chainId ?? ChainId.MAINNET, MFI_USDC_ADDRESS, 18, 'MFI/USDC')
   const currentToken = mfiStake ? getMFIToken : getLiquidityToken
-  const canWithdraw = useCanWithdraw({ chainId, provider, address, account, mfiStake })
+  const signedContract = useSignedContract({ chainId, provider, account, mfiStake })
+  const canWithdraw = useCanWithdraw({
+    chainId,
+    provider,
+    address,
+    account,
+    signedContract
+  })
+  const isMigrated = useIsMigrated({
+    chainId,
+    provider,
+    address,
+    account,
+    signedContract
+  })
   const addTransaction = useTransactionAdder(addTransactionResponseCallback)
   const isTxnPending = useIsTransactionPending(pendingTxhHash || '')
   // check whether the user has approved the router on the input token
@@ -95,6 +109,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
   )
 
   const approvalSubmitted = approval === ApprovalState.APPROVED || approval === ApprovalState.PENDING
+  const migrated = isMigrated && transactionType === '3'
 
   useEffect(() => {
     if (!isTxnPending && pendingTxhHash) {
@@ -129,7 +144,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
 
       // Claim
       if (txnType === transactionTypeOptions[1].value && address) {
-        balance = await accruedReward(contract, address)
+        balance = await accruedReward(contract, undefined, address)
       }
 
       // Withdraw
@@ -148,36 +163,34 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
     setStakeErrorMsn(error)
   }
 
-  const getDuration = () => {
-    switch (period) {
-      case periodSelectOptions[0].value:
-        return Duration.ONE_WEEK
-      case periodSelectOptions[1].value:
-        return Duration.ONE_MONTH
-      case periodSelectOptions[2].value:
-        return Duration.THREE_MONTHS
-      default:
-        return Duration.ONE_WEEK
+  const handleMigrate = async () => {
+    const legacy = await getLegacyStakingContract(chainId, provider, account ?? undefined)
+
+    if (legacy && account) {
+      exitLegacyStake(legacy, account)
+        .then((data: any) => {
+          addTransaction(data, {
+            summary: `Migrate stake`
+          })
+          setAttemptingTxn(false)
+          setTxHash(data.hash)
+        })
+        .catch((err: any) => {
+          console.error(err)
+          handleError(err?.data?.message)
+        })
+    } else {
+      console.log('Error with legacy contract')
     }
   }
 
   const handleStake = async () => {
-    let signedContract
-
-    if (mfiStake && account) {
-      signedContract = getMFIStakingContract(chainId, provider, account)
-    } else {
-      if (account) {
-        signedContract = getLiquidityStakingContract(chainId, provider, account)
-      }
-    }
-
     const tokenAmt = utils.parseUnits(amount, 18)
 
     if (signedContract) {
       setAttemptingTxn(true)
       if (transactionType.toString() === transactionTypeOptions[0].value) {
-        stake(signedContract, tokenAmt.toHexString(), getDuration())
+        stake(signedContract, tokenAmt.toHexString())
           .then((data: any) => {
             addTransaction(data, {
               summary: `Deposit Stake`
@@ -186,7 +199,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
             setTxHash(data.hash)
             setValue('amount', '0')
           })
-          .catch((err: any) => handleError(err.data.message))
+          .catch((err: any) => handleError(err?.data?.message))
       }
 
       if (transactionType.toString() === transactionTypeOptions[1].value) {
@@ -212,7 +225,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
             setTxHash(data.hash)
             setValue('amount', '0')
           })
-          .catch((err: any) => handleError(err.data.message))
+          .catch((err: any) => handleError(err?.data?.message))
       }
     }
   }
@@ -225,12 +238,6 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
     queryClient.refetchQueries()
   }
 
-  const periodSelectOptions = [
-    { value: '1', label: 'One week' },
-    { value: '2', label: 'One month' },
-    { value: '3', label: 'Three months' }
-  ]
-
   const transactionTypeOptions = [
     { value: '1', label: 'Deposit' },
     { value: '2', label: 'Claim' },
@@ -238,7 +245,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
   ]
 
   const isAbleTransaction = Boolean(amount?.length) && Number(amount) > 0
-  const isAbleToWithdraw = transactionType === '1' || (canWithdraw.data && transactionType !== '1')
+  const isAbleToWithdraw = transactionType === '1' || (canWithdraw && transactionType !== '1')
 
   return (
     <div style={{ maxWidth: 420 }}>
@@ -256,7 +263,6 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
           <Wrapper>
             <DropdownsContainer>
               <Select name="transactionType" options={transactionTypeOptions} register={register} />
-              <Select name="period" options={periodSelectOptions} register={register} />
             </DropdownsContainer>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <div style={{ position: 'relative', width: '100%' }}>
@@ -284,7 +290,7 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
                 />
               </div>
             </div>
-            {isAbleTransaction && isAbleToWithdraw ? (
+            {!migrated && isAbleTransaction && isAbleToWithdraw ? (
               <ApprovalStepper
                 firstStepLabel={transactionTypeOptions.find(tt => tt.value === transactionType)?.label || ''}
                 firstStepOnClick={e => {
@@ -299,39 +305,47 @@ export default function TradeStake({ chainId, provider, address, account }: Stak
                 approval={approval}
                 approvalSubmitted={approvalSubmitted}
               />
+            ) : migrated && isAbleToWithdraw ? (
+              <MigrateStepper
+                firstStepOnClick={e => {
+                  e.preventDefault()
+                  handleMigrate()
+                }}
+                secondStepLabel={transactionTypeOptions.find(tt => tt.value === transactionType)?.label || ''}
+                secondStepOnClick={e => {
+                  e.preventDefault()
+                  setConfirmStakeModal(true)
+                }}
+                migrated={migrated}
+              />
             ) : (
-              <GreyCardStyled>{getNotificationMsn(isAbleTransaction, canWithdraw.data || false, false)}</GreyCardStyled>
+              <GreyCardStyled>{getNotificationMsn(isAbleTransaction, canWithdraw || false, false)}</GreyCardStyled>
             )}
           </Wrapper>
         </form>
       </AppBody>
       {mfiStake ? (
-        <MFIData
-          chainId={chainId}
-          provider={provider}
-          address={address ?? undefined}
-          period={Number(period)}
-          pendingTxhHash={pendingTxhHash}
-        />
+        <MFIData chainId={chainId} provider={provider} address={address ?? undefined} pendingTxhHash={pendingTxhHash} />
       ) : (
         <LiquidityData
           chainId={chainId}
           provider={provider}
           address={address ?? undefined}
-          period={Number(period)}
           pendingTxhHash={pendingTxhHash}
         />
       )}
       <WarningBar>
-        Use different wallets if you intend to stake for multiple timeframes. All stakes from the same wallet will be
-        locked up for the longest selected timeframe
+        To support continuous staking, all stake will be locked for 30 days, after which it can be withdrawn. If you
+        previously staked in the system that supported multiple stake durations, you will have to migrate your stake
+        after your staking period ends, in order to withdraw it. When you migrate your stake will not be locked up
+        again, you can withdraw immediately if you like. Accrued reward balance for migrated 90 day stakers includes a
+        pre-applied bonus to make up for longer staking period.
       </WarningBar>
       <ConfirmStakeModal
         token={currentToken}
         chainId={chainId}
         provider={provider}
         address={address ?? undefined}
-        period={Number(period)}
         mfiStake={mfiStake}
         amount={amount}
         attemptingTxn={attemptingTxn}
