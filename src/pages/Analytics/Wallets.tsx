@@ -96,7 +96,7 @@ export const Wallets = () => {
     DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
       .set({ hour: 0 })
       .set({ minute: 1 })
-      .minus({ day: 2 })
+      .minus({ day: 1 })
       .toSeconds()
   )
   const lteValue = Math.round(DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' }).toSeconds())

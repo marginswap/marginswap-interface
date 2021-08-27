@@ -51,6 +51,8 @@ export const Analytics = () => {
   const [dailySwap, setDailySwap] = useState<StatsProps>()
   const [montlyFees, setMontlyFees] = useState<number>()
   const [aggregateBalances, setAggregateBalances] = useState<number>()
+  const [totalLending, setTotalLending] = useState<number>()
+  const [totalBorrowed, setTotalBorrowed] = useState<number>()
 
   const gteValue = Math.round(
     DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
@@ -182,21 +184,23 @@ export const Analytics = () => {
   }, [montlySwap?.dailySwap])
 
   useEffect(() => {
-    async function getTlv({
+    async function getTvl({
       /*aggregateBalancesBsc,*/
       aggregateBalancesAvalanche,
       aggregateBalancesPolygon
     }: GetAggregateBalancesProps) {
-      const tvl = await getAggregateBalances({
+      const agregateBalancesResults = await getAggregateBalances({
         /*aggregateBalancesBsc,*/
         aggregateBalancesAvalanche,
         aggregateBalancesPolygon
       })
-      setAggregateBalances(tvl)
+      setAggregateBalances(agregateBalancesResults.tvl)
+      setTotalLending(agregateBalancesResults.totalBorrowed)
+      setTotalBorrowed(agregateBalancesResults.totalLending)
     }
 
     if (!aggregateBalancesLoading && !aggregateBalancesError) {
-      getTlv({
+      getTvl({
         /*aggregateBalancesBsc: bscAggreateBalancesData?.aggregatedBalances || [],*/
         aggregateBalancesPolygon: polygonAggreateBalancesData?.aggregatedBalances || [],
         aggregateBalancesAvalanche: avalancheAggreateBalancesData?.aggregatedBalances || []
@@ -210,6 +214,12 @@ export const Analytics = () => {
     avalancheAggreateBalancesData
   ])
 
+  /*useEffect(() => {
+    if (aggregateBalances) {
+
+    }
+  }, [aggregateBalances])*/
+
   return (
     <div className={classes.wrapper}>
       <h2>Marginswap Analytics</h2>
@@ -220,30 +230,35 @@ export const Analytics = () => {
         series={montlySwap?.dailySwap || []}
       />*/}
       <div className={classes.stats}>
-        <Stats title={'Marginswap Volume'} time={'Last Month'} value={montlySwap?.totalDailyVolume || 0} series={[]} />
-        <Stats title={'Total Fees'} time={'Fees paid past month'} value={montlyFees || 0} series={[]} />
-        <Stats
-          title={'Marginswap Volume'}
-          time={'Last 24 hrs'}
-          value={Number(dailySwap?.totalDailyVolume.toFixed(2)) || 0}
-          series={[]}
-        />
-        <Stats title={'Total Value Locked'} time={'Last 24 hrs'} value={Number(aggregateBalances) || 0} series={[]} />
-        {/*
-        <Stats
-          title={'Fees'}
-          time={'Last 24 hrs'}
-          value={mvData?.totalDailyVolume}
-          chartColor={'#F90B0B'}
-          series={dailySwap?.dailySwap || []}
-        />
-        <Stats
-          title={'Total Volume'}
-          time={'Last 24 hrs'}
-          value={mvData?.totalDailyVolume}
-          chartColor={'#F99808'}
-          series={dailySwap?.dailySwap || []}
-       />*/}
+        <div>
+          <Stats
+            title={'Marginswap Volume'}
+            time={'Last Month'}
+            value={montlySwap?.totalDailyVolume || 0}
+            series={[]}
+          />
+          <Stats
+            title={'Marginswap Volume'}
+            time={'Last 24 hrs'}
+            value={Number(dailySwap?.totalDailyVolume.toFixed(2)) || 0}
+            series={[]}
+          />
+        </div>
+        <div>
+          <Stats title={'Total Fees'} time={'Fees paid past month'} value={montlyFees || 0} series={[]} />
+          <Stats title={'Total Lending'} time={'Last 24 hrs'} value={totalLending} chartColor={'#F99808'} series={[]} />
+        </div>
+        <div>
+          <Stats
+            title={'Total Borrowed'}
+            time={'Last 24 hrs'}
+            value={totalBorrowed}
+            chartColor={'#F90B0B'}
+            series={[]}
+          />
+
+          <Stats title={'Total Value Locked'} time={'Last 24 hrs'} value={Number(aggregateBalances) || 0} series={[]} />
+        </div>
       </div>
       <Wallets />
     </div>

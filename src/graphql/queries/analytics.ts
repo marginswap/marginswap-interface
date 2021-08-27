@@ -71,6 +71,7 @@ export const swapsGQL = gql`
       trader
       fromAmount
       fromToken
+      createdAt
     }
   }
 `

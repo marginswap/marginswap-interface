@@ -196,6 +196,8 @@ GetAggregateBalancesProps) {
   const tokensPrice = { ...tokensAvalanchePrice, ...tokensPolygonPrice /*...tokensBscPrice*/ }
 
   let tvl = 0
+  let totalBorrowed = 0
+  let totalLending = 0
   const aggregateBalances = [...aggregateBalancesPolygon, ...aggregateBalancesAvalanche /*...aggregateBalancesBsc*/]
   aggregateBalances.forEach((aggBal: AggregateBalances) => {
     try {
@@ -204,10 +206,18 @@ GetAggregateBalancesProps) {
         tokensPrice[aggBal.token].usd
 
       tvl += formattedBalance
+
+      if (aggBal.balanceType === 'BOND_DEPOSIT') {
+        totalLending += formattedBalance
+      }
+
+      if (aggBal.balanceType === 'CROSS_MARGIN_DEBT') {
+        totalBorrowed += formattedBalance
+      }
     } catch (err) {
       console.log('Token not found ::', aggBal.token)
     }
   })
 
-  return tvl
+  return { tvl, totalBorrowed, totalLending }
 }
