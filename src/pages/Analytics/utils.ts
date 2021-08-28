@@ -211,7 +211,7 @@ GetAggregateBalancesProps) {
         totalLending += formattedBalance
       }
 
-      if (aggBal.balanceType === 'CROSS_MARGIN_DEBT') {
+      if (aggBal.balanceType === 'CROSS_MARGIN_HOLDING') {
         totalBorrowed += formattedBalance
       }
     } catch (err) {
