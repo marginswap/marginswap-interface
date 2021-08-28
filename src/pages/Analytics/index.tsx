@@ -246,18 +246,11 @@ export const Analytics = () => {
         </div>
         <div>
           <Stats title={'Total Fees'} time={'Fees paid past month'} value={montlyFees || 0} series={[]} />
-          <Stats title={'Total Lending'} time={'Last 24 hrs'} value={totalLending} chartColor={'#F99808'} series={[]} />
+          <Stats title={'Total Value Locked'} time={''} value={Number(aggregateBalances) || 0} series={[]} />
         </div>
         <div>
-          <Stats
-            title={'Total Borrowed'}
-            time={'Last 24 hrs'}
-            value={totalBorrowed}
-            chartColor={'#F90B0B'}
-            series={[]}
-          />
-
-          <Stats title={'Total Value Locked'} time={'Last 24 hrs'} value={Number(aggregateBalances) || 0} series={[]} />
+          <Stats title={'Total Borrowed'} time={''} value={totalBorrowed} chartColor={'#F90B0B'} series={[]} />
+          <Stats title={'Total Lending'} time={''} value={totalLending} chartColor={'#F99808'} series={[]} />
         </div>
       </div>
       <Wallets />
