@@ -198,6 +198,7 @@ export const BondSupply = () => {
         {}
       )
     )
+
     setIncentiveAPRs(
       Object.keys(_incentiveRates).reduce(
         (acc, cur) => ({ ...acc, [cur]: BigNumber.from(_incentiveRates[cur]).toNumber() / 100 }),
@@ -375,7 +376,7 @@ export const BondSupply = () => {
           Deposit: () => (allowances[token.address] > 0 ? 'Confirm Transaction' : 'Approve')
         }
       })),
-    [tokens, bondBalances, bondMaturities, allowances]
+    [tokens, bondBalances, bondMaturities, allowances, incentiveAPRs]
   )
 
   const pegCurrency = getPegCurrency(chainId) ?? USDT_MAINNET
