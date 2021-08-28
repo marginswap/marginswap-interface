@@ -35,7 +35,7 @@ import { TransactionDetails } from '../../state/transactions/reducer'
 import { NETWORK_URLS } from '../../constants/networks'
 import Tooltip from '@material-ui/core/Tooltip'
 
-const DATA_POLLING_INTERVAL = 60 * 1000
+const DATA_POLLING_INTERVAL = 25 * 1000
 
 type BondRateData = {
   img: string
@@ -155,6 +155,11 @@ export const BondSupply = () => {
     if (!chainId || !account || !pegCurrency) return
 
     const [_interestRates, _maturities, _bondCosts, _incentiveRates] = await Promise.all([
+      getHourlyBondIncentiveInterestRates(
+        tokens.map(t => new Token(chainId, t.address, t.decimals, t.symbol, t.name, t.coingeckoId)),
+        chainId,
+        queryProvider
+      ),
       getHourlyBondInterestRates(
         tokens.map(t => t.address),
         chainId,
@@ -169,11 +174,6 @@ export const BondSupply = () => {
       getBondsCostInDollars(
         account,
         tokens.map(t => t.address),
-        chainId,
-        queryProvider
-      ),
-      getHourlyBondIncentiveInterestRates(
-        tokens.map(t => new Token(chainId, t.address, t.decimals, t.symbol, t.name, t.coingeckoId)),
         chainId,
         queryProvider
       )
