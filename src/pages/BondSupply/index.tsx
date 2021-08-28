@@ -154,7 +154,7 @@ export const BondSupply = () => {
     const pegCurrency = getPegCurrency(chainId)
     if (!chainId || !account || !pegCurrency) return
 
-    const [_interestRates, _maturities, _bondCosts, _incentiveRates] = await Promise.all([
+    const [_incentiveRates, _interestRates, _maturities, _bondCosts] = await Promise.all([
       getHourlyBondIncentiveInterestRates(
         tokens.map(t => new Token(chainId, t.address, t.decimals, t.symbol, t.name, t.coingeckoId)),
         chainId,
