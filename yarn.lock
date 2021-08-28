@@ -2062,10 +2062,10 @@
   resolved "https://registry.yarnpkg.com/@marginswap/core-abi/-/core-abi-1.4.1.tgz#0814473b0a5f08284f25bfe57a2120a7a058a7b7"
   integrity sha512-BjpQyGQShd8ZZogkjZcz6qakXu9phSU4xZ3XF8AGOoUmYfBiwewY2YCBVpV6QT9eCgU7lYzQk0pBPjNXXc5ssA==
 
-"@marginswap/sdk@^4.4.5":
-  version "4.4.5"
-  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.4.5.tgz#e66c1b1b3fb7b287e912f234c64d80507a9b5756"
-  integrity sha512-fIHTf/ArAAvfI+gWsV8OUGdSMtmPNZ3hze129jzLGSNSFz4kWuRRwd84E4dUEwWMgpOKn/frzF/XaWOt063hcA==
+"@marginswap/sdk@^4.4.6":
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.4.6.tgz#b99af24daf389d96f6cee41cb9190e7c667cc770"
+  integrity sha512-jDGz48EaPMKUzIkbOZTjXAgT9HKBRzAUbjOYi0c2vSxOhLU62fWCu0e3L2nzjw0CoakcL4g1jRvpBp5czz3wgg==
   dependencies:
     "@marginswap/core-abi" "^1.4.1"
     "@uniswap/v2-core" "^1.0.0"
