@@ -214,12 +214,6 @@ export const Analytics = () => {
     avalancheAggreateBalancesData
   ])
 
-  /*useEffect(() => {
-    if (aggregateBalances) {
-
-    }
-  }, [aggregateBalances])*/
-
   return (
     <div className={classes.wrapper}>
       <h2>Marginswap Analytics</h2>

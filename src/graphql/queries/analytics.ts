@@ -94,6 +94,7 @@ export const aggregatedBalancesGQL = gql`
       token
       balance
       balanceType
+      createdAt
     }
   }
 `

@@ -1,8 +1,20 @@
 import axiosInstance from '../../config/axios-config'
 import { DateTime } from 'luxon'
 import groupby from 'lodash.groupby'
-import { BigNumber } from 'bignumber.js'
+import tokenList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 import { AVALANCHE_TOKENS_LIST } from '../../constants'
+import { TokenAmount, Token } from '@marginswap/sdk'
+interface TokensValue {
+  [key: string]: { usd: number }
+}
+
+interface AggregateBalances {
+  balance: string
+  balanceType: string
+  id: string
+  token: string
+  createdAt: string
+}
 
 type DataProps = {
   fromAmount: string
@@ -10,8 +22,55 @@ type DataProps = {
   id: string
   trader: string
 }
-interface TokensValue {
-  [key: string]: { usd: number }
+
+type TopTradersProps = {
+  trader: string
+  volume: number
+}
+
+type VolumeSwaps = {
+  polygonSwaps: DataProps[]
+  avalancheSwaps: DataProps[]
+  /*bscSwaps: DataProps[]*/
+}
+
+export type SwapVolumeProps = {
+  id: string
+  createdAt: string
+  token: string
+  volume: string
+}
+
+export type GetAggregateBalancesProps = {
+  aggregateBalancesPolygon: AggregateBalances[]
+  aggregateBalancesAvalanche: AggregateBalances[]
+  /*aggregateBalancesBsc: AggregateBalances[]*/
+}
+
+export type GetDailyVolumeProps = {
+  dailyPolygonSwapVolumes: SwapVolumeProps[]
+  dailyAvalancheSwapVolumes: SwapVolumeProps[]
+  //dailyBscSwapVolumes: SwapVolumeProps[]
+}
+
+async function adjustTokenValue(token: AggregateBalances | SwapVolumeProps) {
+  const info = tokenList.tokens.filter(value => value.address.toLowerCase() === token.token.toLowerCase())[0]
+  return {
+    ...token,
+    info: {
+      ...info
+    }
+  }
+}
+
+async function adjustTokenValueForTraders(token: DataProps) {
+  const info = tokenList.tokens.filter(value => value.address.toLowerCase() === token.fromToken.toLowerCase())[0]
+  return {
+    ...token,
+    info: {
+      ...info
+    }
+  }
 }
 
 //polygon-pos - avalanche - binance-smart-chain
@@ -57,17 +116,6 @@ export async function getAvalancheTokenUSDPrice(): Promise<TokensValue> {
   return avalancheTokens
 }
 
-type TopTradersProps = {
-  trader: string
-  volume: number
-}
-
-type VolumeSwaps = {
-  polygonSwaps: DataProps[]
-  avalancheSwaps: DataProps[]
-  /*bscSwaps: DataProps[]*/
-}
-
 export async function getTopTraders({
   polygonSwaps,
   avalancheSwaps
@@ -81,14 +129,21 @@ VolumeSwaps): Promise<TopTradersProps[]> {
   //const bscTokensPrice = await getBscTokenUSDPrice(bscTokenAddresses)
 
   let swaps = []
-  swaps = [...polygonSwaps, ...avalancheSwaps /*...bscSwaps*/]
+  swaps = await Promise.all(
+    [...polygonSwaps, ...avalancheSwaps /*...bscSwaps*/].map(t => adjustTokenValueForTraders(t))
+  )
+
   const tokensPrice = { ...polygonTokensPrice, ...avalancheTokensPrice /*...bscTokensPrice*/ }
 
-  const swapWithTokensUsdValue = await swaps.map(swap => ({
+  const swapWithTokensUsdValue = swaps.map(swap => ({
     ...swap,
     usdTokenValue:
-      Number(new BigNumber(swap.fromAmount).shiftedBy(-17).toFixed(2, BigNumber.ROUND_HALF_UP)) *
-      tokensPrice[swap.fromToken].usd
+      Number(
+        new TokenAmount(
+          new Token(swap.info.chainId, swap.fromToken, swap.info.decimals),
+          swap.fromAmount
+        ).toSignificant(3)
+      ) * tokensPrice[swap.fromToken].usd
   }))
 
   const tradersInfo = await groupby(swapWithTokensUsdValue, (swap: { trader: any }) => swap.trader)
@@ -107,19 +162,6 @@ VolumeSwaps): Promise<TopTradersProps[]> {
     .sort((a, b) => b.volume - a.volume)
 }
 
-export type SwapVolumeProps = {
-  id: string
-  createdAt: string
-  token: string
-  volume: string
-}
-
-export type GetDailyVolumeProps = {
-  dailyPolygonSwapVolumes: SwapVolumeProps[]
-  dailyAvalancheSwapVolumes: SwapVolumeProps[]
-  //dailyBscSwapVolumes: SwapVolumeProps[]
-}
-
 export async function getDailyVolume({
   dailyPolygonSwapVolumes,
   dailyAvalancheSwapVolumes
@@ -136,21 +178,24 @@ GetDailyVolumeProps) {
   const tokensPrice = { ...tokensAvalanchePrice, ...tokensPolygonPrice /*...tokensBscPrice*/ }
 
   let dailyVolume = 0
-  const dailySwap = [...dailyPolygonSwapVolumes, ...dailyAvalancheSwapVolumes /*...dailyBscSwapVolumes*/].map(
-    (token: SwapVolumeProps) => {
-      let formattedVolume = 0
-
-      formattedVolume =
-        Number(new BigNumber(token.volume).shiftedBy(-17).toFixed(2, BigNumber.ROUND_HALF_UP)) *
-        tokensPrice[token.token].usd
-
-      dailyVolume += formattedVolume
-      return {
-        time: DateTime.fromSeconds(Number(token.createdAt)).toFormat('yyyy-MM-dd').toString(),
-        value: Number(formattedVolume)
-      }
-    }
+  const swapVolumes = await Promise.all(
+    [...dailyPolygonSwapVolumes, ...dailyAvalancheSwapVolumes /*...dailyBscSwapVolumes*/].map(t => adjustTokenValue(t))
   )
+
+  const dailySwap = swapVolumes.map((token: any) => {
+    let formattedVolume = 0
+
+    formattedVolume =
+      Number(
+        new TokenAmount(new Token(token.info.chainId, token.token, token.info.decimals), token.volume).toSignificant(3)
+      ) * tokensPrice[token.token].usd
+
+    dailyVolume += formattedVolume
+    return {
+      time: DateTime.fromSeconds(Number(token.createdAt)).toFormat('yyyy-MM-dd').toString(),
+      value: Number(formattedVolume)
+    }
+  })
 
   //Consolidating dates
   const swapResult = new Map()
@@ -165,19 +210,6 @@ GetDailyVolumeProps) {
       (a, b) => DateTime.fromISO(a.time).toMillis() - DateTime.fromISO(b.time).toMillis()
     )
   }
-}
-
-interface AggregateBalances {
-  balance: string
-  balanceType: string
-  id: string
-  token: string
-}
-
-export type GetAggregateBalancesProps = {
-  aggregateBalancesPolygon: AggregateBalances[]
-  aggregateBalancesAvalanche: AggregateBalances[]
-  /*aggregateBalancesBsc: AggregateBalances[]*/
 }
 
 export async function getAggregateBalances({
@@ -198,12 +230,21 @@ GetAggregateBalancesProps) {
   let tvl = 0
   let totalBorrowed = 0
   let totalLending = 0
-  const aggregateBalances = [...aggregateBalancesPolygon, ...aggregateBalancesAvalanche /*...aggregateBalancesBsc*/]
-  aggregateBalances.forEach((aggBal: AggregateBalances) => {
+  const aggregateBalances: any[] = await Promise.all(
+    [...aggregateBalancesPolygon, ...aggregateBalancesAvalanche /*...aggregateBalancesBsc*/].map(t =>
+      adjustTokenValue(t)
+    )
+  )
+
+  aggregateBalances.forEach((aggBal: any) => {
     try {
       const formattedBalance =
-        Number(new BigNumber(aggBal.balance).shiftedBy(-17).toFixed(2, BigNumber.ROUND_HALF_UP)) *
-        tokensPrice[aggBal.token].usd
+        Number(
+          new TokenAmount(
+            new Token(aggBal.info.chainId, aggBal.token, aggBal.info.decimals),
+            aggBal.balance
+          ).toSignificant(3)
+        ) * tokensPrice[aggBal.token].usd
 
       tvl += formattedBalance
 
@@ -211,7 +252,7 @@ GetAggregateBalancesProps) {
         totalLending += formattedBalance
       }
 
-      if (aggBal.balanceType === 'CROSS_MARGIN_HOLDING') {
+      if (aggBal.balanceType === 'CROSS_MARGIN_DEBT') {
         totalBorrowed += formattedBalance
       }
     } catch (err) {

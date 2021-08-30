@@ -40,12 +40,39 @@
     },
     {
       "chainId": 43114,
+      "address": "0xde3A24028580884448a5397872046a019649b084",
+      "decimals": 6,
+      "name": "Tether USD",
+      "symbol": "USDT",
+      "logoURI": "https://raw.githubusercontent.com/ava-labs/bridge-tokens/main/avalanche-tokens/0xde3A24028580884448a5397872046a019649b084/logo.png",
+      "coingeckoId": "tether"
+    },
+    {
+      "chainId": 43114,
+      "address": "0xf20d962a6c8f70c731bd838a3a388D7d48fA6e15",
+      "decimals": 18,
+      "name": "Wrapped Ether",
+      "symbol": "WETH",
+      "logoURI": "https://raw.githubusercontent.com/ava-labs/bridge-tokens/main/avalanche-tokens/0xf20d962a6c8f70c731bd838a3a388D7d48fA6e15/logo.png",
+      "coingeckoId": "ethereum"
+  },
+    {
+      "chainId": 43114,
       "address": "0x49D5c2BdFfac6CE2BFdB6640F4F80f226bc10bAB",
       "decimals": 18,
       "name": "Wrapped ETH (new bridge)",
       "symbol": "WETH.e",
       "logoURI": "https://raw.githubusercontent.com/ava-labs/avalanche-bridge-resources/main/tokens/WETH/logo.png",
       "coingeckoId": "ethereum"
+    },
+    {
+      "chainId": 43114,
+      "address": "0x408D4cD0ADb7ceBd1F1A1C33A0Ba2098E1295bAB",
+      "decimals": 8,
+      "name": "Wrapped BTC",
+      "symbol": "WBTC",
+      "logoURI": "https://raw.githubusercontent.com/ava-labs/bridge-tokens/main/avalanche-tokens/0x408D4cD0ADb7ceBd1F1A1C33A0Ba2098E1295bAB/logo.png",
+      "coingeckoId": "binance-wrapped-btc"
     },
     {
       "chainId": 1,
