@@ -1,0 +1,2981 @@
+{
+  "aggregatedBalances": [
+    {
+      "balance": "0",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629300025",
+      "id": "0x408d4cd0adb7cebd1f1a1c33a0ba2098e1295bab-CROSS_MARGIN_HOLDING",
+      "token": "0x408d4cd0adb7cebd1f1a1c33a0ba2098e1295bab",
+      "updatedAt": "1630075056"
+    },
+    {
+      "balance": "66109270547782685",
+      "balanceType": "BOND_DEPOSIT",
+      "contract": "0x0576d25bc4fe40b93492702911fdf1866915acd7",
+      "createdAt": "1629531615",
+      "id": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-BOND_DEPOSIT",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "updatedAt": "1630066163"
+    },
+    {
+      "balance": "33802310074378607",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629578847",
+      "id": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-CROSS_MARGIN_DEBT",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "updatedAt": null
+    },
+    {
+      "balance": "29025860647071612",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629128752",
+      "id": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-CROSS_MARGIN_HOLDING",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "updatedAt": "1630263260"
+    },
+    {
+      "balance": "305592341155559196224",
+      "balanceType": "BOND_DEPOSIT",
+      "contract": "0x0576d25bc4fe40b93492702911fdf1866915acd7",
+      "createdAt": "1623960831",
+      "id": "0x60781c2586d68229fde47564546784ab3faca982-BOND_DEPOSIT",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "updatedAt": "1630178723"
+    },
+    {
+      "balance": "936774785841899109428",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1628706389",
+      "id": "0x60781c2586d68229fde47564546784ab3faca982-CROSS_MARGIN_DEBT",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "updatedAt": null
+    },
+    {
+      "balance": "439829537659266033317",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1628652851",
+      "id": "0x60781c2586d68229fde47564546784ab3faca982-CROSS_MARGIN_HOLDING",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "updatedAt": "1630205762"
+    },
+    {
+      "balance": "18920638216034",
+      "balanceType": "BOND_DEPOSIT",
+      "contract": "0x0576d25bc4fe40b93492702911fdf1866915acd7",
+      "createdAt": "1624212207",
+      "id": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-BOND_DEPOSIT",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "updatedAt": "1630179396"
+    },
+    {
+      "balance": "688764936340173803214",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1628653437",
+      "id": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-CROSS_MARGIN_DEBT",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "updatedAt": null
+    },
+    {
+      "balance": "15896778598559460304",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1628653003",
+      "id": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-CROSS_MARGIN_HOLDING",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "updatedAt": "1630263260"
+    },
+    {
+      "balance": "25393867968",
+      "balanceType": "BOND_DEPOSIT",
+      "contract": "0x0576d25bc4fe40b93492702911fdf1866915acd7",
+      "createdAt": "1629344796",
+      "id": "0xc7198437980c041c805a1edcba50c1ce5db95118-BOND_DEPOSIT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "updatedAt": "1630186057"
+    },
+    {
+      "balance": "69842748585",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629345301",
+      "id": "0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_DEBT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "updatedAt": null
+    },
+    {
+      "balance": "182179493",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629340384",
+      "id": "0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_HOLDING",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "updatedAt": "1630263260"
+    },
+    {
+      "balance": "2959156",
+      "balanceType": "BOND_DEPOSIT",
+      "contract": "0x0576d25bc4fe40b93492702911fdf1866915acd7",
+      "createdAt": "1623963136",
+      "id": "0xde3a24028580884448a5397872046a019649b084-BOND_DEPOSIT",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "updatedAt": "1630086232"
+    },
+    {
+      "balance": "21800130582",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1628783012",
+      "id": "0xde3a24028580884448a5397872046a019649b084-CROSS_MARGIN_DEBT",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "updatedAt": null
+    },
+    {
+      "balance": "6541059",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1628706389",
+      "id": "0xde3a24028580884448a5397872046a019649b084-CROSS_MARGIN_HOLDING",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "updatedAt": "1630205762"
+    },
+    {
+      "balance": "635278027915",
+      "balanceType": "BOND_DEPOSIT",
+      "contract": "0x0576d25bc4fe40b93492702911fdf1866915acd7",
+      "createdAt": "1626569462",
+      "id": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15-BOND_DEPOSIT",
+      "token": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15",
+      "updatedAt": "1630186197"
+    },
+    {
+      "balance": "461325474480225199",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629114058",
+      "id": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15-CROSS_MARGIN_DEBT",
+      "token": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15",
+      "updatedAt": null
+    },
+    {
+      "balance": "194577565008517",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1628706389",
+      "id": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15-CROSS_MARGIN_HOLDING",
+      "token": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15",
+      "updatedAt": "1630205762"
+    }
+  ],
+  "balances": [
+    {
+      "balance": "471553122969",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1630038191",
+      "id": "0x09cf25d2bf8691ea5db6c3ad4878cf8f8e1e0046-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-CROSS_MARGIN_HOLDING",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x09cf25d2bf8691ea5db6c3ad4878cf8f8e1e0046",
+      "updatedAt": "1630041739"
+    },
+    {
+      "balance": "452142494",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1630038191",
+      "id": "0x09cf25d2bf8691ea5db6c3ad4878cf8f8e1e0046-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_DEBT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x09cf25d2bf8691ea5db6c3ad4878cf8f8e1e0046",
+      "updatedAt": null
+    },
+    {
+      "balance": "0",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1630038122",
+      "id": "0x09cf25d2bf8691ea5db6c3ad4878cf8f8e1e0046-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_HOLDING",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x09cf25d2bf8691ea5db6c3ad4878cf8f8e1e0046",
+      "updatedAt": "1630041739"
+    },
+    {
+      "balance": "123",
+      "balanceType": "BOND_DEPOSIT",
+      "contract": "0x0576d25bc4fe40b93492702911fdf1866915acd7",
+      "createdAt": "1629552953",
+      "id": "0x0db84836c55e1afe68699383b431003f0381f7c8-0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x0db84836c55e1afe68699383b431003f0381f7c8",
+      "updatedAt": "1629562672"
+    },
+    {
+      "balance": "0",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629074562",
+      "id": "0x1191935e6fc44a74bb5f66f489c3a38f69e9209b-0x60781c2586d68229fde47564546784ab3faca982-CROSS_MARGIN_HOLDING",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x1191935e6fc44a74bb5f66f489c3a38f69e9209b",
+      "updatedAt": "1629076118"
+    },
+    {
+      "balance": "13841860000000000000",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629841763",
+      "id": "0x11f130460633344183dad9a354ac0e40a45e5eb7-0x60781c2586d68229fde47564546784ab3faca982-CROSS_MARGIN_HOLDING",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x11f130460633344183dad9a354ac0e40a45e5eb7",
+      "updatedAt": null
+    },
+    {
+      "balance": "29855485259493834592",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629825883",
+      "id": "0x1fafd2be3a17802fcb9cdbf50667907ab5e9bff7-0x60781c2586d68229fde47564546784ab3faca982-CROSS_MARGIN_HOLDING",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x1fafd2be3a17802fcb9cdbf50667907ab5e9bff7",
+      "updatedAt": null
+    },
+    {
+      "balance": "19610408",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629825883",
+      "id": "0x1fafd2be3a17802fcb9cdbf50667907ab5e9bff7-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_DEBT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x1fafd2be3a17802fcb9cdbf50667907ab5e9bff7",
+      "updatedAt": null
+    },
+    {
+      "balance": "0",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629825719",
+      "id": "0x1fafd2be3a17802fcb9cdbf50667907ab5e9bff7-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_HOLDING",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x1fafd2be3a17802fcb9cdbf50667907ab5e9bff7",
+      "updatedAt": "1629825883"
+    },
+    {
+      "balance": "0",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629980637",
+      "id": "0x20191b4ffb44ec768d8d1609e3a46b982eef5090-0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-CROSS_MARGIN_HOLDING",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x20191b4ffb44ec768d8d1609e3a46b982eef5090",
+      "updatedAt": "1630002457"
+    },
+    {
+      "balance": "10289490154526190",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629823509",
+      "id": "0x20191b4ffb44ec768d8d1609e3a46b982eef5090-0x60781c2586d68229fde47564546784ab3faca982-CROSS_MARGIN_DEBT",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x20191b4ffb44ec768d8d1609e3a46b982eef5090",
+      "updatedAt": null
+    },
+    {
+      "balance": "5803683485684578",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629825547",
+      "id": "0x20191b4ffb44ec768d8d1609e3a46b982eef5090-0x60781c2586d68229fde47564546784ab3faca982-CROSS_MARGIN_HOLDING",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x20191b4ffb44ec768d8d1609e3a46b982eef5090",
+      "updatedAt": "1630002457"
+    },
+    {
+      "balance": "31143751706638",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1630001982",
+      "id": "0x20191b4ffb44ec768d8d1609e3a46b982eef5090-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-CROSS_MARGIN_HOLDING",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x20191b4ffb44ec768d8d1609e3a46b982eef5090",
+      "updatedAt": "1630002457"
+    },
+    {
+      "balance": "2175010331",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629837228",
+      "id": "0x20191b4ffb44ec768d8d1609e3a46b982eef5090-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_DEBT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x20191b4ffb44ec768d8d1609e3a46b982eef5090",
+      "updatedAt": null
+    },
+    {
+      "balance": "0",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629823419",
+      "id": "0x20191b4ffb44ec768d8d1609e3a46b982eef5090-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_HOLDING",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x20191b4ffb44ec768d8d1609e3a46b982eef5090",
+      "updatedAt": "1630002457"
+    },
+    {
+      "balance": "750000000",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629837087",
+      "id": "0x20191b4ffb44ec768d8d1609e3a46b982eef5090-0xde3a24028580884448a5397872046a019649b084-CROSS_MARGIN_DEBT",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0x20191b4ffb44ec768d8d1609e3a46b982eef5090",
+      "updatedAt": null
+    },
+    {
+      "balance": "1881",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629837570",
+      "id": "0x20191b4ffb44ec768d8d1609e3a46b982eef5090-0xde3a24028580884448a5397872046a019649b084-CROSS_MARGIN_HOLDING",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0x20191b4ffb44ec768d8d1609e3a46b982eef5090",
+      "updatedAt": "1630002457"
+    },
+    {
+      "balance": "408",
+      "balanceType": "BOND_DEPOSIT",
+      "contract": "0x0576d25bc4fe40b93492702911fdf1866915acd7",
+      "createdAt": "1629964699",
+      "id": "0x2239b652eae482dc3550924bb1e9e679aed884cd-0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x2239b652eae482dc3550924bb1e9e679aed884cd",
+      "updatedAt": "1630057337"
+    },
+    {
+      "balance": "0",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629790787",
+      "id": "0x250fcead4021e2a70ab262145ba195e7c3ad2824-0x60781c2586d68229fde47564546784ab3faca982-CROSS_MARGIN_HOLDING",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x250fcead4021e2a70ab262145ba195e7c3ad2824",
+      "updatedAt": "1629790992"
+    },
+    {
+      "balance": "7000004203975874496",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629790068",
+      "id": "0x250fcead4021e2a70ab262145ba195e7c3ad2824-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-CROSS_MARGIN_DEBT",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x250fcead4021e2a70ab262145ba195e7c3ad2824",
+      "updatedAt": null
+    },
+    {
+      "balance": "396",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629789975",
+      "id": "0x250fcead4021e2a70ab262145ba195e7c3ad2824-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-CROSS_MARGIN_HOLDING",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x250fcead4021e2a70ab262145ba195e7c3ad2824",
+      "updatedAt": "1629790992"
+    },
+    {
+      "balance": "320055391525",
+      "balanceType": "BOND_DEPOSIT",
+      "contract": "0x0576d25bc4fe40b93492702911fdf1866915acd7",
+      "createdAt": "1625595677",
+      "id": "0x29db7f6dee7eccecf79da574edfee51fd73fffe0-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x29db7f6dee7eccecf79da574edfee51fd73fffe0",
+      "updatedAt": null
+    },
+    {
+      "balance": "161620996247174967729",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1630055528",
+      "id": "0x2d829fa56864074813f64b6915ebf531b56ae0b8-0x60781c2586d68229fde47564546784ab3faca982-CROSS_MARGIN_DEBT",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x2d829fa56864074813f64b6915ebf531b56ae0b8",
+      "updatedAt": null
+    },
+    {
+      "balance": "379003752825032271",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629980621",
+      "id": "0x2d829fa56864074813f64b6915ebf531b56ae0b8-0x60781c2586d68229fde47564546784ab3faca982-CROSS_MARGIN_HOLDING",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x2d829fa56864074813f64b6915ebf531b56ae0b8",
+      "updatedAt": "1630056627"
+    },
+    {
+      "balance": "5100048842",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629980621",
+      "id": "0x2d829fa56864074813f64b6915ebf531b56ae0b8-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_DEBT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x2d829fa56864074813f64b6915ebf531b56ae0b8",
+      "updatedAt": null
+    },
+    {
+      "balance": "0",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629980550",
+      "id": "0x2d829fa56864074813f64b6915ebf531b56ae0b8-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_HOLDING",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x2d829fa56864074813f64b6915ebf531b56ae0b8",
+      "updatedAt": "1630056627"
+    },
+    {
+      "balance": "614829",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629980724",
+      "id": "0x2d829fa56864074813f64b6915ebf531b56ae0b8-0xde3a24028580884448a5397872046a019649b084-CROSS_MARGIN_DEBT",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0x2d829fa56864074813f64b6915ebf531b56ae0b8",
+      "updatedAt": null
+    },
+    {
+      "balance": "0",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1630056557",
+      "id": "0x2d829fa56864074813f64b6915ebf531b56ae0b8-0xde3a24028580884448a5397872046a019649b084-CROSS_MARGIN_HOLDING",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0x2d829fa56864074813f64b6915ebf531b56ae0b8",
+      "updatedAt": "1630056627"
+    },
+    {
+      "balance": "86731033751759482446",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629841497",
+      "id": "0x2e34723a04b9bb5938373dcfdd61410f43189246-0x60781c2586d68229fde47564546784ab3faca982-CROSS_MARGIN_HOLDING",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x2e34723a04b9bb5938373dcfdd61410f43189246",
+      "updatedAt": "1629841745"
+    },
+    {
+      "balance": "215000000",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629841745",
+      "id": "0x2e34723a04b9bb5938373dcfdd61410f43189246-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_DEBT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x2e34723a04b9bb5938373dcfdd61410f43189246",
+      "updatedAt": null
+    },
+    {
+      "balance": "14447317754031",
+      "balanceType": "BOND_DEPOSIT",
+      "contract": "0x0576d25bc4fe40b93492702911fdf1866915acd7",
+      "createdAt": "1625615189",
+      "id": "0x3a9e0da873dbe52d7869e2fa76aeed965ffc01dc-0x60781c2586d68229fde47564546784ab3faca982",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x3a9e0da873dbe52d7869e2fa76aeed965ffc01dc",
+      "updatedAt": "1629862716"
+    },
+    {
+      "balance": "6",
+      "balanceType": "BOND_DEPOSIT",
+      "contract": "0x0576d25bc4fe40b93492702911fdf1866915acd7",
+      "createdAt": "1624168822",
+      "id": "0x3a9e0da873dbe52d7869e2fa76aeed965ffc01dc-0xde3a24028580884448a5397872046a019649b084",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0x3a9e0da873dbe52d7869e2fa76aeed965ffc01dc",
+      "updatedAt": "1629593404"
+    },
+    {
+      "balance": "5082483742",
+      "balanceType": "BOND_DEPOSIT",
+      "contract": "0x0576d25bc4fe40b93492702911fdf1866915acd7",
+      "createdAt": "1626569462",
+      "id": "0x3a9e0da873dbe52d7869e2fa76aeed965ffc01dc-0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15",
+      "token": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15",
+      "trader": "0x3a9e0da873dbe52d7869e2fa76aeed965ffc01dc",
+      "updatedAt": "1628995675"
+    },
+    {
+      "balance": "9",
+      "balanceType": "BOND_DEPOSIT",
+      "contract": "0x0576d25bc4fe40b93492702911fdf1866915acd7",
+      "createdAt": "1624431340",
+      "id": "0x3f3f4e8738313d996a735b91419940daaea0c4c7-0xde3a24028580884448a5397872046a019649b084",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0x3f3f4e8738313d996a735b91419940daaea0c4c7",
+      "updatedAt": "1626860533"
+    },
+    {
+      "balance": "941060532558251",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629512889",
+      "id": "0x3fb03a65f00c51c815cbdb54de843992332c5131-0x60781c2586d68229fde47564546784ab3faca982-CROSS_MARGIN_HOLDING",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x3fb03a65f00c51c815cbdb54de843992332c5131",
+      "updatedAt": "1629606601"
+    },
+    {
+      "balance": "1000000000",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629512889",
+      "id": "0x3fb03a65f00c51c815cbdb54de843992332c5131-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_DEBT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x3fb03a65f00c51c815cbdb54de843992332c5131",
+      "updatedAt": null
+    },
+    {
+      "balance": "0",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629511712",
+      "id": "0x3fb03a65f00c51c815cbdb54de843992332c5131-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_HOLDING",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x3fb03a65f00c51c815cbdb54de843992332c5131",
+      "updatedAt": "1629606601"
+    },
+    {
+      "balance": "0",
+      "balanceType": "BOND_DEPOSIT",
+      "contract": "0x0576d25bc4fe40b93492702911fdf1866915acd7",
+      "createdAt": "1629630972",
+      "id": "0x4085e9fb679dd2f60c2e64afe9533107fa1c18f2-0xde3a24028580884448a5397872046a019649b084",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0x4085e9fb679dd2f60c2e64afe9533107fa1c18f2",
+      "updatedAt": null
+    },
+    {
+      "balance": "35562",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629028603",
+      "id": "0x44e8656eb073d58da666217009f2c9591682a4a0-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-CROSS_MARGIN_HOLDING",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x44e8656eb073d58da666217009f2c9591682a4a0",
+      "updatedAt": "1629226558"
+    },
+    {
+      "balance": "3750000000",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629028982",
+      "id": "0x44e8656eb073d58da666217009f2c9591682a4a0-0xde3a24028580884448a5397872046a019649b084-CROSS_MARGIN_DEBT",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0x44e8656eb073d58da666217009f2c9591682a4a0",
+      "updatedAt": null
+    },
+    {
+      "balance": "758544",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629028603",
+      "id": "0x44e8656eb073d58da666217009f2c9591682a4a0-0xde3a24028580884448a5397872046a019649b084-CROSS_MARGIN_HOLDING",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0x44e8656eb073d58da666217009f2c9591682a4a0",
+      "updatedAt": "1629226558"
+    },
+    {
+      "balance": "11",
+      "balanceType": "BOND_DEPOSIT",
+      "contract": "0x0576d25bc4fe40b93492702911fdf1866915acd7",
+      "createdAt": "1629388324",
+      "id": "0x484cf83d33551f2abad064006a97aad734ee9b85-0xde3a24028580884448a5397872046a019649b084",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0x484cf83d33551f2abad064006a97aad734ee9b85",
+      "updatedAt": "1630086232"
+    },
+    {
+      "balance": "3300349010526087",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629643411",
+      "id": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00-0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-CROSS_MARGIN_DEBT",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "updatedAt": null
+    },
+    {
+      "balance": "879",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629546871",
+      "id": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00-0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-CROSS_MARGIN_HOLDING",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "updatedAt": "1630049899"
+    },
+    {
+      "balance": "200013390335646479274",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629548978",
+      "id": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-CROSS_MARGIN_DEBT",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "updatedAt": null
+    },
+    {
+      "balance": "6585563314585754",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629546755",
+      "id": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-CROSS_MARGIN_HOLDING",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "updatedAt": "1630049899"
+    },
+    {
+      "balance": "16746600381",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629547835",
+      "id": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_DEBT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "updatedAt": null
+    },
+    {
+      "balance": "246692",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629546309",
+      "id": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_HOLDING",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "updatedAt": "1630049899"
+    },
+    {
+      "balance": "3157942055",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629549928",
+      "id": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00-0xde3a24028580884448a5397872046a019649b084-CROSS_MARGIN_DEBT",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "updatedAt": null
+    },
+    {
+      "balance": "533323",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629549928",
+      "id": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00-0xde3a24028580884448a5397872046a019649b084-CROSS_MARGIN_HOLDING",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "updatedAt": "1630049899"
+    },
+    {
+      "balance": "0",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629569975",
+      "id": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00-0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15-CROSS_MARGIN_HOLDING",
+      "token": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "updatedAt": "1630049899"
+    },
+    {
+      "balance": "10000000000000000000",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629764144",
+      "id": "0x51043eeae771928201aec273e2d41e282ca0c118-0x60781c2586d68229fde47564546784ab3faca982-CROSS_MARGIN_HOLDING",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x51043eeae771928201aec273e2d41e282ca0c118",
+      "updatedAt": null
+    },
+    {
+      "balance": "6000000000000",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629740789",
+      "id": "0x51a077da6448a5fce80295bbb3c84b6f1ae9cb33-0x60781c2586d68229fde47564546784ab3faca982-CROSS_MARGIN_HOLDING",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x51a077da6448a5fce80295bbb3c84b6f1ae9cb33",
+      "updatedAt": "1629901959"
+    },
+    {
+      "balance": "91110595732",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629764264",
+      "id": "0x51a077da6448a5fce80295bbb3c84b6f1ae9cb33-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-CROSS_MARGIN_DEBT",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x51a077da6448a5fce80295bbb3c84b6f1ae9cb33",
+      "updatedAt": null
+    },
+    {
+      "balance": "0",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629741225",
+      "id": "0x51a077da6448a5fce80295bbb3c84b6f1ae9cb33-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-CROSS_MARGIN_HOLDING",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x51a077da6448a5fce80295bbb3c84b6f1ae9cb33",
+      "updatedAt": "1629901959"
+    },
+    {
+      "balance": "8140469062",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629741225",
+      "id": "0x51a077da6448a5fce80295bbb3c84b6f1ae9cb33-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_DEBT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x51a077da6448a5fce80295bbb3c84b6f1ae9cb33",
+      "updatedAt": null
+    },
+    {
+      "balance": "0",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629764264",
+      "id": "0x51a077da6448a5fce80295bbb3c84b6f1ae9cb33-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_HOLDING",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x51a077da6448a5fce80295bbb3c84b6f1ae9cb33",
+      "updatedAt": "1629901959"
+    },
+    {
+      "balance": "157563775",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1630038170",
+      "id": "0x557d9470b791f99f54a8e98f6caa1450655fe6cc-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_DEBT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x557d9470b791f99f54a8e98f6caa1450655fe6cc",
+      "updatedAt": null
+    },
+    {
+      "balance": "9388278",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1630021042",
+      "id": "0x557d9470b791f99f54a8e98f6caa1450655fe6cc-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_HOLDING",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x557d9470b791f99f54a8e98f6caa1450655fe6cc",
+      "updatedAt": "1630038803"
+    },
+    {
+      "balance": "6146714",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1630038604",
+      "id": "0x557d9470b791f99f54a8e98f6caa1450655fe6cc-0xde3a24028580884448a5397872046a019649b084-CROSS_MARGIN_DEBT",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0x557d9470b791f99f54a8e98f6caa1450655fe6cc",
+      "updatedAt": null
+    },
+    {
+      "balance": "0",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1630038170",
+      "id": "0x557d9470b791f99f54a8e98f6caa1450655fe6cc-0xde3a24028580884448a5397872046a019649b084-CROSS_MARGIN_HOLDING",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0x557d9470b791f99f54a8e98f6caa1450655fe6cc",
+      "updatedAt": "1630038803"
+    },
+    {
+      "balance": "0",
+      "balanceType": "BOND_DEPOSIT",
+      "contract": "0x0576d25bc4fe40b93492702911fdf1866915acd7",
+      "createdAt": "1628832122",
+      "id": "0x5890dc2b382ffb6199385d8ceccf7250c0ef31cd-0x60781c2586d68229fde47564546784ab3faca982",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x5890dc2b382ffb6199385d8ceccf7250c0ef31cd",
+      "updatedAt": "1628832240"
+    },
+    {
+      "balance": "10000000000000000000",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1628832187",
+      "id": "0x5890dc2b382ffb6199385d8ceccf7250c0ef31cd-0x60781c2586d68229fde47564546784ab3faca982-CROSS_MARGIN_HOLDING",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x5890dc2b382ffb6199385d8ceccf7250c0ef31cd",
+      "updatedAt": "1628833341"
+    },
+    {
+      "balance": "1199886000000000000",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1628833341",
+      "id": "0x5890dc2b382ffb6199385d8ceccf7250c0ef31cd-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-CROSS_MARGIN_DEBT",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x5890dc2b382ffb6199385d8ceccf7250c0ef31cd",
+      "updatedAt": null
+    },
+    {
+      "balance": "1199886000000000000",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1628833341",
+      "id": "0x5890dc2b382ffb6199385d8ceccf7250c0ef31cd-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-CROSS_MARGIN_HOLDING",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x5890dc2b382ffb6199385d8ceccf7250c0ef31cd",
+      "updatedAt": null
+    },
+    {
+      "balance": "277531492759674",
+      "balanceType": "BOND_DEPOSIT",
+      "contract": "0x0576d25bc4fe40b93492702911fdf1866915acd7",
+      "createdAt": "1624086329",
+      "id": "0x5a45fec59cc53180407f9134534f77a2a8722f87-0x60781c2586d68229fde47564546784ab3faca982",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x5a45fec59cc53180407f9134534f77a2a8722f87",
+      "updatedAt": "1624874994"
+    },
+    {
+      "balance": "15",
+      "balanceType": "BOND_DEPOSIT",
+      "contract": "0x0576d25bc4fe40b93492702911fdf1866915acd7",
+      "createdAt": "1625624573",
+      "id": "0x5f71a197d303cd700511323976067ece43de8ad0-0xde3a24028580884448a5397872046a019649b084",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0x5f71a197d303cd700511323976067ece43de8ad0",
+      "updatedAt": "1626097329"
+    },
+    {
+      "balance": "400000000000000000",
+      "balanceType": "BOND_DEPOSIT",
+      "contract": "0x0576d25bc4fe40b93492702911fdf1866915acd7",
+      "createdAt": "1623960831",
+      "id": "0x6f226269635978130cc9de17a61a2fe0915c60fb-0x60781c2586d68229fde47564546784ab3faca982",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x6f226269635978130cc9de17a61a2fe0915c60fb",
+      "updatedAt": null
+    },
+    {
+      "balance": "22408",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629326691",
+      "id": "0x6f58a3743357bc488d9b14fa875ea91e98439dab-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-CROSS_MARGIN_HOLDING",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x6f58a3743357bc488d9b14fa875ea91e98439dab",
+      "updatedAt": "1629903549"
+    },
+    {
+      "balance": "217131",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629671188",
+      "id": "0x6f58a3743357bc488d9b14fa875ea91e98439dab-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_DEBT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x6f58a3743357bc488d9b14fa875ea91e98439dab",
+      "updatedAt": null
+    },
+    {
+      "balance": "282869",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629729661",
+      "id": "0x6f58a3743357bc488d9b14fa875ea91e98439dab-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_HOLDING",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x6f58a3743357bc488d9b14fa875ea91e98439dab",
+      "updatedAt": "1629903549"
+    },
+    {
+      "balance": "2589206729",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629326835",
+      "id": "0x6f58a3743357bc488d9b14fa875ea91e98439dab-0xde3a24028580884448a5397872046a019649b084-CROSS_MARGIN_DEBT",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0x6f58a3743357bc488d9b14fa875ea91e98439dab",
+      "updatedAt": null
+    },
+    {
+      "balance": "364789",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629392005",
+      "id": "0x6f58a3743357bc488d9b14fa875ea91e98439dab-0xde3a24028580884448a5397872046a019649b084-CROSS_MARGIN_HOLDING",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0x6f58a3743357bc488d9b14fa875ea91e98439dab",
+      "updatedAt": "1629903549"
+    },
+    {
+      "balance": "0",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629831607",
+      "id": "0x730d82aed9fc7aebc5264c381e8fda092aaf1872-0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-CROSS_MARGIN_HOLDING",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x730d82aed9fc7aebc5264c381e8fda092aaf1872",
+      "updatedAt": "1630081948"
+    },
+    {
+      "balance": "12537132499374687664",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629858298",
+      "id": "0x730d82aed9fc7aebc5264c381e8fda092aaf1872-0x60781c2586d68229fde47564546784ab3faca982-CROSS_MARGIN_DEBT",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x730d82aed9fc7aebc5264c381e8fda092aaf1872",
+      "updatedAt": null
+    },
+    {
+      "balance": "2867500625312336",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629833599",
+      "id": "0x730d82aed9fc7aebc5264c381e8fda092aaf1872-0x60781c2586d68229fde47564546784ab3faca982-CROSS_MARGIN_HOLDING",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x730d82aed9fc7aebc5264c381e8fda092aaf1872",
+      "updatedAt": "1630081948"
+    },
+    {
+      "balance": "1984465883708653364",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1630025640",
+      "id": "0x730d82aed9fc7aebc5264c381e8fda092aaf1872-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-CROSS_MARGIN_DEBT",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x730d82aed9fc7aebc5264c381e8fda092aaf1872",
+      "updatedAt": null
+    },
+    {
+      "balance": "2534025047416414",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629831319",
+      "id": "0x730d82aed9fc7aebc5264c381e8fda092aaf1872-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-CROSS_MARGIN_HOLDING",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x730d82aed9fc7aebc5264c381e8fda092aaf1872",
+      "updatedAt": "1630081948"
+    },
+    {
+      "balance": "936128417",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629831486",
+      "id": "0x730d82aed9fc7aebc5264c381e8fda092aaf1872-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_DEBT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x730d82aed9fc7aebc5264c381e8fda092aaf1872",
+      "updatedAt": null
+    },
+    {
+      "balance": "0",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629830624",
+      "id": "0x730d82aed9fc7aebc5264c381e8fda092aaf1872-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_HOLDING",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x730d82aed9fc7aebc5264c381e8fda092aaf1872",
+      "updatedAt": "1630081948"
+    },
+    {
+      "balance": "0",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629845842",
+      "id": "0x730d82aed9fc7aebc5264c381e8fda092aaf1872-0xde3a24028580884448a5397872046a019649b084-CROSS_MARGIN_HOLDING",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0x730d82aed9fc7aebc5264c381e8fda092aaf1872",
+      "updatedAt": "1630081948"
+    },
+    {
+      "balance": "0",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629201693",
+      "id": "0x734caa5f4c9e0a60dd5a16166c19bae9020051c4-0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-CROSS_MARGIN_HOLDING",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x734caa5f4c9e0a60dd5a16166c19bae9020051c4",
+      "updatedAt": "1630205762"
+    },
+    {
+      "balance": "62054",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1628783377",
+      "id": "0x734caa5f4c9e0a60dd5a16166c19bae9020051c4-0x60781c2586d68229fde47564546784ab3faca982-CROSS_MARGIN_HOLDING",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x734caa5f4c9e0a60dd5a16166c19bae9020051c4",
+      "updatedAt": "1630205762"
+    },
+    {
+      "balance": "874588942893",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1628782893",
+      "id": "0x734caa5f4c9e0a60dd5a16166c19bae9020051c4-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-CROSS_MARGIN_HOLDING",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x734caa5f4c9e0a60dd5a16166c19bae9020051c4",
+      "updatedAt": "1630205762"
+    },
+    {
+      "balance": "1015923249",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629402872",
+      "id": "0x734caa5f4c9e0a60dd5a16166c19bae9020051c4-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_DEBT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x734caa5f4c9e0a60dd5a16166c19bae9020051c4",
+      "updatedAt": null
+    },
+    {
+      "balance": "76751",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629402872",
+      "id": "0x734caa5f4c9e0a60dd5a16166c19bae9020051c4-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_HOLDING",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x734caa5f4c9e0a60dd5a16166c19bae9020051c4",
+      "updatedAt": "1630205762"
+    },
+    {
+      "balance": "10454",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1628783012",
+      "id": "0x734caa5f4c9e0a60dd5a16166c19bae9020051c4-0xde3a24028580884448a5397872046a019649b084-CROSS_MARGIN_DEBT",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0x734caa5f4c9e0a60dd5a16166c19bae9020051c4",
+      "updatedAt": null
+    },
+    {
+      "balance": "3742449",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1628783012",
+      "id": "0x734caa5f4c9e0a60dd5a16166c19bae9020051c4-0xde3a24028580884448a5397872046a019649b084-CROSS_MARGIN_HOLDING",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0x734caa5f4c9e0a60dd5a16166c19bae9020051c4",
+      "updatedAt": "1630205762"
+    },
+    {
+      "balance": "451318247484136912",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629201693",
+      "id": "0x734caa5f4c9e0a60dd5a16166c19bae9020051c4-0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15-CROSS_MARGIN_DEBT",
+      "token": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15",
+      "trader": "0x734caa5f4c9e0a60dd5a16166c19bae9020051c4",
+      "updatedAt": null
+    },
+    {
+      "balance": "193395336768164",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629202700",
+      "id": "0x734caa5f4c9e0a60dd5a16166c19bae9020051c4-0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15-CROSS_MARGIN_HOLDING",
+      "token": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15",
+      "trader": "0x734caa5f4c9e0a60dd5a16166c19bae9020051c4",
+      "updatedAt": "1630205762"
+    },
+    {
+      "balance": "274701537921933738366",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629844396",
+      "id": "0x735c3f629a29aa4f31e68ade5e2e33d1549135fd-0x60781c2586d68229fde47564546784ab3faca982-CROSS_MARGIN_HOLDING",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x735c3f629a29aa4f31e68ade5e2e33d1549135fd",
+      "updatedAt": null
+    },
+    {
+      "balance": "10000000000000000000",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629844396",
+      "id": "0x735c3f629a29aa4f31e68ade5e2e33d1549135fd-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-CROSS_MARGIN_DEBT",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x735c3f629a29aa4f31e68ade5e2e33d1549135fd",
+      "updatedAt": null
+    },
+    {
+      "balance": "0",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629844084",
+      "id": "0x735c3f629a29aa4f31e68ade5e2e33d1549135fd-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-CROSS_MARGIN_HOLDING",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x735c3f629a29aa4f31e68ade5e2e33d1549135fd",
+      "updatedAt": "1629844396"
+    },
+    {
+      "balance": "778",
+      "balanceType": "BOND_DEPOSIT",
+      "contract": "0x0576d25bc4fe40b93492702911fdf1866915acd7",
+      "createdAt": "1629185413",
+      "id": "0x741d2cbf05ccdcaf537692ebdeb1dd86039d6db7-0xde3a24028580884448a5397872046a019649b084",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0x741d2cbf05ccdcaf537692ebdeb1dd86039d6db7",
+      "updatedAt": "1629242529"
+    },
+    {
+      "balance": "5233301952580345",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629671657",
+      "id": "0x74859aa7e242ce5f9ec8bfdd86f0342e7661f1db-0x60781c2586d68229fde47564546784ab3faca982-CROSS_MARGIN_DEBT",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x74859aa7e242ce5f9ec8bfdd86f0342e7661f1db",
+      "updatedAt": null
+    },
+    {
+      "balance": "0",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629671657",
+      "id": "0x74859aa7e242ce5f9ec8bfdd86f0342e7661f1db-0x60781c2586d68229fde47564546784ab3faca982-CROSS_MARGIN_HOLDING",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x74859aa7e242ce5f9ec8bfdd86f0342e7661f1db",
+      "updatedAt": "1630015240"
+    },
+    {
+      "balance": "1500016477111268465",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629671582",
+      "id": "0x74859aa7e242ce5f9ec8bfdd86f0342e7661f1db-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-CROSS_MARGIN_DEBT",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x74859aa7e242ce5f9ec8bfdd86f0342e7661f1db",
+      "updatedAt": null
+    },
+    {
+      "balance": "182790927547",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629671582",
+      "id": "0x74859aa7e242ce5f9ec8bfdd86f0342e7661f1db-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-CROSS_MARGIN_HOLDING",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x74859aa7e242ce5f9ec8bfdd86f0342e7661f1db",
+      "updatedAt": "1630015240"
+    },
+    {
+      "balance": "2100026910",
+      "balanceType": "CROSS_MARGIN_DEBT",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1630012445",
+      "id": "0x74859aa7e242ce5f9ec8bfdd86f0342e7661f1db-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_DEBT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x74859aa7e242ce5f9ec8bfdd86f0342e7661f1db",
+      "updatedAt": null
+    },
+    {
+      "balance": "23594",
+      "balanceType": "CROSS_MARGIN_HOLDING",
+      "contract": "0xfda3e986e38a913ac3300c2eff168d0d69d698b1",
+      "createdAt": "1629671354",
+      "id": "0x74859aa7e242ce5f9ec8bfdd86f0342e7661f1db-0xc7198437980c041c805a1edcba50c1ce5db95118-CROSS_MARGIN_HOLDING",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x74859aa7e242ce5f9ec8bfdd86f0342e7661f1db",
+      "updatedAt": "1630015240"
+    }
+  ],
+  "dailySwapVolumes": [
+    {
+      "createdAt": "1628687882",
+      "id": "18850-0x59414b3089ce2af0010e7523dea7e2b35d776ec7-SPOT",
+      "token": "0x59414b3089ce2af0010e7523dea7e2b35d776ec7",
+      "type": "SPOT",
+      "updatedAt": null,
+      "volume": "795814806862166000"
+    },
+    {
+      "createdAt": "1628653003",
+      "id": "18850-0x60781c2586d68229fde47564546784ab3faca982-MARGIN",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "type": "MARGIN",
+      "updatedAt": null,
+      "volume": "50000000000000000"
+    },
+    {
+      "createdAt": "1628783377",
+      "id": "18851-0xde3a24028580884448a5397872046a019649b084-MARGIN",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "type": "MARGIN",
+      "updatedAt": null,
+      "volume": "500000000"
+    },
+    {
+      "createdAt": "1628821912",
+      "id": "18852-0xde3a24028580884448a5397872046a019649b084-MARGIN",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "type": "MARGIN",
+      "updatedAt": "1628869646",
+      "volume": "2600000000"
+    },
+    {
+      "createdAt": "1628924546",
+      "id": "18853-0x59414b3089ce2af0010e7523dea7e2b35d776ec7-SPOT",
+      "token": "0x59414b3089ce2af0010e7523dea7e2b35d776ec7",
+      "type": "SPOT",
+      "updatedAt": null,
+      "volume": "505315067546536000"
+    },
+    {
+      "createdAt": "1629060167",
+      "id": "18854-0x60781c2586d68229fde47564546784ab3faca982-MARGIN",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "type": "MARGIN",
+      "updatedAt": null,
+      "volume": "2197000000000000000000"
+    },
+    {
+      "createdAt": "1629028398",
+      "id": "18854-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-SPOT",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "type": "SPOT",
+      "updatedAt": null,
+      "volume": "290658228398863481267"
+    },
+    {
+      "createdAt": "1629028982",
+      "id": "18854-0xde3a24028580884448a5397872046a019649b084-MARGIN",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "type": "MARGIN",
+      "updatedAt": null,
+      "volume": "7750000000"
+    },
+    {
+      "createdAt": "1629057489",
+      "id": "18854-0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15-MARGIN",
+      "token": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15",
+      "type": "MARGIN",
+      "updatedAt": "1629065933",
+      "volume": "9000000000000000000"
+    },
+    {
+      "createdAt": "1629130507",
+      "id": "18855-0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-MARGIN",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "type": "MARGIN",
+      "updatedAt": "1629148532",
+      "volume": "11620611483503202755"
+    },
+    {
+      "createdAt": "1629142249",
+      "id": "18855-0x60781c2586d68229fde47564546784ab3faca982-MARGIN",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "type": "MARGIN",
+      "updatedAt": null,
+      "volume": "1000000000000000000"
+    },
+    {
+      "createdAt": "1629125119",
+      "id": "18855-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-MARGIN",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "type": "MARGIN",
+      "updatedAt": "1629144271",
+      "volume": "561488668231145708319"
+    },
+    {
+      "createdAt": "1629132866",
+      "id": "18855-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-SPOT",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "type": "SPOT",
+      "updatedAt": null,
+      "volume": "100000000000000000"
+    },
+    {
+      "createdAt": "1629138203",
+      "id": "18855-0xc7198437980c041c805a1edcba50c1ce5db95118-SPOT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "type": "SPOT",
+      "updatedAt": "1629144214",
+      "volume": "9628956213"
+    },
+    {
+      "createdAt": "1629096687",
+      "id": "18855-0xde3a24028580884448a5397872046a019649b084-MARGIN",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "type": "MARGIN",
+      "updatedAt": "1629138659",
+      "volume": "11080658143"
+    },
+    {
+      "createdAt": "1629094749",
+      "id": "18855-0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15-MARGIN",
+      "token": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15",
+      "type": "MARGIN",
+      "updatedAt": "1629130042",
+      "volume": "9447141359503079201"
+    },
+    {
+      "createdAt": "1629188694",
+      "id": "18856-0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-MARGIN",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "type": "MARGIN",
+      "updatedAt": "1629232569",
+      "volume": "8573236594696555775"
+    },
+    {
+      "createdAt": "1629203476",
+      "id": "18856-0x60781c2586d68229fde47564546784ab3faca982-SPOT",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "type": "SPOT",
+      "updatedAt": null,
+      "volume": "3000000000163573587635"
+    },
+    {
+      "createdAt": "1629176200",
+      "id": "18856-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-MARGIN",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "type": "MARGIN",
+      "updatedAt": "1629226452",
+      "volume": "1512067162119914800986"
+    },
+    {
+      "createdAt": "1629203660",
+      "id": "18856-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-SPOT",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "type": "SPOT",
+      "updatedAt": null,
+      "volume": "100000000000000000000"
+    },
+    {
+      "createdAt": "1629187487",
+      "id": "18856-0xde3a24028580884448a5397872046a019649b084-MARGIN",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "type": "MARGIN",
+      "updatedAt": "1629207024",
+      "volume": "9872619097"
+    },
+    {
+      "createdAt": "1629201693",
+      "id": "18856-0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15-MARGIN",
+      "token": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15",
+      "type": "MARGIN",
+      "updatedAt": "1629204268",
+      "volume": "557241312731395156"
+    },
+    {
+      "createdAt": "1629202282",
+      "id": "18856-0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15-SPOT",
+      "token": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15",
+      "type": "SPOT",
+      "updatedAt": "1629240565",
+      "volume": "8748642119551443776"
+    },
+    {
+      "createdAt": "1629266463",
+      "id": "18857-0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-MARGIN",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "type": "MARGIN",
+      "updatedAt": "1629267502",
+      "volume": "2113741983648967162"
+    },
+    {
+      "createdAt": "1629287194",
+      "id": "18857-0x60781c2586d68229fde47564546784ab3faca982-MARGIN",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "type": "MARGIN",
+      "updatedAt": null,
+      "volume": "1000000000000000000000"
+    },
+    {
+      "createdAt": "1629266326",
+      "id": "18857-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-MARGIN",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "type": "MARGIN",
+      "updatedAt": "1629300025",
+      "volume": "554904346650705455608"
+    },
+    {
+      "createdAt": "1629290568",
+      "id": "18857-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-SPOT",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "type": "SPOT",
+      "updatedAt": "1629292036",
+      "volume": "2915121345454997168"
+    },
+    {
+      "createdAt": "1629265984",
+      "id": "18857-0xc7198437980c041c805a1edcba50c1ce5db95118-SPOT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "type": "SPOT",
+      "updatedAt": "1629306006",
+      "volume": "32202336850"
+    },
+    {
+      "createdAt": "1629301495",
+      "id": "18857-0xde3a24028580884448a5397872046a019649b084-MARGIN",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "type": "MARGIN",
+      "updatedAt": "1629326835",
+      "volume": "9518392389"
+    },
+    {
+      "createdAt": "1629270953",
+      "id": "18857-0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15-MARGIN",
+      "token": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15",
+      "type": "MARGIN",
+      "updatedAt": "1629323556",
+      "volume": "110000000000000000"
+    },
+    {
+      "createdAt": "1629301470",
+      "id": "18857-0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15-SPOT",
+      "token": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15",
+      "type": "SPOT",
+      "updatedAt": null,
+      "volume": "320046682162712643"
+    },
+    {
+      "createdAt": "1629403930",
+      "id": "18858-0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-MARGIN",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "type": "MARGIN",
+      "updatedAt": "1629411602",
+      "volume": "17400000000000000000"
+    },
+    {
+      "createdAt": "1629354827",
+      "id": "18858-0x60781c2586d68229fde47564546784ab3faca982-MARGIN",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "type": "MARGIN",
+      "updatedAt": null,
+      "volume": "500000000000000000000"
+    },
+    {
+      "createdAt": "1629350918",
+      "id": "18858-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-MARGIN",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "type": "MARGIN",
+      "updatedAt": "1629408285",
+      "volume": "907293843165770958295"
+    },
+    {
+      "createdAt": "1629359482",
+      "id": "18858-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-SPOT",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "type": "SPOT",
+      "updatedAt": "1629377102",
+      "volume": "9100000000000000000"
+    },
+    {
+      "createdAt": "1629340591",
+      "id": "18858-0xc7198437980c041c805a1edcba50c1ce5db95118-MARGIN",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "type": "MARGIN",
+      "updatedAt": "1629406521",
+      "volume": "112727866933"
+    },
+    {
+      "createdAt": "1629393297",
+      "id": "18858-0xde3a24028580884448a5397872046a019649b084-MARGIN",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "type": "MARGIN",
+      "updatedAt": null,
+      "volume": "1073396167"
+    },
+    {
+      "createdAt": "1629397281",
+      "id": "18858-0xde3a24028580884448a5397872046a019649b084-SPOT",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "type": "SPOT",
+      "updatedAt": "1629410699",
+      "volume": "54609908"
+    },
+    {
+      "createdAt": "1629345230",
+      "id": "18858-0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15-MARGIN",
+      "token": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15",
+      "type": "MARGIN",
+      "updatedAt": null,
+      "volume": "100000000000000000"
+    },
+    {
+      "createdAt": "1629455387",
+      "id": "18859-0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-SPOT",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "type": "SPOT",
+      "updatedAt": "1629494222",
+      "volume": "630000000000000000"
+    },
+    {
+      "createdAt": "1629474249",
+      "id": "18859-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-MARGIN",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "type": "MARGIN",
+      "updatedAt": "1629485667",
+      "volume": "226452130761609219196"
+    },
+    {
+      "createdAt": "1629471575",
+      "id": "18859-0xc7198437980c041c805a1edcba50c1ce5db95118-MARGIN",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "type": "MARGIN",
+      "updatedAt": "1629472510",
+      "volume": "18542348169"
+    },
+    {
+      "createdAt": "1629498363",
+      "id": "18859-0xc7198437980c041c805a1edcba50c1ce5db95118-SPOT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "type": "SPOT",
+      "updatedAt": null,
+      "volume": "1132556312"
+    },
+    {
+      "createdAt": "1629450021",
+      "id": "18859-0xde3a24028580884448a5397872046a019649b084-MARGIN",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "type": "MARGIN",
+      "updatedAt": null,
+      "volume": "3120000000"
+    },
+    {
+      "createdAt": "1629578847",
+      "id": "18860-0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-MARGIN",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "type": "MARGIN",
+      "updatedAt": "1629580659",
+      "volume": "4000000000000000000"
+    },
+    {
+      "createdAt": "1629534479",
+      "id": "18860-0x60781c2586d68229fde47564546784ab3faca982-MARGIN",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "type": "MARGIN",
+      "updatedAt": null,
+      "volume": "100000000000000000000"
+    },
+    {
+      "createdAt": "1629544714",
+      "id": "18860-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-MARGIN",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "type": "MARGIN",
+      "updatedAt": "1629577351",
+      "volume": "205738215166043118477"
+    },
+    {
+      "createdAt": "1629555620",
+      "id": "18860-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-SPOT",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "type": "SPOT",
+      "updatedAt": null,
+      "volume": "42911398990715870"
+    },
+    {
+      "createdAt": "1629581162",
+      "id": "18860-0xb3fe5374f67d7a22886a0ee082b2e2f9d2651651-SPOT",
+      "token": "0xb3fe5374f67d7a22886a0ee082b2e2f9d2651651",
+      "type": "SPOT",
+      "updatedAt": null,
+      "volume": "2311383593005608419"
+    },
+    {
+      "createdAt": "1629555671",
+      "id": "18860-0xc38f41a296a4493ff429f1238e030924a1542e50-SPOT",
+      "token": "0xc38f41a296a4493ff429f1238e030924a1542e50",
+      "type": "SPOT",
+      "updatedAt": null,
+      "volume": "1500000000000000000"
+    },
+    {
+      "createdAt": "1629512889",
+      "id": "18860-0xc7198437980c041c805a1edcba50c1ce5db95118-MARGIN",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "type": "MARGIN",
+      "updatedAt": "1629587703",
+      "volume": "987410089409"
+    },
+    {
+      "createdAt": "1629530956",
+      "id": "18860-0xc7198437980c041c805a1edcba50c1ce5db95118-SPOT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "type": "SPOT",
+      "updatedAt": "1629585452",
+      "volume": "171986975193"
+    },
+    {
+      "createdAt": "1629507484",
+      "id": "18860-0xde3a24028580884448a5397872046a019649b084-MARGIN",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "type": "MARGIN",
+      "updatedAt": "1629526835",
+      "volume": "13979998191"
+    },
+    {
+      "createdAt": "1629526466",
+      "id": "18860-0xde3a24028580884448a5397872046a019649b084-SPOT",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "type": "SPOT",
+      "updatedAt": null,
+      "volume": "30000000"
+    },
+    {
+      "createdAt": "1629534709",
+      "id": "18860-0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15-MARGIN",
+      "token": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15",
+      "type": "MARGIN",
+      "updatedAt": "1629570016",
+      "volume": "1100000000000000000"
+    },
+    {
+      "createdAt": "1629631306",
+      "id": "18861-0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-MARGIN",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "type": "MARGIN",
+      "updatedAt": "1629670586",
+      "volume": "10149324040584371462"
+    },
+    {
+      "createdAt": "1629612418",
+      "id": "18861-0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-SPOT",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "type": "SPOT",
+      "updatedAt": "1629658825",
+      "volume": "3029471969820326748"
+    },
+    {
+      "createdAt": "1629606291",
+      "id": "18861-0x60781c2586d68229fde47564546784ab3faca982-MARGIN",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "type": "MARGIN",
+      "updatedAt": null,
+      "volume": "709000000000000000000"
+    },
+    {
+      "createdAt": "1629635394",
+      "id": "18861-0x60781c2586d68229fde47564546784ab3faca982-SPOT",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "type": "SPOT",
+      "updatedAt": null,
+      "volume": "25669050074546271604"
+    },
+    {
+      "createdAt": "1629594863",
+      "id": "18861-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-MARGIN",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "type": "MARGIN",
+      "updatedAt": "1629676441",
+      "volume": "390808436046306984482"
+    },
+    {
+      "createdAt": "1629596016",
+      "id": "18861-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-SPOT",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "type": "SPOT",
+      "updatedAt": null,
+      "volume": "3256097228940512899"
+    },
+    {
+      "createdAt": "1629590696",
+      "id": "18861-0xc7198437980c041c805a1edcba50c1ce5db95118-MARGIN",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "type": "MARGIN",
+      "updatedAt": "1629676622",
+      "volume": "733829822229"
+    },
+    {
+      "createdAt": "1629593421",
+      "id": "18861-0xc7198437980c041c805a1edcba50c1ce5db95118-SPOT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "type": "SPOT",
+      "updatedAt": "1629675626",
+      "volume": "333733502627"
+    },
+    {
+      "createdAt": "1629653366",
+      "id": "18861-0xde3a24028580884448a5397872046a019649b084-MARGIN",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "type": "MARGIN",
+      "updatedAt": null,
+      "volume": "9872673893"
+    },
+    {
+      "createdAt": "1629593586",
+      "id": "18861-0xde3a24028580884448a5397872046a019649b084-SPOT",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "type": "SPOT",
+      "updatedAt": null,
+      "volume": "47614002"
+    },
+    {
+      "createdAt": "1629596349",
+      "id": "18861-0xe896cdeaac9615145c0ca09c8cd5c25bced6384c-SPOT",
+      "token": "0xe896cdeaac9615145c0ca09c8cd5c25bced6384c",
+      "type": "SPOT",
+      "updatedAt": "1629626002",
+      "volume": "3382907322159160672"
+    },
+    {
+      "createdAt": "1629660999",
+      "id": "18861-0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15-SPOT",
+      "token": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15",
+      "type": "SPOT",
+      "updatedAt": null,
+      "volume": "1000000000000000000"
+    },
+    {
+      "createdAt": "1629701684",
+      "id": "18862-0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-MARGIN",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "type": "MARGIN",
+      "updatedAt": "1629745294",
+      "volume": "4000000000000000000"
+    },
+    {
+      "createdAt": "1629703188",
+      "id": "18862-0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-SPOT",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "type": "SPOT",
+      "updatedAt": "1629741381",
+      "volume": "44872345009418132655"
+    },
+    {
+      "createdAt": "1629685075",
+      "id": "18862-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-MARGIN",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "type": "MARGIN",
+      "updatedAt": "1629762267",
+      "volume": "2394071743001443672944"
+    },
+    {
+      "createdAt": "1629692000",
+      "id": "18862-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-SPOT",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "type": "SPOT",
+      "updatedAt": "1629749007",
+      "volume": "1011000000000000000000"
+    },
+    {
+      "createdAt": "1629677292",
+      "id": "18862-0xc7198437980c041c805a1edcba50c1ce5db95118-MARGIN",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "type": "MARGIN",
+      "updatedAt": "1629762484",
+      "volume": "251369575718"
+    },
+    {
+      "createdAt": "1629677085",
+      "id": "18862-0xc7198437980c041c805a1edcba50c1ce5db95118-SPOT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "type": "SPOT",
+      "updatedAt": "1629762671",
+      "volume": "334690695114"
+    },
+    {
+      "createdAt": "1629742280",
+      "id": "18862-0xde3a24028580884448a5397872046a019649b084-MARGIN",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "type": "MARGIN",
+      "updatedAt": null,
+      "volume": "7721615154"
+    },
+    {
+      "createdAt": "1629752353",
+      "id": "18862-0xde3a24028580884448a5397872046a019649b084-SPOT",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "type": "SPOT",
+      "updatedAt": null,
+      "volume": "1014231395"
+    },
+    {
+      "createdAt": "1629787352",
+      "id": "18863-0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-MARGIN",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "type": "MARGIN",
+      "updatedAt": "1629838032",
+      "volume": "11500000000000000000"
+    },
+    {
+      "createdAt": "1629807571",
+      "id": "18863-0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-SPOT",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "type": "SPOT",
+      "updatedAt": null,
+      "volume": "1000000000000000000"
+    },
+    {
+      "createdAt": "1629790928",
+      "id": "18863-0x60781c2586d68229fde47564546784ab3faca982-MARGIN",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "type": "MARGIN",
+      "updatedAt": "1629837570",
+      "volume": "1443602319058116221517"
+    },
+    {
+      "createdAt": "1629813874",
+      "id": "18863-0x60781c2586d68229fde47564546784ab3faca982-SPOT",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "type": "SPOT",
+      "updatedAt": null,
+      "volume": "14633667617811279315"
+    },
+    {
+      "createdAt": "1629843764",
+      "id": "18863-0x8729438eb15e2c8b576fcc6aecda6a148776c0f5-SPOT",
+      "token": "0x8729438eb15e2c8b576fcc6aecda6a148776c0f5",
+      "type": "SPOT",
+      "updatedAt": null,
+      "volume": "1539088042153576891527"
+    },
+    {
+      "createdAt": "1629764264",
+      "id": "18863-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-MARGIN",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "type": "MARGIN",
+      "updatedAt": "1629845842",
+      "volume": "4573890288188485805161"
+    },
+    {
+      "createdAt": "1629841622",
+      "id": "18863-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-SPOT",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "type": "SPOT",
+      "updatedAt": "1629847432",
+      "volume": "1100000000000000000"
+    },
+    {
+      "createdAt": "1629763774",
+      "id": "18863-0xc7198437980c041c805a1edcba50c1ce5db95118-MARGIN",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "type": "MARGIN",
+      "updatedAt": "1629848987",
+      "volume": "886554171692"
+    },
+    {
+      "createdAt": "1629763225",
+      "id": "18863-0xc7198437980c041c805a1edcba50c1ce5db95118-SPOT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "type": "SPOT",
+      "updatedAt": "1629844573",
+      "volume": "574902221434"
+    },
+    {
+      "createdAt": "1629771874",
+      "id": "18863-0xde3a24028580884448a5397872046a019649b084-MARGIN",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "type": "MARGIN",
+      "updatedAt": "1629837087",
+      "volume": "18030683964"
+    },
+    {
+      "createdAt": "1629860221",
+      "id": "18864-0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-MARGIN",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "type": "MARGIN",
+      "updatedAt": "1629924612",
+      "volume": "4126856800754621828"
+    },
+    {
+      "createdAt": "1629896200",
+      "id": "18864-0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-SPOT",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "type": "SPOT",
+      "updatedAt": "1629929704",
+      "volume": "4000000000000000000"
+    },
+    {
+      "createdAt": "1629852726",
+      "id": "18864-0x60781c2586d68229fde47564546784ab3faca982-MARGIN",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "type": "MARGIN",
+      "updatedAt": "1629865903",
+      "volume": "1942597415751918448922"
+    },
+    {
+      "createdAt": "1629852526",
+      "id": "18864-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-MARGIN",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "type": "MARGIN",
+      "updatedAt": "1629925644",
+      "volume": "3867463649673937975576"
+    },
+    {
+      "createdAt": "1629851355",
+      "id": "18864-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-SPOT",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "type": "SPOT",
+      "updatedAt": "1629890739",
+      "volume": "2075000000000000000"
+    },
+    {
+      "createdAt": "1629850952",
+      "id": "18864-0xc7198437980c041c805a1edcba50c1ce5db95118-MARGIN",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "type": "MARGIN",
+      "updatedAt": "1629927478",
+      "volume": "631499625278"
+    },
+    {
+      "createdAt": "1629855569",
+      "id": "18864-0xc7198437980c041c805a1edcba50c1ce5db95118-SPOT",
+      "token": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "type": "SPOT",
+      "updatedAt": "1629929323",
+      "volume": "488337646776"
+    },
+    {
+      "createdAt": "1629862268",
+      "id": "18864-0xde3a24028580884448a5397872046a019649b084-MARGIN",
+      "token": "0xde3a24028580884448a5397872046a019649b084",
+      "type": "MARGIN",
+      "updatedAt": null,
+      "volume": "260000000"
+    },
+    {
+      "createdAt": "1629881312",
+      "id": "18864-0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15-MARGIN",
+      "token": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15",
+      "type": "MARGIN",
+      "updatedAt": null,
+      "volume": "18939769178897943"
+    },
+    {
+      "createdAt": "1629866577",
+      "id": "18864-0xf39f9671906d8630812f9d9863bbef5d523c84ab-SPOT",
+      "token": "0xf39f9671906d8630812f9d9863bbef5d523c84ab",
+      "type": "SPOT",
+      "updatedAt": null,
+      "volume": "1000000000000000000"
+    },
+    {
+      "createdAt": "1629970855",
+      "id": "18865-0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-MARGIN",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "type": "MARGIN",
+      "updatedAt": "1630000283",
+      "volume": "6597351025305429189"
+    },
+    {
+      "createdAt": "1629944783",
+      "id": "18865-0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab-SPOT",
+      "token": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "type": "SPOT",
+      "updatedAt": "1630020548",
+      "volume": "4275724464403999708"
+    },
+    {
+      "createdAt": "1629986213",
+      "id": "18865-0x60781c2586d68229fde47564546784ab3faca982-MARGIN",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "type": "MARGIN",
+      "updatedAt": "1630022289",
+      "volume": "5440175934967221963284"
+    },
+    {
+      "createdAt": "1630021009",
+      "id": "18865-0x60781c2586d68229fde47564546784ab3faca982-SPOT",
+      "token": "0x60781c2586d68229fde47564546784ab3faca982",
+      "type": "SPOT",
+      "updatedAt": null,
+      "volume": "30085029805764746183"
+    },
+    {
+      "createdAt": "1629965602",
+      "id": "18865-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7-MARGIN",
+      "token": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "type": "MARGIN",
+      "updatedAt": "1630016262",
+      "volume": "1080336809801621719120"
+    }
+  ],
+  "swaps": [
+    {
+      "createdAt": "1629746329",
+      "fromAmount": "1000000000",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x001172c64bf0a24ee63d3341537185ae387b7dcb413a74d50baa669edcc18f6d",
+      "toAmount": "21763043086660779388",
+      "toToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x734caa5f4c9e0a60dd5a16166c19bae9020051c4",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629455387",
+      "fromAmount": "100000000000000000",
+      "fromToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "id": "0x003c8db985e0e4c5e6f81bfd384b875135ea4c4d642856b3f65ae2c253770b93",
+      "toAmount": "8791631686596896236",
+      "toToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0xf35db530c0416106b749c301176155c04e3c684d",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629555620",
+      "fromAmount": "42911398990715870",
+      "fromToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "id": "0x007de4f72ea4881abe1e8c36ec1f5b63907a59f0a32381a991d7725ccc4d1596",
+      "toAmount": "1500000000000000000",
+      "toToken": "0xc38f41a296a4493ff429f1238e030924a1542e50",
+      "trader": "0x459397d644324a9e7c19c71c2965eeab6fff4605",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629866577",
+      "fromAmount": "1000000000000000000",
+      "fromToken": "0xf39f9671906d8630812f9d9863bbef5d523c84ab",
+      "id": "0x00809cbbe53b0791ca25a862d77fc63db1e45497c15c4795e1791aabfc70f4c1",
+      "toAmount": "1327650062289983376",
+      "toToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x7bc0ceafffc2f2322f07c3058ffbcc2fa7c2af7d",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629655769",
+      "fromAmount": "6198167050",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x009d9a6289c43e1273acfd47508d1264d1941954baac2e6a14cbd1a3ca003c55",
+      "toAmount": "2000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0xc4c93d09d45df1ce52053fdc0befcc49b01884ea",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629203143",
+      "fromAmount": "100000000000000000",
+      "fromToken": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15",
+      "id": "0x00c014fb26ca3467f8551cf06d0deb5569b2fa63a592d46a9608af941e807ed0",
+      "toAmount": "126099445153283950",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0xb124c2e19b7de50db658e899d5ecf0a88dc6d99c",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629028398",
+      "fromAmount": "290658228398863481267",
+      "fromToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "id": "0x00e70622d8466f77d3acb1bb39ddd2db04a5fc22b131b0c4087bb77deb1a5bfd",
+      "toAmount": "5000000000",
+      "toToken": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0xcd081fe01bb797c2afdb01b0e3a62ed3fb8900d6",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629843824",
+      "fromAmount": "100000000000000000000",
+      "fromToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "id": "0x010213d97f04091a8b0f90630435b69b2d6cf254236136e92364071462523d6b",
+      "toAmount": "5549746098",
+      "toToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629876743",
+      "fromAmount": "3178830354",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x011755f63178f52b6c7933290a07a112963b5a472790c358139d3a45469bfbcb",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629855366",
+      "fromAmount": "222585055",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x011788135055502749c423415315b4de005d1e76a4d32c4c277a0bf544b6664f",
+      "toAmount": "50000000000000000000",
+      "toToken": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x730d82aed9fc7aebc5264c381e8fda092aaf1872",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629410364",
+      "fromAmount": "1000000000000000000",
+      "fromToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "id": "0x011888e7b1976851315e420d8c293df4778c9afa0ea4831bf850abb2d32626cc",
+      "toAmount": "3255196145",
+      "toToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0xb124c2e19b7de50db658e899d5ecf0a88dc6d99c",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629822079",
+      "fromAmount": "6241331973",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0129445e9e27143128d38bd3c415e473a5b089bb811b30c641d243f27df11c3d",
+      "toAmount": "2000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629729052",
+      "fromAmount": "2000000000000000000",
+      "fromToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "id": "0x013d012aa7f39e215622971667060158c27ebadf9e984f5fe7b321393454c1cd",
+      "toAmount": "6704410384",
+      "toToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629772183",
+      "fromAmount": "3281281893",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x016643952a8c534a595167f277e4c18b9f328ef3ee51981615959c9069315289",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629613480",
+      "fromAmount": "12896380303",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0190abc5928f2f2abf54c5ef9ca7e66de2abe5523bfe2226cb3d46466ed39c79",
+      "toAmount": "4000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629872925",
+      "fromAmount": "6320445045",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x019bacf2a70cdb29ca6a222ea1a470f1b4bc9ef6b662dec32c14756e09e1ce69",
+      "toAmount": "2000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629967340",
+      "fromAmount": "3087923682",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x01ebc6a557c14f1b5d158c094607713f71cca2a2818f0b0b128682529a4d2fa6",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629659529",
+      "fromAmount": "3123357240",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x01fa49884eff7f2de8d4831edc7cf48932ba231fc3c1c8ad3609911af5681952",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0xc4c93d09d45df1ce52053fdc0befcc49b01884ea",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629908267",
+      "fromAmount": "100000000000000000000",
+      "fromToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "id": "0x01fd117702f4f8b246a030861d1a2b65f031b48c63da6e0c08a313411a4bff70",
+      "toAmount": "5063386236",
+      "toToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629814003",
+      "fromAmount": "3214496564",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x023df1233e0972a6ee9a79305f2e08642a966b0970617b65cc14f320c21f0138",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629856218",
+      "fromAmount": "3072533210",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x025259e0f8fc9902c24752fe4f5f9af0393159b7caef6fff16dffa8999f25442",
+      "toAmount": "975346116050217506",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629837429",
+      "fromAmount": "100000000000000000000",
+      "fromToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "id": "0x028752b03d0265996f95e90a8b99a62247ba6329e840bc778763c7b94e9c1654",
+      "toAmount": "5237786055",
+      "toToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629743499",
+      "fromAmount": "100000000000000000000",
+      "fromToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "id": "0x02968704c3a0a2490a812feb85691f6d14315a5e701ac09dffb839bb183a5c76",
+      "toAmount": "4647037726",
+      "toToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629855774",
+      "fromAmount": "12450815481",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x02a52f22c966f366ad614e33fdda7e7b7f87f3f6f2efc3c76d37778cb5114cd4",
+      "toAmount": "4000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0xc4c93d09d45df1ce52053fdc0befcc49b01884ea",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1630023251",
+      "fromAmount": "40000000",
+      "fromToken": "0xde3a24028580884448a5397872046a019649b084",
+      "id": "0x02f2241e3363649d10fbf8736d5da549b72d957954bfadcae2ade50dde79d7d5",
+      "toAmount": "15250323135675947657",
+      "toToken": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x91e4797a91bac4d5b0b4dc4f24c66d48c185b2bb",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1630000283",
+      "fromAmount": "1000000000000000000",
+      "fromToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "id": "0x02f6603ce1eee1f91711f61d72aab17203d23ab649014613638e6086c93af2cb",
+      "toAmount": "3128299562",
+      "toToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0xc4c93d09d45df1ce52053fdc0befcc49b01884ea",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629804143",
+      "fromAmount": "1000000000000000000",
+      "fromToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "id": "0x02f83717179d7ec6d03c376a5986d09627d2166c831868e912ced711d0593a6f",
+      "toAmount": "3322467605",
+      "toToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629553069",
+      "fromAmount": "3262889890",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x033f2bcf01a69135c549f3eee7e198cc5fa11c27edca3e8d4f6a5325016dbae5",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1630025640",
+      "fromAmount": "29569814267882239568",
+      "fromToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "id": "0x03d5b564946441ef9e66369af8bd9488ef8b0a9952c9062afc0e98b6bcf5ec36",
+      "toAmount": "474984518606160019503",
+      "toToken": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x730d82aed9fc7aebc5264c381e8fda092aaf1872",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629851733",
+      "fromAmount": "12635275207",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x03fdf5cb2add27f2f21f7eec9bf87f66cce4d29e08b2c9f3fa7594ddd910a3f1",
+      "toAmount": "4000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0xc4c93d09d45df1ce52053fdc0befcc49b01884ea",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629820363",
+      "fromAmount": "4779402229",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x041efe8a4f00f21af21d274dcaf79973d4618306885fa515c80ac9700d1d3ca9",
+      "toAmount": "100000000000000000000",
+      "toToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629816773",
+      "fromAmount": "9757210055523351",
+      "fromToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "id": "0x04400689238a2bdaaa4e12ada3cab742540835dfec9ee02d5e11bb5b63602dd6",
+      "toAmount": "500000",
+      "toToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x6f58a3743357bc488d9b14fa875ea91e98439dab",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629857623",
+      "fromAmount": "100000000000000000000",
+      "fromToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "id": "0x045ce1a0f95f72261c29cc1196b275ff3b682254a4d10fb742079eba3d640175",
+      "toAmount": "5569265265",
+      "toToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629586822",
+      "fromAmount": "3253622110",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0484a48c4f361646202ae7b0543ee9b882ff5267b5b1a0531aa49259dfe4d0d2",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629840951",
+      "fromAmount": "100000000000000000000",
+      "fromToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "id": "0x0489ec4327436fb3fdeb9526a423834a9058e83f31431bfea3922a61c9eccb59",
+      "toAmount": "5515331083",
+      "toToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629563250",
+      "fromAmount": "3277045288",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x04b6af43764a24b479a59be0f3a6b414e43a8409e4ffa0784e55f711d0ded12b",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629583240",
+      "fromAmount": "6466668557",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x04d2a28db21a46479b7c54cc355e767aa545cf78c22ee867f377ed3057b92a4e",
+      "toAmount": "2000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0xc4c93d09d45df1ce52053fdc0befcc49b01884ea",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629763908",
+      "fromAmount": "3310909659",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x04e3ddb644a544a90d0e07f0ae2dd56b8870c3b4f492d2147009ef019a6c8fe2",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629977550",
+      "fromAmount": "5446431847",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x05017fbcbded28a8f65ab644c213a909d497216716ec5a80d81a54a447f8493b",
+      "toAmount": "1785005719895053929",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629773090",
+      "fromAmount": "3281099317",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x056318c153632f0b095fe873ef905c83c4205fdd9d752ea8207894fd6104f333",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629565154",
+      "fromAmount": "9642257879",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x05a28a1dd46528a8b798453b76cd7d541c91d502ce40403658f5e50369e936fb",
+      "toAmount": "3000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0xc4c93d09d45df1ce52053fdc0befcc49b01884ea",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629834369",
+      "fromAmount": "100000000000000000000",
+      "fromToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "id": "0x05b6eed57cb489f87e6cec0cbb78271ff511f39f86663c11938ecfc497ca81ef",
+      "toAmount": "5282430706",
+      "toToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629814616",
+      "fromAmount": "15738143772",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x05cab25cb1632f31e3da47e3b7cff72644ce7fa62df0ea54e10651ed4e79bacf",
+      "toAmount": "5000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0xc4c93d09d45df1ce52053fdc0befcc49b01884ea",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629925644",
+      "fromAmount": "100000000000000000000",
+      "fromToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "id": "0x0613b3ae389cf229c8ae2b1087f4b96ec78f79d4d6398708c380174fa446a5de",
+      "toAmount": "4689741174",
+      "toToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629558855",
+      "fromAmount": "4809707697",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x06543f52f0880d21fd647a93325f57b44283d06c08589cf160b654c18ee13d6d",
+      "toAmount": "100000000000000000000",
+      "toToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629566801",
+      "fromAmount": "3215474109",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x067e63db33a4808bdda4f5c209b2dbd691c4c98e39969412cc855246914ca2b0",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0xc4c93d09d45df1ce52053fdc0befcc49b01884ea",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629840098",
+      "fromAmount": "6286224870",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x067fbaf7003d459cbb9cb8b6ec96a3fc700f42e3d07835e70e240cb3097e9e81",
+      "toAmount": "2000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629562950",
+      "fromAmount": "3257617419",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x069168e49b51307bf761f7526dc6f035ef07bc667353f426ccdaa9be54c683ed",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629731313",
+      "fromAmount": "13285642497",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x069b3f94144125f520ee42a44f6d060e0a719c3e3f6c81d46c0e4865c00d04a4",
+      "toAmount": "4000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0xc4c93d09d45df1ce52053fdc0befcc49b01884ea",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629726451",
+      "fromAmount": "13155266605",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x06a589c77fef7f876f9a2022b22864638fdae0e52d554e42ebe91698e4bd005a",
+      "toAmount": "4000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629536104",
+      "fromAmount": "9581324107",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x06e49236950509fb0198fe1efd9aa7351e98afdb9e3f6caf2919b10572b80677",
+      "toAmount": "200000000000000000000",
+      "toToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0xb124c2e19b7de50db658e899d5ecf0a88dc6d99c",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629929323",
+      "fromAmount": "4674642966",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0702508fd087a41294a1e0e7b1ca496f023257685db566f5ad75ceaa28411a33",
+      "toAmount": "100000000000000000000",
+      "toToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629856173",
+      "fromAmount": "6276127038",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x072a5e36e2562f4e0aba7525f4e49e00eccdba8bc4a1e4a1dfbd2bf973fa32ff",
+      "toAmount": "2000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629967177",
+      "fromAmount": "3078695232",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0737c9634711f84e31941a1b38b164c7d3093325ea301343a32408eacaed7967",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629562400",
+      "fromAmount": "3252908974",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0753efd29aee7d8486ac1f17472262418ed9f285c8ade0837c21fb984e96d057",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629840555",
+      "fromAmount": "9506858937",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x07c650ca831aa615f96ff7da0f155bd6b78312147947f0f0ea5f322bb5ca6f73",
+      "toAmount": "3000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629740960",
+      "fromAmount": "1000000000000000000",
+      "fromToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "id": "0x080f65fbdd0d8a3f435d3f4602b2b7970046e90e9593bd070c4b91e46f410e38",
+      "toAmount": "3356793161",
+      "toToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629822300",
+      "fromAmount": "4623214813",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0816d96185c7b7cd21dca05f54a3497fce63401d96cc83ed06efe589227bf29f",
+      "toAmount": "100000000000000000000",
+      "toToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629562389",
+      "fromAmount": "3249935245",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0889f89edfd5eaebaae20ef1855762df89d401d0315516586e13d444242deff3",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629844387",
+      "fromAmount": "3179131373",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x089da399ff4bca75315f217e23c2d4cc686a2df69545f861c3d3eb4d698373a1",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629554092",
+      "fromAmount": "3278878114",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x08d990563a4fc70b9d8ad7324780ecfd7c3ae9d83e09fd9065beba383a6bd604",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629904811",
+      "fromAmount": "15751506590",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x08e62b2d26b4b768f19d20f7d531389b98aa93cd04550cf7bed295f50c6505ad",
+      "toAmount": "5000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0xc4c93d09d45df1ce52053fdc0befcc49b01884ea",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629762671",
+      "fromAmount": "3311157303",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x09085571a5fff428f5815b60be15ad75ba32aec73d0a0a7312aef5c0ff9e96c7",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629653366",
+      "fromAmount": "9872673893",
+      "fromToken": "0xde3a24028580884448a5397872046a019649b084",
+      "id": "0x091388bc82bdea99bc2cbd2c11233d1e447d6c6ff178f6ad0dbf10007c20880f",
+      "toAmount": "300000000000000000000",
+      "toToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0xcd081fe01bb797c2afdb01b0e3a62ed3fb8900d6",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629712920",
+      "fromAmount": "6691350274",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0922614082dd8e52ca0bc893843cac05cd7383eae6a17a5839cba3b392abaf8b",
+      "toAmount": "2000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0xc4c93d09d45df1ce52053fdc0befcc49b01884ea",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629834242",
+      "fromAmount": "3080700000",
+      "fromToken": "0xde3a24028580884448a5397872046a019649b084",
+      "id": "0x09273f1fe36563f2958712dfb13d8a5e812282715e134a1c1834fed871aaa312",
+      "toAmount": "4010851424",
+      "toToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0xcd081fe01bb797c2afdb01b0e3a62ed3fb8900d6",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629814728",
+      "fromAmount": "4823841892",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x093f7a80d58d5e61f4f60bbda0db59dae0dad73fa9b30e125fe4f8132ecdb64e",
+      "toAmount": "1509015917913471389",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629659351",
+      "fromAmount": "9294767135",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x096020beadc16883f5d23522d058ec7765355d9aeb84f6b2388e4499703df08b",
+      "toAmount": "3000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0xc4c93d09d45df1ce52053fdc0befcc49b01884ea",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629988501",
+      "fromAmount": "100000000000000000000",
+      "fromToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "id": "0x09e8c980827d62b979e3f4146bf86d5235546eac6640ff8f0125e5422b29087f",
+      "toAmount": "4621890728",
+      "toToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0xc4c93d09d45df1ce52053fdc0befcc49b01884ea",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629471917",
+      "fromAmount": "3636858228",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0a4bf656ee2b83e8ffe56f6cff9c5c8948383375799d11d8947502339de7f326",
+      "toAmount": "100000000000000000000",
+      "toToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0xb124c2e19b7de50db658e899d5ecf0a88dc6d99c",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629612996",
+      "fromAmount": "3223868046",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0a769fefd0ef53832cb0c6b889dbed5128583099fca2a6918d8b0e0df860458e",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629266663",
+      "fromAmount": "2348896009",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0a7c2678713ee1e7f6ad08c4dc2ca09304bb7509d83655cc91290630a829d8ad",
+      "toAmount": "100000000000000000000",
+      "toToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0xb124c2e19b7de50db658e899d5ecf0a88dc6d99c",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629116076",
+      "fromAmount": "1000000000000000000",
+      "fromToken": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15",
+      "id": "0x0b0091624721f75a9e3d6149ca92366bb56ac78b256040520934eccf70135332",
+      "toAmount": "178166768464621758089",
+      "toToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0xb124c2e19b7de50db658e899d5ecf0a88dc6d99c",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629097962",
+      "fromAmount": "1886850674",
+      "fromToken": "0xde3a24028580884448a5397872046a019649b084",
+      "id": "0x0b07ed61edccb5a10410408801323272d90c6630fc961bb9243dfe9efcedcbdc",
+      "toAmount": "100000000000000000000",
+      "toToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0xb124c2e19b7de50db658e899d5ecf0a88dc6d99c",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629865903",
+      "fromAmount": "503000000000000000000",
+      "fromToken": "0x60781c2586d68229fde47564546784ab3faca982",
+      "id": "0x0b11b23ea5ba4d8ecdf78bd5d7bcfd579a58321accd54e1e29fa912bf281501e",
+      "toAmount": "2183927416",
+      "toToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x730d82aed9fc7aebc5264c381e8fda092aaf1872",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1630093065",
+      "fromAmount": "8164760649046248382",
+      "fromToken": "0x60781c2586d68229fde47564546784ab3faca982",
+      "id": "0x0b13e65ec5b0b2c5e5aaca76443e93b1fc950dd08fc74083c1ba21c8e62b1af9",
+      "toAmount": "500000000000000000",
+      "toToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0xb124c2e19b7de50db658e899d5ecf0a88dc6d99c",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629904528",
+      "fromAmount": "3155253313",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0b65c41fbed76c6688dcaa67689c4de7123cbcdb092344ac84e530d53ac6b751",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629907493",
+      "fromAmount": "100000000000000000000",
+      "fromToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "id": "0x0b94d9a3f8023697ea1de07a9967ab1d895161d932fa78ab42cbbffd2c01cf06",
+      "toAmount": "5083506156",
+      "toToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629979707",
+      "fromAmount": "3053809244",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0bbde064ab9888440529e16a96fbd33577909c9fe665ce454282de6c5946c3b8",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0xc4c93d09d45df1ce52053fdc0befcc49b01884ea",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629643470",
+      "fromAmount": "1000000000000000000",
+      "fromToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "id": "0x0bf41da8b595e5dca5c47245db583934b4d1b66c3b0055dc9b139dbe7148b4ba",
+      "toAmount": "3229515209",
+      "toToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1630056557",
+      "fromAmount": "3063709333",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0c02f9f48f48e47521e387b3b15f6ab779f4f4ecc5cccc36579398e62c8f8406",
+      "toAmount": "3000000000",
+      "toToken": "0xde3a24028580884448a5397872046a019649b084",
+      "trader": "0x2d829fa56864074813f64b6915ebf531b56ae0b8",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629572686",
+      "fromAmount": "3242702095",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0c0a50ed0f2f1b98b971956eae3002295f25ec110a39658d72d797008a7f5e74",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629956294",
+      "fromAmount": "3114872042",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0c3e80a42cec29214274a12d40a1714775aea9e102d411d1c26bbc886d9a73b1",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629551678",
+      "fromAmount": "52918241350233839",
+      "fromToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "id": "0x0cd603ae2353847c5cd046e7a1e03fea1e797bd0da70d7b2ecaa2c32a68d2368",
+      "toAmount": "891287384417608905",
+      "toToken": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0xd62be35495ebce459e64bf7167077ccc12c894cd",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629724231",
+      "fromAmount": "48682134",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0d2e2ddd0a965abfa06ed8cdbc6dfec9cb00225ed734bbffcd0def1a5cb64ecc",
+      "toAmount": "1000000000000000000",
+      "toToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0xc4c93d09d45df1ce52053fdc0befcc49b01884ea",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629394798",
+      "fromAmount": "3036521863",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0d585927c93a01107002eaa6833397962abf14c6a08804f51cac8960ff8ed97f",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0xb124c2e19b7de50db658e899d5ecf0a88dc6d99c",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629546871",
+      "fromAmount": "4537159864",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0dad10591e43ca321e3941c3b0945c92c96d525a8183dc71ec7b8278dc17a8e1",
+      "toAmount": "100000000000000000000",
+      "toToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0xb124c2e19b7de50db658e899d5ecf0a88dc6d99c",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629650588",
+      "fromAmount": "5000000000000000000",
+      "fromToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "id": "0x0dbc34069c92f8c7d471280323781bed843402dfb847929afbdbadeb3eb19118",
+      "toAmount": "16173887382",
+      "toToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629812341",
+      "fromAmount": "3192308810",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0e1e83ce9218075b80ac5a59ac23ab60f5466482994722dc3478219f22feda64",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0xc4c93d09d45df1ce52053fdc0befcc49b01884ea",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629531370",
+      "fromAmount": "15000000000",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0e21d039255abaa24a1d8b312e9e6e74ce8d2ada2de8906c4ac69fec5b3da253",
+      "toAmount": "345555425753709110955",
+      "toToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x388cad06256a829f3d57642acdc11950453a62c4",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1630059160",
+      "fromAmount": "3113701284",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0e372cc03472b97fa14a166214f98520e1e8510f6b0a1345275e07e6c9216844",
+      "toAmount": "1000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1628869614",
+      "fromAmount": "1000000000",
+      "fromToken": "0xde3a24028580884448a5397872046a019649b084",
+      "id": "0x0e8c1ee7d78158c6144824d15bd42a3983d8840c26f82cfcaa39513fc53bdd1d",
+      "toAmount": "914487702199177815374",
+      "toToken": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0x734caa5f4c9e0a60dd5a16166c19bae9020051c4",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629837174",
+      "fromAmount": "1000000000000000000",
+      "fromToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "id": "0x0f02aa14cf67ffab4afbf8ea7f5825fa47e4ddb4818e4b6997d0b3825c51e6c1",
+      "toAmount": "14286509939543862078",
+      "toToken": "0x60781c2586d68229fde47564546784ab3faca982",
+      "trader": "0xd4ff07632f976d9bc93c3260185fd659e813a650",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629851355",
+      "fromAmount": "2000000000000000000",
+      "fromToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "id": "0x0f207626b11ccd2dfa5563cfc8dca1d304334f416559f6d3baf6b7f54d99377d",
+      "toAmount": "18934426711927528",
+      "toToken": "0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15",
+      "trader": "0xc919c80b09654cf74f301d23145f4da1d1f0dcec",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629580659",
+      "fromAmount": "2000000000000000000",
+      "fromToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "id": "0x0f29bac9c1808084ac5cf2f39ff804830974905d2b60023b4258199770885a0f",
+      "toAmount": "6502724413",
+      "toToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0xc4c93d09d45df1ce52053fdc0befcc49b01884ea",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1630043530",
+      "fromAmount": "100000000000000000000",
+      "fromToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "id": "0x0f34619fc5488c9d12c1529c9a573d2e6a1c2c100c1dc1bacbfa085d0f4a221d",
+      "toAmount": "4195670480",
+      "toToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "trader": "0xc4c93d09d45df1ce52053fdc0befcc49b01884ea",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629658221",
+      "fromAmount": "6165386067",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0f3e1b3b6d0088d832c414aaf8bc23e0e6492ecae985a6007611654f6c7a21ad",
+      "toAmount": "2000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629928555",
+      "fromAmount": "4571087057",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0f461999ae1d34eaab3e533d2560a49b38b5f482a1b39d54c8d47ab72b4f07c6",
+      "toAmount": "100000000000000000000",
+      "toToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "SPOT"
+    },
+    {
+      "createdAt": "1629856314",
+      "fromAmount": "6291693124",
+      "fromToken": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+      "id": "0x0f4d1eaa8a04fd135ffc6331c2b782ed8d7df80bd2c60ff46201184bd9fa5ea9",
+      "toAmount": "2000000000000000000",
+      "toToken": "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+      "trader": "0x4bedb38b2b6a1a90fe5578614d24e67aa5457a00",
+      "type": "MARGIN"
+    },
+    {
+      "createdAt": "1629301495",
+      "fromAmount": "17470100",
+      "fromToken": "0xde3a24028580884448a5397872046a019649b084",
+      "id": "0x1033f5d9bfe6e8daea7bc9d9fd474784ba05d1b05bc0d73e238df9d45c0843b0",
+      "toAmount": "733580242528910529",
+      "toToken": "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+      "trader": "0xcb553c622b37f6b9c382c071de99121eab11f32c",
+      "type": "MARGIN"
+    }
+  ]
+}
