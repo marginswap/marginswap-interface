@@ -1,8 +1,6 @@
 import React from 'react'
 import { AdvancedChart } from 'react-tradingview-embed'
-import MarketTrades from '../../components/MarketTrades'
 import styled from 'styled-components'
-import AccountBalance from 'components/AccountBalance'
 import Swap from 'pages/Swap'
 
 const Container = styled.div`
