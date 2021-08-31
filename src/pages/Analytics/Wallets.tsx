@@ -9,7 +9,7 @@ import IconButton from '@material-ui/core/IconButton'
 import Circle from '../../assets/images/blue-loader.svg'
 import { polygonClient } from '../../config/apollo-config'
 import { avalancheClient } from '../../config/apollo-config'
-//import { bscClient } from '../../config/apollo-config'
+import { bscClient } from '../../config/apollo-config'
 
 import { getTopTraders } from './utils'
 
@@ -125,7 +125,7 @@ export const Wallets = () => {
     }
   })
 
-  /*const {
+  const {
     loading: bscLoading,
     error: bscError,
     data: bscData
@@ -135,25 +135,25 @@ export const Wallets = () => {
       gte: gteValue,
       lte: lteValue
     }
-  })*/
+  })
 
-  const swapsLoading = avaLoading && polyLoading //&& bscLoading
-  const swapsError = avaError && polyError //&& bscError
+  const swapsLoading = avaLoading && polyLoading && bscLoading
+  const swapsError = avaError && polyError && bscError
 
   useEffect(() => {
-    const getTraderData = async (polygonData: any, avalancheData: any /*bscData: any*/) => {
+    const getTraderData = async (polygonData: any, avalancheData: any, bscData: any) => {
       const tradersData = await getTopTraders({
         polygonSwaps: polygonData || [],
-        avalancheSwaps: avalancheData || []
-        /*bscSwaps: bscData || []*/
+        avalancheSwaps: avalancheData || [],
+        bscSwaps: bscData || []
       })
       setTopTraders(tradersData)
     }
 
     if (!swapsLoading && !swapsError) {
-      getTraderData(polygonData?.swaps || [], avalancheData?.swaps || [] /*bscData?.swaps || []*/)
+      getTraderData(polygonData?.swaps || [], avalancheData?.swaps || [], bscData?.swaps || [])
     }
-  }, [polygonData, avalancheData /*bscData*/])
+  }, [polygonData, avalancheData, bscData])
 
   const handleChange = () => {
     setChecked(prev => !prev)
@@ -167,9 +167,9 @@ export const Wallets = () => {
           <span>Wallet</span>
           <span>Volume (24hrs)</span>
         </div>
-        {polyLoading || avaLoading /*|| bscLoading*/ ? (
+        {polyLoading || avaLoading || bscLoading ? (
           <CustomLightSpinner src={Circle} alt="loader" size={'90px'} />
-        ) : polyError || avaError /*|| bscError*/ ? (
+        ) : polyError || avaError || bscError ? (
           <div> Error! </div>
         ) : (
           <>

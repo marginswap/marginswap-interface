@@ -31,7 +31,7 @@ type TopTradersProps = {
 type VolumeSwaps = {
   polygonSwaps: DataProps[]
   avalancheSwaps: DataProps[]
-  /*bscSwaps: DataProps[]*/
+  bscSwaps: DataProps[]
 }
 
 export type SwapVolumeProps = {
@@ -44,13 +44,13 @@ export type SwapVolumeProps = {
 export type GetAggregateBalancesProps = {
   aggregateBalancesPolygon: AggregateBalances[]
   aggregateBalancesAvalanche: AggregateBalances[]
-  /*aggregateBalancesBsc: AggregateBalances[]*/
+  aggregateBalancesBsc: AggregateBalances[]
 }
 
 export type GetDailyVolumeProps = {
   dailyPolygonSwapVolumes: SwapVolumeProps[]
   dailyAvalancheSwapVolumes: SwapVolumeProps[]
-  //dailyBscSwapVolumes: SwapVolumeProps[]
+  dailyBscSwapVolumes: SwapVolumeProps[]
 }
 
 async function adjustTokenValue(token: AggregateBalances | SwapVolumeProps) {
@@ -118,22 +118,20 @@ export async function getAvalancheTokenUSDPrice(): Promise<TokensValue> {
 
 export async function getTopTraders({
   polygonSwaps,
-  avalancheSwaps
-}: /*bscSwaps*/
-VolumeSwaps): Promise<TopTradersProps[]> {
+  avalancheSwaps,
+  bscSwaps
+}: VolumeSwaps): Promise<TopTradersProps[]> {
   const polygonTokenAddresses = await Promise.all(polygonSwaps.map(swap => swap.fromToken))
-  //const bscTokenAddresses = await Promise.all(bscSwaps.map(swap => swap.fromToken))
+  const bscTokenAddresses = await Promise.all(bscSwaps.map((swap: { fromToken: any }) => swap.fromToken))
 
   const polygonTokensPrice = await getPolygonTokenUSDPrice(polygonTokenAddresses)
   const avalancheTokensPrice = await getAvalancheTokenUSDPrice()
-  //const bscTokensPrice = await getBscTokenUSDPrice(bscTokenAddresses)
+  const bscTokensPrice = await getBscTokenUSDPrice(bscTokenAddresses)
 
   let swaps = []
-  swaps = await Promise.all(
-    [...polygonSwaps, ...avalancheSwaps /*...bscSwaps*/].map(t => adjustTokenValueForTraders(t))
-  )
+  swaps = await Promise.all([...polygonSwaps, ...avalancheSwaps, ...bscSwaps].map(t => adjustTokenValueForTraders(t)))
 
-  const tokensPrice = { ...polygonTokensPrice, ...avalancheTokensPrice /*...bscTokensPrice*/ }
+  const tokensPrice = { ...polygonTokensPrice, ...avalancheTokensPrice, ...bscTokensPrice }
 
   const swapWithTokensUsdValue = swaps.map(swap => ({
     ...swap,
@@ -156,7 +154,7 @@ VolumeSwaps): Promise<TopTradersProps[]> {
 
       return {
         trader: trader,
-        volume: Number(volumeValue.toFixed(2))
+        volume: Number(volumeValue.toFixed(6))
       }
     })
     .sort((a, b) => b.volume - a.volume)
@@ -164,22 +162,22 @@ VolumeSwaps): Promise<TopTradersProps[]> {
 
 export async function getDailyVolume({
   dailyPolygonSwapVolumes,
-  dailyAvalancheSwapVolumes
-}: /*dailyBscSwapVolumes*/
-GetDailyVolumeProps) {
+  dailyAvalancheSwapVolumes,
+  dailyBscSwapVolumes
+}: GetDailyVolumeProps) {
   // avalancheTokenAddresses ->  WE ARE GETTING THIS FROM A STATIC FILE
   const polygonTokenAddresses = dailyPolygonSwapVolumes.map(dsv => dsv.token)
-  //const bscTokenAddresses = dailyBscSwapVolumes.map(dsv => dsv.token)
+  const bscTokenAddresses = dailyBscSwapVolumes.map(dsv => dsv.token)
 
   const tokensAvalanchePrice = await getAvalancheTokenUSDPrice()
   const tokensPolygonPrice = await getPolygonTokenUSDPrice(polygonTokenAddresses)
-  //const tokensBscPrice = await getBscTokenUSDPrice(bscTokenAddresses)
+  const tokensBscPrice = await getBscTokenUSDPrice(bscTokenAddresses)
 
-  const tokensPrice = { ...tokensAvalanchePrice, ...tokensPolygonPrice /*...tokensBscPrice*/ }
+  const tokensPrice = { ...tokensAvalanchePrice, ...tokensPolygonPrice, ...tokensBscPrice }
 
   let dailyVolume = 0
   const swapVolumes = await Promise.all(
-    [...dailyPolygonSwapVolumes, ...dailyAvalancheSwapVolumes /*...dailyBscSwapVolumes*/].map(t => adjustTokenValue(t))
+    [...dailyPolygonSwapVolumes, ...dailyAvalancheSwapVolumes, ...dailyBscSwapVolumes].map(t => adjustTokenValue(t))
   )
 
   const dailySwap = swapVolumes.map((token: any) => {
@@ -214,26 +212,24 @@ GetDailyVolumeProps) {
 
 export async function getAggregateBalances({
   aggregateBalancesPolygon,
-  aggregateBalancesAvalanche
-}: /*aggregateBalancesBsc*/
-GetAggregateBalancesProps) {
+  aggregateBalancesAvalanche,
+  aggregateBalancesBsc
+}: GetAggregateBalancesProps) {
   // avalancheTokenAddresses ->  WE ARE GETTING THIS FROM A STATIC FILE
   const polygonTokenAddresses = aggregateBalancesPolygon.map(dsv => dsv.token)
-  //const bscTokenAddresses = aggregateBalancesBsc.map(dsv => dsv.token)
+  const bscTokenAddresses = aggregateBalancesBsc.map(dsv => dsv.token)
 
   const tokensAvalanchePrice = await getAvalancheTokenUSDPrice()
   const tokensPolygonPrice = await getPolygonTokenUSDPrice(polygonTokenAddresses)
-  //const tokensBscPrice = await getBscTokenUSDPrice(bscTokenAddresses)
+  const tokensBscPrice = await getBscTokenUSDPrice(bscTokenAddresses)
 
-  const tokensPrice = { ...tokensAvalanchePrice, ...tokensPolygonPrice /*...tokensBscPrice*/ }
+  const tokensPrice = { ...tokensAvalanchePrice, ...tokensPolygonPrice, ...tokensBscPrice }
 
   let tvl = 0
   let totalBorrowed = 0
   let totalLending = 0
   const aggregateBalances: any[] = await Promise.all(
-    [...aggregateBalancesPolygon, ...aggregateBalancesAvalanche /*...aggregateBalancesBsc*/].map(t =>
-      adjustTokenValue(t)
-    )
+    [...aggregateBalancesPolygon, ...aggregateBalancesAvalanche, ...aggregateBalancesBsc].map(t => adjustTokenValue(t))
   )
 
   aggregateBalances.forEach((aggBal: any) => {

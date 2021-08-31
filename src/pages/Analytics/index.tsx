@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core'
-//import Graphic from 'components/Graphic'
 import { Stats } from './Stats'
 import { Wallets } from './Wallets'
 import { getAggregateBalances, getDailyVolume, GetAggregateBalancesProps } from './utils'
@@ -8,7 +7,7 @@ import { DateTime } from 'luxon'
 import { useSwapVolumesQuery, useAggregatedBalancesQuery } from '../../graphql/queries/analytics'
 import { avalancheClient } from '../../config/apollo-config'
 import { polygonClient } from '../../config/apollo-config'
-//import { bscClient } from '../../config/apollo-config'
+import { bscClient } from '../../config/apollo-config'
 
 const useStyles = makeStyles(() => ({
   wrapper: {
@@ -94,7 +93,7 @@ export const Analytics = () => {
 
   //dsv -> Dialy Swap Volume
   // Binance Smart Contract
-  /*const {
+  const {
     data: bscDsvData,
     loading: bscDsvLoading,
     error: bscDsvError
@@ -104,19 +103,19 @@ export const Analytics = () => {
       lte: lteValue
     },
     client: bscClient
-  })*/
+  })
 
-  const swapVolumesLoading = avalancheDsvLoading && polygonDsvLoading //&& bscDsvLoading
-  const swapVolumesError = avalancheDsvError && polygonDsvError //&& bscDsvError
+  const swapVolumesLoading = avalancheDsvLoading && polygonDsvLoading && bscDsvLoading
+  const swapVolumesError = avalancheDsvError && polygonDsvError && bscDsvError
 
   // Binance Smart Contract
-  /*const {
+  const {
     data: bscAggreateBalancesData,
     loading: bscAggBalLoading,
     error: bscAggBalError
   } = useAggregatedBalancesQuery({
     client: bscClient
-  })*/
+  })
 
   // Polygon Smart Contract
   const {
@@ -136,20 +135,20 @@ export const Analytics = () => {
     client: avalancheClient
   })
 
-  const aggregateBalancesLoading = polygonAggBalLoading && avalancheAggBalLoading //&& bscAggBalLoading
-  const aggregateBalancesError = polygonAggBalError && avalancheAggBalError //&& bscAggBalError
+  const aggregateBalancesLoading = polygonAggBalLoading && avalancheAggBalLoading && bscAggBalLoading
+  const aggregateBalancesError = polygonAggBalError && avalancheAggBalError && bscAggBalError
 
   const avalancheDsv = avalancheDsvData?.dailySwapVolumes || []
   const polygonDsv = polygonDsvData?.dailySwapVolumes || []
-  //const bscDsv = bscDsvData?.dailySwapVolumes || []
+  const bscDsv = bscDsvData?.dailySwapVolumes || []
 
   useEffect(() => {
-    if (avalancheDsv.length && polygonDsv.length /*&& bscDsv.length*/) {
-      const getMontlyVolumeData = async (avalancheDsv: any, polygonDsv: any /* bscDsv: any*/) => {
+    if (avalancheDsv.length && polygonDsv.length && bscDsv.length) {
+      const getMontlyVolumeData = async (avalancheDsv: any, polygonDsv: any, bscDsv: any) => {
         const dailySwapFormatted = await getDailyVolume({
           dailyAvalancheSwapVolumes: avalancheDsv || [],
-          dailyPolygonSwapVolumes: polygonDsv || []
-          /*dailyBscSwapVolumes: bscDsv || []*/
+          dailyPolygonSwapVolumes: polygonDsv || [],
+          dailyBscSwapVolumes: bscDsv || []
         })
 
         const montlyFees = dailySwapFormatted?.totalDailyVolume * (0.1 / 100)
@@ -159,7 +158,7 @@ export const Analytics = () => {
         setMonlySwap(dailySwapFormatted)
       }
       if (!swapVolumesLoading && !swapVolumesError) {
-        getMontlyVolumeData(avalancheDsv, polygonDsv /*, bscDsv*/)
+        getMontlyVolumeData(avalancheDsv, polygonDsv, bscDsv)
       }
     }
   }, [avalancheDsv, polygonDsv /*bscDsv*/])
@@ -185,23 +184,23 @@ export const Analytics = () => {
 
   useEffect(() => {
     async function getTvl({
-      /*aggregateBalancesBsc,*/
+      aggregateBalancesBsc,
       aggregateBalancesAvalanche,
       aggregateBalancesPolygon
     }: GetAggregateBalancesProps) {
       const agregateBalancesResults = await getAggregateBalances({
-        /*aggregateBalancesBsc,*/
+        aggregateBalancesBsc,
         aggregateBalancesAvalanche,
         aggregateBalancesPolygon
       })
       setAggregateBalances(agregateBalancesResults.tvl)
-      setTotalLending(agregateBalancesResults.totalBorrowed)
-      setTotalBorrowed(agregateBalancesResults.totalLending)
+      setTotalLending(agregateBalancesResults.totalLending)
+      setTotalBorrowed(agregateBalancesResults.totalBorrowed)
     }
 
     if (!aggregateBalancesLoading && !aggregateBalancesError) {
       getTvl({
-        /*aggregateBalancesBsc: bscAggreateBalancesData?.aggregatedBalances || [],*/
+        aggregateBalancesBsc: bscAggreateBalancesData?.aggregatedBalances || [],
         aggregateBalancesPolygon: polygonAggreateBalancesData?.aggregatedBalances || [],
         aggregateBalancesAvalanche: avalancheAggreateBalancesData?.aggregatedBalances || []
       })
@@ -209,7 +208,7 @@ export const Analytics = () => {
   }, [
     aggregateBalancesLoading,
     aggregateBalancesError,
-    /*bscAggreateBalancesData,*/
+    bscAggreateBalancesData,
     polygonAggreateBalancesData,
     avalancheAggreateBalancesData
   ])
@@ -217,12 +216,6 @@ export const Analytics = () => {
   return (
     <div className={classes.wrapper}>
       <h2>Marginswap Analytics</h2>
-      {/*<Graphic
-        title={'Marginswap Volume'}
-        time={'Last Month'}
-        value={montlySwap?.totalDailyVolume || 0}
-        series={montlySwap?.dailySwap || []}
-      />*/}
       <div className={classes.stats}>
         <div>
           <Stats
