@@ -8,6 +8,7 @@ import { useSwapVolumesQuery, useAggregatedBalancesQuery } from '../../graphql/q
 import { avalancheClient } from '../../config/apollo-config'
 import { polygonClient } from '../../config/apollo-config'
 import { bscClient } from '../../config/apollo-config'
+import { ethereumClient } from '../../config/apollo-config'
 
 const useStyles = makeStyles(() => ({
   wrapper: {
@@ -105,8 +106,22 @@ export const Analytics = () => {
     client: bscClient
   })
 
-  const swapVolumesLoading = avalancheDsvLoading && polygonDsvLoading && bscDsvLoading
-  const swapVolumesError = avalancheDsvError && polygonDsvError && bscDsvError
+  //dsv -> Dialy Swap Volume
+  // Ethereum
+  const {
+    data: ethDsvData,
+    loading: ethDsvLoading,
+    error: ethDsvError
+  } = useSwapVolumesQuery({
+    variables: {
+      gte: gteValue,
+      lte: lteValue
+    },
+    client: ethereumClient
+  })
+
+  const swapVolumesLoading = avalancheDsvLoading && polygonDsvLoading && bscDsvLoading && ethDsvLoading
+  const swapVolumesError = avalancheDsvError && polygonDsvError && bscDsvError && ethDsvError
 
   // Binance Smart Contract
   const {
@@ -135,20 +150,34 @@ export const Analytics = () => {
     client: avalancheClient
   })
 
-  const aggregateBalancesLoading = polygonAggBalLoading && avalancheAggBalLoading && bscAggBalLoading
-  const aggregateBalancesError = polygonAggBalError && avalancheAggBalError && bscAggBalError
+  // Avalanche Smart Contract
+  const {
+    data: ethAggreateBalancesData,
+    loading: ethAggBalLoading,
+    error: ethAggBalError
+  } = useAggregatedBalancesQuery({
+    client: ethereumClient
+  })
+  console.log('🚀 ~ file: index.tsx ~ line 161 ~ Analytics ~ ethAggBalError', ethAggBalError)
+  console.log('🚀 ~ file: index.tsx ~ line 161 ~ Analytics ~ ethAggBalLoading', ethAggBalLoading)
+
+  const aggregateBalancesLoading =
+    polygonAggBalLoading && avalancheAggBalLoading && bscAggBalLoading && ethAggBalLoading
+  const aggregateBalancesError = polygonAggBalError && avalancheAggBalError && bscAggBalError && ethAggBalError
 
   const avalancheDsv = avalancheDsvData?.dailySwapVolumes || []
   const polygonDsv = polygonDsvData?.dailySwapVolumes || []
   const bscDsv = bscDsvData?.dailySwapVolumes || []
+  const ethDsv = ethDsvData?.dailySwapVolumes || []
 
   useEffect(() => {
-    if (avalancheDsv.length && polygonDsv.length && bscDsv.length) {
-      const getMontlyVolumeData = async (avalancheDsv: any, polygonDsv: any, bscDsv: any) => {
+    if ((avalancheDsv.length && polygonDsv.length && bscDsv.length, ethDsv.length)) {
+      const getMontlyVolumeData = async (avalancheDsv: any, polygonDsv: any, bscDsv: any, ethDsv: any) => {
         const dailySwapFormatted = await getDailyVolume({
           dailyAvalancheSwapVolumes: avalancheDsv || [],
           dailyPolygonSwapVolumes: polygonDsv || [],
-          dailyBscSwapVolumes: bscDsv || []
+          dailyBscSwapVolumes: bscDsv || [],
+          dailyEthSwapVolumes: ethDsv || []
         })
 
         const montlyFees = dailySwapFormatted?.totalDailyVolume * (0.1 / 100)
@@ -158,10 +187,10 @@ export const Analytics = () => {
         setMonlySwap(dailySwapFormatted)
       }
       if (!swapVolumesLoading && !swapVolumesError) {
-        getMontlyVolumeData(avalancheDsv, polygonDsv, bscDsv)
+        getMontlyVolumeData(avalancheDsv, polygonDsv, bscDsv, ethDsv)
       }
     }
-  }, [avalancheDsv, polygonDsv /*bscDsv*/])
+  }, [avalancheDsv, polygonDsv, bscDsv, ethDsv])
 
   useEffect(() => {
     async function getDailyVolume(montlySwap: ChartData[]) {
@@ -186,12 +215,14 @@ export const Analytics = () => {
     async function getTvl({
       aggregateBalancesBsc,
       aggregateBalancesAvalanche,
-      aggregateBalancesPolygon
+      aggregateBalancesPolygon,
+      aggregateBalancesEth
     }: GetAggregateBalancesProps) {
       const agregateBalancesResults = await getAggregateBalances({
         aggregateBalancesBsc,
         aggregateBalancesAvalanche,
-        aggregateBalancesPolygon
+        aggregateBalancesPolygon,
+        aggregateBalancesEth
       })
       setAggregateBalances(agregateBalancesResults.tvl)
       setTotalLending(agregateBalancesResults.totalLending)
@@ -202,7 +233,8 @@ export const Analytics = () => {
       getTvl({
         aggregateBalancesBsc: bscAggreateBalancesData?.aggregatedBalances || [],
         aggregateBalancesPolygon: polygonAggreateBalancesData?.aggregatedBalances || [],
-        aggregateBalancesAvalanche: avalancheAggreateBalancesData?.aggregatedBalances || []
+        aggregateBalancesAvalanche: avalancheAggreateBalancesData?.aggregatedBalances || [],
+        aggregateBalancesEth: ethAggreateBalancesData?.aggregatedBalances || []
       })
     }
   }, [
@@ -210,7 +242,8 @@ export const Analytics = () => {
     aggregateBalancesError,
     bscAggreateBalancesData,
     polygonAggreateBalancesData,
-    avalancheAggreateBalancesData
+    avalancheAggreateBalancesData,
+    ethAggreateBalancesData
   ])
 
   return (

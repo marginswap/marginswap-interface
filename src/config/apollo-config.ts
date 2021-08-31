@@ -15,4 +15,9 @@ const avalancheClient = new ApolloClient({
   cache: new InMemoryCache()
 })
 
-export { bscClient, polygonClient, avalancheClient }
+const ethereumClient = new ApolloClient({
+  uri: process.env.REACT_APP_GRAPH_SERVER_ETHEREUM,
+  cache: new InMemoryCache()
+})
+
+export { bscClient, polygonClient, avalancheClient, ethereumClient }
