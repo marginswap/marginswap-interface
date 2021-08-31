@@ -62,7 +62,7 @@ import { LeverageType } from '@marginswap/sdk'
 import { useBorrowable, useLendingAvailable } from '../../state/wallet/hooks'
 import { useMarginSwapTokenList } from '../../state/lists/hooks'
 
-export default function Swap() {
+export default function Swap({ roundedBody = true }: { roundedBody?: boolean }) {
   const loadedUrlParams = useDefaultsFromURLSearch()
 
   // token warning stuff
@@ -350,7 +350,7 @@ export default function Swap() {
         onConfirm={handleConfirmTokenWarning}
       />
       <SwapPoolTabs active={'swap'} />
-      <AppBody>
+      <AppBody roundedBody={roundedBody}>
         <SwapHeader />
         <PaddedColumn>
           <ToggleWrapper>

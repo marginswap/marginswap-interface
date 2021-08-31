@@ -10,6 +10,7 @@ import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
 import { MarginAccount } from './MarginAccount'
 import Swap from './Swap'
+import Pro from './Pro'
 import Vote from './Vote'
 import VotePage from './Vote/VotePage'
 import BondSupply from './BondSupply'
@@ -67,6 +68,7 @@ export default function App() {
           <Web3ReactManager>
             <Switch>
               <Route exact strict path="/swap" component={Swap} />
+              <Route exact strict path="/pro" component={Pro} />
               <Route exact strict path="/stake" component={Stake} />
               <Route exact strict path="/margin-account" component={MarginAccount} />
               <Route exact strict path="/bond-supply" component={BondSupply} />
