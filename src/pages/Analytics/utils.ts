@@ -153,18 +153,18 @@ export async function getTopTraders({
   const bscTokensPrice = await getBscTokenUSDPrice(bscTokenAddresses)
   const ethTokensPrice = await getEthTokenUSDPrice(ethTokenAddresses)
 
-  const avalancheSwapsLegacy = await Promise.all(
+  /*const avalancheSwapsLegacy = await Promise.all(
     legacyAvalancheData.swaps.map(s => ({
       trader: s.trader,
       id: s.id,
       fromToken: s.fromToken,
       fromAmount: s.fromAmount
     }))
-  )
+  )*/
 
   let swaps = []
   swaps = await Promise.all(
-    [...polygonSwaps, ...avalancheSwaps, ...avalancheSwapsLegacy, ...bscSwaps, ...ethSwaps].map(t =>
+    [...polygonSwaps, ...avalancheSwaps, /*...avalancheSwapsLegacy,*/ ...bscSwaps, ...ethSwaps].map(t =>
       adjustTokenValueForTraders(t)
     )
   )
@@ -209,14 +209,14 @@ export async function getDailyVolume({
   const bscTokenAddresses = dailyBscSwapVolumes.map(dsv => dsv.token)
   const ethTokenAddresses = dailyEthSwapVolumes.map(dsv => dsv.token)
 
-  const avalancheSwapVolumeLegacy = await Promise.all(
+  /*const avalancheSwapVolumeLegacy = await Promise.all(
     legacyAvalancheData.dailySwapVolumes.map(s => ({
       createdAt: s.createdAt,
       id: s.id,
       token: s.token,
       volume: s.volume
     }))
-  )
+  )*/
 
   const tokensAvalanchePrice = await getAvalancheTokenUSDPrice()
   const tokensPolygonPrice = await getPolygonTokenUSDPrice(polygonTokenAddresses)
@@ -230,7 +230,7 @@ export async function getDailyVolume({
     [
       ...dailyPolygonSwapVolumes,
       ...dailyAvalancheSwapVolumes,
-      ...avalancheSwapVolumeLegacy,
+      /*...avalancheSwapVolumeLegacy,*/
       ...dailyBscSwapVolumes,
       ...dailyEthSwapVolumes
     ].map(t => adjustTokenValue(t))

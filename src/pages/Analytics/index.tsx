@@ -119,6 +119,9 @@ export const Analytics = () => {
     },
     client: ethereumClient
   })
+  console.log('🚀 ~ file: index.tsx ~ line 122 ~ Analytics ~ ethDsvData', ethDsvData)
+  console.log('🚀 ~ file: index.tsx ~ line 122 ~ Analytics ~ ethDsvError', ethDsvError)
+  console.log('🚀 ~ file: index.tsx ~ line 122 ~ Analytics ~ ethDsvLoading', ethDsvLoading)
 
   const swapVolumesLoading = avalancheDsvLoading && polygonDsvLoading && bscDsvLoading && ethDsvLoading
   const swapVolumesError = avalancheDsvError && polygonDsvError && bscDsvError && ethDsvError
@@ -169,24 +172,22 @@ export const Analytics = () => {
   const ethDsv = ethDsvData?.dailySwapVolumes || []
 
   useEffect(() => {
-    if ((avalancheDsv.length && polygonDsv.length && bscDsv.length, ethDsv.length)) {
-      const getMontlyVolumeData = async (avalancheDsv: any, polygonDsv: any, bscDsv: any, ethDsv: any) => {
-        const dailySwapFormatted = await getDailyVolume({
-          dailyAvalancheSwapVolumes: avalancheDsv || [],
-          dailyPolygonSwapVolumes: polygonDsv || [],
-          dailyBscSwapVolumes: bscDsv || [],
-          dailyEthSwapVolumes: ethDsv || []
-        })
+    const getMontlyVolumeData = async (avalancheDsv: any, polygonDsv: any, bscDsv: any, ethDsv: any) => {
+      const dailySwapFormatted = await getDailyVolume({
+        dailyAvalancheSwapVolumes: avalancheDsv || [],
+        dailyPolygonSwapVolumes: polygonDsv || [],
+        dailyBscSwapVolumes: bscDsv || [],
+        dailyEthSwapVolumes: ethDsv || []
+      })
 
-        const montlyFees = dailySwapFormatted?.totalDailyVolume * (0.1 / 100)
+      const montlyFees = dailySwapFormatted?.totalDailyVolume * (0.1 / 100)
 
-        setMontlyFees(Number(montlyFees.toFixed(2)))
+      setMontlyFees(Number(montlyFees.toFixed(2)))
 
-        setMonlySwap(dailySwapFormatted)
-      }
-      if (!swapVolumesLoading && !swapVolumesError) {
-        getMontlyVolumeData(avalancheDsv, polygonDsv, bscDsv, ethDsv)
-      }
+      setMonlySwap(dailySwapFormatted)
+    }
+    if (!swapVolumesLoading && !swapVolumesError) {
+      getMontlyVolumeData(avalancheDsv, polygonDsv, bscDsv, ethDsv)
     }
   }, [avalancheDsv, polygonDsv, bscDsv, ethDsv])
 
