@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core'
 import { Stats } from './Stats'
-//import { Wallets } from './Wallets'
+import { Wallets } from './Wallets'
 import { getAggregateBalances, getVolume, GetAggregateBalancesProps } from './utils'
 import { DateTime } from 'luxon'
 import { useSwapVolumesQuery, useAggregatedBalancesQuery } from '../../graphql/queries/analytics'
@@ -171,10 +171,6 @@ export const Analytics = () => {
         dailyEthSwapVolumes: ethDsv || []
       })
 
-      const montlyFees = dailySwapFormatted?.totalDailyVolume * (0.1 / 100)
-
-      setMontlyFees(Number(montlyFees.toFixed(2)))
-
       setVolumeSwap(dailySwapFormatted)
     }
 
@@ -202,6 +198,10 @@ export const Analytics = () => {
 
       const last24HSwaps = await VolumeSwap.filter(ds => DateTime.fromISO(ds.time.toString()).toMillis() > yesterday)
       const last24hVol = await last24HSwaps.map(s => Number(s.value)).reduce((acc, cur) => acc + cur, 0)
+
+      const montlyFees = lastMonthVol * (0.1 / 100)
+
+      setMontlyFees(Number(montlyFees.toFixed(2)))
 
       setDailySwap({ totalDailyVolume: last24hVol, dailySwap: last24HSwaps })
       setLastMonthSwapVolume({ totalDailyVolume: lastMonthVol, dailySwap: lastMonthSwaps })
@@ -252,32 +252,59 @@ export const Analytics = () => {
       <h2>Marginswap Analytics</h2>
       <div className={classes.stats}>
         <div>
-          <Stats title={'Marginswap Volume'} time={''} value={volumeSwap?.totalDailyVolume || 0} series={[]} />
+          <Stats
+            title={'Total Volume'}
+            time={'All-time Marginswap volume'}
+            value={volumeSwap?.totalDailyVolume || 0}
+            series={[]}
+          />
         </div>
         <div>
           <Stats
-            title={'Marginswap Volume'}
-            time={'Last Month'}
+            title={'Monthly Volume'}
+            time={'Last 30 days Marginswap volume'}
             value={lastMonthSwapVolume?.totalDailyVolume || 0}
             series={[]}
           />
           <Stats
-            title={'Marginswap Volume'}
-            time={'Last 24 hrs'}
+            title={'Daily Volume'}
+            time={'Last 24 hours Marginswap volume'}
             value={Number(dailySwap?.totalDailyVolume.toFixed(2)) || 0}
             series={[]}
           />
         </div>
         <div>
-          <Stats title={'Total Fees'} time={'Fees paid past month'} value={montlyFees || 0} series={[]} />
-          <Stats title={'Total Value Locked'} time={''} value={Number(aggregateBalances) || 0} series={[]} />
+          <Stats
+            title={'Monthly Fees'}
+            time={'Fees paid to Marginswap in the last 30 days'}
+            value={montlyFees || 0}
+            series={[]}
+          />
+          <Stats
+            title={'Total Value Locked'}
+            time={'Total deposits on Marginswap'}
+            value={Number(aggregateBalances) || 0}
+            series={[]}
+          />
         </div>
         <div>
-          <Stats title={'Total Borrowed'} time={''} value={totalBorrowed || 0} chartColor={'#F90B0B'} series={[]} />
-          <Stats title={'Total Lending'} time={''} value={totalLending || 0} chartColor={'#F99808'} series={[]} />
+          <Stats
+            title={'Total Borrowed'}
+            time={'Total margin borrowing on Marginswap'}
+            value={totalBorrowed || 0}
+            chartColor={'#F90B0B'}
+            series={[]}
+          />
+          <Stats
+            title={'Total Lending'}
+            time={'Total lending liquidity on Marginswap'}
+            value={totalLending || 0}
+            chartColor={'#F99808'}
+            series={[]}
+          />
         </div>
       </div>
-      {/*<Wallets />*/}
+      <Wallets />
     </div>
   )
 }

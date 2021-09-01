@@ -167,7 +167,7 @@ export const Wallets = () => {
     if (!swapsLoading && !swapsError) {
       getTraderData(polygonData?.swaps || [], avalancheData?.swaps || [], bscData?.swaps || [], ethData?.swaps || [])
     }
-  }, [swapsLoading, swapsError])
+  }, [swapsLoading, swapsError, polygonData, avalancheData, bscData, ethData])
 
   const handleChange = () => {
     setChecked(prev => !prev)
@@ -181,9 +181,9 @@ export const Wallets = () => {
           <span>Wallet</span>
           <span>Volume (24hrs)</span>
         </div>
-        {polyLoading || avaLoading || bscLoading || ethLoading ? (
+        {swapsLoading ? (
           <CustomLightSpinner src={Circle} alt="loader" size={'90px'} />
-        ) : polyError || avaError || bscError || ethError ? (
+        ) : swapsError ? (
           <div> Error! </div>
         ) : (
           <>
