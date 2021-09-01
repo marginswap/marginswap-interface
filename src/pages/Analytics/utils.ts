@@ -4,6 +4,8 @@ import groupby from 'lodash.groupby'
 import tokenList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 import { AVALANCHE_TOKENS_LIST } from '../../constants'
 import { TokenAmount, Token } from '@marginswap/sdk'
+
+import legacyAvalancheData from '../../data/legacy-data/avalanche-aug-2021.json'
 interface TokensValue {
   [key: string]: { usd: number }
 }
@@ -32,6 +34,7 @@ type VolumeSwaps = {
   polygonSwaps: DataProps[]
   avalancheSwaps: DataProps[]
   bscSwaps: DataProps[]
+  ethSwaps: DataProps[]
 }
 
 export type SwapVolumeProps = {
@@ -99,7 +102,13 @@ export async function getPolygonTokenUSDPrice(tokenAddress: string[]) {
 }
 
 export async function getAvalancheTokenUSDPrice(): Promise<TokensValue> {
-  const tokenTypes = AVALANCHE_TOKENS_LIST.map(token => token.type)
+  const legacyTokens: { token: any; type: any }[] = []
+  tokenList.tokens.forEach((info: any) => {
+    if (info.chainId === 43114) legacyTokens.push({ token: info.address, type: info.coingeckoId })
+  })
+
+  const allAvalancheTokens = [...AVALANCHE_TOKENS_LIST, ...legacyTokens]
+  const tokenTypes = allAvalancheTokens.map(token => token?.type)
 
   const prices = await axiosInstance.get(`/simple/price`, {
     params: {
@@ -110,30 +119,57 @@ export async function getAvalancheTokenUSDPrice(): Promise<TokensValue> {
 
   const avalancheTokens: TokensValue = {}
 
-  await AVALANCHE_TOKENS_LIST.forEach(avax => {
-    const newObj = { [avax.token]: prices.data[avax.type] }
+  await allAvalancheTokens.forEach(avax => {
+    const newObj = { [avax.token.toLowerCase()]: prices.data[avax.type] }
     Object.assign(avalancheTokens, newObj)
   })
 
   return avalancheTokens
 }
 
+export async function getEthTokenUSDPrice(tokenAddress: string[]) {
+  const ethPrices = await axiosInstance.get(`/simple/token_price/ethereum`, {
+    params: {
+      contract_addresses: tokenAddress.join(','),
+      vs_currencies: 'usd'
+    }
+  })
+
+  return ethPrices.data
+}
+
 export async function getTopTraders({
   polygonSwaps,
   avalancheSwaps,
-  bscSwaps
+  bscSwaps,
+  ethSwaps
 }: VolumeSwaps): Promise<TopTradersProps[]> {
   const polygonTokenAddresses = await Promise.all(polygonSwaps.map(swap => swap.fromToken))
   const bscTokenAddresses = await Promise.all(bscSwaps.map((swap: { fromToken: any }) => swap.fromToken))
+  const ethTokenAddresses = await Promise.all(ethSwaps.map((swap: { fromToken: any }) => swap.fromToken))
 
   const polygonTokensPrice = await getPolygonTokenUSDPrice(polygonTokenAddresses)
   const avalancheTokensPrice = await getAvalancheTokenUSDPrice()
   const bscTokensPrice = await getBscTokenUSDPrice(bscTokenAddresses)
+  const ethTokensPrice = await getEthTokenUSDPrice(ethTokenAddresses)
+
+  const avalancheSwapsLegacy = await Promise.all(
+    legacyAvalancheData.swaps.map(s => ({
+      trader: s.trader,
+      id: s.id,
+      fromToken: s.fromToken,
+      fromAmount: s.fromAmount
+    }))
+  )
 
   let swaps = []
-  swaps = await Promise.all([...polygonSwaps, ...avalancheSwaps, ...bscSwaps].map(t => adjustTokenValueForTraders(t)))
+  swaps = await Promise.all(
+    [...polygonSwaps, ...avalancheSwaps, ...avalancheSwapsLegacy, ...bscSwaps, ...ethSwaps].map(t =>
+      adjustTokenValueForTraders(t)
+    )
+  )
 
-  const tokensPrice = { ...polygonTokensPrice, ...avalancheTokensPrice, ...bscTokensPrice }
+  const tokensPrice = { ...polygonTokensPrice, ...avalancheTokensPrice, ...bscTokensPrice, ...ethTokensPrice }
 
   const swapWithTokensUsdValue = swaps.map(swap => ({
     ...swap,
@@ -173,18 +209,31 @@ export async function getDailyVolume({
   const bscTokenAddresses = dailyBscSwapVolumes.map(dsv => dsv.token)
   const ethTokenAddresses = dailyEthSwapVolumes.map(dsv => dsv.token)
 
+  const avalancheSwapVolumeLegacy = await Promise.all(
+    legacyAvalancheData.dailySwapVolumes.map(s => ({
+      createdAt: s.createdAt,
+      id: s.id,
+      token: s.token,
+      volume: s.volume
+    }))
+  )
+
   const tokensAvalanchePrice = await getAvalancheTokenUSDPrice()
   const tokensPolygonPrice = await getPolygonTokenUSDPrice(polygonTokenAddresses)
   const tokensBscPrice = await getBscTokenUSDPrice(bscTokenAddresses)
-  const tokensEthPrice = await getBscTokenUSDPrice(ethTokenAddresses)
+  const tokensEthPrice = await getEthTokenUSDPrice(ethTokenAddresses)
 
   const tokensPrice = { ...tokensAvalanchePrice, ...tokensPolygonPrice, ...tokensBscPrice, ...tokensEthPrice }
 
   let dailyVolume = 0
   const swapVolumes = await Promise.all(
-    [...dailyPolygonSwapVolumes, ...dailyAvalancheSwapVolumes, ...dailyBscSwapVolumes, ...dailyEthSwapVolumes].map(t =>
-      adjustTokenValue(t)
-    )
+    [
+      ...dailyPolygonSwapVolumes,
+      ...dailyAvalancheSwapVolumes,
+      ...avalancheSwapVolumeLegacy,
+      ...dailyBscSwapVolumes,
+      ...dailyEthSwapVolumes
+    ].map(t => adjustTokenValue(t))
   )
 
   const dailySwap = swapVolumes.map((token: any) => {
@@ -231,7 +280,17 @@ export async function getAggregateBalances({
   const tokensAvalanchePrice = await getAvalancheTokenUSDPrice()
   const tokensPolygonPrice = await getPolygonTokenUSDPrice(polygonTokenAddresses)
   const tokensBscPrice = await getBscTokenUSDPrice(bscTokenAddresses)
-  const tokensEthPrice = await getBscTokenUSDPrice(ethTokenAddresses)
+  const tokensEthPrice = await getEthTokenUSDPrice(ethTokenAddresses)
+
+  const avalancheAggreateBalancesLegacy = await Promise.all(
+    legacyAvalancheData.aggregatedBalances.map(ab => ({
+      balance: ab.balance,
+      balanceType: ab.balanceType,
+      createdAt: ab.createdAt,
+      id: ab.id,
+      token: ab.token
+    }))
+  )
 
   const tokensPrice = { ...tokensAvalanchePrice, ...tokensPolygonPrice, ...tokensBscPrice, ...tokensEthPrice }
 
@@ -239,9 +298,13 @@ export async function getAggregateBalances({
   let totalBorrowed = 0
   let totalLending = 0
   const aggregateBalances: any[] = await Promise.all(
-    [...aggregateBalancesPolygon, ...aggregateBalancesAvalanche, ...aggregateBalancesBsc, ...aggregateBalancesEth].map(
-      t => adjustTokenValue(t)
-    )
+    [
+      ...aggregateBalancesPolygon,
+      ...aggregateBalancesAvalanche,
+      ...avalancheAggreateBalancesLegacy,
+      ...aggregateBalancesBsc,
+      ...aggregateBalancesEth
+    ].map(t => adjustTokenValue(t))
   )
 
   aggregateBalances.forEach((aggBal: any) => {

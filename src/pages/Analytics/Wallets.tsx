@@ -10,6 +10,7 @@ import Circle from '../../assets/images/blue-loader.svg'
 import { polygonClient } from '../../config/apollo-config'
 import { avalancheClient } from '../../config/apollo-config'
 import { bscClient } from '../../config/apollo-config'
+import { ethereumClient } from '../../config/apollo-config'
 
 import { getTopTraders } from './utils'
 
@@ -137,23 +138,36 @@ export const Wallets = () => {
     }
   })
 
-  const swapsLoading = avaLoading && polyLoading && bscLoading
-  const swapsError = avaError && polyError && bscError
+  const {
+    loading: ethLoading,
+    error: ethError,
+    data: ethData
+  } = useSwapsQuery({
+    client: ethereumClient,
+    variables: {
+      gte: gteValue,
+      lte: lteValue
+    }
+  })
+
+  const swapsLoading = avaLoading && polyLoading && bscLoading && ethLoading
+  const swapsError = avaError && polyError && bscError && ethError
 
   useEffect(() => {
-    const getTraderData = async (polygonData: any, avalancheData: any, bscData: any) => {
+    const getTraderData = async (polygonData: any, avalancheData: any, bscData: any, ethData: any) => {
       const tradersData = await getTopTraders({
         polygonSwaps: polygonData || [],
         avalancheSwaps: avalancheData || [],
-        bscSwaps: bscData || []
+        bscSwaps: bscData || [],
+        ethSwaps: ethData || []
       })
       setTopTraders(tradersData)
     }
 
     if (!swapsLoading && !swapsError) {
-      getTraderData(polygonData?.swaps || [], avalancheData?.swaps || [], bscData?.swaps || [])
+      getTraderData(polygonData?.swaps || [], avalancheData?.swaps || [], bscData?.swaps || [], ethData?.swaps || [])
     }
-  }, [polygonData, avalancheData, bscData])
+  }, [polygonData, avalancheData, bscData, ethData])
 
   const handleChange = () => {
     setChecked(prev => !prev)
@@ -167,9 +181,9 @@ export const Wallets = () => {
           <span>Wallet</span>
           <span>Volume (24hrs)</span>
         </div>
-        {polyLoading || avaLoading || bscLoading ? (
+        {polyLoading || avaLoading || bscLoading || ethLoading ? (
           <CustomLightSpinner src={Circle} alt="loader" size={'90px'} />
-        ) : polyError || avaError || bscError ? (
+        ) : polyError || avaError || bscError || ethError ? (
           <div> Error! </div>
         ) : (
           <>

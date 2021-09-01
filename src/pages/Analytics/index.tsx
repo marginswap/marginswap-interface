@@ -158,8 +158,6 @@ export const Analytics = () => {
   } = useAggregatedBalancesQuery({
     client: ethereumClient
   })
-  console.log('🚀 ~ file: index.tsx ~ line 161 ~ Analytics ~ ethAggBalError', ethAggBalError)
-  console.log('🚀 ~ file: index.tsx ~ line 161 ~ Analytics ~ ethAggBalLoading', ethAggBalLoading)
 
   const aggregateBalancesLoading =
     polygonAggBalLoading && avalancheAggBalLoading && bscAggBalLoading && ethAggBalLoading
