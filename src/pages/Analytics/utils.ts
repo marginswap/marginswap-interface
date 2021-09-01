@@ -45,6 +45,8 @@ export type SwapVolumeProps = {
   createdAt: string
   token: string
   volume: string
+  type: string
+  updatedAt: string | null
 }
 
 export type GetAggregateBalancesProps = {
@@ -201,7 +203,7 @@ export async function getTopTraders({
     .sort((a, b) => b.volume - a.volume)
 }
 
-export async function getMontlyVolume({
+export async function getVolume({
   dailyPolygonSwapVolumes,
   dailyAvalancheSwapVolumes,
   dailyBscSwapVolumes,
@@ -211,15 +213,6 @@ export async function getMontlyVolume({
   const polygonTokenAddresses = dailyPolygonSwapVolumes.map(dsv => dsv.token)
   const bscTokenAddresses = dailyBscSwapVolumes.map(dsv => dsv.token)
   const ethTokenAddresses = dailyEthSwapVolumes.map(dsv => dsv.token)
-
-  /*const avalancheSwapVolumeLegacy = await Promise.all(
-    legacyAvalancheData.dailySwapVolumes.map(s => ({
-      createdAt: s.createdAt,
-      id: s.id,
-      token: s.token,
-      volume: s.volume
-    }))
-  )*/
 
   const tokensAvalanchePrice = await getAvalancheTokenUSDPrice()
   const tokensPolygonPrice = await getPolygonTokenUSDPrice(polygonTokenAddresses)
@@ -233,7 +226,7 @@ export async function getMontlyVolume({
     [
       ...dailyPolygonSwapVolumes,
       ...dailyAvalancheSwapVolumes,
-      /*...avalancheSwapVolumeLegacy,*/
+      ...legacyAvalancheData.dailySwapVolumes,
       ...dailyBscSwapVolumes,
       ...dailyEthSwapVolumes
     ].map(t => adjustTokenValue(t))
@@ -242,10 +235,17 @@ export async function getMontlyVolume({
   const dailySwap = swapVolumes.map((token: any) => {
     let formattedVolume = 0
 
-    formattedVolume =
-      Number(
-        new TokenAmount(new Token(token.info.chainId, token.token, token.info.decimals), token.volume).toSignificant(3)
-      ) * tokensPrice[token.token].usd
+    try {
+      formattedVolume =
+        Number(
+          new TokenAmount(new Token(token.info.chainId, token.token, token.info.decimals), token.volume).toSignificant(
+            3
+          )
+        ) * tokensPrice[token.token].usd
+    } catch (err) {
+      formattedVolume = 0
+      console.log('Not found token :::', token)
+    }
 
     dailyVolume += formattedVolume
     return {
@@ -263,7 +263,7 @@ export async function getMontlyVolume({
 
   return {
     totalDailyVolume: Number(dailyVolume.toFixed(2)),
-    dailySwap: Array.from(swapResult, ([key, value]) => ({ time: key, value: value.toFixed(2) })).sort(
+    dailySwap: Array.from(swapResult, ([key, value]) => ({ time: key, value: value.toFixed(6) })).sort(
       (a, b) => DateTime.fromISO(a.time).toMillis() - DateTime.fromISO(b.time).toMillis()
     )
   }

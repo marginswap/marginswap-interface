@@ -21,6 +21,8 @@ export const swapVolumesGQL = gql`
       token
       volume
       createdAt
+      type
+      updatedAt
     }
   }
 `
