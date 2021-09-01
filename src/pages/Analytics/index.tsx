@@ -54,14 +54,15 @@ export const Analytics = () => {
   const [totalLending, setTotalLending] = useState<number>()
   const [totalBorrowed, setTotalBorrowed] = useState<number>()
 
-  const gteValue = DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
-    .set({ hour: 0 })
-    .set({ minute: 1 })
-    .minus({ month: 1 })
-    .minus({ day: 1 })
-    .toSeconds()
-
-  const lteValue = DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' }).toSeconds()
+  const gteValue = Math.round(
+    DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
+      .set({ hour: 0 })
+      .set({ minute: 1 })
+      .minus({ month: 1 })
+      .minus({ day: 1 })
+      .toSeconds()
+  )
+  const lteValue = Math.round(DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' }).toSeconds())
 
   //dsv -> Dialy Swap Volume
   // Avalanche

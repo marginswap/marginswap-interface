@@ -93,13 +93,14 @@ export const Wallets = () => {
   const [checked, setChecked] = useState(true)
   const [topTraders, setTopTraders] = useState<TopTradersProps[]>([])
 
-  const gteValue = DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
-    .set({ hour: 0 })
-    .set({ minute: 1 })
-    .minus({ day: 1 })
-    .toSeconds()
-
-  const lteValue = DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' }).toSeconds()
+  const gteValue = Math.round(
+    DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
+      .set({ hour: 0 })
+      .set({ minute: 1 })
+      .minus({ day: 1 })
+      .toSeconds()
+  )
+  const lteValue = Math.round(DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' }).toSeconds())
 
   const {
     loading: avaLoading,
