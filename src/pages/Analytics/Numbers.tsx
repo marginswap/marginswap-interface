@@ -60,7 +60,6 @@ const Numbers = ({ aggregateBalancesData, swapVolumesData }: NumbersProps) => {
 
   useEffect(() => {
     const getVolumeData = async (avalancheDsv: any, polygonDsv: any, bscDsv: any, ethDsv: any) => {
-      console.log('Call :::')
       const dailySwapFormatted = await getVolume({
         dailyAvalancheSwapVolumes: avalancheDsv || [],
         dailyPolygonSwapVolumes: polygonDsv || [],
@@ -88,7 +87,6 @@ const Numbers = ({ aggregateBalancesData, swapVolumesData }: NumbersProps) => {
 
   useEffect(() => {
     async function getDailyVolume(VolumeSwap: ChartData[]) {
-      console.log('Call 3 :::')
       const yesterday = DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
         .set({ hour: 0 })
         .set({ minute: 1 })
@@ -115,9 +113,7 @@ const Numbers = ({ aggregateBalancesData, swapVolumesData }: NumbersProps) => {
       setLastMonthSwapVolume({ totalDailyVolume: lastMonthVol, dailySwap: lastMonthSwaps })
     }
 
-    if (volumeSwap?.dailySwap) {
-      getDailyVolume(volumeSwap?.dailySwap || [])
-    }
+    getDailyVolume(volumeSwap?.dailySwap || [])
   }, [volumeSwap?.dailySwap])
 
   useEffect(() => {
@@ -127,7 +123,6 @@ const Numbers = ({ aggregateBalancesData, swapVolumesData }: NumbersProps) => {
       aggregateBalancesPolygon,
       aggregateBalancesEth
     }: GetAggregateBalancesProps) {
-      console.log('Call 2 :::')
       const agregateBalancesResults = await getAggregateBalances({
         aggregateBalancesBsc,
         aggregateBalancesAvalanche,
