@@ -138,35 +138,60 @@ const Numbers = ({ aggregateBalancesData, swapVolumesData }: NumbersProps) => {
   }, [aggregateBalancesData])
 
   return (
-    <>
-      <div className={classes.stats}>
-        <div>
-          <Stats title={'Marginswap Volume'} time={''} value={volumeSwap?.totalDailyVolume || 0} series={[]} />
-        </div>
-        <div>
-          <Stats
-            title={'Marginswap Volume'}
-            time={'Last Month'}
-            value={lastMonthSwapVolume?.totalDailyVolume || 0}
-            series={[]}
-          />
-          <Stats
-            title={'Marginswap Volume'}
-            time={'Last 24 hrs'}
-            value={Number(dailySwap?.totalDailyVolume.toFixed(2)) || 0}
-            series={[]}
-          />
-        </div>
-        <div>
-          <Stats title={'Total Fees'} time={'Fees paid past month'} value={montlyFees || 0} series={[]} />
-          <Stats title={'Total Value Locked'} time={''} value={Number(aggregateBalances) || 0} series={[]} />
-        </div>
-        <div>
-          <Stats title={'Total Borrowed'} time={''} value={totalBorrowed || 0} chartColor={'#F90B0B'} series={[]} />
-          <Stats title={'Total Lending'} time={''} value={totalLending || 0} chartColor={'#F99808'} series={[]} />
-        </div>
+    <div className={classes.stats}>
+      <div>
+        <Stats
+          title={'Total Volume'}
+          time={'All-time Marginswap volume'}
+          value={volumeSwap?.totalDailyVolume || 0}
+          series={[]}
+        />
       </div>
-    </>
+      <div>
+        <Stats
+          title={'Monthly Volume'}
+          time={'Last 30 days Marginswap volume'}
+          value={lastMonthSwapVolume?.totalDailyVolume || 0}
+          series={[]}
+        />
+        <Stats
+          title={'Daily Volume'}
+          time={'Last 24 hours Marginswap volume'}
+          value={Number(dailySwap?.totalDailyVolume.toFixed(2)) || 0}
+          series={[]}
+        />
+      </div>
+      <div>
+        <Stats
+          title={'Monthly Fees'}
+          time={'Fees paid to Marginswap in the last 30 days'}
+          value={montlyFees || 0}
+          series={[]}
+        />
+        <Stats
+          title={'Total Value Locked'}
+          time={'Total deposits on Marginswap'}
+          value={Number(aggregateBalances) || 0}
+          series={[]}
+        />
+      </div>
+      <div>
+        <Stats
+          title={'Total Borrowed'}
+          time={'Total margin borrowing on Marginswap'}
+          value={totalBorrowed || 0}
+          chartColor={'#F90B0B'}
+          series={[]}
+        />
+        <Stats
+          title={'Total Lending'}
+          time={'Total lending liquidity on Marginswap'}
+          value={totalLending || 0}
+          chartColor={'#F99808'}
+          series={[]}
+        />
+      </div>
+    </div>
   )
 }
 
