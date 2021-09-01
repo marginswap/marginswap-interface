@@ -167,7 +167,7 @@ export const Wallets = () => {
     if (!swapsLoading && !swapsError) {
       getTraderData(polygonData?.swaps || [], avalancheData?.swaps || [], bscData?.swaps || [], ethData?.swaps || [])
     }
-  }, [polygonData, avalancheData, bscData, ethData])
+  }, [swapsLoading, swapsError])
 
   const handleChange = () => {
     setChecked(prev => !prev)

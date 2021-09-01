@@ -183,10 +183,11 @@ export const Analytics = () => {
 
       setMonlySwap(dailySwapFormatted)
     }
+
     if (!swapVolumesLoading && !swapVolumesError) {
       getMontlyVolumeData(avalancheDsv, polygonDsv, bscDsv, ethDsv)
     }
-  }, [avalancheDsv, polygonDsv, bscDsv, ethDsv])
+  }, [swapVolumesLoading, swapVolumesError])
 
   useEffect(() => {
     async function getDailyVolume(montlySwap: ChartData[]) {
@@ -233,14 +234,7 @@ export const Analytics = () => {
         aggregateBalancesEth: ethAggreateBalancesData?.aggregatedBalances || []
       })
     }
-  }, [
-    aggregateBalancesLoading,
-    aggregateBalancesError,
-    bscAggreateBalancesData,
-    polygonAggreateBalancesData,
-    avalancheAggreateBalancesData,
-    ethAggreateBalancesData
-  ])
+  }, [aggregateBalancesLoading, aggregateBalancesError])
 
   return (
     <div className={classes.wrapper}>

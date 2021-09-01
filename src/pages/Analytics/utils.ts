@@ -5,7 +5,7 @@ import tokenList from '../../constants/tokenLists/marginswap-default.tokenlist.j
 import { AVALANCHE_TOKENS_LIST } from '../../constants'
 import { TokenAmount, Token } from '@marginswap/sdk'
 
-import legacyAvalancheData from '../../data/legacy-data/avalanche-aug-2021.json'
+//import legacyAvalancheData from '../../data/legacy-data/avalanche-aug-2021.json'
 interface TokensValue {
   [key: string]: { usd: number }
 }
@@ -162,19 +162,6 @@ export async function getTopTraders({
       fromAmount: s.fromAmount
     }))
   )*/
-  /*const tempo = [...polygonSwaps, ...avalancheSwaps, /*...avalancheSwapsLegacy,*/ //...bscSwaps, ...ethSwaps]
-  /*tempo.forEach(s => {
-    if (
-      Number(s.createdAt) <
-      DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
-        .set({ hour: 0 })
-        .set({ minute: 1 })
-        .minus({ day: 1 })
-        .toSeconds()
-    ) {
-      console.log('Older :::', DateTime.fromSeconds(Number(s.createdAt)).toISODate())
-    }
-  })*/
 
   let swaps = []
   swaps = await Promise.all(
@@ -296,7 +283,7 @@ export async function getAggregateBalances({
   const tokensBscPrice = await getBscTokenUSDPrice(bscTokenAddresses)
   const tokensEthPrice = await getEthTokenUSDPrice(ethTokenAddresses)
 
-  const avalancheAggreateBalancesLegacy = await Promise.all(
+  /*const avalancheAggreateBalancesLegacy = await Promise.all(
     legacyAvalancheData.aggregatedBalances.map(ab => ({
       balance: ab.balance,
       balanceType: ab.balanceType,
@@ -304,7 +291,7 @@ export async function getAggregateBalances({
       id: ab.id,
       token: ab.token
     }))
-  )
+  )*/
 
   const tokensPrice = { ...tokensAvalanchePrice, ...tokensPolygonPrice, ...tokensBscPrice, ...tokensEthPrice }
 
@@ -315,7 +302,7 @@ export async function getAggregateBalances({
     [
       ...aggregateBalancesPolygon,
       ...aggregateBalancesAvalanche,
-      ...avalancheAggreateBalancesLegacy,
+      /*...avalancheAggreateBalancesLegacy,*/
       ...aggregateBalancesBsc,
       ...aggregateBalancesEth
     ].map(t => adjustTokenValue(t))
