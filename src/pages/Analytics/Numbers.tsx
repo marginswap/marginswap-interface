@@ -67,10 +67,6 @@ const Numbers = ({ aggregateBalancesData, swapVolumesData }: NumbersProps) => {
         dailyEthSwapVolumes: ethDsv || []
       })
 
-      const montlyFees = dailySwapFormatted?.totalDailyVolume * (0.1 / 100)
-
-      setMontlyFees(Number(montlyFees.toFixed(2)))
-
       setVolumeSwap(dailySwapFormatted)
     }
 
@@ -101,6 +97,10 @@ const Numbers = ({ aggregateBalancesData, swapVolumesData }: NumbersProps) => {
 
       const last24HSwaps = await VolumeSwap.filter(ds => DateTime.fromISO(ds.time.toString()).toMillis() > yesterday)
       const last24hVol = await last24HSwaps.map(s => Number(s.value)).reduce((acc, cur) => acc + cur, 0)
+
+      const montlyFees = lastMonthVol * (0.1 / 100)
+
+      setMontlyFees(Number(montlyFees.toFixed(2)))
 
       setDailySwap({ totalDailyVolume: last24hVol, dailySwap: last24HSwaps })
       setLastMonthSwapVolume({ totalDailyVolume: lastMonthVol, dailySwap: lastMonthSwaps })
