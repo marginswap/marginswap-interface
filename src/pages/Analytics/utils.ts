@@ -23,6 +23,7 @@ type DataProps = {
   fromToken: string
   id: string
   trader: string
+  createdAt: string
 }
 
 type TopTradersProps = {
@@ -161,6 +162,19 @@ export async function getTopTraders({
       fromAmount: s.fromAmount
     }))
   )*/
+  const tempo = [...polygonSwaps, ...avalancheSwaps, /*...avalancheSwapsLegacy,*/ ...bscSwaps, ...ethSwaps]
+  /*tempo.forEach(s => {
+    if (
+      Number(s.createdAt) >
+      DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
+        .set({ hour: 0 })
+        .set({ minute: 1 })
+        .minus({ day: 1 })
+        .toSeconds()
+    ) {
+      console.log('Older :::', DateTime.fromSeconds(Number(s.createdAt)).toISODate())
+    }
+  })*/
 
   let swaps = []
   swaps = await Promise.all(
