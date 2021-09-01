@@ -82,6 +82,8 @@ const Numbers = ({ aggregateBalancesData, swapVolumesData }: NumbersProps) => {
 
   useEffect(() => {
     async function getDailyVolume(VolumeSwap: ChartData[]) {
+      console.log('🚀 ~ file: Numbers.tsx ~ line 85 ~ getDailyVolume ~ VolumeSwap', VolumeSwap)
+
       const yesterday = DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
         .set({ hour: 0 })
         .set({ minute: 1 })
