@@ -119,9 +119,6 @@ export const Analytics = () => {
     },
     client: ethereumClient
   })
-  console.log('🚀 ~ file: index.tsx ~ line 122 ~ Analytics ~ ethDsvData', ethDsvData)
-  console.log('🚀 ~ file: index.tsx ~ line 122 ~ Analytics ~ ethDsvError', ethDsvError)
-  console.log('🚀 ~ file: index.tsx ~ line 122 ~ Analytics ~ ethDsvLoading', ethDsvLoading)
 
   const swapVolumesLoading = avalancheDsvLoading && polygonDsvLoading && bscDsvLoading && ethDsvLoading
   const swapVolumesError = avalancheDsvError && polygonDsvError && bscDsvError && ethDsvError
