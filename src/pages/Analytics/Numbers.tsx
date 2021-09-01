@@ -78,12 +78,7 @@ const Numbers = ({ aggregateBalancesData, swapVolumesData }: NumbersProps) => {
         swapVolumesData.ethData
       )
     }
-  }, [
-    swapVolumesData.avalancheData.length,
-    swapVolumesData.polygonData.length,
-    swapVolumesData.bscData.length,
-    swapVolumesData.ethData.length
-  ])
+  }, [swapVolumesData])
 
   useEffect(() => {
     async function getDailyVolume(VolumeSwap: ChartData[]) {

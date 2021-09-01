@@ -242,7 +242,7 @@ export async function getVolume({
         ) * tokensPrice[token.token].usd
     } catch (err) {
       formattedVolume = 0
-      console.log('Not found token :::', token)
+      console.log('Not found :::')
     }
 
     dailyVolume += formattedVolume
