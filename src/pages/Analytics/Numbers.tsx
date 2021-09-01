@@ -87,37 +87,30 @@ const Numbers = ({ aggregateBalancesData, swapVolumesData }: NumbersProps) => {
 
   useEffect(() => {
     async function getDailyVolume(VolumeSwap: ChartData[]) {
-      console.log('🚀 ~ file: Numbers.tsx ~ line 85 ~ getDailyVolume ~ VolumeSwap', VolumeSwap)
-      try {
-        const yesterday = DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
-          .set({ hour: 0 })
-          .set({ minute: 1 })
-          .minus({ day: 1 })
-          .toMillis()
+      const yesterday = DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
+        .set({ hour: 0 })
+        .set({ minute: 1 })
+        .minus({ day: 1 })
+        .toMillis()
 
-        const lastMonth = DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
-          .set({ hour: 0 })
-          .set({ minute: 1 })
-          .minus({ month: 1 })
-          .toMillis()
+      const lastMonth = DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
+        .set({ hour: 0 })
+        .set({ minute: 1 })
+        .minus({ month: 1 })
+        .toMillis()
 
-        const lastMonthSwaps = await VolumeSwap.filter(
-          ds => DateTime.fromISO(ds.time.toString()).toMillis() > lastMonth
-        )
-        const lastMonthVol = await lastMonthSwaps.map(s => Number(s.value)).reduce((acc, cur) => acc + cur, 0)
+      const lastMonthSwaps = await VolumeSwap.filter(ds => DateTime.fromISO(ds.time.toString()).toMillis() > lastMonth)
+      const lastMonthVol = await lastMonthSwaps.map(s => Number(s.value)).reduce((acc, cur) => acc + cur, 0)
 
-        const last24HSwaps = await VolumeSwap.filter(ds => DateTime.fromISO(ds.time.toString()).toMillis() > yesterday)
-        const last24hVol = await last24HSwaps.map(s => Number(s.value)).reduce((acc, cur) => acc + cur, 0)
+      const last24HSwaps = await VolumeSwap.filter(ds => DateTime.fromISO(ds.time.toString()).toMillis() > yesterday)
+      const last24hVol = await last24HSwaps.map(s => Number(s.value)).reduce((acc, cur) => acc + cur, 0)
 
-        const montlyFees = lastMonthVol * (0.1 / 100)
+      const montlyFees = lastMonthVol * (0.1 / 100)
 
-        setMontlyFees(Number(montlyFees.toFixed(2)))
+      setMontlyFees(Number(montlyFees.toFixed(2)))
 
-        setDailySwap({ totalDailyVolume: last24hVol, dailySwap: last24HSwaps })
-        setLastMonthSwapVolume({ totalDailyVolume: lastMonthVol, dailySwap: lastMonthSwaps })
-      } catch (err) {
-        console.log('There is an error :::', err)
-      }
+      setDailySwap({ totalDailyVolume: last24hVol, dailySwap: last24HSwaps })
+      setLastMonthSwapVolume({ totalDailyVolume: lastMonthVol, dailySwap: lastMonthSwaps })
     }
 
     if (volumeSwap?.dailySwap) {
@@ -138,17 +131,13 @@ const Numbers = ({ aggregateBalancesData, swapVolumesData }: NumbersProps) => {
         aggregateBalancesPolygon,
         aggregateBalancesEth
       })
+      console.log('🚀 ~ file: Numbers.tsx ~ line 134 ~ useEffect ~ agregateBalancesResults', agregateBalancesResults)
       setAggregateBalances(agregateBalancesResults.tvl)
       setTotalLending(agregateBalancesResults.totalLending)
       setTotalBorrowed(agregateBalancesResults.totalBorrowed)
     }
 
-    if (
-      aggregateBalancesData.bscData.length > 0 &&
-      aggregateBalancesData.polygonData.length > 0 &&
-      aggregateBalancesData.avalancheData.length > 0 &&
-      aggregateBalancesData.ethData.length > 0
-    ) {
+    if (aggregateBalancesData.polygonData.length > 0 && aggregateBalancesData.avalancheData.length > 0) {
       getTvl({
         aggregateBalancesBsc: aggregateBalancesData.bscData,
         aggregateBalancesPolygon: aggregateBalancesData.polygonData,
