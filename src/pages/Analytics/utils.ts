@@ -162,10 +162,10 @@ export async function getTopTraders({
       fromAmount: s.fromAmount
     }))
   )*/
-  const tempo = [...polygonSwaps, ...avalancheSwaps, /*...avalancheSwapsLegacy,*/ ...bscSwaps, ...ethSwaps]
-  tempo.forEach(s => {
+  /*const tempo = [...polygonSwaps, ...avalancheSwaps, /*...avalancheSwapsLegacy,*/ //...bscSwaps, ...ethSwaps]
+  /*tempo.forEach(s => {
     if (
-      Number(s.createdAt) >
+      Number(s.createdAt) <
       DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
         .set({ hour: 0 })
         .set({ minute: 1 })
@@ -174,7 +174,7 @@ export async function getTopTraders({
     ) {
       console.log('Older :::', DateTime.fromSeconds(Number(s.createdAt)).toISODate())
     }
-  })
+  })*/
 
   let swaps = []
   swaps = await Promise.all(
