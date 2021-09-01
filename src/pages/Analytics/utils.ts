@@ -5,7 +5,7 @@ import tokenList from '../../constants/tokenLists/marginswap-default.tokenlist.j
 import { AVALANCHE_TOKENS_LIST } from '../../constants'
 import { TokenAmount, Token } from '@marginswap/sdk'
 
-//import legacyAvalancheData from '../../data/legacy-data/avalanche-aug-2021.json'
+import legacyAvalancheData from '../../data/legacy-data/avalanche-aug-2021.json'
 interface TokensValue {
   [key: string]: { usd: number }
 }
@@ -16,6 +16,8 @@ interface AggregateBalances {
   id: string
   token: string
   createdAt: string
+  contract: string
+  updatedAt: string | null
 }
 
 type DataProps = {
@@ -283,16 +285,6 @@ export async function getAggregateBalances({
   const tokensBscPrice = await getBscTokenUSDPrice(bscTokenAddresses)
   const tokensEthPrice = await getEthTokenUSDPrice(ethTokenAddresses)
 
-  /*const avalancheAggreateBalancesLegacy = await Promise.all(
-    legacyAvalancheData.aggregatedBalances.map(ab => ({
-      balance: ab.balance,
-      balanceType: ab.balanceType,
-      createdAt: ab.createdAt,
-      id: ab.id,
-      token: ab.token
-    }))
-  )*/
-
   const tokensPrice = { ...tokensAvalanchePrice, ...tokensPolygonPrice, ...tokensBscPrice, ...tokensEthPrice }
 
   let tvl = 0
@@ -302,7 +294,7 @@ export async function getAggregateBalances({
     [
       ...aggregateBalancesPolygon,
       ...aggregateBalancesAvalanche,
-      /*...avalancheAggreateBalancesLegacy,*/
+      ...legacyAvalancheData.aggregatedBalances,
       ...aggregateBalancesBsc,
       ...aggregateBalancesEth
     ].map(t => adjustTokenValue(t))

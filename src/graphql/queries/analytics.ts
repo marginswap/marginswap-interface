@@ -92,9 +92,11 @@ export const aggregatedBalancesGQL = gql`
     aggregatedBalances {
       id
       token
+      contract
       balance
       balanceType
       createdAt
+      updatedAt
     }
   }
 `
