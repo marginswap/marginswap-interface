@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core'
 import { Stats } from './Stats'
-import { Wallets } from './Wallets'
+//import { Wallets } from './Wallets'
 import { getAggregateBalances, getMontlyVolume, GetAggregateBalancesProps } from './utils'
 import { DateTime } from 'luxon'
 import { useSwapVolumesQuery, useAggregatedBalancesQuery } from '../../graphql/queries/analytics'
@@ -263,7 +263,7 @@ export const Analytics = () => {
           <Stats title={'Total Lending'} time={''} value={totalLending || 0} chartColor={'#F99808'} series={[]} />
         </div>
       </div>
-      <Wallets />
+      {/*<Wallets />*/}
     </div>
   )
 }
