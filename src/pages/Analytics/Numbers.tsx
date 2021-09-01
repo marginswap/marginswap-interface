@@ -115,7 +115,7 @@ const Numbers = ({ aggregateBalancesData, swapVolumesData }: NumbersProps) => {
       setLastMonthSwapVolume({ totalDailyVolume: lastMonthVol, dailySwap: lastMonthSwaps })
     }
 
-    if (volumeSwap?.dailySwap.length) {
+    if (volumeSwap?.dailySwap) {
       getDailyVolume(volumeSwap?.dailySwap || [])
     }
   }, [volumeSwap?.dailySwap])
