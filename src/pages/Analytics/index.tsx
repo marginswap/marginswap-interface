@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core'
 import { Stats } from './Stats'
 import { Wallets } from './Wallets'
-import { getAggregateBalances, getDailyVolume, GetAggregateBalancesProps } from './utils'
+import { getAggregateBalances, getMontlyVolume, GetAggregateBalancesProps } from './utils'
 import { DateTime } from 'luxon'
 import { useSwapVolumesQuery, useAggregatedBalancesQuery } from '../../graphql/queries/analytics'
 import { avalancheClient } from '../../config/apollo-config'
@@ -170,7 +170,7 @@ export const Analytics = () => {
 
   useEffect(() => {
     const getMontlyVolumeData = async (avalancheDsv: any, polygonDsv: any, bscDsv: any, ethDsv: any) => {
-      const dailySwapFormatted = await getDailyVolume({
+      const dailySwapFormatted = await getMontlyVolume({
         dailyAvalancheSwapVolumes: avalancheDsv || [],
         dailyPolygonSwapVolumes: polygonDsv || [],
         dailyBscSwapVolumes: bscDsv || [],

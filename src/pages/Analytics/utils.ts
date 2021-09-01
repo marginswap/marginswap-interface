@@ -212,7 +212,7 @@ export async function getTopTraders({
     .sort((a, b) => b.volume - a.volume)
 }
 
-export async function getDailyVolume({
+export async function getMontlyVolume({
   dailyPolygonSwapVolumes,
   dailyAvalancheSwapVolumes,
   dailyBscSwapVolumes,
