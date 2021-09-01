@@ -3,18 +3,10 @@ import Collapse from '@material-ui/core/Collapse'
 import { makeStyles, Paper } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
-import { DateTime } from 'luxon'
-import { CustomLightSpinner } from '../../theme'
 import IconButton from '@material-ui/core/IconButton'
-import Circle from '../../assets/images/blue-loader.svg'
-import { polygonClient } from '../../config/apollo-config'
-import { avalancheClient } from '../../config/apollo-config'
-import { bscClient } from '../../config/apollo-config'
-import { ethereumClient } from '../../config/apollo-config'
 
 import { getTopTraders } from './utils'
-
-import { useSwapsQuery } from '../../graphql/queries/analytics'
+import { VolumeSwaps } from './utils'
 
 export const useStyles = makeStyles(() => ({
   root: {
@@ -83,91 +75,33 @@ const Wallet = (wallet: WalletData) => {
   )
 }
 
-type TopTradersProps = {
+interface TopTradersProps {
   trader: string
   volume: number
 }
 
-export const Wallets = () => {
+type WalletProps = {
+  swaps: VolumeSwaps
+}
+
+export const Wallets = ({ swaps }: WalletProps) => {
   const classes = useStyles()
   const [checked, setChecked] = useState(true)
   const [topTraders, setTopTraders] = useState<TopTradersProps[]>([])
 
-  const gteValue = Math.round(
-    DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
-      .set({ hour: 0 })
-      .set({ minute: 1 })
-      .minus({ day: 1 })
-      .toSeconds()
-  )
-  const lteValue = Math.round(DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' }).toSeconds())
-
-  const {
-    loading: avaLoading,
-    error: avaError,
-    data: avalancheData
-  } = useSwapsQuery({
-    client: avalancheClient,
-    variables: {
-      gte: gteValue,
-      lte: lteValue
-    }
-  })
-
-  const {
-    loading: polyLoading,
-    error: polyError,
-    data: polygonData
-  } = useSwapsQuery({
-    client: polygonClient,
-    variables: {
-      gte: gteValue,
-      lte: lteValue
-    }
-  })
-
-  const {
-    loading: bscLoading,
-    error: bscError,
-    data: bscData
-  } = useSwapsQuery({
-    client: bscClient,
-    variables: {
-      gte: gteValue,
-      lte: lteValue
-    }
-  })
-
-  const {
-    loading: ethLoading,
-    error: ethError,
-    data: ethData
-  } = useSwapsQuery({
-    client: ethereumClient,
-    variables: {
-      gte: gteValue,
-      lte: lteValue
-    }
-  })
-
-  const swapsLoading = avaLoading && polyLoading && bscLoading && ethLoading
-  const swapsError = avaError && polyError && bscError && ethError
-
   useEffect(() => {
     const getTraderData = async (polygonData: any, avalancheData: any, bscData: any, ethData: any) => {
       const tradersData = await getTopTraders({
-        polygonSwaps: polygonData || [],
-        avalancheSwaps: avalancheData || [],
-        bscSwaps: bscData || [],
-        ethSwaps: ethData || []
+        polygonData,
+        avalancheData,
+        bscData,
+        ethData
       })
       setTopTraders(tradersData)
     }
 
-    if (!swapsLoading && !swapsError) {
-      getTraderData(polygonData?.swaps || [], avalancheData?.swaps || [], bscData?.swaps || [], ethData?.swaps || [])
-    }
-  }, [swapsLoading, swapsError])
+    getTraderData(swaps.avalancheData || [], swaps.polygonData || [], swaps.bscData || [], swaps.ethData || [])
+  }, [swaps])
 
   const handleChange = () => {
     setChecked(prev => !prev)
@@ -181,27 +115,21 @@ export const Wallets = () => {
           <span>Wallet</span>
           <span>Volume (24hrs)</span>
         </div>
-        {polyLoading || avaLoading || bscLoading || ethLoading ? (
-          <CustomLightSpinner src={Circle} alt="loader" size={'90px'} />
-        ) : polyError || avaError || bscError || ethError ? (
-          <div> Error! </div>
-        ) : (
-          <>
-            <Collapse in={checked}>
-              {topTraders.map(
-                (trader: any) =>
-                  trader.volume > 0 && (
-                    <div key={trader.trader} className={classes.walletsList}>
-                      <Wallet address={trader.trader} volume={trader.volume} />
-                    </div>
-                  )
-              )}
-            </Collapse>
-            <IconButton className={classes.expand} onClick={handleChange}>
-              {checked ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-            </IconButton>
-          </>
-        )}
+        <>
+          <Collapse in={checked}>
+            {topTraders.map(
+              (trader: any) =>
+                trader.volume > 0 && (
+                  <div key={trader.trader} className={classes.walletsList}>
+                    <Wallet address={trader.trader} volume={trader.volume} />
+                  </div>
+                )
+            )}
+          </Collapse>
+          <IconButton className={classes.expand} onClick={handleChange}>
+            {checked ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          </IconButton>
+        </>
       </div>
     </Paper>
   )

@@ -10,7 +10,7 @@ interface TokensValue {
   [key: string]: { usd: number }
 }
 
-interface AggregateBalances {
+export interface IAggregateBalance {
   balance: string
   balanceType: string
   id: string
@@ -20,7 +20,7 @@ interface AggregateBalances {
   updatedAt: string | null
 }
 
-type DataProps = {
+export interface ISwap {
   fromAmount: string
   fromToken: string
   id: string
@@ -33,11 +33,11 @@ type TopTradersProps = {
   volume: number
 }
 
-type VolumeSwaps = {
-  polygonSwaps: DataProps[]
-  avalancheSwaps: DataProps[]
-  bscSwaps: DataProps[]
-  ethSwaps: DataProps[]
+export type VolumeSwaps = {
+  polygonData: ISwap[]
+  avalancheData: ISwap[]
+  bscData: ISwap[]
+  ethData: ISwap[]
 }
 
 export type SwapVolumeProps = {
@@ -50,10 +50,10 @@ export type SwapVolumeProps = {
 }
 
 export type GetAggregateBalancesProps = {
-  aggregateBalancesPolygon: AggregateBalances[]
-  aggregateBalancesAvalanche: AggregateBalances[]
-  aggregateBalancesBsc: AggregateBalances[]
-  aggregateBalancesEth: AggregateBalances[]
+  aggregateBalancesPolygon: IAggregateBalance[]
+  aggregateBalancesAvalanche: IAggregateBalance[]
+  aggregateBalancesBsc: IAggregateBalance[]
+  aggregateBalancesEth: IAggregateBalance[]
 }
 
 export type GetDailyVolumeProps = {
@@ -63,7 +63,7 @@ export type GetDailyVolumeProps = {
   dailyEthSwapVolumes: SwapVolumeProps[]
 }
 
-async function adjustTokenValue(token: AggregateBalances | SwapVolumeProps) {
+async function adjustTokenValue(token: IAggregateBalance | SwapVolumeProps) {
   const info = tokenList.tokens.filter(value => value.address.toLowerCase() === token.token.toLowerCase())[0]
   return {
     ...token,
@@ -73,7 +73,7 @@ async function adjustTokenValue(token: AggregateBalances | SwapVolumeProps) {
   }
 }
 
-async function adjustTokenValueForTraders(token: DataProps) {
+async function adjustTokenValueForTraders(token: ISwap) {
   const info = tokenList.tokens.filter(value => value.address.toLowerCase() === token.fromToken.toLowerCase())[0]
   return {
     ...token,
@@ -144,48 +144,40 @@ export async function getEthTokenUSDPrice(tokenAddress: string[]) {
 }
 
 export async function getTopTraders({
-  polygonSwaps,
-  avalancheSwaps,
-  bscSwaps,
-  ethSwaps
+  polygonData,
+  avalancheData,
+  bscData,
+  ethData
 }: VolumeSwaps): Promise<TopTradersProps[]> {
-  const polygonTokenAddresses = await Promise.all(polygonSwaps.map(swap => swap.fromToken))
-  const bscTokenAddresses = await Promise.all(bscSwaps.map((swap: { fromToken: any }) => swap.fromToken))
-  const ethTokenAddresses = await Promise.all(ethSwaps.map((swap: { fromToken: any }) => swap.fromToken))
+  const polygonTokenAddresses = await Promise.all(polygonData.map(swap => swap.fromToken))
+  const bscTokenAddresses = await Promise.all(bscData.map((swap: { fromToken: any }) => swap.fromToken))
+  const ethTokenAddresses = await Promise.all(ethData.map((swap: { fromToken: any }) => swap.fromToken))
 
   const polygonTokensPrice = await getPolygonTokenUSDPrice(polygonTokenAddresses)
   const avalancheTokensPrice = await getAvalancheTokenUSDPrice()
   const bscTokensPrice = await getBscTokenUSDPrice(bscTokenAddresses)
   const ethTokensPrice = await getEthTokenUSDPrice(ethTokenAddresses)
 
-  /*const avalancheSwapsLegacy = await Promise.all(
-    legacyAvalancheData.swaps.map(s => ({
-      trader: s.trader,
-      id: s.id,
-      fromToken: s.fromToken,
-      fromAmount: s.fromAmount
-    }))
-  )*/
-
   let swaps = []
   swaps = await Promise.all(
-    [...polygonSwaps, ...avalancheSwaps, /*...avalancheSwapsLegacy,*/ ...bscSwaps, ...ethSwaps].map(t =>
-      adjustTokenValueForTraders(t)
-    )
+    [...polygonData, ...avalancheData, ...bscData, ...ethData].map(t => adjustTokenValueForTraders(t))
   )
 
   const tokensPrice = { ...polygonTokensPrice, ...avalancheTokensPrice, ...bscTokensPrice, ...ethTokensPrice }
 
-  const swapWithTokensUsdValue = swaps.map(swap => ({
-    ...swap,
-    usdTokenValue:
-      Number(
-        new TokenAmount(
-          new Token(swap.info.chainId, swap.fromToken, swap.info.decimals),
-          swap.fromAmount
-        ).toSignificant(3)
-      ) * tokensPrice[swap.fromToken].usd
-  }))
+  const swapWithTokensUsdValue = swaps.map(swap => {
+    const mult = tokensPrice[swap.fromToken]?.usd || 0
+    return {
+      ...swap,
+      usdTokenValue:
+        Number(
+          new TokenAmount(
+            new Token(swap.info.chainId, swap.fromToken, swap.info.decimals),
+            swap.fromAmount
+          ).toSignificant(3)
+        ) * mult
+    }
+  })
 
   const tradersInfo = await groupby(swapWithTokensUsdValue, (swap: { trader: any }) => swap.trader)
 

@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { makeStyles } from '@material-ui/core'
-import { Stats } from './Stats'
-//import { Wallets } from './Wallets'
-import { getAggregateBalances, getVolume, GetAggregateBalancesProps } from './utils'
 import { DateTime } from 'luxon'
-import { useSwapVolumesQuery, useAggregatedBalancesQuery } from '../../graphql/queries/analytics'
+import Numbers from './Numbers'
+import { Wallets } from './Wallets'
+import { useSwapVolumesQuery, useAggregatedBalancesQuery, useSwapsQuery } from '../../graphql/queries/analytics'
 import { avalancheClient } from '../../config/apollo-config'
 import { polygonClient } from '../../config/apollo-config'
 import { bscClient } from '../../config/apollo-config'
@@ -21,41 +20,20 @@ const useStyles = makeStyles(() => ({
     '& h2': {
       width: '1040px'
     }
-  },
-  stats: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '1024px',
-    '& p': {
-      margin: '10px 0',
-      fontWeight: 600,
-      fontSize: '15px'
-    }
   }
 }))
 
-type ChartData = {
-  time: string
-  value: number
-}
-
-type StatsProps = {
-  totalDailyVolume: number
-  dailySwap: ChartData[]
-}
-
 export const Analytics = () => {
   const classes = useStyles()
-  const [volumeSwap, setVolumeSwap] = useState<StatsProps>()
-  const [dailySwap, setDailySwap] = useState<StatsProps>()
-  const [lastMonthSwapVolume, setLastMonthSwapVolume] = useState<StatsProps>()
-  const [montlyFees, setMontlyFees] = useState<number>()
-  const [aggregateBalances, setAggregateBalances] = useState<number>()
-  const [totalLending, setTotalLending] = useState<number>()
-  const [totalBorrowed, setTotalBorrowed] = useState<number>()
 
   const initialDate = 1567311501 //use this date to consider all the historical data - Sep 9, 2019
+  const gteValue = Math.round(
+    DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
+      .set({ hour: 0 })
+      .set({ minute: 1 })
+      .minus({ day: 1 })
+      .toSeconds()
+  )
   const lteValue = Math.round(DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' }).toSeconds())
 
   //dsv -> Dialy Swap Volume
@@ -116,6 +94,12 @@ export const Analytics = () => {
 
   const swapVolumesLoading = avalancheDsvLoading && polygonDsvLoading && bscDsvLoading && ethDsvLoading
   const swapVolumesError = avalancheDsvError && polygonDsvError && bscDsvError && ethDsvError
+  const swapVolumes = {
+    avalancheData: avalancheDsvData?.dailySwapVolumes || [],
+    polygonData: polygonDsvData?.dailySwapVolumes || [],
+    bscData: bscDsvData?.dailySwapVolumes || [],
+    ethData: ethDsvData?.dailySwapVolumes || []
+  }
 
   // Binance Smart Contract
   const {
@@ -156,128 +140,84 @@ export const Analytics = () => {
   const aggregateBalancesLoading =
     polygonAggBalLoading && avalancheAggBalLoading && bscAggBalLoading && ethAggBalLoading
   const aggregateBalancesError = polygonAggBalError && avalancheAggBalError && bscAggBalError && ethAggBalError
+  const aggregateBalances = {
+    bscData: bscAggreateBalancesData?.aggregatedBalances || [],
+    polygonData: polygonAggreateBalancesData?.aggregatedBalances || [],
+    avalancheData: avalancheAggreateBalancesData?.aggregatedBalances || [],
+    ethData: ethAggreateBalancesData?.aggregatedBalances || []
+  }
 
-  const avalancheDsv = avalancheDsvData?.dailySwapVolumes || []
-  const polygonDsv = polygonDsvData?.dailySwapVolumes || []
-  const bscDsv = bscDsvData?.dailySwapVolumes || []
-  const ethDsv = ethDsvData?.dailySwapVolumes || []
-
-  useEffect(() => {
-    const getVolumeData = async (avalancheDsv: any, polygonDsv: any, bscDsv: any, ethDsv: any) => {
-      const dailySwapFormatted = await getVolume({
-        dailyAvalancheSwapVolumes: avalancheDsv || [],
-        dailyPolygonSwapVolumes: polygonDsv || [],
-        dailyBscSwapVolumes: bscDsv || [],
-        dailyEthSwapVolumes: ethDsv || []
-      })
-
-      const montlyFees = dailySwapFormatted?.totalDailyVolume * (0.1 / 100)
-
-      setMontlyFees(Number(montlyFees.toFixed(2)))
-
-      setVolumeSwap(dailySwapFormatted)
+  const {
+    loading: avaSwapsLoading,
+    error: avaSwapsError,
+    data: avaSwapsData
+  } = useSwapsQuery({
+    client: avalancheClient,
+    variables: {
+      gte: gteValue,
+      lte: lteValue
     }
+  })
 
-    if (!swapVolumesLoading && !swapVolumesError) {
-      getVolumeData(avalancheDsv, polygonDsv, bscDsv, ethDsv)
+  const {
+    loading: polySwapsLoading,
+    error: polySwapsError,
+    data: polySwapsData
+  } = useSwapsQuery({
+    client: polygonClient,
+    variables: {
+      gte: gteValue,
+      lte: lteValue
     }
-  }, [swapVolumesLoading, swapVolumesError, avalancheDsv.length, polygonDsv.length, bscDsv.length, ethDsv.length])
+  })
 
-  useEffect(() => {
-    async function getDailyVolume(VolumeSwap: ChartData[]) {
-      const yesterday = DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
-        .set({ hour: 0 })
-        .set({ minute: 1 })
-        .minus({ day: 1 })
-        .toMillis()
-
-      const lastMonth = DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
-        .set({ hour: 0 })
-        .set({ minute: 1 })
-        .minus({ month: 1 })
-        .toMillis()
-
-      const lastMonthSwaps = await VolumeSwap.filter(ds => DateTime.fromISO(ds.time.toString()).toMillis() > lastMonth)
-      const lastMonthVol = await lastMonthSwaps.map(s => Number(s.value)).reduce((acc, cur) => acc + cur, 0)
-
-      const last24HSwaps = await VolumeSwap.filter(ds => DateTime.fromISO(ds.time.toString()).toMillis() > yesterday)
-      const last24hVol = await last24HSwaps.map(s => Number(s.value)).reduce((acc, cur) => acc + cur, 0)
-
-      setDailySwap({ totalDailyVolume: last24hVol, dailySwap: last24HSwaps })
-      setLastMonthSwapVolume({ totalDailyVolume: lastMonthVol, dailySwap: lastMonthSwaps })
+  const {
+    loading: bscSwapsLoading,
+    error: bscSwapsError,
+    data: bscSwapsData
+  } = useSwapsQuery({
+    client: bscClient,
+    variables: {
+      gte: gteValue,
+      lte: lteValue
     }
+  })
 
-    if (volumeSwap?.dailySwap.length) {
-      getDailyVolume(volumeSwap?.dailySwap || [])
+  const {
+    loading: ethSwapsLoading,
+    error: ethSwapsError,
+    data: ethSwapsData
+  } = useSwapsQuery({
+    client: ethereumClient,
+    variables: {
+      gte: gteValue,
+      lte: lteValue
     }
-  }, [volumeSwap?.dailySwap])
+  })
 
-  useEffect(() => {
-    async function getTvl({
-      aggregateBalancesBsc,
-      aggregateBalancesAvalanche,
-      aggregateBalancesPolygon,
-      aggregateBalancesEth
-    }: GetAggregateBalancesProps) {
-      const agregateBalancesResults = await getAggregateBalances({
-        aggregateBalancesBsc,
-        aggregateBalancesAvalanche,
-        aggregateBalancesPolygon,
-        aggregateBalancesEth
-      })
-      setAggregateBalances(agregateBalancesResults.tvl)
-      setTotalLending(agregateBalancesResults.totalLending)
-      setTotalBorrowed(agregateBalancesResults.totalBorrowed)
-    }
+  const swapsLoading = avaSwapsLoading && polySwapsLoading && bscSwapsLoading && ethSwapsLoading
+  const swapsError = avaSwapsError && polySwapsError && bscSwapsError && ethSwapsError
+  const swaps = {
+    bscData: avaSwapsData?.swaps || [],
+    polygonData: polySwapsData?.swaps || [],
+    avalancheData: bscSwapsData?.swaps || [],
+    ethData: ethSwapsData?.swaps || []
+  }
 
-    if (!aggregateBalancesLoading && !aggregateBalancesError) {
-      getTvl({
-        aggregateBalancesBsc: bscAggreateBalancesData?.aggregatedBalances || [],
-        aggregateBalancesPolygon: polygonAggreateBalancesData?.aggregatedBalances || [],
-        aggregateBalancesAvalanche: avalancheAggreateBalancesData?.aggregatedBalances || [],
-        aggregateBalancesEth: ethAggreateBalancesData?.aggregatedBalances || []
-      })
-    }
-  }, [
-    aggregateBalancesLoading,
-    aggregateBalancesError,
-    bscAggreateBalancesData,
-    polygonAggreateBalancesData,
-    avalancheAggreateBalancesData,
-    ethAggreateBalancesData
-  ])
+  const showError = swapsError && aggregateBalancesError && swapVolumesError
 
   return (
     <div className={classes.wrapper}>
       <h2>Marginswap Analytics</h2>
-      <div className={classes.stats}>
-        <div>
-          <Stats title={'Marginswap Volume'} time={''} value={volumeSwap?.totalDailyVolume || 0} series={[]} />
-        </div>
-        <div>
-          <Stats
-            title={'Marginswap Volume'}
-            time={'Last Month'}
-            value={lastMonthSwapVolume?.totalDailyVolume || 0}
-            series={[]}
-          />
-          <Stats
-            title={'Marginswap Volume'}
-            time={'Last 24 hrs'}
-            value={Number(dailySwap?.totalDailyVolume.toFixed(2)) || 0}
-            series={[]}
-          />
-        </div>
-        <div>
-          <Stats title={'Total Fees'} time={'Fees paid past month'} value={montlyFees || 0} series={[]} />
-          <Stats title={'Total Value Locked'} time={''} value={Number(aggregateBalances) || 0} series={[]} />
-        </div>
-        <div>
-          <Stats title={'Total Borrowed'} time={''} value={totalBorrowed || 0} chartColor={'#F90B0B'} series={[]} />
-          <Stats title={'Total Lending'} time={''} value={totalLending || 0} chartColor={'#F99808'} series={[]} />
-        </div>
-      </div>
-      {/*<Wallets />*/}
+      {showError ? (
+        <div>Error. Contact Support</div>
+      ) : aggregateBalancesLoading && swapVolumesLoading ? (
+        <div>Loading</div>
+      ) : (
+        <Numbers aggregateBalancesData={aggregateBalances} swapVolumesData={swapVolumes} />
+      )}
+
+      {swapsLoading ? <div> Loading Traders </div> : <Wallets swaps={swaps} />}
     </div>
   )
 }
