@@ -60,6 +60,7 @@ const Numbers = ({ aggregateBalancesData, swapVolumesData }: NumbersProps) => {
 
   useEffect(() => {
     const getVolumeData = async (avalancheDsv: any, polygonDsv: any, bscDsv: any, ethDsv: any) => {
+      console.log('Call :::')
       const dailySwapFormatted = await getVolume({
         dailyAvalancheSwapVolumes: avalancheDsv || [],
         dailyPolygonSwapVolumes: polygonDsv || [],
@@ -70,16 +71,24 @@ const Numbers = ({ aggregateBalancesData, swapVolumesData }: NumbersProps) => {
       setVolumeSwap(dailySwapFormatted)
     }
 
-    getVolumeData(
-      swapVolumesData.avalancheData,
-      swapVolumesData.polygonData,
-      swapVolumesData.bscData,
-      swapVolumesData.ethData
-    )
-  }, [swapVolumesData])
+    if (swapVolumesData.avalancheData.length > 0 && swapVolumesData.polygonData.length > 0) {
+      getVolumeData(
+        swapVolumesData.avalancheData,
+        swapVolumesData.polygonData,
+        swapVolumesData.bscData,
+        swapVolumesData.ethData
+      )
+    }
+  }, [
+    swapVolumesData.avalancheData.length,
+    swapVolumesData.polygonData.length,
+    swapVolumesData.bscData.length,
+    swapVolumesData.ethData.length
+  ])
 
   useEffect(() => {
     async function getDailyVolume(VolumeSwap: ChartData[]) {
+      console.log('Call 3 :::')
       const yesterday = DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
         .set({ hour: 0 })
         .set({ minute: 1 })
@@ -118,6 +127,7 @@ const Numbers = ({ aggregateBalancesData, swapVolumesData }: NumbersProps) => {
       aggregateBalancesPolygon,
       aggregateBalancesEth
     }: GetAggregateBalancesProps) {
+      console.log('Call 2 :::')
       const agregateBalancesResults = await getAggregateBalances({
         aggregateBalancesBsc,
         aggregateBalancesAvalanche,
@@ -129,13 +139,25 @@ const Numbers = ({ aggregateBalancesData, swapVolumesData }: NumbersProps) => {
       setTotalBorrowed(agregateBalancesResults.totalBorrowed)
     }
 
-    getTvl({
-      aggregateBalancesBsc: aggregateBalancesData.bscData,
-      aggregateBalancesPolygon: aggregateBalancesData.polygonData,
-      aggregateBalancesAvalanche: aggregateBalancesData.avalancheData,
-      aggregateBalancesEth: aggregateBalancesData.ethData
-    })
-  }, [aggregateBalancesData])
+    if (
+      aggregateBalancesData.bscData.length > 0 &&
+      aggregateBalancesData.polygonData.length > 0 &&
+      aggregateBalancesData.avalancheData.length > 0 &&
+      aggregateBalancesData.ethData.length > 0
+    ) {
+      getTvl({
+        aggregateBalancesBsc: aggregateBalancesData.bscData,
+        aggregateBalancesPolygon: aggregateBalancesData.polygonData,
+        aggregateBalancesAvalanche: aggregateBalancesData.avalancheData,
+        aggregateBalancesEth: aggregateBalancesData.ethData
+      })
+    }
+  }, [
+    aggregateBalancesData.bscData.length,
+    aggregateBalancesData.polygonData.length,
+    aggregateBalancesData.avalancheData.length,
+    aggregateBalancesData.ethData.length
+  ])
 
   return (
     <div className={classes.stats}>

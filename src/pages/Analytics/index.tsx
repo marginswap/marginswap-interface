@@ -211,13 +211,14 @@ export const Analytics = () => {
       <h2>Marginswap Analytics</h2>
       {showError ? (
         <div>Error. Contact Support</div>
-      ) : aggregateBalancesLoading && swapVolumesLoading ? (
+      ) : aggregateBalancesLoading && swapVolumesLoading && swapsLoading ? (
         <div>Loading</div>
       ) : (
-        <Numbers aggregateBalancesData={aggregateBalances} swapVolumesData={swapVolumes} />
+        <>
+          <Numbers aggregateBalancesData={aggregateBalances} swapVolumesData={swapVolumes} />
+          <Wallets swaps={swaps} />
+        </>
       )}
-
-      {swapsLoading ? <div> Loading Traders </div> : <Wallets swaps={swaps} />}
     </div>
   )
 }

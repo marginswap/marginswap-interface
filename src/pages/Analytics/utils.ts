@@ -85,25 +85,29 @@ async function adjustTokenValueForTraders(token: ISwap) {
 
 //polygon-pos - avalanche - binance-smart-chain
 export async function getBscTokenUSDPrice(tokenAddress: string[]) {
-  const bscPrices = await axiosInstance.get(`/simple/token_price/binance-smart-chain`, {
-    params: {
-      contract_addresses: tokenAddress.join(','),
-      vs_currencies: 'usd'
-    }
-  })
+  if (tokenAddress.length > 0) {
+    const bscPrices = await axiosInstance.get(`/simple/token_price/binance-smart-chain`, {
+      params: {
+        contract_addresses: tokenAddress.join(','),
+        vs_currencies: 'usd'
+      }
+    })
 
-  return bscPrices.data
+    return bscPrices.data
+  }
 }
 
 export async function getPolygonTokenUSDPrice(tokenAddress: string[]) {
-  const polygonPrices = await axiosInstance.get(`/simple/token_price/polygon-pos`, {
-    params: {
-      contract_addresses: tokenAddress.join(','),
-      vs_currencies: 'usd'
-    }
-  })
+  if (tokenAddress.length > 0) {
+    const polygonPrices = await axiosInstance.get(`/simple/token_price/polygon-pos`, {
+      params: {
+        contract_addresses: tokenAddress.join(','),
+        vs_currencies: 'usd'
+      }
+    })
 
-  return polygonPrices.data
+    return polygonPrices.data
+  }
 }
 
 export async function getAvalancheTokenUSDPrice(): Promise<TokensValue> {
@@ -133,14 +137,16 @@ export async function getAvalancheTokenUSDPrice(): Promise<TokensValue> {
 }
 
 export async function getEthTokenUSDPrice(tokenAddress: string[]) {
-  const ethPrices = await axiosInstance.get(`/simple/token_price/ethereum`, {
-    params: {
-      contract_addresses: tokenAddress.join(','),
-      vs_currencies: 'usd'
-    }
-  })
+  if (tokenAddress.length > 0) {
+    const ethPrices = await axiosInstance.get(`/simple/token_price/ethereum`, {
+      params: {
+        contract_addresses: tokenAddress.join(','),
+        vs_currencies: 'usd'
+      }
+    })
 
-  return ethPrices.data
+    return ethPrices.data
+  }
 }
 
 export async function getTopTraders({
