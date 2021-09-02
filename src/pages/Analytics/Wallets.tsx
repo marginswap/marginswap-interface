@@ -5,6 +5,9 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 import IconButton from '@material-ui/core/IconButton'
 
+import { getTopTraders } from './utils'
+import { VolumeSwaps } from './utils'
+
 export const useStyles = makeStyles(() => ({
   root: {
     display: 'flex',
@@ -60,14 +63,7 @@ interface WalletData {
   volume: number
 }
 
-function createWalletData(address: number, volume: number): WalletData {
-  return {
-    address,
-    volume
-  }
-}
-
-const Wallet = ({ wallet }: { wallet: WalletData; index: number }) => {
+const Wallet = (wallet: WalletData) => {
   const numberFormat = new Intl.NumberFormat()
   const { address, volume } = wallet
 
@@ -79,33 +75,33 @@ const Wallet = ({ wallet }: { wallet: WalletData; index: number }) => {
   )
 }
 
-export const Wallets = ({ tokens }: any) => {
+interface TopTradersProps {
+  trader: string
+  volume: number
+}
+
+type WalletProps = {
+  swaps: VolumeSwaps
+}
+
+export const Wallets = ({ swaps }: WalletProps) => {
   const classes = useStyles()
-
-  const [checked, setChecked] = useState(false)
-
-  const [wallets, setWallets] = useState<WalletData[]>([createWalletData(0, 0)])
-  const [renderedWallets, setRenderedWallets] = useState<JSX.Element[] | undefined>()
+  const [checked, setChecked] = useState(true)
+  const [topTraders, setTopTraders] = useState<TopTradersProps[]>([])
 
   useEffect(() => {
-    const unique: string[] = []
-    const newTokens = tokens
-      .filter(({ symbol, logoURI }: any) => {
-        if (!unique.includes(symbol) && logoURI) {
-          unique.push(symbol)
-          return true
-        }
-        return false
+    const getTraderData = async (polygonData: any, avalancheData: any, bscData: any, ethData: any) => {
+      const tradersData = await getTopTraders({
+        polygonData,
+        avalancheData,
+        bscData,
+        ethData
       })
-      .map(({ address }: any) => createWalletData(address, Math.random() * 10000))
-    setWallets(newTokens)
-  }, [tokens])
+      setTopTraders(tradersData)
+    }
 
-  useEffect(() => {
-    const renderResult: JSX.Element[] = []
-    wallets.map((wallet, index) => renderResult.push(Wallet({ wallet, index })))
-    setRenderedWallets(renderResult)
-  }, [wallets])
+    getTraderData(swaps.avalancheData || [], swaps.polygonData || [], swaps.bscData || [], swaps.ethData || [])
+  }, [swaps])
 
   const handleChange = () => {
     setChecked(prev => !prev)
@@ -119,13 +115,21 @@ export const Wallets = ({ tokens }: any) => {
           <span>Wallet</span>
           <span>Volume (24hrs)</span>
         </div>
-        <div className={classes.walletsList}>{renderedWallets && renderedWallets.slice(0, 5)}</div>
-        <Collapse in={checked}>
-          <div className={classes.walletsList}>{renderedWallets && renderedWallets.slice(5)}</div>
-        </Collapse>
-        <IconButton className={classes.expand} onClick={handleChange}>
-          {checked ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-        </IconButton>
+        <>
+          <Collapse in={checked}>
+            {topTraders.map(
+              (trader: any) =>
+                trader.volume > 0 && (
+                  <div key={trader.trader} className={classes.walletsList}>
+                    <Wallet address={trader.trader} volume={trader.volume} />
+                  </div>
+                )
+            )}
+          </Collapse>
+          <IconButton className={classes.expand} onClick={handleChange}>
+            {checked ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          </IconButton>
+        </>
       </div>
     </Paper>
   )
