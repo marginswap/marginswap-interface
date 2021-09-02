@@ -87,17 +87,9 @@ const Numbers = ({ aggregateBalancesData, swapVolumesData }: NumbersProps) => {
 
   useEffect(() => {
     async function getDailyVolume(VolumeSwap: ChartData[]) {
-      const yesterday = DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
-        .set({ hour: 0 })
-        .set({ minute: 1 })
-        .minus({ day: 1 })
-        .toMillis()
+      const yesterday = DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' }).minus({ hour: 24 }).toMillis()
 
-      const lastMonth = DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
-        .set({ hour: 0 })
-        .set({ minute: 1 })
-        .minus({ month: 1 })
-        .toMillis()
+      const lastMonth = DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' }).minus({ hour: 24 }).toMillis()
 
       const lastMonthSwaps = await VolumeSwap.filter(ds => DateTime.fromISO(ds.time.toString()).toMillis() > lastMonth)
       const lastMonthVol = await lastMonthSwaps.map(s => Number(s.value)).reduce((acc, cur) => acc + cur, 0)

@@ -28,11 +28,7 @@ export const Analytics = () => {
 
   const initialDate = 1567311501 //use this date to consider all the historical data - Sep 9, 2019
   const gteValue = Math.round(
-    DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' })
-      .set({ hour: 0 })
-      .set({ minute: 1 })
-      .minus({ day: 1 })
-      .toSeconds()
+    DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' }).minus({ hour: 24 }).toSeconds()
   )
   const lteValue = Math.round(DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' }).toSeconds())
 
