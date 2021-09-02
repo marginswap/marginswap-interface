@@ -247,7 +247,7 @@ export async function getVolume({
 
     dailyVolume += formattedVolume
     return {
-      time: DateTime.fromSeconds(Number(token.createdAt)).toFormat('yyyy-MM-dd').toString(),
+      time: DateTime.fromSeconds(Number(token.createdAt)).toISO().toString(),
       value: Number(formattedVolume)
     }
   })

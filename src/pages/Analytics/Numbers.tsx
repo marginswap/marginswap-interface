@@ -88,7 +88,6 @@ const Numbers = ({ aggregateBalancesData, swapVolumesData }: NumbersProps) => {
   useEffect(() => {
     async function getDailyVolume(VolumeSwap: ChartData[]) {
       const yesterday = DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' }).minus({ hour: 24 }).toMillis()
-
       const lastMonth = DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' }).minus({ month: 1 }).toMillis()
 
       const lastMonthSwaps = await VolumeSwap.filter(ds => DateTime.fromISO(ds.time.toString()).toMillis() > lastMonth)
@@ -123,7 +122,6 @@ const Numbers = ({ aggregateBalancesData, swapVolumesData }: NumbersProps) => {
         aggregateBalancesPolygon,
         aggregateBalancesEth
       })
-      console.log('🚀 ~ file: Numbers.tsx ~ line 134 ~ useEffect ~ agregateBalancesResults', agregateBalancesResults)
       setAggregateBalances(agregateBalancesResults.tvl)
       setTotalLending(agregateBalancesResults.totalLending)
       setTotalBorrowed(agregateBalancesResults.totalBorrowed)
