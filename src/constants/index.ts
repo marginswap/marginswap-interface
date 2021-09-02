@@ -208,38 +208,45 @@ export interface WalletInfo {
 }
 
 export interface AvalancheTokenInfo {
-  token: string
-  type: string
+  chainId: number
+  address: string
+  decimals: number
+  name: string
+  symbol: string
+  logoURI: string
+  coingeckoId: string
 }
 
 export const AVALANCHE_TOKENS_LIST: AvalancheTokenInfo[] = [
   {
-    token: '0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7',
-    type: 'wrapped-avax'
+    chainId: 43114,
+    address: '0xde3a24028580884448a5397872046a019649b084',
+    decimals: 6,
+    name: 'Tether USD',
+    symbol: 'USDT',
+    logoURI:
+      'https://raw.githubusercontent.com/ava-labs/bridge-tokens/main/avalanche-tokens/0xde3A24028580884448a5397872046a019649b084/logo.png',
+    coingeckoId: 'tether'
   },
   {
-    token: '0xc7198437980c041c805a1edcba50c1ce5db95118',
-    type: 'tether'
+    chainId: 43114,
+    address: '0xf20d962a6c8f70c731bd838a3a388D7d48fA6e15',
+    decimals: 18,
+    name: 'Wrapped Ether',
+    symbol: 'WETH',
+    logoURI:
+      'https://raw.githubusercontent.com/ava-labs/bridge-tokens/main/avalanche-tokens/0xf20d962a6c8f70c731bd838a3a388D7d48fA6e15/logo.png',
+    coingeckoId: 'ethereum'
   },
   {
-    token: '0xde3a24028580884448a5397872046a019649b084',
-    type: 'tether'
-  },
-  {
-    token: '0x60781c2586d68229fde47564546784ab3faca982',
-    type: 'pangolin'
-  },
-  {
-    token: '0xf20d962a6c8f70c731bd838a3a388d7d48fa6e15',
-    type: 'ethereum'
-  },
-  {
-    token: '0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab',
-    type: 'ethereum'
-  },
-  {
-    token: '0x408d4cd0adb7cebd1f1a1c33a0ba2098e1295bab',
-    type: 'binance-wrapped-btc'
+    chainId: 43114,
+    address: '0x408D4cD0ADb7ceBd1F1A1C33A0Ba2098E1295bAB',
+    decimals: 8,
+    name: 'Wrapped BTC',
+    symbol: 'WBTC',
+    logoURI:
+      'https://raw.githubusercontent.com/ava-labs/bridge-tokens/main/avalanche-tokens/0x408D4cD0ADb7ceBd1F1A1C33A0Ba2098E1295bAB/logo.png',
+    coingeckoId: 'binance-wrapped-btc'
   }
 ]
 

@@ -2734,6 +2734,13 @@
   dependencies:
     "@types/lodash" "*"
 
+"@types/lodash.transform@^4.6.6":
+  version "4.6.6"
+  resolved "https://registry.yarnpkg.com/@types/lodash.transform/-/lodash.transform-4.6.6.tgz#f69d442089180d7724430ede6b7a985720117132"
+  integrity sha512-lLqr/S3lPtAHMOdJWEnKcx9fL1nn98vrXPQ72gtv/4zzh3Bvc5owGcRiabsdAETJ/51O2A798T3YpHtKuCiD7g==
+  dependencies:
+    "@types/lodash" "*"
+
 "@types/lodash@*", "@types/lodash@^4.14.53":
   version "4.14.170"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.170.tgz#0d67711d4bf7f4ca5147e9091b847479b87925d6"
@@ -10348,6 +10355,11 @@ lodash.templatesettings@^4.0.0:
   integrity sha512-stgLz+i3Aa9mZgnjr/O+v9ruKZsPsndy7qPZOchbqk2cnTU1ZaldKK+v7m54WoKIyxiuMZTKT2H81F8BeAc3ZQ==
   dependencies:
     lodash._reinterpolate "^3.0.0"
+
+lodash.transform@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/lodash.transform/-/lodash.transform-4.6.0.tgz#12306422f63324aed8483d3f38332b5f670547a0"
+  integrity sha1-EjBkIvYzJK7YSD0/ODMrX2cFR6A=
 
 lodash.truncate@^4.4.2:
   version "4.4.2"

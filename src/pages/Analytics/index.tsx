@@ -194,9 +194,9 @@ export const Analytics = () => {
   const swapsLoading = avaSwapsLoading && polySwapsLoading && bscSwapsLoading && ethSwapsLoading
   const swapsError = avaSwapsError && polySwapsError && bscSwapsError && ethSwapsError
   const swaps = {
-    bscData: avaSwapsData?.swaps || [],
+    bscData: bscSwapsData?.swaps || [],
     polygonData: polySwapsData?.swaps || [],
-    avalancheData: bscSwapsData?.swaps || [],
+    avalancheData: avaSwapsData?.swaps || [],
     ethData: ethSwapsData?.swaps || []
   }
 

@@ -1,9 +1,10 @@
 import axiosInstance from '../../config/axios-config'
 import { DateTime } from 'luxon'
 import groupby from 'lodash.groupby'
-import tokenList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
+import tokenListMarginSwap from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 import { AVALANCHE_TOKENS_LIST } from '../../constants'
 import { TokenAmount, Token } from '@marginswap/sdk'
+import transform from 'lodash.transform'
 
 import legacyAvalancheData from '../../data/legacy-data/avalanche-aug-2021.json'
 interface TokensValue {
@@ -63,8 +64,27 @@ export type GetDailyVolumeProps = {
   dailyEthSwapVolumes: SwapVolumeProps[]
 }
 
+async function lowerCaseObjectKey(object: any) {
+  return transform(object, (result: any, val, key: string): any => (result[key.toLowerCase()] = val))
+}
+
+/*function lowerCaseObjectKey(obj: any): TokensValue {
+  let key,
+    keys = Object.keys(obj)
+  let n = keys.length
+  const newObj: TokensValue = {}
+  while (n--) {
+    key = keys[n]
+    newObj[key.toLowerCase()] = obj[key]
+  }
+  return newObj
+}*/
+
 async function adjustTokenValue(token: IAggregateBalance | SwapVolumeProps) {
-  const info = tokenList.tokens.filter(value => value.address.toLowerCase() === token.token.toLowerCase())[0]
+  const info = [...AVALANCHE_TOKENS_LIST, ...tokenListMarginSwap.tokens].filter(
+    value => value.address.toLowerCase() === token.token.toLowerCase()
+  )[0]
+
   return {
     ...token,
     info: {
@@ -74,7 +94,10 @@ async function adjustTokenValue(token: IAggregateBalance | SwapVolumeProps) {
 }
 
 async function adjustTokenValueForTraders(token: ISwap) {
-  const info = tokenList.tokens.filter(value => value.address.toLowerCase() === token.fromToken.toLowerCase())[0]
+  const info = [...AVALANCHE_TOKENS_LIST, ...tokenListMarginSwap.tokens].filter(
+    value => value.address.toLowerCase() === token.fromToken.toLowerCase()
+  )[0]
+
   return {
     ...token,
     info: {
@@ -84,7 +107,7 @@ async function adjustTokenValueForTraders(token: ISwap) {
 }
 
 //polygon-pos - avalanche - binance-smart-chain
-export async function getBscTokenUSDPrice(tokenAddress: string[]) {
+export async function getBscTokenUSDPrice(tokenAddress: string[]): Promise<TokensValue | void> {
   if (tokenAddress.length > 0) {
     const bscPrices = await axiosInstance.get(`/simple/token_price/binance-smart-chain`, {
       params: {
@@ -93,11 +116,15 @@ export async function getBscTokenUSDPrice(tokenAddress: string[]) {
       }
     })
 
-    return bscPrices.data
+    const transformKeys = await Promise.all(
+      Object.keys(bscPrices.data).map(pp => lowerCaseObjectKey({ [pp]: bscPrices.data[pp] }))
+    )
+
+    return Object.assign({}, ...transformKeys)
   }
 }
 
-export async function getPolygonTokenUSDPrice(tokenAddress: string[]) {
+export async function getPolygonTokenUSDPrice(tokenAddress: string[]): Promise<TokensValue | void> {
   if (tokenAddress.length > 0) {
     const polygonPrices = await axiosInstance.get(`/simple/token_price/polygon-pos`, {
       params: {
@@ -106,18 +133,22 @@ export async function getPolygonTokenUSDPrice(tokenAddress: string[]) {
       }
     })
 
-    return polygonPrices.data
+    const transformKeys = await Promise.all(
+      Object.keys(polygonPrices.data).map(pp => lowerCaseObjectKey({ [pp]: polygonPrices.data[pp] }))
+    )
+
+    return Object.assign({}, ...transformKeys)
   }
 }
 
 export async function getAvalancheTokenUSDPrice(): Promise<TokensValue> {
-  const legacyTokens: { token: any; type: any }[] = []
-  tokenList.tokens.forEach((info: any) => {
-    if (info.chainId === 43114) legacyTokens.push({ token: info.address, type: info.coingeckoId })
+  const legacyTokens: any[] = []
+  tokenListMarginSwap.tokens.forEach((info: any) => {
+    if (info.chainId === 43114) legacyTokens.push({ ...info, address: info.address.toLowerCase() })
   })
 
   const allAvalancheTokens = [...AVALANCHE_TOKENS_LIST, ...legacyTokens]
-  const tokenTypes = allAvalancheTokens.map(token => token?.type)
+  const tokenTypes = allAvalancheTokens.map(token => token?.coingeckoId)
 
   const prices = await axiosInstance.get(`/simple/price`, {
     params: {
@@ -129,11 +160,15 @@ export async function getAvalancheTokenUSDPrice(): Promise<TokensValue> {
   const avalancheTokens: TokensValue = {}
 
   await allAvalancheTokens.forEach(avax => {
-    const newObj = { [avax.token.toLowerCase()]: prices.data[avax.type] }
+    const newObj = { [avax.address.toLowerCase()]: prices.data[avax.coingeckoId] }
     Object.assign(avalancheTokens, newObj)
   })
 
-  return avalancheTokens
+  const transformKeys = await Promise.all(
+    Object.keys(avalancheTokens).map(pp => lowerCaseObjectKey({ [pp]: avalancheTokens[pp] }))
+  )
+
+  return Object.assign({}, ...transformKeys)
 }
 
 export async function getEthTokenUSDPrice(tokenAddress: string[]) {
@@ -145,7 +180,11 @@ export async function getEthTokenUSDPrice(tokenAddress: string[]) {
       }
     })
 
-    return ethPrices.data
+    const transformKeys = await Promise.all(
+      Object.keys(ethPrices.data).map(pp => lowerCaseObjectKey({ [pp]: ethPrices.data[pp] }))
+    )
+
+    return Object.assign({}, ...transformKeys)
   }
 }
 
@@ -220,11 +259,12 @@ export async function getVolume({
   const tokensPrice = { ...tokensAvalanchePrice, ...tokensPolygonPrice, ...tokensBscPrice, ...tokensEthPrice }
 
   let dailyVolume = 0
+  const legacyAvalanche = await Promise.all(legacyAvalancheData.dailySwapVolumes.filter(la => la.type === 'MARGIN'))
   const swapVolumes = await Promise.all(
     [
       ...dailyPolygonSwapVolumes,
       ...dailyAvalancheSwapVolumes,
-      ...legacyAvalancheData.dailySwapVolumes,
+      ...legacyAvalanche,
       ...dailyBscSwapVolumes,
       ...dailyEthSwapVolumes
     ].map(t => adjustTokenValue(t))
@@ -232,14 +272,13 @@ export async function getVolume({
 
   const dailySwap = swapVolumes.map((token: any) => {
     let formattedVolume = 0
-
     try {
       formattedVolume =
         Number(
           new TokenAmount(new Token(token.info.chainId, token.token, token.info.decimals), token.volume).toSignificant(
             3
           )
-        ) * tokensPrice[token.token].usd
+        ) * tokensPrice[token.token.toLowerCase()].usd
     } catch (err) {
       formattedVolume = 0
       console.log('Not found :::', token)
@@ -306,7 +345,7 @@ export async function getAggregateBalances({
             new Token(aggBal.info.chainId, aggBal.token, aggBal.info.decimals),
             aggBal.balance
           ).toSignificant(3)
-        ) * tokensPrice[aggBal.token].usd
+        ) * tokensPrice[aggBal.token.toLowerCase()].usd
 
       tvl += formattedBalance
 
