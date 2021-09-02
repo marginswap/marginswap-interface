@@ -11,6 +11,8 @@ const Content = styled.div`
   flex-wrap: wrap;
   overflow-y: auto;
   padding-left: 5px;
+  max-height: 240px;
+  margin-bottom: 15px;
 
   > div {
     margin-bottom: 10px;

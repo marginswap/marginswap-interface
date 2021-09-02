@@ -11,7 +11,6 @@ export const BodyWrapper = styled.div<BodyWrapperProps>`
   width: 100%;
   background: initial;
   border-radius: ${props => (props.roundedBody ? '30px' : '0')};
-  border: 1px solid #777777;
 `
 
 /**
