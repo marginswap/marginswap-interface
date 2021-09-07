@@ -38,8 +38,8 @@ const headerLinks = [
   { path: '/swap', name: 'Swap' },
   { path: '/margin-account', name: 'Margin Account' },
   { path: '/bond-supply', name: 'Bond Lending' },
-  { path: '/stake', name: 'Stake' }
-  // { path: '/Analytics', name: 'Analytics' }
+  { path: '/stake', name: 'Stake' },
+  { path: '/Analytics', name: 'Analytics' }
 ]
 
 /*const NETWORK_LABELS: { [chainId in ChainId]?: string } = {

@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { makeStyles } from '@material-ui/core'
-import { Graphics } from './Graphics'
-import { Stats } from './Stats'
+import { DateTime } from 'luxon'
+import Numbers from './Numbers'
 import { Wallets } from './Wallets'
-import { TokenInfo } from '@uniswap/token-lists'
-import { useFetchListCallback } from 'hooks/useFetchListCallback'
-import { useAllLists } from 'state/lists/hooks'
+import { useSwapVolumesQuery, useAggregatedBalancesQuery, useSwapsQuery } from '../../graphql/queries/analytics'
+import { avalancheClient } from '../../config/apollo-config'
+import { polygonClient } from '../../config/apollo-config'
+import { bscClient } from '../../config/apollo-config'
+import { ethereumClient } from '../../config/apollo-config'
 
 const useStyles = makeStyles(() => ({
   wrapper: {
@@ -18,53 +20,201 @@ const useStyles = makeStyles(() => ({
     '& h2': {
       width: '1040px'
     }
-  },
-  stats: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '30px',
-    width: '1040px',
-    '& p': {
-      margin: '10px 0',
-      fontWeight: 600,
-      fontSize: '15px'
-    }
   }
 }))
 
 export const Analytics = () => {
   const classes = useStyles()
 
-  const lists = useAllLists()
-  const [tokens, setTokens] = useState<TokenInfo[]>([])
+  const initialDate = 1567311501 //use this date to consider all the historical data - Sep 9, 2019
+  const gteValue = Math.round(
+    DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' }).minus({ hour: 24 }).toSeconds()
+  )
+  const lteValue = Math.round(DateTime.fromISO(DateTime.now().toString(), { zone: 'utc' }).toSeconds())
 
-  const fetchList = useFetchListCallback()
+  //dsv -> Dialy Swap Volume
+  // Avalanche
+  const {
+    data: avalancheDsvData,
+    loading: avalancheDsvLoading,
+    error: avalancheDsvError
+  } = useSwapVolumesQuery({
+    variables: {
+      gte: initialDate,
+      lte: lteValue
+    },
+    client: avalancheClient
+  })
 
-  useEffect(() => {
-    const url = Object.keys(lists)[0]
-    if (url) {
-      fetchList(url, false)
-        .then(({ tokens }) => {
-          setTokens(tokens)
-        })
-        .catch(error => console.error('interval list fetching error', error))
+  //dsv -> Dialy Swap Volume
+  // Polygon
+  const {
+    data: polygonDsvData,
+    loading: polygonDsvLoading,
+    error: polygonDsvError
+  } = useSwapVolumesQuery({
+    variables: {
+      gte: initialDate,
+      lte: lteValue
+    },
+    client: polygonClient
+  })
+
+  //dsv -> Dialy Swap Volume
+  // Binance Smart Contract
+  const {
+    data: bscDsvData,
+    loading: bscDsvLoading,
+    error: bscDsvError
+  } = useSwapVolumesQuery({
+    variables: {
+      gte: initialDate,
+      lte: lteValue
+    },
+    client: bscClient
+  })
+
+  //dsv -> Dialy Swap Volume
+  // Ethereum
+  const {
+    data: ethDsvData,
+    loading: ethDsvLoading,
+    error: ethDsvError
+  } = useSwapVolumesQuery({
+    variables: {
+      gte: initialDate,
+      lte: lteValue
+    },
+    client: ethereumClient
+  })
+
+  const swapVolumesLoading = avalancheDsvLoading && polygonDsvLoading && bscDsvLoading && ethDsvLoading
+  const swapVolumesError = avalancheDsvError && polygonDsvError && bscDsvError && ethDsvError
+  const swapVolumes = {
+    avalancheData: avalancheDsvData?.dailySwapVolumes || [],
+    polygonData: polygonDsvData?.dailySwapVolumes || [],
+    bscData: bscDsvData?.dailySwapVolumes || [],
+    ethData: ethDsvData?.dailySwapVolumes || []
+  }
+
+  // Binance Smart Contract
+  const {
+    data: bscAggreateBalancesData,
+    loading: bscAggBalLoading,
+    error: bscAggBalError
+  } = useAggregatedBalancesQuery({
+    client: bscClient
+  })
+
+  // Polygon Smart Contract
+  const {
+    data: polygonAggreateBalancesData,
+    loading: polygonAggBalLoading,
+    error: polygonAggBalError
+  } = useAggregatedBalancesQuery({
+    client: polygonClient
+  })
+
+  // Avalanche Smart Contract
+  const {
+    data: avalancheAggreateBalancesData,
+    loading: avalancheAggBalLoading,
+    error: avalancheAggBalError
+  } = useAggregatedBalancesQuery({
+    client: avalancheClient
+  })
+
+  // Avalanche Smart Contract
+  const {
+    data: ethAggreateBalancesData,
+    loading: ethAggBalLoading,
+    error: ethAggBalError
+  } = useAggregatedBalancesQuery({
+    client: ethereumClient
+  })
+
+  const aggregateBalancesLoading =
+    polygonAggBalLoading && avalancheAggBalLoading && bscAggBalLoading && ethAggBalLoading
+  const aggregateBalancesError = polygonAggBalError && avalancheAggBalError && bscAggBalError && ethAggBalError
+  const aggregateBalances = {
+    bscData: bscAggreateBalancesData?.aggregatedBalances || [],
+    polygonData: polygonAggreateBalancesData?.aggregatedBalances || [],
+    avalancheData: avalancheAggreateBalancesData?.aggregatedBalances || [],
+    ethData: ethAggreateBalancesData?.aggregatedBalances || []
+  }
+
+  const {
+    loading: avaSwapsLoading,
+    error: avaSwapsError,
+    data: avaSwapsData
+  } = useSwapsQuery({
+    client: avalancheClient,
+    variables: {
+      gte: gteValue,
+      lte: lteValue
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  })
+
+  const {
+    loading: polySwapsLoading,
+    error: polySwapsError,
+    data: polySwapsData
+  } = useSwapsQuery({
+    client: polygonClient,
+    variables: {
+      gte: gteValue,
+      lte: lteValue
+    }
+  })
+
+  const {
+    loading: bscSwapsLoading,
+    error: bscSwapsError,
+    data: bscSwapsData
+  } = useSwapsQuery({
+    client: bscClient,
+    variables: {
+      gte: gteValue,
+      lte: lteValue
+    }
+  })
+
+  const {
+    loading: ethSwapsLoading,
+    error: ethSwapsError,
+    data: ethSwapsData
+  } = useSwapsQuery({
+    client: ethereumClient,
+    variables: {
+      gte: gteValue,
+      lte: lteValue
+    }
+  })
+
+  const swapsLoading = avaSwapsLoading && polySwapsLoading && bscSwapsLoading && ethSwapsLoading
+  const swapsError = avaSwapsError && polySwapsError && bscSwapsError && ethSwapsError
+  const swaps = {
+    bscData: bscSwapsData?.swaps || [],
+    polygonData: polySwapsData?.swaps || [],
+    avalancheData: avaSwapsData?.swaps || [],
+    ethData: ethSwapsData?.swaps || []
+  }
+
+  const showError = swapsError && aggregateBalancesError && swapVolumesError
 
   return (
     <div className={classes.wrapper}>
-      <h2>MarginSwap Analytics</h2>
-      <Graphics />
-      <div className={classes.stats}>
-        <Stats title={'MFI Price'} time={'Last 24 hrs'} value={'$1,594'} chartColor={'#BE72F3'} />
-        <Stats title={'Total Fees'} time={'Ever Collected'} value={'$1,10,284'} chartColor={'#94F572'} />
-        <Stats title={'Fees'} time={'Last 24 hrs'} value={'$12,000'} chartColor={'#F90B0B'} />
-        <Stats title={'Total Volume'} time={'Last 24 hrs'} value={'1,10,284'} chartColor={'#F99808'} />
-        <Stats title={'Total Bond Lending'} value={'0.5m'} />
-        <Stats title={'Total Borrowed'} value={'0.5m'} />
-      </div>
-      <Wallets tokens={tokens} />
+      <h2>Marginswap Analytics</h2>
+      {showError ? (
+        <div>Error. Contact Support</div>
+      ) : aggregateBalancesLoading && swapVolumesLoading && swapsLoading ? (
+        <div>Loading</div>
+      ) : (
+        <>
+          <Numbers aggregateBalancesData={aggregateBalances} swapVolumesData={swapVolumes} />
+          <Wallets swaps={swaps} />
+        </>
+      )}
     </div>
   )
 }

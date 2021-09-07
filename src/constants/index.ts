@@ -207,6 +207,49 @@ export interface WalletInfo {
   mobileOnly?: true
 }
 
+export interface AvalancheTokenInfo {
+  chainId: number
+  address: string
+  decimals: number
+  name: string
+  symbol: string
+  logoURI: string
+  coingeckoId: string
+}
+
+export const AVALANCHE_TOKENS_LIST: AvalancheTokenInfo[] = [
+  {
+    chainId: 43114,
+    address: '0xde3a24028580884448a5397872046a019649b084',
+    decimals: 6,
+    name: 'Tether USD',
+    symbol: 'USDT',
+    logoURI:
+      'https://raw.githubusercontent.com/ava-labs/bridge-tokens/main/avalanche-tokens/0xde3A24028580884448a5397872046a019649b084/logo.png',
+    coingeckoId: 'tether'
+  },
+  {
+    chainId: 43114,
+    address: '0xf20d962a6c8f70c731bd838a3a388D7d48fA6e15',
+    decimals: 18,
+    name: 'Wrapped Ether',
+    symbol: 'WETH',
+    logoURI:
+      'https://raw.githubusercontent.com/ava-labs/bridge-tokens/main/avalanche-tokens/0xf20d962a6c8f70c731bd838a3a388D7d48fA6e15/logo.png',
+    coingeckoId: 'ethereum'
+  },
+  {
+    chainId: 43114,
+    address: '0x408D4cD0ADb7ceBd1F1A1C33A0Ba2098E1295bAB',
+    decimals: 8,
+    name: 'Wrapped BTC',
+    symbol: 'WBTC',
+    logoURI:
+      'https://raw.githubusercontent.com/ava-labs/bridge-tokens/main/avalanche-tokens/0x408D4cD0ADb7ceBd1F1A1C33A0Ba2098E1295bAB/logo.png',
+    coingeckoId: 'binance-wrapped-btc'
+  }
+]
+
 export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
   INJECTED: {
     connector: injected,

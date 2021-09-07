@@ -14,6 +14,38 @@
   ],
   "tokens": [
     {
+      "name": "Marginswap",
+      "address": "0xAa4e3edb11AFa93c41db59842b29de64b72E355B",
+      "symbol": "MFI",
+      "decimals": 18,
+      "chainId": 1,
+      "logoURI": "https://assets.coingecko.com/coins/images/13899/small/marginswap_logo.png?1612756590"
+    },
+    {
+      "name": "Marginswap",
+      "address": "0x37bdfd6ed491ee0e0fe2ce49de2cb573880e3734",
+      "symbol": "MFI",
+      "decimals": 18,
+      "chainId": 56,
+      "logoURI": "https://assets.coingecko.com/coins/images/13899/small/marginswap_logo.png?1612756590"
+    },
+    {
+      "name": "Marginswap",
+      "address": "0x7Bc429a2fA7d71C4693424FDcaB5a2521b9FD343",
+      "symbol": "MFI",
+      "decimals": 18,
+      "chainId": 137,
+      "logoURI": "https://assets.coingecko.com/coins/images/13899/small/marginswap_logo.png?1612756590"
+    },
+    {
+      "name": "Marginswap",
+      "address": "0x9fda7ceec4c18008096c2fe2b85f05dc300f94d0",
+      "symbol": "MFI",
+      "decimals": 18,
+      "chainId": 43113,
+      "logoURI": "https://assets.coingecko.com/coins/images/13899/small/marginswap_logo.png?1612756590"
+    },
+    {
       "name": "MAI",
       "address": "0xa3Fa99A148fA48D14Ed51d610c367C61876997F1",
       "symbol": "miMATIC",

@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { makeStyles, Paper } from '@material-ui/core'
 import { createChart } from 'lightweight-charts'
 
@@ -9,25 +9,64 @@ const useStyles = makeStyles(() => ({
     backdropFilter: 'blur(10px)',
     border: '1px solid #777777',
     borderRadius: '12px'
+  },
+  stats: {
+    display: 'flex',
+    flexDirection: 'column',
+    margin: '40px 0',
+    '& span': {
+      height: '90px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '10px',
+      '& div': {
+        gap: '8px'
+      },
+      '& h3': {
+        margin: '0',
+        fontSize: '15px',
+        lineHeight: '18px'
+      },
+      '& p': {
+        margin: '0',
+        fontWeight: '300',
+        fontSize: '14px',
+        lineHeight: '17px',
+        color: '#D0D0D0'
+      },
+      '& h4': {
+        margin: '0',
+        fontWeight: 'normal',
+        fontSize: '22px',
+        lineHeight: '27px'
+      }
+    }
   }
 }))
 
-export const Graphic: FunctionComponent<{ state: unknown }> = () => {
+type GraphicProps = {
+  title: string
+  time?: string
+  value: number
+  series: { time: string; value: number }[]
+}
+
+export default function Graphic({ title, time, value, series }: GraphicProps) {
   const classes = useStyles()
   const ref = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
-    if (ref.current) {
+    if (ref.current && series.length) {
       const chart = createChart(ref.current, {
-        width: 505,
+        width: 1024,
         height: 338,
         layout: {
           backgroundColor: 'transparent',
-          textColor: 'black'
+          textColor: 'white'
         },
         rightPriceScale: {
           scaleMargins: {
-            top: 0.32,
-            bottom: 0
+            top: 0.1,
+            bottom: 0.5
           },
           borderVisible: false
         },
@@ -54,7 +93,7 @@ export const Graphic: FunctionComponent<{ state: unknown }> = () => {
             style: 0,
             width: 2,
             color: 'rgba(32, 38, 46, 0.1)',
-            labelVisible: false
+            labelVisible: true
           }
         }
       })
@@ -64,92 +103,22 @@ export const Graphic: FunctionComponent<{ state: unknown }> = () => {
         lineColor: '#ff007a',
         lineWidth: 3
       })
-      lineSeries.setData([
-        { time: '2019-04-06', value: 73.22 },
-        { time: '2019-04-07', value: 70.81 },
-        { time: '2019-04-08', value: 69.01 },
-        { time: '2019-04-09', value: 68.21 },
-        { time: '2019-04-10', value: 72.09 },
-        { time: '2019-04-11', value: 77.02 },
-        { time: '2019-04-12', value: 83.63 },
-        { time: '2019-04-13', value: 79.64 },
-        { time: '2019-04-14', value: 81.89 },
-        { time: '2019-04-15', value: 77.43 },
-        { time: '2019-04-16', value: 80.01 },
-        { time: '2019-04-17', value: 78.63 },
-        { time: '2019-04-18', value: 76.64 },
-        { time: '2019-04-19', value: 81.89 },
-        { time: '2019-04-20', value: 74.43 },
-        { time: '2019-04-21', value: 70.63 },
-        { time: '2019-04-22', value: 72.13 },
-        { time: '2019-04-23', value: 68.33 },
-        { time: '2019-04-24', value: 73.43 },
-        { time: '2019-04-25', value: 69.43 },
-        { time: '2019-04-26', value: 66.21 },
-        { time: '2019-04-27', value: 63.22 },
-        { time: '2019-04-28', value: 60.73 },
-        { time: '2019-04-29', value: 62.61 },
-        { time: '2019-04-30', value: 60.83 },
-        { time: '2019-05-01', value: 63.21 },
-        { time: '2019-05-02', value: 65.21 },
-        { time: '2019-05-03', value: 69.44 },
-        { time: '2019-05-04', value: 74.34 },
-        { time: '2019-05-05', value: 82.87 },
-        { time: '2019-05-06', value: 95.92 },
-        { time: '2019-05-07', value: 101.81 },
-        { time: '2019-05-08', value: 103.12 },
-        { time: '2019-05-09', value: 107.84 },
-        { time: '2019-05-10', value: 105.11 },
-        { time: '2019-05-11', value: 98.92 },
-        { time: '2019-05-12', value: 97.02 },
-        { time: '2019-05-13', value: 98.34 },
-        { time: '2019-05-14', value: 95.12 },
-        { time: '2019-05-15', value: 104.73 },
-        { time: '2019-05-16', value: 99.68 },
-        { time: '2019-05-17', value: 100.33 },
-        { time: '2019-05-19', value: 103.85 },
-        { time: '2019-05-20', value: 104.45 },
-        { time: '2019-05-21', value: 101.54 },
-        { time: '2019-05-22', value: 98.62 },
-        { time: '2019-05-23', value: 99.35 },
-        { time: '2019-05-24', value: 95.93 },
-        { time: '2019-05-25', value: 93.76 },
-        { time: '2019-05-26', value: 92.12 },
-        { time: '2019-05-27', value: 93.84 },
-        { time: '2019-05-28', value: 91.75 },
-        { time: '2019-05-29', value: 88.79 },
-        { time: '2019-05-30', value: 87.36 },
-        { time: '2019-05-31', value: 85.13 },
-        { time: '2019-06-01', value: 86.85 },
-        { time: '2019-06-02', value: 83.46 },
-        { time: '2019-06-03', value: 84.86 },
-        { time: '2019-06-04', value: 86.56 },
-        { time: '2019-06-05', value: 87.36 },
-        { time: '2019-06-06', value: 87.02 },
-        { time: '2019-06-07', value: 88.25 },
-        { time: '2019-06-08', value: 89.11 },
-        { time: '2019-06-09', value: 90.34 },
-        { time: '2019-06-11', value: 92.32 },
-        { time: '2019-06-12', value: 89.46 },
-        { time: '2019-06-13', value: 88.35 },
-        { time: '2019-06-14', value: 85.16 },
-        { time: '2019-06-15', value: 83.12 },
-        { time: '2019-06-16', value: 82.97 },
-        { time: '2019-06-17', value: 80.34 },
-        { time: '2019-06-18', value: 79.03 },
-        { time: '2019-06-19', value: 77.01 },
-        { time: '2019-06-20', value: 78.32 },
-        { time: '2019-06-21', value: 76.76 },
-        { time: '2019-06-22', value: 74.37 },
-        { time: '2019-06-23', value: 72.13 },
-        { time: '2019-06-24', value: 70.46 }
-      ])
+      lineSeries.setData(series.filter(s => s.value > 10000))
     }
-  }, [])
+  }, [series.length])
 
   return (
-    <Paper className={classes.graphic}>
-      <div id="chart" ref={ref} />
-    </Paper>
+    <div className={classes.stats}>
+      <span>
+        <div>
+          <h4>{title}</h4>
+          {time && <p>{time}</p>}
+        </div>
+        <h3>{`$${new Intl.NumberFormat().format(value)}`}</h3>
+      </span>
+      <Paper className={classes.graphic}>
+        <div id="chart" ref={ref} />
+      </Paper>
+    </div>
   )
 }
