@@ -10,8 +10,12 @@ export const WidgetHeader = styled.div`
 `
 
 export const Container = styled.div`
+  background-color: #161618;
+  border-radius: 7px;
   padding: 5px 10px;
   color: #fff;
+  width: 100%;
+  max-height: 470px;
 `
 
 export const Content = styled.div`
@@ -45,6 +49,11 @@ export const Actions = styled.div`
   justify-content: space-between;
   margin-top: 15px;
   margin-bottom: 15px;
+
+  @media screen and (max-width: 1290px) {
+    flex-direction: column;
+    gap: 1vh;
+  }
 `
 
 export const PrimaryButton = styled.button`

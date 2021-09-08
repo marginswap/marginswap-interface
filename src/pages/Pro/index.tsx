@@ -14,8 +14,6 @@ const index = () => {
       <LeftContainer>
         <WidgetContainer>
           <MarketWidget />
-        </WidgetContainer>
-        <WidgetContainer>
           <OrderWidget />
         </WidgetContainer>
       </LeftContainer>
@@ -26,8 +24,6 @@ const index = () => {
       <RightContainer>
         <WidgetContainer>
           <AccountBalance />
-        </WidgetContainer>
-        <WidgetContainer>
           <MarketTrades />
         </WidgetContainer>
       </RightContainer>

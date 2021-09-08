@@ -2,8 +2,13 @@ import styled from 'styled-components'
 import { Star } from 'react-feather'
 
 export const Container = styled.div`
+  border-radius: 7px;
   display: flex;
   flex-direction: column;
+  background-color: #161618;
+  width: 100%;
+  max-height: 470px;
+  padding: 5px 10px;
 `
 
 export const CoinSelector = styled.div`
