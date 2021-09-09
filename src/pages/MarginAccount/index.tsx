@@ -507,8 +507,8 @@ export const MarginAccount = () => {
           : 0,
         liquidity: liquidities[token.address] ? parseFloat(liquidities[token.address].toFixed(6)) : 0,
         maxBorrow: Math.min(
-          withdrawableAmounts[token.address] ? parseFloat(withdrawableAmounts[token.address].toFixed(6)) : 0,
-          borrowableAmounts[token.address] ? parseFloat(borrowableAmounts[token.address].toFixed(6)) : 0,
+          withdrawableAmounts[token.address] ? 0.6 * parseFloat(withdrawableAmounts[token.address].toFixed(6)) : 0,
+          borrowableAmounts[token.address] ? 0.33 * parseFloat(borrowableAmounts[token.address].toFixed(6)) : 0,
           liquidities[token.address] ? parseFloat(liquidities[token.address].toFixed()) : 0
         ),
         maxWithdraw: Math.min(
