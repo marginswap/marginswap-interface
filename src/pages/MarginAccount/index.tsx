@@ -194,7 +194,7 @@ export const MarginAccount = () => {
           setTriggerDataPoll(true)
           getUserMarginswapData()
         } catch (e) {
-          toast.error('Borrow error', { position: 'bottom-right' })
+          toast.error('Borrow error: reduce decimal amount', { position: 'bottom-right' })
           console.error(error)
         }
       },
@@ -247,7 +247,7 @@ export const MarginAccount = () => {
             setTriggerDataPoll(true)
             delayedFetchUserData()
           } catch (error) {
-            toast.error('Deposit error', { position: 'bottom-right' })
+            toast.error('Deposit error: reduce decimal amount', { position: 'bottom-right' })
             console.error(error)
           }
         }
