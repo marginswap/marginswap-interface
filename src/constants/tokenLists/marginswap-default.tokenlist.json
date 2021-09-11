@@ -15,6 +15,15 @@
   "tokens": [
     {
       "chainId": 43114,
+      "address": "0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5",
+      "decimals": 18,
+      "name": "BENQI",
+      "symbol": "QI",
+      "logoURI": "https://raw.githubusercontent.com/pangolindex/tokens/main/assets/0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5/logo.png",
+      "coingeckoId": "benqi"
+    },
+    {
+      "chainId": 43114,
       "address": "0x59414b3089ce2AF0010e7523Dea7E2b35d776ec7",
       "decimals": 18,
       "name": "Yield Yak",
