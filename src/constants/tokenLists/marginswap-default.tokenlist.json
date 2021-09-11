@@ -36,7 +36,7 @@
       "symbol": "QUICK",
       "decimals": 18,
       "chainId": 137,
-      "logoURI": "https://raw.githubusercontent.com/sameepsi/quickswap-interface/master/public/favicon.jpeg"
+      "logoURI": "https://raw.githubusercontent.com/marginswap/token-list/main/logo/quickswap-logo.png"
     },
     {
       "chainId": 43114,
