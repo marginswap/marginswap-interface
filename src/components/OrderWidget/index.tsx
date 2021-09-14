@@ -24,7 +24,7 @@ const OrderWidget = () => {
 
   return (
     <Container>
-      <ToggleButtonGroup options={['Isolated', 'Cross']} state={orderType} setState={setOrderType} big={true} />
+      {/* <ToggleButtonGroup options={['Isolated', 'Cross']} state={orderType} setState={setOrderType} big={true} /> */}
       <ToggleButtonGroup options={['Buy', 'Sell']} state={action} setState={setAction} />
 
       <Tabs
