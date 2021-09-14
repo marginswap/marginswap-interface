@@ -30,6 +30,14 @@
       "logoURI": "https://raw.githubusercontent.com/pangolindex/tokens/main/assets/0x59414b3089ce2AF0010e7523Dea7E2b35d776ec7/logo.png"
     },
     {
+      "chainId": 43114,
+      "address": "0xd1c3f94DE7e5B45fa4eDBBA472491a9f4B166FC4",
+      "decimals": 18,
+      "name": "Avalaunch",
+      "symbol": "XAVA",
+      "logoURI": "https://raw.githubusercontent.com/avalaunch-app/xava-protocol/master/logo.png"
+    },
+    {
       "name": "Marginswap",
       "address": "0xAa4e3edb11AFa93c41db59842b29de64b72E355B",
       "symbol": "MFI",

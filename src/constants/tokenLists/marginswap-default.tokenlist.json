@@ -32,6 +32,15 @@
       "coingeckoId": "yield-yak"
     },
     {
+      "chainId": 43114,
+      "address": "0xd1c3f94DE7e5B45fa4eDBBA472491a9f4B166FC4",
+      "decimals": 18,
+      "name": "Avalaunch",
+      "symbol": "XAVA",
+      "logoURI": "https://raw.githubusercontent.com/avalaunch-app/xava-protocol/master/logo.png",
+      "coingeckoId": "avalaunch"
+    },
+    {
       "name": "MAI",
       "address": "0xa3Fa99A148fA48D14Ed51d610c367C61876997F1",
       "symbol": "miMATIC",
