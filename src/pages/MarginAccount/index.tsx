@@ -194,7 +194,7 @@ export const MarginAccount = () => {
           setTriggerDataPoll(true)
           getUserMarginswapData()
         } catch (e) {
-          toast.error('Borrow error', { position: 'bottom-right' })
+          toast.error('Borrow error: reduce decimal amount', { position: 'bottom-right' })
           console.error(error)
         }
       },
@@ -247,7 +247,7 @@ export const MarginAccount = () => {
             setTriggerDataPoll(true)
             delayedFetchUserData()
           } catch (error) {
-            toast.error('Deposit error', { position: 'bottom-right' })
+            toast.error('Deposit error: reduce decimal amount', { position: 'bottom-right' })
             console.error(error)
           }
         }
@@ -507,8 +507,8 @@ export const MarginAccount = () => {
           : 0,
         liquidity: liquidities[token.address] ? parseFloat(liquidities[token.address].toFixed(6)) : 0,
         maxBorrow: Math.min(
-          withdrawableAmounts[token.address] ? parseFloat(withdrawableAmounts[token.address].toFixed(6)) : 0,
-          borrowableAmounts[token.address] ? parseFloat(borrowableAmounts[token.address].toFixed(6)) : 0,
+          withdrawableAmounts[token.address] ? 0.6 * parseFloat(withdrawableAmounts[token.address].toFixed(6)) : 0,
+          borrowableAmounts[token.address] ? 0.33 * parseFloat(borrowableAmounts[token.address].toFixed(6)) : 0,
           liquidities[token.address] ? parseFloat(liquidities[token.address].toFixed()) : 0
         ),
         maxWithdraw: Math.min(

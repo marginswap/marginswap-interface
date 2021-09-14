@@ -14,6 +14,33 @@
   ],
   "tokens": [
     {
+      "chainId": 43114,
+      "address": "0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5",
+      "decimals": 18,
+      "name": "BENQI",
+      "symbol": "QI",
+      "logoURI": "https://raw.githubusercontent.com/pangolindex/tokens/main/assets/0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5/logo.png",
+      "coingeckoId": "benqi"
+    },
+    {
+      "chainId": 43114,
+      "address": "0x59414b3089ce2AF0010e7523Dea7E2b35d776ec7",
+      "decimals": 18,
+      "name": "Yield Yak",
+      "symbol": "YAK",
+      "logoURI": "https://raw.githubusercontent.com/pangolindex/tokens/main/assets/0x59414b3089ce2AF0010e7523Dea7E2b35d776ec7/logo.png",
+      "coingeckoId": "yield-yak"
+    },
+    {
+      "chainId": 43114,
+      "address": "0xd1c3f94DE7e5B45fa4eDBBA472491a9f4B166FC4",
+      "decimals": 18,
+      "name": "Avalaunch",
+      "symbol": "XAVA",
+      "logoURI": "https://raw.githubusercontent.com/avalaunch-app/xava-protocol/master/logo.png",
+      "coingeckoId": "avalaunch"
+    },
+    {
       "name": "MAI",
       "address": "0xa3Fa99A148fA48D14Ed51d610c367C61876997F1",
       "symbol": "miMATIC",
@@ -27,7 +54,7 @@
       "symbol": "QUICK",
       "decimals": 18,
       "chainId": 137,
-      "logoURI": "https://raw.githubusercontent.com/sameepsi/quickswap-interface/master/public/favicon.jpeg"
+      "logoURI": "https://raw.githubusercontent.com/marginswap/token-list/main/logo/quickswap-logo.png"
     },
     {
       "chainId": 43114,
