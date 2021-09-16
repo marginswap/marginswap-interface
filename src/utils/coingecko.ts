@@ -5,7 +5,7 @@ import { ChainId } from '@marginswap/sdk'
 export async function getTokenUSDPrice(
   chainId: ChainId,
   tokenAddress: string,
-  include24hrChange: boolean = true
+  include24hrChange: boolean
 ): Promise<string[] | void> {
   const coingeckoUrl = `/simple/token_price/${COINGECKO_PLATFORM_ID[chainId]}`
   const { data } = await axiosInstance.get(coingeckoUrl, {

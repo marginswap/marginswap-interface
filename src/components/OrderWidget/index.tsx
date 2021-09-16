@@ -2,7 +2,6 @@ import ToggleButtonGroup from 'components/ToggleButtonGroup'
 import Tabs from '@material-ui/core/Tabs'
 import React, { useContext, useState } from 'react'
 import InputAdornment from '@material-ui/core/InputAdornment'
-import { useActiveWeb3React } from '../../hooks'
 import { ProUIContext } from 'pages/Pro'
 
 import {
@@ -16,9 +15,7 @@ import {
 import TabPanel from 'components/PagerSwap/TabPanel'
 
 const OrderWidget = () => {
-  const { currentPair, setCurrentPair } = useContext(ProUIContext)
-  const { library, chainId } = useActiveWeb3React()
-  const [orderType, setOrderType] = useState(false)
+  const { currentPair } = useContext(ProUIContext)
   const [action, setAction] = useState(true)
   const [market, setMarket] = useState(0)
 

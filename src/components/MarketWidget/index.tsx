@@ -1,7 +1,7 @@
 import React, { useContext, useMemo, useEffect, useState } from 'react'
 import { useActiveWeb3React } from '../../hooks'
 import { SUPPORTED_PAIRS } from '../../constants'
-import { Container, CoinSelector, Content, Header, Row, Item, ChangeValue, StyledStarIcon } from './MarketWidget.styles'
+import { Container, CoinSelector, Content, Header, Row, Item, ChangeValue } from './MarketWidget.styles'
 import { ChainId } from '@marginswap/sdk'
 import { getTokenUSDPrice } from 'utils/coingecko'
 import { CoinPair } from 'pages/Pro'
@@ -18,7 +18,7 @@ const MarketWidget = () => {
   }
 
   const fetchTokenPrice = async (address: string) => {
-    return await getTokenUSDPrice(chainId ?? ChainId.MAINNET, address)
+    return await getTokenUSDPrice(chainId ?? ChainId.MAINNET, address, true)
   }
 
   const processPairs = async () => {

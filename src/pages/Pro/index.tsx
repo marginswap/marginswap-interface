@@ -26,7 +26,7 @@ export const ProUIContext = createContext<Context>({
   setCurrentPair: () => null
 })
 
-const index = () => {
+const Pro = () => {
   const [currentPair, setCurrentPair] = useState<[CoinPair, CoinPair]>([{}, {}])
 
   return (
@@ -56,4 +56,4 @@ const index = () => {
   )
 }
 
-export default index
+export default Pro
