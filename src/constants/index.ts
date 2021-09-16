@@ -39,7 +39,6 @@ export const USDT_MATIC = new Token(
 )
 
 export const USDT_BSC = new Token(ChainId.BSC, '0x55d398326f99059fF775485246999027B3197955', 18, 'USDT', 'Tether USD')
-
 export const COMP = new Token(ChainId.MAINNET, '0xc00e94Cb662C3520282E6f5717214004A7f26888', 18, 'COMP', 'Compound')
 export const MKR = new Token(ChainId.MAINNET, '0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2', 18, 'MKR', 'Maker')
 export const AMPL = new Token(ChainId.MAINNET, '0xD46bA6D942050d489DBd938a2C909A5d5039A161', 9, 'AMPL', 'Ampleforth')
@@ -124,12 +123,20 @@ export const RUNE = new Token(ChainId.MAINNET, '0x3155BA85D5F96b2d030a4966AF2062
 export const NFTX = new Token(ChainId.MAINNET, '0x87d73E916D7057945c9BcD8cdd94e42A6F47f776', 18, 'NFTX', 'NFTX')
 export const STETH = new Token(ChainId.MAINNET, '0xDFe66B14D37C77F4E9b180cEb433d1b164f0281D', 18, 'stETH', 'stakedETH')
 
+export const MAINNET: { [key: string]: Token } = {
+  WETH: new Token(ChainId.MAINNET, '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', 18, 'WETH', 'Wrapped ETH'),
+  WBTC: new Token(ChainId.MAINNET, '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', 18, 'WBTC', 'Wrapped Bitcoin'),
+  USDT: new Token(ChainId.MAINNET, '0x55d398326f99059fF775485246999027B3197955', 18, 'USDT', 'Tether USD')
+}
+
 export const BSC: { [key: string]: Token } = {
   DAI: new Token(ChainId.BSC, '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3', 18, 'DAI', 'Dai Stablecoin'),
   USD: new Token(ChainId.BSC, '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', 18, 'BUSD', 'Binance USD'),
   USDC: new Token(ChainId.BSC, '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d', 18, 'USDC', 'USD Coin'),
   USDT: new Token(ChainId.BSC, '0x55d398326f99059fF775485246999027B3197955', 18, 'USDT', 'Tether USD'),
-  BTCB: new Token(ChainId.BSC, '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c', 18, 'BTCB', 'Bitcoin')
+  BTCB: new Token(ChainId.BSC, '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c', 18, 'BTCB', 'Bitcoin'),
+  WETH: new Token(ChainId.BSC, '0x2170Ed0880ac9A755fd29B2688956BD959F933F8', 18, 'WETH', 'Ethereum Token'),
+  WBNB: new Token(ChainId.BSC, '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', 18, 'WBNB', 'WBNB Token')
 }
 
 export const FANTOM: { [key: string]: Token } = {
@@ -140,11 +147,18 @@ export const FANTOM: { [key: string]: Token } = {
 }
 
 export const MATIC: { [key: string]: Token } = {
-  USDC: new Token(ChainId.MATIC, '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', 6, 'USDC', 'USD Coin'),
-  WBTC: new Token(ChainId.MATIC, '0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6', 8, 'WBTC', 'Wrapped Bitcoin'),
-  DAI: new Token(ChainId.MATIC, '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063', 18, 'DAI', 'Dai Stablecoin'),
-  WETH: new Token(ChainId.MATIC, '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619', 18, 'WETH', 'Wrapped Ether'),
-  USDT: new Token(ChainId.MATIC, '0xc2132D05D31c914a87C6611C10748AEb04B58e8F', 6, 'USDT', 'Tether USD')
+  USDC: new Token(ChainId.MATIC, '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', 6, 'USDC', 'USD Coin'),
+  WBTC: new Token(ChainId.MATIC, '0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6', 8, 'WBTC', 'Wrapped Bitcoin'),
+  DAI: new Token(ChainId.MATIC, '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063', 18, 'DAI', 'Dai Stablecoin'),
+  WETH: new Token(ChainId.MATIC, '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619', 18, 'WETH', 'Wrapped Ether'),
+  USDT: new Token(ChainId.MATIC, '0xc2132d05d31c914a87c6611c10748aeb04b58e8f', 6, 'USDT', 'Tether USD'),
+  WMATIC: new Token(ChainId.MATIC, '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270', 18, 'WMATIC', 'Wrapped Matic')
+}
+
+export const AVALANCHE: { [key: string]: Token } = {
+  AVAX: new Token(ChainId.AVALANCHE, '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7', 18, 'AVAX', 'Wrapped AVAX'),
+  USDT: new Token(ChainId.AVALANCHE, '0xde3a24028580884448a5397872046a019649b084', 6, 'USDT', 'Tether UDST'),
+  WETH: new Token(ChainId.AVALANCHE, '0x49D5c2BdFfac6CE2BFdB6640F4F80f226bc10bAB', 18, 'WETH', 'Wrapped Ether')
 }
 
 // used to construct intermediary pairs for trading
@@ -349,3 +363,29 @@ export const BLOCKED_ADDRESSES: string[] = [
   '0x901bb9583b24D97e995513C6778dc6888AB6870e',
   '0xA7e5d5A720f06526557c513402f2e6B5fA20b008'
 ]
+
+export const SUPPORTED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {
+  [ChainId.MAINNET]: [
+    [MAINNET.WETH, MAINNET.USDT],
+    [MAINNET.WBTC, MAINNET.USDT]
+  ],
+  [ChainId.AVALANCHE]: [
+    [AVALANCHE.AVAX, AVALANCHE.USDT],
+    [AVALANCHE.WETH, AVALANCHE.USDT]
+  ],
+  [ChainId.BSC]: [
+    [BSC.WBNB, BSC.USDT],
+    [BSC.WETH, BSC.USDT]
+  ],
+  [ChainId.MATIC]: [
+    [MATIC.WMATIC, MATIC.USDT],
+    [MATIC.WETH, MATIC.USDT]
+  ]
+}
+
+export const COINGECKO_PLATFORM_ID: { readonly [chainId in ChainId]?: string } = {
+  [ChainId.MAINNET]: 'ethereum',
+  [ChainId.MATIC]: 'polygon-pos',
+  [ChainId.AVALANCHE]: 'avalanche',
+  [ChainId.BSC]: 'binance-smart-chain'
+}

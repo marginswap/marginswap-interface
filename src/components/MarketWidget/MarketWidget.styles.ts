@@ -7,6 +7,7 @@ export const Container = styled.div`
   flex-direction: column;
   background-color: #161618;
   width: 100%;
+  height: 470px;
   max-height: 470px;
   padding: 5px 10px;
 `
@@ -25,7 +26,7 @@ export const Content = styled.div`
   overflow-y: auto;
   padding-left: 5px;
   padding-right: 5px;
-  max-height: 240px;
+  max-height: 365px;
   margin-bottom: 15px;
 
   > div {
@@ -42,11 +43,11 @@ export const Header = styled.div`
 
   > div {
     font-size: 12px;
-    width: 38%;
+    width: 40%;
   }
 
   > div:last-child {
-    width: 26%;
+    width: 20%;
   }
 `
 
@@ -59,14 +60,14 @@ export const Row = styled.div`
   > div {
     display: flex;
     flex-direction: column;
-    width: 38%;
+    width: 40%;
   }
 
   > div:last-child {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
-    width: 26%;
+    width: 20%;
 
     > svg {
       margin-left: 7px;
@@ -90,7 +91,12 @@ export const Item = styled.div`
   }
 `
 
-export const StyledStarIcon = styled(Star)<{ favorite: boolean }>`
+export const ChangeValue = styled.div<{ value?: number }>`
+  font-weight: 600;
+  color: ${({ value }) => (value && value >= 0 ? 'green' : 'red')};
+`
+
+export const StyledStarIcon = styled(Star)<{ favorite?: boolean }>`
   height: 13px;
   width: 13px;
 
