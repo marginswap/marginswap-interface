@@ -44,10 +44,11 @@ const Pro = () => {
       currentPairCombinedSymbol += currentPair[1].symbol && currentPair[1].symbol
       setCurrentSymbol(currentPairCombinedSymbol)
 
-      const test = (
+      const advancedChartComponent = (
         <AdvancedChart
           key="chart"
           widgetProps={{
+            allow_symbol_change: true,
             container_id: currentPairCombinedSymbol,
             symbol: currentPairCombinedSymbol,
             theme: 'dark',
@@ -57,7 +58,7 @@ const Pro = () => {
           widgetPropsAny={{ timestamp: Date.now() }}
         />
       )
-      setAdvancedChart(test)
+      setAdvancedChart(advancedChartComponent)
     }
   }, [currentPair])
 
