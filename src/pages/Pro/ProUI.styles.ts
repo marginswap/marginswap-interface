@@ -47,6 +47,10 @@ export const CenterContainer = styled.div`
   }
 `
 
+export const ChartContainer = styled.div`
+  height: 400px;
+`
+
 export const RightContainer = styled.div`
   display: flex;
   flex-direction: column;
