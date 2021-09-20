@@ -35,7 +35,7 @@ export const ProUIContext = createContext<Context>({
 
 const Pro = () => {
   const [currentPair, setCurrentPair] = useState<[CoinPair, CoinPair]>([{}, {}])
-  const [currentSymbol, setCurrentSymbol] = useState<string>('WETHUSDT')
+  const [, setCurrentSymbol] = useState<string>('WETHUSDT')
   const [advancedChart, setAdvancedChart] = useState<JSX.Element>()
 
   useEffect(() => {
