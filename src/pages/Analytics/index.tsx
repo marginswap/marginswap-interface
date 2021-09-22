@@ -8,13 +8,14 @@ import { avalancheClient } from '../../config/apollo-config'
 import { polygonClient } from '../../config/apollo-config'
 import { bscClient } from '../../config/apollo-config'
 import { ethereumClient } from '../../config/apollo-config'
+import { WarningBar } from '../../components/Placeholders'
 
 const useStyles = makeStyles(() => ({
   wrapper: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    width: '100%',
+    maxWidth: '420px',
     padding: '0 20px',
     gap: '20px',
     '& h2': {
@@ -210,10 +211,11 @@ export const Analytics = () => {
       ) : aggregateBalancesLoading && swapVolumesLoading && swapsLoading ? (
         <div>Loading</div>
       ) : (
-        <>
+        <div>
+          <WarningBar>Currently out of order</WarningBar>
           <Numbers aggregateBalancesData={aggregateBalances} swapVolumesData={swapVolumes} />
           <Wallets swaps={swaps} />
-        </>
+        </div>
       )}
     </div>
   )
