@@ -212,7 +212,7 @@ export const Analytics = () => {
         <div>Loading</div>
       ) : (
         <div>
-          <WarningBar>Currently out of order</WarningBar>
+          <WarningBar>Apologies: Analytics are currently out of order while we fix scaling issues with large subgraph queries.</WarningBar>
           <Numbers aggregateBalancesData={aggregateBalances} swapVolumesData={swapVolumes} />
           <Wallets swaps={swaps} />
         </div>
