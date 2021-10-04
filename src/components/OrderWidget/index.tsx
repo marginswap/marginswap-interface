@@ -12,6 +12,7 @@ import useENSAddress from '../../hooks/useENSAddress'
 import TradePrice from 'components/swap/TradePrice'
 import ConfirmSwapModal from '../../components/swap/ConfirmSwapModal'
 import confirmPriceImpactWithoutFee from '../../components/swap/confirmPriceImpactWithoutFee'
+import Settings from '../Settings'
 
 import { ProUIContext } from 'pages/Pro'
 import { useDispatch } from 'react-redux'
@@ -25,7 +26,7 @@ import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } 
 import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { AutoRow } from '../../components/Row'
-import { Container, SettingsContainer, StyledMenuIcon, BottomGrouping, StyledInput } from './OrderWidget.styles'
+import { Container, SettingsContainer, BottomGrouping, StyledInput } from './OrderWidget.styles'
 import { SwapCallbackError } from '../../components/swap/styleds'
 import { CurrencyAmount, JSBI, LeverageType, Trade } from '@marginswap/sdk'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
@@ -279,7 +280,7 @@ const OrderWidget = () => {
   ])
 
   return (
-    <>
+    <div>
       <Container>
         <ConfirmSwapModal
           isOpen={showConfirm}
@@ -330,7 +331,11 @@ const OrderWidget = () => {
             variant="outlined"
             InputLabelProps={{ shrink: true }}
             InputProps={{
-              endAdornment: <InputAdornment position="end">{currencies[Field.INPUT]?.symbol}</InputAdornment>
+              endAdornment: (
+                <InputAdornment position="end">
+                  {currencies[Field.INPUT] ? currencies[Field.INPUT]?.symbol : ''}
+                </InputAdornment>
+              )
             }}
           />
           <StyledInput
@@ -344,7 +349,11 @@ const OrderWidget = () => {
             variant="outlined"
             InputLabelProps={{ shrink: true }}
             InputProps={{
-              endAdornment: <InputAdornment position="end">{currencies[Field.OUTPUT]?.symbol}</InputAdornment>,
+              endAdornment: (
+                <InputAdornment position="end">
+                  {currencies[Field.OUTPUT] ? currencies[Field.OUTPUT]?.symbol : ''}
+                </InputAdornment>
+              ),
               readOnly: true
             }}
           />
@@ -355,9 +364,9 @@ const OrderWidget = () => {
             <TradePrice price={trade?.executionPrice} showInverted={showInverted} setShowInverted={setShowInverted} />
           </RowBetween>
         </div>
-        <SettingsContainer>
+        <SettingsContainer show={leverageType === LeverageType.SPOT}>
           <span>Advanced Settings</span>
-          <StyledMenuIcon />
+          <Settings centered />
         </SettingsContainer>
         <BottomGrouping>
           {swapIsUnsupported ? (
@@ -437,7 +446,7 @@ const OrderWidget = () => {
       ) : (
         <UnsupportedCurrencyFooter show={swapIsUnsupported} currencies={[currencies.INPUT, currencies.OUTPUT]} />
       )}
-    </>
+    </div>
   )
 }
 

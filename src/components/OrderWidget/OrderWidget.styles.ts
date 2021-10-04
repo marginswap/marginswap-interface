@@ -12,19 +12,15 @@ export const Container = styled.div`
   max-height: 470px;
 `
 
-export const SettingsContainer = styled.div`
-  display: flex;
+export const SettingsContainer = styled.div<{ show?: boolean }>`
+  display: ${props => (props.show ? 'flex' : 'none')};
   flex-direction: row;
   justify-content: flex-end;
   margin-top: 10px;
-  margin-bottom: 15px;
-  margin-right: 10px;
-  cursor: pointer;
 
   > span {
     color: #dedede;
-    margin-right: 5px;
-    margin-top: 2px;
+    margin-top: 9px;
     font-size: 12px;
   }
 `
