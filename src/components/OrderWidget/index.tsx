@@ -1,5 +1,4 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import InputAdornment from '@material-ui/core/InputAdornment'
 import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetailsDropdown'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import ReactGA from 'react-ga'
@@ -26,7 +25,7 @@ import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } 
 import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { AutoRow } from '../../components/Row'
-import { Container, SettingsContainer, BottomGrouping, StyledInput } from './OrderWidget.styles'
+import { Container, SettingsContainer, BottomGrouping } from './OrderWidget.styles'
 import { SwapCallbackError } from '../../components/swap/styleds'
 import { CurrencyAmount, JSBI, LeverageType, Trade } from '@marginswap/sdk'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
@@ -46,6 +45,7 @@ import {
   useSwapActionHandlers,
   useSwapState
 } from '../../state/swap/hooks'
+import CurrencyStyledInput from 'components/CurrencyStyledInput'
 
 enum OrderType {
   BUY,
@@ -320,42 +320,24 @@ const OrderWidget = () => {
         </ToggleWrapper>
 
         <div>
-          <StyledInput
-            id="market-amount"
+          <CurrencyStyledInput
             label={independentField === Field.OUTPUT && !showWrap && trade ? 'From (estimated)' : 'From'}
-            value={formattedAmounts[Field.INPUT]}
+            symbol={currencies[Field.INPUT]?.symbol}
+            placeholder="Amount"
             onChange={e => {
               onUserInput(Field.INPUT, e.currentTarget.value)
             }}
-            placeholder="Amount"
-            variant="outlined"
-            InputLabelProps={{ shrink: true }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  {currencies[Field.INPUT] ? currencies[Field.INPUT]?.symbol : ''}
-                </InputAdornment>
-              )
-            }}
+            value={formattedAmounts[Field.INPUT]}
           />
-          <StyledInput
-            id="market-price"
-            value={formattedAmounts[Field.OUTPUT]}
+          <CurrencyStyledInput
             label={independentField === Field.INPUT && !showWrap && trade ? 'To (estimated)' : 'To'}
+            symbol={currencies[Field.OUTPUT]?.symbol}
+            placeholder="Price"
             onChange={e => {
               onUserInput(Field.OUTPUT, e.currentTarget.value)
             }}
-            placeholder="Price"
-            variant="outlined"
-            InputLabelProps={{ shrink: true }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  {currencies[Field.OUTPUT] ? currencies[Field.OUTPUT]?.symbol : ''}
-                </InputAdornment>
-              ),
-              readOnly: true
-            }}
+            value={formattedAmounts[Field.OUTPUT]}
+            readOnly
           />
           <RowBetween align="center">
             <Text fontWeight={500} fontSize={14} color={theme.text2}>
