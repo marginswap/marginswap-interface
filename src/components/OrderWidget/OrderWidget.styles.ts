@@ -16,6 +16,7 @@ export const SettingsContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+  margin-top: 10px;
   margin-bottom: 15px;
   margin-right: 10px;
   cursor: pointer;
@@ -43,15 +44,17 @@ export const StyledMenuIcon = styled(Settings)`
 
 export const PrimaryButton = styled.button`
   background: rgb(46, 32, 185);
-  background: linear-gradient(90deg, rgba(46, 32, 185, 1) 0%, rgba(128, 11, 188, 1) 100%);
+  background: ${props =>
+    props.disabled ? '#d6d6d6' : 'linear-gradient(90deg, rgba(46, 32, 185, 1) 0%, rgba(128, 11, 188, 1) 100%);'};
   border-radius: 25px;
-  color: white;
+  color: ${props => (props.disabled ? '#0C0C0C' : 'white')};
   width: 100%;
   border: none;
   height: 40px;
 
   :hover {
-    background: linear-gradient(90deg, rgba(59, 45, 196, 1) 0%, rgba(144, 26, 205, 1) 100%);
+    background: ${props =>
+      props.disabled ? '#d6d6d6' : 'linear-gradient(90deg, rgba(59, 45, 196, 1) 0%, rgba(144, 26, 205, 1) 100%);'};
   }
 `
 
@@ -77,12 +80,14 @@ export const StyledInput = styled(TextField)`
 
     & .MuiOutlinedInput-root {
       & fieldset {
+        border-radius: 10px;
         border-color: #4a4a4a;
       }
       /* &:hover fieldset {
         border-color: white;
       } */
       &.Mui-focused fieldset {
+        border-radius: 10px;
         border-color: #3f51b5;
       }
     }
@@ -93,4 +98,8 @@ export const StyledTab = styled(Tab)`
   > span {
     color: white;
   }
+`
+
+export const BottomGrouping = styled.div`
+  margin-top: 1rem;
 `
