@@ -157,7 +157,7 @@ export const MATIC: { [key: string]: Token } = {
 
 export const AVALANCHE: { [key: string]: Token } = {
   AVAX: new Token(ChainId.AVALANCHE, '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7', 18, 'AVAX', 'Wrapped AVAX'),
-  USDT: new Token(ChainId.AVALANCHE, '0xde3a24028580884448a5397872046a019649b084', 6, 'USDT', 'Tether UDST'),
+  USDT: new Token(ChainId.AVALANCHE, '0xc7198437980c041c805A1EDcbA50c1Ce5db95118', 6, 'USDT', 'Tether UDST'),
   WETH: new Token(ChainId.AVALANCHE, '0x49D5c2BdFfac6CE2BFdB6640F4F80f226bc10bAB', 18, 'WETH', 'Wrapped Ether')
 }
 
