@@ -33,13 +33,14 @@ export const FlatToggleOption = styled.div<{ active?: boolean; big?: boolean }>`
   justify-content: center;
   font-weight: 600;
   font-size: 15px;
-  border-bottom: ${({ active }) => (active ? '3px solid #3f51b5' : '1px solid #898989')};
+  border-bottom: ${({ active }) => (active ? '4px solid #4654f5' : '4px solid #2e3233')};
   color: white;
   user-select: none;
   height: ${({ big }) => (big ? '70px' : '')};
 
   :hover {
     cursor: pointer;
-    opacity: 0.9;
+    opacity: 1;
+    border-bottom: ${({ active }) => (active ? '4px solid #3e80f9' : '4px solid #4e5152')};
   }
 `

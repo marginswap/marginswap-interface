@@ -5,7 +5,7 @@ export const StyledInputWrapper = styled.div`
   flex-direction: row;
   background-color: #181818;
   border-radius: 8px;
-  border: 1px solid #5c5c5c;
+  border: 1px solid #787879;
   margin-bottom: 10px;
   margin-top: 10px;
 `
@@ -14,7 +14,7 @@ export const StyledInputContainer = styled.div`
   display: flex;
   flex-direction: column;
   color: white;
-  width: 75%;
+  width: 70%;
   padding: 7px;
 
   > label {
@@ -41,8 +41,7 @@ export const StyledInputContainer = styled.div`
 `
 
 export const StyledInputAdornment = styled.div`
-  min-width: 100px;
-  width: 25%;
+  width: 30%;
   background-color: #3d3d3d;
   color: white;
   border-top-right-radius: 8px;
