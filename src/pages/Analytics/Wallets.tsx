@@ -97,7 +97,7 @@ export const Wallets = ({ swaps }: WalletProps) => {
         bscData,
         ethData
       })
-      console.log('🚀 ~ file: Wallets.tsx ~ line 100 ~ getTraderData ~ tradersData', JSON.stringify(tradersData))
+
       setTopTraders(tradersData)
     }
 
