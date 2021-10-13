@@ -8,15 +8,21 @@ export async function getTokenUSDPrice(
   include24hrChange: boolean
 ): Promise<string[] | void> {
   const coingeckoUrl = `/simple/token_price/${COINGECKO_PLATFORM_ID[chainId]}`
-  const { data } = await axiosInstance.get(coingeckoUrl, {
-    params: {
-      contract_addresses: tokenAddress,
-      vs_currencies: 'usd',
-      include_24hr_change: include24hrChange
-    }
-  })
+  let result
 
-  const result = [data[tokenAddress.toLowerCase()]?.usd, data[tokenAddress.toLowerCase()]?.usd_24h_change]
+  try {
+    const { data } = await axiosInstance.get(coingeckoUrl, {
+      params: {
+        contract_addresses: tokenAddress,
+        vs_currencies: 'usd',
+        include_24hr_change: include24hrChange
+      }
+    })
+
+    result = [data[tokenAddress.toLowerCase()]?.usd, data[tokenAddress.toLowerCase()]?.usd_24h_change]
+  } catch (err) {
+    result = [0, 0]
+  }
 
   return result
 }
