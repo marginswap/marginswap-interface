@@ -6,6 +6,7 @@ import { ChainId } from '@marginswap/sdk'
 import { getTokenUSDPrice } from 'utils/coingecko'
 import { CoinPair } from 'pages/Pro'
 import { ProUIContext } from 'pages/Pro'
+import { unwrappedTokenBySymbol } from 'utils/wrappedCurrency'
 
 const MarketWidget = () => {
   const { currentPair, setCurrentPair } = useContext(ProUIContext)
@@ -33,14 +34,16 @@ const MarketWidget = () => {
             symbol: pair[0].symbol,
             name: pair[0].name,
             price: pPrice1[0],
-            change: parseFloat(pPrice1[1]).toFixed(2)
+            change: parseFloat(pPrice1[1]).toFixed(2),
+            unwrappedSymbol: unwrappedTokenBySymbol(pair[0].symbol)
           },
           {
             address: pair[1].address,
             symbol: pair[1].symbol,
             name: pair[1].name,
             price: pPrice2,
-            change: parseFloat(pPrice2[1]).toFixed(2)
+            change: parseFloat(pPrice2[1]).toFixed(2),
+            unwrappedSymbol: unwrappedTokenBySymbol(pair[1].symbol)
           }
         ]
       })

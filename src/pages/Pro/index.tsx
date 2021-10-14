@@ -21,6 +21,7 @@ export type CoinPair = {
   name?: string
   price?: string
   change?: number
+  unwrappedSymbol?: string
 }
 
 export type Context = {
@@ -39,9 +40,9 @@ const Pro = () => {
   const [advancedChart, setAdvancedChart] = useState<JSX.Element>()
 
   useEffect(() => {
-    if (currentPair && currentPair[0].symbol) {
-      let currentPairCombinedSymbol = currentPair[0].symbol && currentPair[0].symbol
-      currentPairCombinedSymbol += currentPair[1].symbol && currentPair[1].symbol
+    if (currentPair && currentPair[0].unwrappedSymbol) {
+      let currentPairCombinedSymbol = currentPair[0].unwrappedSymbol && currentPair[0].unwrappedSymbol
+      currentPairCombinedSymbol += currentPair[1].unwrappedSymbol && currentPair[1].unwrappedSymbol
       setCurrentSymbol(currentPairCombinedSymbol)
 
       const advancedChartComponent = (
