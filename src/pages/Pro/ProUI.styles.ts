@@ -35,7 +35,7 @@ export const LeftContainer = styled.div`
 export const CenterContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 50%;
+  width: 100%;
 
   > div {
     border: 1px solid #525252;

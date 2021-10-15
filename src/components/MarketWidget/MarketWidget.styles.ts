@@ -6,28 +6,49 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   background-color: #161618;
-  width: 100%;
+  width: 290px;
   height: 470px;
   max-height: 470px;
-  padding: 5px 10px;
+`
+export const WidgetBgImg = styled.img`
+  position: absolute;
+  align-self: flex-end;
+  z-index: 1;
+  opacity: 0.5;
+`
+
+export const PairIcon = styled.img`
+  width: 16px;
+  margin-left: 30px;
+  margin-right: 30px;
 `
 
 export const CoinSelector = styled.div`
-  padding-top: 10px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
   color: white;
   text-align: center;
-  height: 40px;
   border-bottom: 1px solid #373738;
+  font-size: 18px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+`
+
+export const CoinSelectorHeader = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 `
 
 export const Content = styled.div`
   display: flex;
   flex-wrap: wrap;
   overflow-y: auto;
-  padding-left: 5px;
-  padding-right: 5px;
   max-height: 365px;
   margin-bottom: 15px;
+  z-index: 10;
 
   > div {
     margin-bottom: 10px;
@@ -37,17 +58,24 @@ export const Content = styled.div`
 export const Header = styled.div`
   display: flex;
   flex-direction: row;
-  padding: 8px;
+  padding: 10px;
   width: 100%;
   margin-bottom: 4px;
+  z-index: 10;
+
+  > div:first-child {
+    width: 45%;
+  }
 
   > div {
-    font-size: 12px;
+    font-size: 11px;
     width: 40%;
   }
 
   > div:last-child {
-    width: 20%;
+    display: flex;
+    width: 10%;
+    justify-content: flex-end;
   }
 `
 
@@ -55,19 +83,24 @@ export const Row = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  padding: 5px;
+  padding: 10px;
+
+  > div:first-child {
+    width: 116px;
+  }
 
   > div {
     display: flex;
     flex-direction: column;
-    width: 40%;
+    width: 104px;
+    font-size: 11px;
   }
 
   > div:last-child {
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
-    width: 20%;
+    justify-content: flex-start;
+    width: 42px;
 
     > svg {
       margin-left: 7px;
@@ -83,7 +116,7 @@ export const Item = styled.div`
   color: white;
   width: 100%;
 
-  font-size: 12px;
+  font-size: 11px;
 
   > span {
     font-size: 0.6rem;
@@ -92,8 +125,9 @@ export const Item = styled.div`
 `
 
 export const ChangeValue = styled.div<{ value?: number }>`
+  display: flex;
   font-weight: 600;
-  color: ${({ value }) => (value && value >= 0 ? 'green' : 'red')};
+  color: ${({ value }) => (value && value >= 0 ? '#0ECA80' : '#FF4E4B')};
 `
 
 export const StyledStarIcon = styled(Star)<{ favorite?: boolean }>`
