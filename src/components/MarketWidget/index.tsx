@@ -1,11 +1,25 @@
 import React, { useContext, useMemo, useEffect, useState } from 'react'
 import { useActiveWeb3React } from '../../hooks'
 import { SUPPORTED_PAIRS } from '../../constants'
-import { Container, CoinSelector, Content, Header, Row, Item, ChangeValue } from './MarketWidget.styles'
+import {
+  Container,
+  CoinSelector,
+  Content,
+  Header,
+  Row,
+  Item,
+  ChangeValue,
+  CoinSelectorHeader,
+  WidgetBgImg,
+  PairIcon
+} from './MarketWidget.styles'
 import { ChainId } from '@marginswap/sdk'
 import { getTokenUSDPrice } from 'utils/coingecko'
 import { CoinPair } from 'pages/Pro'
 import { ProUIContext } from 'pages/Pro'
+
+import ethIcon from '../../assets/images/eth-icon.png'
+import marketWidgetBg from '../../assets/images/pairs-widget-bg.png'
 
 const MarketWidget = () => {
   const { currentPair, setCurrentPair } = useContext(ProUIContext)
@@ -59,8 +73,12 @@ const MarketWidget = () => {
 
   return (
     <Container>
+      <WidgetBgImg src={marketWidgetBg} alt="eth" />
       <CoinSelector>
-        {currentPair && currentPair[0].symbol} - {currentPair && currentPair[1].symbol}
+        <CoinSelectorHeader>
+          {currentPair && currentPair[0].symbol} <PairIcon src={ethIcon} alt="eth" />{' '}
+          {currentPair && currentPair[1].symbol}
+        </CoinSelectorHeader>
       </CoinSelector>
       <Header>
         <Item>Symbol</Item>
@@ -84,7 +102,9 @@ const MarketWidget = () => {
               <span>{pair[0].symbol}</span>
             </Item>
             <Item>
-              <ChangeValue value={pair[0].change}>{pair[0].change}</ChangeValue>
+              <ChangeValue value={pair[0].change}>{`${pair[0].change && pair[0].change >= 0 ? '+' : '-'} ${
+                pair[0].change
+              }`}</ChangeValue>
               {/* <StyledStarIcon /> */}
             </Item>
           </Row>
