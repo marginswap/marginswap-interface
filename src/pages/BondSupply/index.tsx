@@ -15,7 +15,7 @@ import {
   buyHourlyBondSubscription,
   getHourlyBondIncentiveInterestRates,
   getBondsCostInDollars,
-  withdrawHourlyBond,
+  // withdrawHourlyBond,
   approveToFund,
   TokenAmount,
   getTokenAllowances,
@@ -336,15 +336,15 @@ export const BondSupply = () => {
       onClick: async (token: BondRateData, amount: number) => {
         if (!amount) return
         try {
-          const response: any = await withdrawHourlyBond(
-            token.address,
-            utils.parseUnits(String(amount), token.decimals).toHexString(),
-            chainId,
-            provider
-          )
-          addTransaction(response, {
-            summary: `Withdraw HourlyBond`
-          })
+          // const response: any = await withdrawHourlyBond(
+          //   token.address,
+          //   utils.parseUnits(String(amount), token.decimals).toHexString(),
+          //   chainId,
+          //   provider
+          // )
+          // addTransaction(response, {
+          //   summary: `Withdraw HourlyBond`
+          // })
           delayedFetchUserData()
         } catch (e) {
           toast.error('Withdrawal error', { position: 'bottom-right' })
