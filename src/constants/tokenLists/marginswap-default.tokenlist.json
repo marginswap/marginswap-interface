@@ -41,6 +41,15 @@
       "coingeckoId": "avalaunch"
     },
     {
+      "address": "0x6e84a6216ea6dacc71ee8e6b0a5b7322eebc0fdd",
+      "chainId": 43114,
+      "name": "Joe Token",
+      "symbol": "JOE",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/pangolindex/tokens/main/assets/0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd/logo.png",
+      "coingeckoId": "joe"
+    },
+    {
       "name": "MAI",
       "address": "0xa3Fa99A148fA48D14Ed51d610c367C61876997F1",
       "symbol": "miMATIC",
