@@ -262,6 +262,15 @@
       "coingeckoId": "avalanche-2"
     },
     {
+      "name": "Wrapped BTC",
+      "address": "0x50b7545627a5162f82a992c33b87adc75187b218",
+      "symbol": "WBTC",
+      "decimals": 8,
+      "chainId": 43114,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6/logo.png",
+      "coingeckoId": "wrapped-bitcoin"
+    },
+    {
       "name": "USD Coin",
       "address": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
       "symbol": "USDC",
