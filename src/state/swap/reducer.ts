@@ -25,7 +25,7 @@ export interface SwapState {
 }
 
 const initialState: SwapState = {
-  leverageType: LeverageType.CROSS_MARGIN,
+  leverageType: LeverageType.SPOT,
   independentField: Field.INPUT,
   typedValue: '',
   [Field.INPUT]: {

@@ -12,7 +12,6 @@ import TradePrice from 'components/swap/TradePrice'
 import ConfirmSwapModal from '../../components/swap/ConfirmSwapModal'
 import confirmPriceImpactWithoutFee from '../../components/swap/confirmPriceImpactWithoutFee'
 import Settings from '../Settings'
-
 import { ProUIContext } from 'pages/Pro'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../../state/index'
@@ -27,7 +26,7 @@ import { useWalletModalToggle } from '../../state/application/hooks'
 import { AutoRow } from '../../components/Row'
 import { Container, SettingsContainer, BottomGrouping } from './OrderWidget.styles'
 import { SwapCallbackError } from '../../components/swap/styleds'
-import { CurrencyAmount, JSBI, LeverageType, Trade } from '@marginswap/sdk'
+import { ChainId, CurrencyAmount, JSBI, LeverageType, Trade } from '@marginswap/sdk'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { RowBetween } from 'components/Row'
 import { Text } from 'rebass'
@@ -39,6 +38,7 @@ import { FlatToggleOption, ToggleOption, ToggleWrapper } from 'components/Toggle
 import { ButtonError, ButtonLight, ButtonPrimary, ButtonConfirmed } from '../../components/Button'
 import { GreyCard } from '../../components/Card'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
+import { parseUnits } from '@ethersproject/units'
 import {
   useDefaultsFromURLSearch,
   useDerivedSwapInfo,
@@ -46,6 +46,9 @@ import {
   useSwapState
 } from '../../state/swap/hooks'
 import CurrencyStyledInput from 'components/CurrencyStyledInput'
+import { useMakeOrder, useOrderActionHandlers, useOrderState, useDerivedOrderInfo } from '../../state/order/hooks'
+import { selectOrderCurrency } from 'state/order/actions'
+import ConfirmOrderModal from './ConfirmOrderModal'
 
 enum OrderType {
   BUY,
@@ -65,6 +68,8 @@ const OrderWidget = () => {
     inputError: swapInputError
   } = useDerivedSwapInfo()
 
+  const { orderCurrencies, orderInputError } = useDerivedOrderInfo()
+
   let provider: any
   if (library && account) {
     provider = getProviderOrSigner(library, account)
@@ -78,6 +83,7 @@ const OrderWidget = () => {
   const [orderType, setOrderType] = useState(OrderType.BUY)
   const [showInverted, setShowInverted] = useState<boolean>(false)
   const { independentField, typedValue, recipient, leverageType } = useSwapState()
+  const { inAmount, outAmount, orderInput, orderOutput } = useOrderState()
   const [isExpertMode] = useExpertModeManager()
   const { address: recipientAddress } = useENSAddress(recipient)
 
@@ -93,6 +99,8 @@ const OrderWidget = () => {
   }>({ isLoading: false, timeout: undefined })
 
   const { onSwitchTokens, onUserInput, onSwitchLeverageType } = useSwapActionHandlers()
+  const { onOrderSwitchTokens, onOrderUserInput } = useOrderActionHandlers()
+  const { onMakeOrder } = useMakeOrder()
 
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(
     currencyBalances[Field.INPUT],
@@ -113,6 +121,7 @@ const OrderWidget = () => {
       }
 
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT
+
   const formattedAmounts = {
     [independentField]: typedValue,
     [dependentField]: showWrap
@@ -125,7 +134,6 @@ const OrderWidget = () => {
     currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmounts[independentField]?.greaterThan(JSBI.BigInt(0))
   )
   const noRoute = !route
-
   const toggleWalletModal = useWalletModalToggle()
   const [singleHopOnly] = useUserSingleHopOnly()
 
@@ -142,6 +150,18 @@ const OrderWidget = () => {
     attemptingTxn: false,
     swapErrorMessage: undefined,
     txHash: undefined
+  })
+
+  const [{ showConfirmOrder, orderErrorMessage, attemptingOrderTxn, orderTxHash }, setOrderState] = useState<{
+    showConfirmOrder: boolean
+    attemptingOrderTxn: boolean
+    orderErrorMessage: string | undefined
+    orderTxHash: string | undefined
+  }>({
+    showConfirmOrder: false,
+    attemptingOrderTxn: false,
+    orderErrorMessage: undefined,
+    orderTxHash: undefined
   })
 
   // get custom setting values for user
@@ -164,25 +184,44 @@ const OrderWidget = () => {
     const currencyAddress1: string = currentPair && currentPair[0].address ? currentPair[0].address : 'ETH'
     const currencyAddress2: string = currentPair && currentPair[1].address ? currentPair[1].address : 'ETH'
 
-    dispatch(
-      selectCurrency({
-        field: Field.INPUT,
-        currencyId: currencyAddress1
-      })
-    )
+    if (leverageType !== LeverageType.LIMIT_ORDER) {
+      dispatch(
+        selectCurrency({
+          field: Field.INPUT,
+          currencyId: currencyAddress1
+        })
+      )
 
-    dispatch(
-      selectCurrency({
-        field: Field.OUTPUT,
-        currencyId: currencyAddress2
-      })
-    )
+      dispatch(
+        selectCurrency({
+          field: Field.OUTPUT,
+          currencyId: currencyAddress2
+        })
+      )
+    }
+
+    if (leverageType === LeverageType.LIMIT_ORDER) {
+      dispatch(
+        selectOrderCurrency({
+          field: Field.INPUT,
+          currencyId: currencyAddress1
+        })
+      )
+
+      dispatch(
+        selectOrderCurrency({
+          field: Field.OUTPUT,
+          currencyId: currencyAddress2
+        })
+      )
+    }
   }, [currentPair, loadedUrlParams])
 
   const handleChangeOrderType = (orderType: OrderType) => {
     setApprovalSubmitted(false)
     setOrderType(orderType)
     onSwitchTokens()
+    onOrderSwitchTokens()
   }
 
   useEffect(() => {
@@ -201,6 +240,7 @@ const OrderWidget = () => {
   const priceImpactSeverity = warningSeverity(priceImpactWithoutFee)
   const marginTrade = leverageType === LeverageType.CROSS_MARGIN
   const isValid = !swapInputError
+  const isOrderValid = !orderInputError
 
   const showApproveFlow =
     !swapInputError &&
@@ -234,6 +274,7 @@ const OrderWidget = () => {
     if (priceImpactWithoutFee && !confirmPriceImpactWithoutFee(priceImpactWithoutFee)) {
       return
     }
+
     if (!swapCallback) {
       return
     }
@@ -279,6 +320,44 @@ const OrderWidget = () => {
     singleHopOnly
   ])
 
+  const handleOrder = async () => {
+    if (!chainId) return
+
+    if (chainId === ChainId.LOCAL) {
+      const inAmnt = parseUnits(inAmount, currencies[Field.INPUT]?.decimals).toString()
+      const outAmnt = parseUnits(outAmount, currencies[Field.OUTPUT]?.decimals).toString()
+
+      setOrderState({
+        attemptingOrderTxn: true,
+        showConfirmOrder,
+        orderErrorMessage: undefined,
+        orderTxHash: undefined
+      })
+
+      onMakeOrder(chainId, provider, orderInput.currencyId, orderOutput.currencyId, inAmnt, outAmnt)
+        .then(hash => {
+          setOrderState({
+            attemptingOrderTxn: false,
+            showConfirmOrder: false,
+            orderErrorMessage: undefined,
+            orderTxHash: hash
+          })
+        })
+        .catch(error => {
+          setOrderState({
+            attemptingOrderTxn: false,
+            showConfirmOrder,
+            orderErrorMessage: error.message,
+            orderTxHash: undefined
+          })
+        })
+    }
+  }
+
+  const handleConfirmOrderDismiss = useCallback(() => {
+    setOrderState({ showConfirmOrder: false, attemptingOrderTxn, orderErrorMessage: undefined, orderTxHash })
+  }, [attemptingOrderTxn, orderErrorMessage, orderTxHash])
+
   return (
     <div>
       <Container>
@@ -295,7 +374,17 @@ const OrderWidget = () => {
           swapErrorMessage={swapErrorMessage}
           onDismiss={handleConfirmDismiss}
         />
-
+        <ConfirmOrderModal
+          isOpen={showConfirmOrder}
+          attemptingTxn={attemptingOrderTxn}
+          orderErrorMessage={orderErrorMessage}
+          onDismiss={handleConfirmOrderDismiss}
+          onConfirm={handleOrder}
+          fromToken={orderCurrencies[Field.INPUT]}
+          toToken={orderCurrencies[Field.OUTPUT]}
+          inAmount={inAmount}
+          outAmount={outAmount}
+        />
         <ToggleWrapper style={{ backgroundColor: '#2e3233', padding: '0', borderRadius: '8px' }}>
           <ToggleOption onClick={() => handleChangeOrderType(OrderType.BUY)} active={orderType === OrderType.BUY}>
             Buy
@@ -312,116 +401,167 @@ const OrderWidget = () => {
             Market
           </FlatToggleOption>
           <FlatToggleOption
-            onClick={() => onSwitchLeverageType(LeverageType.CROSS_MARGIN)}
-            active={leverageType === LeverageType.CROSS_MARGIN}
+            onClick={() => onSwitchLeverageType(LeverageType.LIMIT_ORDER)}
+            active={leverageType === LeverageType.LIMIT_ORDER}
           >
             Limit
           </FlatToggleOption>
         </ToggleWrapper>
 
-        <div>
-          <CurrencyStyledInput
-            label={independentField === Field.OUTPUT && !showWrap && trade ? 'From (estimated)' : 'From'}
-            symbol={currencies[Field.INPUT]?.symbol}
-            placeholder="Amount"
-            onChange={e => {
-              onUserInput(Field.INPUT, e.currentTarget.value)
-            }}
-            value={formattedAmounts[Field.INPUT]}
-          />
-          <CurrencyStyledInput
-            label={independentField === Field.INPUT && !showWrap && trade ? 'To (estimated)' : 'To'}
-            symbol={currencies[Field.OUTPUT]?.symbol}
-            placeholder="Price"
-            onChange={e => {
-              onUserInput(Field.OUTPUT, e.currentTarget.value)
-            }}
-            value={formattedAmounts[Field.OUTPUT]}
-            readOnly
-          />
-          <RowBetween align="center">
-            <Text fontWeight={500} fontSize={14} color={theme.text2}>
-              Price
-            </Text>
-            <TradePrice price={trade?.executionPrice} showInverted={showInverted} setShowInverted={setShowInverted} />
-          </RowBetween>
-        </div>
+        {leverageType === LeverageType.LIMIT_ORDER ? (
+          <div>
+            <CurrencyStyledInput
+              label={'From'}
+              symbol={orderCurrencies[Field.INPUT]?.symbol}
+              placeholder="Amount"
+              onChange={e => {
+                onOrderUserInput(Field.INPUT, e.currentTarget.value)
+              }}
+              value={inAmount}
+            />
+            <CurrencyStyledInput
+              label={'To'}
+              symbol={orderCurrencies[Field.OUTPUT]?.symbol}
+              placeholder="Price"
+              onChange={e => {
+                onOrderUserInput(Field.OUTPUT, e.currentTarget.value)
+              }}
+              value={outAmount}
+            />
+          </div>
+        ) : (
+          <div>
+            <CurrencyStyledInput
+              label={independentField === Field.OUTPUT && !showWrap && trade ? 'From (estimated)' : 'From'}
+              symbol={currencies[Field.INPUT]?.symbol}
+              placeholder="Amount"
+              onChange={e => {
+                onUserInput(Field.INPUT, e.currentTarget.value)
+              }}
+              value={formattedAmounts[Field.INPUT]}
+            />
+            <CurrencyStyledInput
+              label={independentField === Field.INPUT && !showWrap && trade ? 'To (estimated)' : 'To'}
+              symbol={currencies[Field.OUTPUT]?.symbol}
+              placeholder="Price"
+              onChange={e => {
+                onUserInput(Field.OUTPUT, e.currentTarget.value)
+              }}
+              value={formattedAmounts[Field.OUTPUT]}
+              readOnly
+            />
+            <RowBetween align="center">
+              <Text fontWeight={500} fontSize={14} color={theme.text2}>
+                Price
+              </Text>
+              <TradePrice price={trade?.executionPrice} showInverted={showInverted} setShowInverted={setShowInverted} />
+            </RowBetween>
+          </div>
+        )}
+
         <SettingsContainer show={leverageType === LeverageType.SPOT}>
           <span>Advanced Settings</span>
           <Settings centered />
         </SettingsContainer>
-        <BottomGrouping>
-          {swapIsUnsupported ? (
-            <ButtonPrimary disabled={true}>Unsupported Asset</ButtonPrimary>
-          ) : !account ? (
-            <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
-          ) : showWrap ? (
-            <ButtonPrimary disabled={Boolean(wrapInputError)} onClick={onWrap}>
-              {wrapInputError ?? (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
-            </ButtonPrimary>
-          ) : noRoute && userHasSpecifiedInputOutput && tradeLoading.isLoading ? (
-            <GreyCard style={{ textAlign: 'center' }}>
-              <CustomLightSpinner src={Circle} alt="loader" size={'25px'} />
-            </GreyCard>
-          ) : noRoute && userHasSpecifiedInputOutput ? (
-            <GreyCard style={{ textAlign: 'center' }}>
-              Insufficient liquidity for this trade.
-              {singleHopOnly && 'Try enabling multi-hop trades.'}
-            </GreyCard>
-          ) : leverageType !== LeverageType.CROSS_MARGIN && showApproveFlow ? (
-            <RowBetween>
-              <ButtonConfirmed
-                onClick={approveCallback}
-                disabled={approval !== ApprovalState.NOT_APPROVED || approvalSubmitted}
-                altDisabledStyle={approval === ApprovalState.PENDING} // show solid button while waiting
-                confirmed={approval === ApprovalState.APPROVED}
-              >
-                {approval === ApprovalState.PENDING ? (
-                  <AutoRow gap="6px" justify="center">
-                    Approving <Loader stroke="white" />
-                  </AutoRow>
-                ) : approvalSubmitted && approval === ApprovalState.APPROVED ? (
-                  'Approved'
-                ) : (
-                  'Approve ' + currencies[Field.INPUT]?.symbol
-                )}
-              </ButtonConfirmed>
-            </RowBetween>
-          ) : (
-            <ButtonError
-              onClick={() => {
-                if (isExpertMode) {
-                  handleSwap()
-                } else {
-                  setSwapState({
-                    tradeToConfirm: trade,
-                    attemptingTxn: false,
-                    swapErrorMessage: undefined,
-                    showConfirm: true,
-                    txHash: undefined
+        {leverageType === LeverageType.LIMIT_ORDER ? (
+          <BottomGrouping>
+            {!account ? (
+              <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
+            ) : (
+              <ButtonError
+                onClick={() => {
+                  setOrderState({
+                    attemptingOrderTxn: false,
+                    orderErrorMessage: undefined,
+                    showConfirmOrder: true,
+                    orderTxHash: undefined
                   })
-                }
-              }}
-              id="swap-button-2"
-              disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
-              error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
-            >
-              <Text fontSize={20} fontWeight={500}>
-                {swapInputError
-                  ? swapInputError
-                  : priceImpactSeverity > 3 && !isExpertMode
-                  ? `Price Impact Too High`
-                  : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
-              </Text>
-            </ButtonError>
-          )}
-          {showApproveFlow && (
-            <Column style={{ marginTop: '1rem' }}>
-              <ProgressSteps steps={[approval === ApprovalState.APPROVED]} />
-            </Column>
-          )}
-          {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
-        </BottomGrouping>
+                }}
+                id="order-button-2"
+                disabled={!isOrderValid}
+                error={!isOrderValid && !!orderErrorMessage}
+              >
+                <Text fontSize={20} fontWeight={500}>
+                  {orderInputError ? orderInputError : `Make Order`}
+                </Text>
+              </ButtonError>
+            )}
+          </BottomGrouping>
+        ) : (
+          <BottomGrouping>
+            {swapIsUnsupported ? (
+              <ButtonPrimary disabled={true}>Unsupported Asset</ButtonPrimary>
+            ) : !account ? (
+              <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
+            ) : showWrap ? (
+              <ButtonPrimary disabled={Boolean(wrapInputError)} onClick={onWrap}>
+                {wrapInputError ??
+                  (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
+              </ButtonPrimary>
+            ) : noRoute && userHasSpecifiedInputOutput && tradeLoading.isLoading ? (
+              <GreyCard style={{ textAlign: 'center' }}>
+                <CustomLightSpinner src={Circle} alt="loader" size={'25px'} />
+              </GreyCard>
+            ) : noRoute && userHasSpecifiedInputOutput ? (
+              <GreyCard style={{ textAlign: 'center' }}>
+                Insufficient liquidity for this trade.
+                {singleHopOnly && 'Try enabling multi-hop trades.'}
+              </GreyCard>
+            ) : leverageType !== LeverageType.CROSS_MARGIN && showApproveFlow ? (
+              <RowBetween>
+                <ButtonConfirmed
+                  onClick={approveCallback}
+                  disabled={approval !== ApprovalState.NOT_APPROVED || approvalSubmitted}
+                  altDisabledStyle={approval === ApprovalState.PENDING} // show solid button while waiting
+                  confirmed={approval === ApprovalState.APPROVED}
+                >
+                  {approval === ApprovalState.PENDING ? (
+                    <AutoRow gap="6px" justify="center">
+                      Approving <Loader stroke="white" />
+                    </AutoRow>
+                  ) : approvalSubmitted && approval === ApprovalState.APPROVED ? (
+                    'Approved'
+                  ) : (
+                    'Approve ' + currencies[Field.INPUT]?.symbol
+                  )}
+                </ButtonConfirmed>
+              </RowBetween>
+            ) : (
+              <ButtonError
+                onClick={() => {
+                  if (isExpertMode) {
+                    handleSwap()
+                  } else {
+                    setSwapState({
+                      tradeToConfirm: trade,
+                      attemptingTxn: false,
+                      swapErrorMessage: undefined,
+                      showConfirm: true,
+                      txHash: undefined
+                    })
+                  }
+                }}
+                id="swap-button-2"
+                disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
+                error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
+              >
+                <Text fontSize={20} fontWeight={500}>
+                  {swapInputError
+                    ? swapInputError
+                    : priceImpactSeverity > 3 && !isExpertMode
+                    ? `Price Impact Too High`
+                    : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
+                </Text>
+              </ButtonError>
+            )}
+            {showApproveFlow && (
+              <Column style={{ marginTop: '1rem' }}>
+                <ProgressSteps steps={[approval === ApprovalState.APPROVED]} />
+              </Column>
+            )}
+            {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
+          </BottomGrouping>
+        )}
       </Container>
       {!swapIsUnsupported ? (
         <AdvancedSwapDetailsDropdown trade={trade} />

@@ -161,6 +161,14 @@ export const AVALANCHE: { [key: string]: Token } = {
   WETH: new Token(ChainId.AVALANCHE, '0x49D5c2BdFfac6CE2BFdB6640F4F80f226bc10bAB', 18, 'WETH', 'Wrapped Ether')
 }
 
+export const LOCAL: { [key: string]: Token } = {
+  DAI: new Token(ChainId.LOCAL, '0x6b175474e89094c44da98b954eedeac495271d0f', 18, 'DAI', 'DAI'),
+  USDC: new Token(ChainId.LOCAL, '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', 18, 'USDC', 'Tether UDSC'),
+  USDT: new Token(ChainId.LOCAL, '0xdAC17F958D2ee523a2206206994597C13D831ec7', 6, 'USDT', 'Tether UDST'),
+  WBTC: new Token(ChainId.LOCAL, '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', 18, 'WBTC', 'Wrapped BTC'),
+  WETH: new Token(ChainId.LOCAL, '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', 18, 'WETH', 'Wrapped Ether')
+}
+
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   ...WETH_ONLY,
@@ -380,6 +388,10 @@ export const SUPPORTED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][]
   [ChainId.MATIC]: [
     [MATIC.WMATIC, MATIC.USDT],
     [MATIC.WETH, MATIC.USDT]
+  ],
+  [ChainId.LOCAL]: [
+    [LOCAL.WETH, LOCAL.USDT],
+    [LOCAL.WETH, LOCAL.USDC]
   ]
 }
 
