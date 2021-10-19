@@ -16,9 +16,9 @@ import OrdersWidget from 'components/OrderListWidget'
 import OrderWidget from 'components/OrderWidget'
 
 export type CoinPair = {
-  address?: string
-  symbol?: string
-  name?: string
+  address: string
+  symbol: string
+  name: string
   price?: string
   change?: number
   unwrappedSymbol?: string
@@ -35,7 +35,10 @@ export const ProUIContext = createContext<Context>({
 })
 
 const Pro = () => {
-  const [currentPair, setCurrentPair] = useState<[CoinPair, CoinPair]>([{}, {}])
+  const [currentPair, setCurrentPair] = useState<[CoinPair, CoinPair]>([
+    { address: '', symbol: '', name: '' },
+    { address: '', symbol: '', name: '' }
+  ])
   const [, setCurrentSymbol] = useState<string>('WETHUSDT')
   const [advancedChart, setAdvancedChart] = useState<JSX.Element>()
 

@@ -7,7 +7,7 @@ import React, { useCallback } from 'react'
 import OrderModalFooter from './OrderModalFooter'
 import OrderModalHeader from './OrderModalHeader'
 
-const ConfirmOrderModal = ({
+export default function ConfirmSwapModal({
   onConfirm,
   onDismiss,
   attemptingTxn,
@@ -16,7 +16,8 @@ const ConfirmOrderModal = ({
   fromToken,
   toToken,
   inAmount,
-  outAmount
+  outAmount,
+  orderTxHash
 }: {
   isOpen: boolean
   onConfirm: () => void
@@ -27,7 +28,8 @@ const ConfirmOrderModal = ({
   toToken: Currency
   inAmount: string
   outAmount: string
-}) => {
+  orderTxHash: string | undefined
+}) {
   const modalHeader = useCallback(() => {
     return <OrderModalHeader fromToken={fromToken} toToken={toToken} inAmount={inAmount} outAmount={outAmount} />
   }, [fromToken, toToken, inAmount, outAmount])
@@ -59,11 +61,9 @@ const ConfirmOrderModal = ({
       isOpen={isOpen}
       onDismiss={onDismiss}
       attemptingTxn={attemptingTxn}
-      hash=""
+      hash={orderTxHash}
       content={confirmationContent}
       pendingText={pendingText}
     />
   )
 }
-
-export default ConfirmOrderModal

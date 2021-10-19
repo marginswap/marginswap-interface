@@ -1,12 +1,13 @@
 import { useCallback } from 'react'
 import { AppDispatch, AppState } from '../index'
 import { useDispatch, useSelector } from 'react-redux'
-import { ChainId, makeOrder } from '@marginswap/sdk'
+import { makeOrder } from '@marginswap/sdk'
 import { Currency, CurrencyAmount, ETHER, Token } from '@marginswap/sdk'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency } from '../../hooks/Tokens'
 import { useBorrowable, useCurrencyBalances } from '../wallet/hooks'
 import { tryParseAmount } from 'state/swap/hooks'
+import { parseUnits } from '@ethersproject/units'
 import { Field, selectOrderCurrency, switchOrderCurrencies, typeOrderInput } from './actions'
 
 export function useOrderState(): AppState['order'] {
@@ -117,41 +118,41 @@ export function useOrderActionHandlers(): {
   }
 }
 
-export function useMakeOrder(): {
-  onMakeOrder: (
-    chainId: ChainId,
-    provider: any,
-    fromToken: string | undefined,
-    toToken: string | undefined,
-    inAmount: string,
-    outAmount: string
-  ) => Promise<string>
+export function useMakeOrder(provider: any): {
+  callback: null | (() => Promise<string>)
 } {
-  const onMakeOrder = async (
-    chainId: ChainId,
-    provider: any,
-    fromToken: string | undefined,
-    toToken: string | undefined,
-    inAmount: string,
-    outAmount: string
-  ): Promise<string> => {
-    try {
-      if (!chainId || !provider || !fromToken || !toToken || !inAmount || !outAmount) {
-        throw new Error('Missing dependencies')
-      }
-
-      const result = await makeOrder(fromToken, toToken, inAmount, outAmount, chainId, provider)
-      return result.blockHash
-    } catch (error: any) {
-      if (error?.code === 4001) {
-        throw new Error(`Transaction rejected: ${error.message}`)
-      } else {
-        throw new Error(`Order failed: ${error.message}`)
-      }
-    }
-  }
+  const { chainId } = useActiveWeb3React()
+  const { inAmount, outAmount, orderInput, orderOutput } = useOrderState()
+  const { orderCurrencies } = useDerivedOrderInfo()
 
   return {
-    onMakeOrder
+    callback: async function onOrder(): Promise<string> {
+      const inAmt = parseUnits(inAmount, orderCurrencies[Field.INPUT]?.decimals).toString()
+      const outAmt = parseUnits(outAmount, orderCurrencies[Field.OUTPUT]?.decimals).toString()
+
+      try {
+        if (!chainId || !provider || !orderInput.currencyId || !orderOutput.currencyId || !inAmt || !outAmt) {
+          throw new Error('Missing dependencies')
+        }
+
+        const response = await makeOrder(
+          orderInput.currencyId,
+          orderOutput.currencyId,
+          inAmt,
+          outAmt,
+          chainId,
+          provider
+        )
+        const result = response as any
+
+        return result.hash
+      } catch (error: any) {
+        if (error?.code === 4001) {
+          throw new Error(`Transaction rejected: ${error.message}`)
+        } else {
+          throw new Error(`Order failed: ${error.message}`)
+        }
+      }
+    }
   }
 }

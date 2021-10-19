@@ -105,7 +105,7 @@ const MarketWidget = () => {
               <span>{pair[0].symbol}</span>
             </Item>
             <Item>
-              <ChangeValue value={pair[0].change}>{`${pair[0].change && pair[0].change >= 0 ? '+' : '-'} ${
+              <ChangeValue value={pair[0].change}>{`${pair[0].change && pair[0].change >= 0 ? '+' : ''} ${
                 pair[0].change
               }`}</ChangeValue>
               {/* <StyledStarIcon /> */}

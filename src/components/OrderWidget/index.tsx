@@ -26,7 +26,7 @@ import { useWalletModalToggle } from '../../state/application/hooks'
 import { AutoRow } from '../../components/Row'
 import { Container, SettingsContainer, BottomGrouping } from './OrderWidget.styles'
 import { SwapCallbackError } from '../../components/swap/styleds'
-import { ChainId, CurrencyAmount, JSBI, LeverageType, Trade } from '@marginswap/sdk'
+import { CurrencyAmount, JSBI, LeverageType, Trade } from '@marginswap/sdk'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { RowBetween } from 'components/Row'
 import { Text } from 'rebass'
@@ -38,7 +38,6 @@ import { FlatToggleOption, ToggleOption, ToggleWrapper } from 'components/Toggle
 import { ButtonError, ButtonLight, ButtonPrimary, ButtonConfirmed } from '../../components/Button'
 import { GreyCard } from '../../components/Card'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
-import { parseUnits } from '@ethersproject/units'
 import {
   useDefaultsFromURLSearch,
   useDerivedSwapInfo,
@@ -83,7 +82,7 @@ const OrderWidget = () => {
   const [orderType, setOrderType] = useState(OrderType.BUY)
   const [showInverted, setShowInverted] = useState<boolean>(false)
   const { independentField, typedValue, recipient, leverageType } = useSwapState()
-  const { inAmount, outAmount, orderInput, orderOutput } = useOrderState()
+  const { inAmount, outAmount } = useOrderState()
   const [isExpertMode] = useExpertModeManager()
   const { address: recipientAddress } = useENSAddress(recipient)
 
@@ -100,7 +99,7 @@ const OrderWidget = () => {
 
   const { onSwitchTokens, onUserInput, onSwitchLeverageType } = useSwapActionHandlers()
   const { onOrderSwitchTokens, onOrderUserInput } = useOrderActionHandlers()
-  const { onMakeOrder } = useMakeOrder()
+  const { callback: orderCallback } = useMakeOrder(provider)
 
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(
     currencyBalances[Field.INPUT],
@@ -181,8 +180,8 @@ const OrderWidget = () => {
   }, [approval, approvalSubmitted])
 
   useEffect(() => {
-    const currencyAddress1: string = currentPair && currentPair[0].address ? currentPair[0].address : 'ETH'
-    const currencyAddress2: string = currentPair && currentPair[1].address ? currentPair[1].address : 'ETH'
+    const currencyAddress1: string = currentPair ? currentPair[0].address : ''
+    const currencyAddress2: string = currentPair ? currentPair[1].address : ''
 
     if (leverageType !== LeverageType.LIMIT_ORDER) {
       dispatch(
@@ -323,39 +322,41 @@ const OrderWidget = () => {
   const handleOrder = async () => {
     if (!chainId) return
 
-    if (chainId === ChainId.LOCAL) {
-      const inAmnt = parseUnits(inAmount, currencies[Field.INPUT]?.decimals).toString()
-      const outAmnt = parseUnits(outAmount, currencies[Field.OUTPUT]?.decimals).toString()
+    if (!orderCallback) return
 
-      setOrderState({
-        attemptingOrderTxn: true,
-        showConfirmOrder,
-        orderErrorMessage: undefined,
-        orderTxHash: undefined
+    setOrderState({
+      attemptingOrderTxn: true,
+      showConfirmOrder,
+      orderErrorMessage: undefined,
+      orderTxHash: undefined
+    })
+
+    orderCallback()
+      .then(hash => {
+        setOrderState({
+          attemptingOrderTxn: false,
+          showConfirmOrder,
+          orderErrorMessage: undefined,
+          orderTxHash: hash
+        })
       })
-
-      onMakeOrder(chainId, provider, orderInput.currencyId, orderOutput.currencyId, inAmnt, outAmnt)
-        .then(hash => {
-          setOrderState({
-            attemptingOrderTxn: false,
-            showConfirmOrder: false,
-            orderErrorMessage: undefined,
-            orderTxHash: hash
-          })
+      .catch(error => {
+        setOrderState({
+          attemptingOrderTxn: false,
+          showConfirmOrder,
+          orderErrorMessage: error.message,
+          orderTxHash: undefined
         })
-        .catch(error => {
-          setOrderState({
-            attemptingOrderTxn: false,
-            showConfirmOrder,
-            orderErrorMessage: error.message,
-            orderTxHash: undefined
-          })
-        })
-    }
+      })
   }
 
   const handleConfirmOrderDismiss = useCallback(() => {
     setOrderState({ showConfirmOrder: false, attemptingOrderTxn, orderErrorMessage: undefined, orderTxHash })
+
+    if (orderTxHash) {
+      onOrderUserInput(Field.INPUT, '')
+      onOrderUserInput(Field.OUTPUT, '')
+    }
   }, [attemptingOrderTxn, orderErrorMessage, orderTxHash])
 
   return (
@@ -380,6 +381,7 @@ const OrderWidget = () => {
           orderErrorMessage={orderErrorMessage}
           onDismiss={handleConfirmOrderDismiss}
           onConfirm={handleOrder}
+          orderTxHash={orderTxHash}
           fromToken={orderCurrencies[Field.INPUT]}
           toToken={orderCurrencies[Field.OUTPUT]}
           inAmount={inAmount}
