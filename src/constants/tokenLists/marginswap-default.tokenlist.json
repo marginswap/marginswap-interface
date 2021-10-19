@@ -277,7 +277,7 @@
       "decimals": 18,
       "name": "Dai Stablecoin",
       "symbol": "DAI.e",
-      "logoURI": "https://raw.githubusercontent.com/ava-labs/bridge-tokens/main/avalanche-tokens/0xd586E7F844cEa2F87f50152665BCbc2C279D8d70/logo.png",
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063/logo.png",
       "coingeckoId": "dai"
     },
     {
