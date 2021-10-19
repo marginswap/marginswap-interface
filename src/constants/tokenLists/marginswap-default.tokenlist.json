@@ -262,6 +262,15 @@
       "coingeckoId": "avalanche-2"
     },
     {
+      "name": "Wrapped BTC",
+      "address": "0x50b7545627a5162f82a992c33b87adc75187b218",
+      "symbol": "WBTC",
+      "decimals": 8,
+      "chainId": 43114,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6/logo.png",
+      "coingeckoId": "wrapped-bitcoin"
+    },
+    {
       "name": "Dai Stablecoin",
       "address": "0xd586e7f844cea2f87f50152665bcbc2c279d8d70",
       "symbol": "DAI",
