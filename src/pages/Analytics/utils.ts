@@ -1,5 +1,4 @@
 import axiosInstance from '../../config/axios-config'
-import { DateTime } from 'luxon'
 import groupby from 'lodash.groupby'
 import tokenListMarginSwap from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 import { AVALANCHE_TOKENS_LIST } from '../../constants'

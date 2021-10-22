@@ -3,8 +3,7 @@ import Chart from './Chart'
 import Numbers from './Numbers'
 import TopTraders from './TopTraders'
 import { Container } from './styled'
-import { Wallets } from './Wallets'
-import { useSwapVolumesQuery, useAggregatedBalancesQuery, useSwapsQuery } from '../../graphql/queries/analytics'
+import { useSwapVolumesQuery, useAggregatedBalancesQuery } from '../../graphql/queries/analytics'
 import { avalancheClient } from '../../config/apollo-config'
 import { polygonClient } from '../../config/apollo-config'
 import { bscClient } from '../../config/apollo-config'
@@ -15,22 +14,12 @@ import moment from 'moment'
 const initialDate = moment('09-09-2019').utc().unix() //use this date to consider all the historical data - Sep 9, 2019
 const lteValue = moment().utc().unix()
 
-const useStyles = makeStyles(() => ({
-  wrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    maxWidth: '420px',
-    padding: '0 20px',
-    gap: '20px',
-    '& h2': {
-      width: '1040px'
-    }
-  }
-}))
-
 const Analytics: React.FC = () => {
-  const { data: avalancheDsvData, loading: avalancheLoading } = useSwapVolumesQuery({
+  const {
+    data: avalancheDsvData,
+    loading: avalancheLoading,
+    error: avalancheError
+  } = useSwapVolumesQuery({
     variables: {
       gte: initialDate,
       lte: lteValue
@@ -38,7 +27,11 @@ const Analytics: React.FC = () => {
     client: avalancheClient
   })
 
-  const { data: polygonDsvData, loading: polygonDsvDataLoading } = useSwapVolumesQuery({
+  const {
+    data: polygonDsvData,
+    loading: polygonDsvDataLoading,
+    error: polygonDsvDataError
+  } = useSwapVolumesQuery({
     variables: {
       gte: initialDate,
       lte: lteValue
@@ -46,7 +39,11 @@ const Analytics: React.FC = () => {
     client: polygonClient
   })
 
-  const { data: bscDsvData, loading: bscDsvLoading } = useSwapVolumesQuery({
+  const {
+    data: bscDsvData,
+    loading: bscDsvLoading,
+    error: bscDsvError
+  } = useSwapVolumesQuery({
     variables: {
       gte: initialDate,
       lte: lteValue
@@ -54,7 +51,11 @@ const Analytics: React.FC = () => {
     client: bscClient
   })
 
-  const { data: ethDsvData, loading: ethDsvLoading } = useSwapVolumesQuery({
+  const {
+    data: ethDsvData,
+    loading: ethDsvLoading,
+    error: ethDsvError
+  } = useSwapVolumesQuery({
     variables: {
       gte: initialDate,
       lte: lteValue
@@ -67,6 +68,10 @@ const Analytics: React.FC = () => {
     [avalancheLoading, bscDsvLoading, ethDsvLoading, polygonDsvDataLoading]
   )
 
+  const errorsSwapVolumes = useMemo(
+    () => avalancheError || polygonDsvDataError || bscDsvError || ethDsvError,
+    [avalancheError, bscDsvError, ethDsvError, polygonDsvDataError]
+  )
   const swapVolumes = useMemo(() => {
     if (loadingSwapVolumes) {
       return {
@@ -85,7 +90,11 @@ const Analytics: React.FC = () => {
     }
   }, [loadingSwapVolumes]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const { data: bscAggreateBalancesData, loading: bscAggreateBalancesLoading } = useAggregatedBalancesQuery({
+  const {
+    data: bscAggreateBalancesData,
+    loading: bscAggreateBalancesLoading,
+    error: bscAggBalError
+  } = useAggregatedBalancesQuery({
     variables: {
       gte: initialDate,
       lte: lteValue
@@ -93,7 +102,11 @@ const Analytics: React.FC = () => {
     client: bscClient
   })
 
-  const { data: polygonAggreateBalancesData, loading: polygonAggreateBalancesLoading } = useAggregatedBalancesQuery({
+  const {
+    data: polygonAggreateBalancesData,
+    loading: polygonAggreateBalancesLoading,
+    error: polygonAggBalError
+  } = useAggregatedBalancesQuery({
     variables: {
       gte: initialDate,
       lte: lteValue
@@ -101,17 +114,23 @@ const Analytics: React.FC = () => {
     client: polygonClient
   })
 
-  const { data: avalancheAggreateBalancesData, loading: avalancheAggreateBalancesLoading } = useAggregatedBalancesQuery(
-    {
-      variables: {
-        gte: initialDate,
-        lte: lteValue
-      },
-      client: avalancheClient
-    }
-  )
+  const {
+    data: avalancheAggreateBalancesData,
+    loading: avalancheAggreateBalancesLoading,
+    error: avalancheAggBalError
+  } = useAggregatedBalancesQuery({
+    variables: {
+      gte: initialDate,
+      lte: lteValue
+    },
+    client: avalancheClient
+  })
 
-  const { data: ethAggreateBalancesData, loading: ethAggreateBalancesLoading } = useAggregatedBalancesQuery({
+  const {
+    data: ethAggreateBalancesData,
+    loading: ethAggreateBalancesLoading,
+    error: ethAggBalError
+  } = useAggregatedBalancesQuery({
     variables: {
       gte: initialDate,
       lte: lteValue
@@ -132,7 +151,10 @@ const Analytics: React.FC = () => {
       polygonAggreateBalancesLoading
     ]
   )
-
+  const errorsAggregateBalances = useMemo(
+    () => bscAggBalError || polygonAggBalError || avalancheAggBalError || ethAggBalError,
+    [bscAggBalError, polygonAggBalError, avalancheAggBalError, ethAggBalError]
+  )
   const aggregateBalances = useMemo(() => {
     if (loadingAggregateBalances) {
       return {
@@ -154,13 +176,24 @@ const Analytics: React.FC = () => {
   return (
     <Container>
       <h2>Marginswap Analytics</h2>
+      {errorsAggregateBalances && errorsSwapVolumes ? (
+        <div>Error. Contact Support</div>
+      ) : loadingAggregateBalances && loadingSwapVolumes ? (
+        <div>Loading</div>
+      ) : (
+        <>
+          <WarningBar>
+            Apologies: Analytics are currently out of order while we fix scaling issues with large subgraph queries.
+          </WarningBar>
 
-      <Chart aggregateBalancesData={aggregateBalances} swapVolumesData={swapVolumes} />
+          <Chart aggregateBalancesData={aggregateBalances} swapVolumesData={swapVolumes} />
 
-      <div style={{ marginTop: '10px' }}>
-        <Numbers aggregateBalancesData={aggregateBalances} swapVolumesData={swapVolumes} />
-        <TopTraders />
-      </div>
+          <div style={{ marginTop: '10px' }}>
+            <Numbers aggregateBalancesData={aggregateBalances} swapVolumesData={swapVolumes} />
+            <TopTraders />
+          </div>
+        </>
+      )}
     </Container>
   )
 }
