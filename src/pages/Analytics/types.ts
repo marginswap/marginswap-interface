@@ -30,17 +30,6 @@ export interface AggregateBalance {
   createdAt: string
   contract: string
   updatedAt: string | null
-  info: AggregateBalanceInfo
-}
-
-export interface AggregateBalanceInfo {
-  address: string
-  chainId: number
-  coingeckoId: string
-  decimals: number
-  logoURI: string
-  name: string
-  symbol: string
 }
 
 export interface GetAggregateBalances {
@@ -81,6 +70,6 @@ export interface StatsProps {
 }
 
 export interface ChartData {
-  time: Date
+  time: string
   value: number
 }

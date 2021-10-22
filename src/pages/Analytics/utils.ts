@@ -1,4 +1,5 @@
 import axiosInstance from '../../config/axios-config'
+import { DateTime } from 'luxon'
 import groupby from 'lodash.groupby'
 import tokenListMarginSwap from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 import { AVALANCHE_TOKENS_LIST } from '../../constants'
@@ -48,24 +49,10 @@ export async function adjustTokenValueForTraders(token: Swap) {
   }
 }
 
-export async function getTokenPriceByDay(tokenName: string, date: string) {
-  if (!tokenName) return 0
-
-  const response = await axiosInstance.get(`/coins/${tokenName}/history`, {
-    params: {
-      date
-    }
-  })
-
-  return response.data.market_data?.current_price?.usd || 0
-}
-
-export async function getTokenPriceById(
-  tokenAddress: string[],
-  tokenId: 'ethereum' | 'binance-smart-chain' | 'polygon-pos'
-) {
+//polygon-pos - avalanche - binance-smart-chain
+export async function getBscTokenUSDPrice(tokenAddress: string[]): Promise<TokensMap | void> {
   if (tokenAddress.length > 0) {
-    const ethPrices = await axiosInstance.get(`/simple/token_price/${tokenId}`, {
+    const bscPrices = await axiosInstance.get(`/simple/token_price/binance-smart-chain`, {
       params: {
         contract_addresses: tokenAddress.join(','),
         vs_currencies: 'usd'
@@ -73,7 +60,24 @@ export async function getTokenPriceById(
     })
 
     const transformKeys = await Promise.all(
-      Object.keys(ethPrices.data).map(pp => lowerCaseObjectKey({ [pp]: ethPrices.data[pp] }))
+      Object.keys(bscPrices.data).map(pp => lowerCaseObjectKey({ [pp]: bscPrices.data[pp] }))
+    )
+
+    return Object.assign({}, ...transformKeys)
+  }
+}
+
+export async function getPolygonTokenUSDPrice(tokenAddress: string[]): Promise<TokensMap | void> {
+  if (tokenAddress.length > 0) {
+    const polygonPrices = await axiosInstance.get(`/simple/token_price/polygon-pos`, {
+      params: {
+        contract_addresses: tokenAddress.join(','),
+        vs_currencies: 'usd'
+      }
+    })
+
+    const transformKeys = await Promise.all(
+      Object.keys(polygonPrices.data).map(pp => lowerCaseObjectKey({ [pp]: polygonPrices.data[pp] }))
     )
 
     return Object.assign({}, ...transformKeys)
@@ -110,6 +114,23 @@ export async function getAvalancheTokenUSDPrice(): Promise<TokensMap> {
   return Object.assign({}, ...transformKeys)
 }
 
+export async function getEthTokenUSDPrice(tokenAddress: string[]) {
+  if (tokenAddress.length > 0) {
+    const ethPrices = await axiosInstance.get(`/simple/token_price/ethereum`, {
+      params: {
+        contract_addresses: tokenAddress.join(','),
+        vs_currencies: 'usd'
+      }
+    })
+
+    const transformKeys = await Promise.all(
+      Object.keys(ethPrices.data).map(pp => lowerCaseObjectKey({ [pp]: ethPrices.data[pp] }))
+    )
+
+    return Object.assign({}, ...transformKeys)
+  }
+}
+
 export async function getTopTraders({ polygonData, avalancheData, bscData, ethData }: VolumeSwaps): Promise<Trader[]> {
   const polygonTokenAddresses = await Promise.all(polygonData.map(swap => swap.fromToken))
   const bscTokenAddresses = await Promise.all(bscData.map((swap: { fromToken: string }) => swap.fromToken))
@@ -142,10 +163,10 @@ export async function getTopTraders({ polygonData, avalancheData, bscData, ethDa
     filterPolygonTokenAddresses.push(address)
   })
 
-  const polygonTokensPrice = await getTokenPriceById(filterPolygonTokenAddresses, 'polygon-pos')
+  const polygonTokensPrice = await getPolygonTokenUSDPrice(filterPolygonTokenAddresses)
   const avalancheTokensPrice = await getAvalancheTokenUSDPrice()
-  const bscTokensPrice = await getTokenPriceById(filterEthTokenAddresses, 'binance-smart-chain')
-  const ethTokensPrice = await getTokenPriceById(filterEthTokenAddresses, 'ethereum')
+  const bscTokensPrice = await getBscTokenUSDPrice(filterbscTokenAddresses)
+  const ethTokensPrice = await getEthTokenUSDPrice(filterEthTokenAddresses)
 
   let swaps = []
   swaps = await Promise.all(
@@ -159,14 +180,13 @@ export async function getTopTraders({ polygonData, avalancheData, bscData, ethDa
 
     return {
       ...swap,
-      usdTokenValue: swap.info?.chainId
-        ? Number(
-            new TokenAmount(
-              new Token(swap.info.chainId, swap.fromToken, swap.info.decimals),
-              swap.fromAmount
-            ).toSignificant(3)
-          ) * mult
-        : 0
+      usdTokenValue:
+        Number(
+          new TokenAmount(
+            new Token(swap.info.chainId, swap.fromToken, swap.info.decimals),
+            swap.fromAmount
+          ).toSignificant(3)
+        ) * mult
     }
   })
 
@@ -177,7 +197,7 @@ export async function getTopTraders({ polygonData, avalancheData, bscData, ethDa
     let weeklyDays: string[] = []
 
     for (let i = 0; i < 7; i++) {
-      weeklyDays = [...weeklyDays, moment().utc().subtract(i, 'days').format('DD-MM-YYYY')]
+      weeklyDays = [...weeklyDays, moment().subtract(i, 'days').format('DD-MM-YYYY')]
     }
 
     const monthlyVolume = infos
@@ -196,7 +216,7 @@ export async function getTopTraders({ polygonData, avalancheData, bscData, ethDa
 
     const dailyVolume = infos
       .map(traderInfo => {
-        if (moment.unix(Number(traderInfo.createdAt)).utc().isAfter(moment().utc().subtract(1, 'days'))) {
+        if (moment.unix(Number(traderInfo.createdAt)).isAfter(moment().subtract(1, 'days'))) {
           return traderInfo.usdTokenValue
         }
 
@@ -252,9 +272,9 @@ export async function getVolume({
   })
 
   const tokensAvalanchePrice = await getAvalancheTokenUSDPrice()
-  const tokensPolygonPrice = await getTokenPriceById(filterPolygonTokenAddresses, 'polygon-pos')
-  const tokensBscPrice = await getTokenPriceById(filterEthTokenAddresses, 'binance-smart-chain')
-  const tokensEthPrice = await getTokenPriceById(filterEthTokenAddresses, 'ethereum')
+  const tokensPolygonPrice = await getPolygonTokenUSDPrice(filterPolygonTokenAddresses)
+  const tokensBscPrice = await getBscTokenUSDPrice(filterbscTokenAddresses)
+  const tokensEthPrice = await getEthTokenUSDPrice(filterEthTokenAddresses)
 
   const tokensPrice = { ...tokensAvalanchePrice, ...tokensPolygonPrice, ...tokensBscPrice, ...tokensEthPrice }
 
@@ -279,17 +299,14 @@ export async function getVolume({
             3
           )
         ) * tokensPrice[token.token.toLowerCase()].usd
-    } catch {
+    } catch (err) {
       formattedVolume = 0
+      console.log('Not found :::', token)
     }
 
     dailyVolume += formattedVolume
     return {
-      time: new Date(
-        Number(moment.unix(Number(token.createdAt)).utc().format('YYYY')),
-        Number(moment.unix(Number(token.createdAt)).utc().format('MM')) - 1,
-        Number(moment.unix(Number(token.createdAt)).utc().format('DD'))
-      ),
+      time: DateTime.fromSeconds(Number(token.createdAt)).toISO().toString(),
       value: Number(formattedVolume)
     }
   })
@@ -303,8 +320,8 @@ export async function getVolume({
 
   return {
     totalDailyVolume: Number(dailyVolume.toFixed(2)),
-    dailySwap: Array.from(swapResult, ([key, value]) => ({ time: key, value: value?.toFixed(6) })).sort(
-      (a, b) => moment(a.time).utc().unix() - moment(b.time).utc().unix()
+    dailySwap: Array.from(swapResult, ([key, value]) => ({ time: key, value: value.toFixed(6) })).sort(
+      (a, b) => DateTime.fromISO(a.time).toMillis() - DateTime.fromISO(b.time).toMillis()
     )
   }
 }
@@ -315,6 +332,45 @@ export async function getAggregateBalances({
   aggregateBalancesBsc,
   aggregateBalancesEth
 }: GetAggregateBalances) {
+  // avalancheTokenAddresses ->  WE ARE GETTING THIS FROM A STATIC FILE
+  const polygonTokenAddresses = aggregateBalancesPolygon.map(dsv => dsv.token)
+  const bscTokenAddresses = aggregateBalancesBsc.map(dsv => dsv.token)
+  const ethTokenAddresses = aggregateBalancesEth.map(dsv => dsv.token)
+
+  const filterPolygonTokenAddresses: string[] = []
+  const filterEthTokenAddresses: string[] = []
+  const filterbscTokenAddresses: string[] = []
+
+  ethTokenAddresses.map(address => {
+    if (filterEthTokenAddresses.includes(address)) {
+      return
+    }
+
+    filterEthTokenAddresses.push(address)
+  })
+
+  bscTokenAddresses.map(address => {
+    if (filterbscTokenAddresses.includes(address)) {
+      return
+    }
+    filterbscTokenAddresses.push(address)
+  })
+
+  polygonTokenAddresses.map(address => {
+    if (filterPolygonTokenAddresses.includes(address)) {
+      return
+    }
+
+    filterPolygonTokenAddresses.push(address)
+  })
+
+  const tokensAvalanchePrice = await getAvalancheTokenUSDPrice()
+  const tokensPolygonPrice = await getPolygonTokenUSDPrice(filterPolygonTokenAddresses)
+  const tokensBscPrice = await getBscTokenUSDPrice(filterbscTokenAddresses)
+  const tokensEthPrice = await getEthTokenUSDPrice(filterEthTokenAddresses)
+
+  const tokensPrice = { ...tokensAvalanchePrice, ...tokensPolygonPrice, ...tokensBscPrice, ...tokensEthPrice }
+
   let tvl = 0
   let totalBorrowed = 0
   let totalLending = 0
@@ -326,36 +382,22 @@ export async function getAggregateBalances({
       ...legacyAvalancheData.aggregatedBalances,
       ...aggregateBalancesBsc,
       ...aggregateBalancesEth
-    ].map((t: any) => adjustTokenValue(t))
+    ].map(t => adjustTokenValue(t))
   )
 
-  await Promise.all(
-    aggregateBalances.map(async (aggBal: AggregateBalance) => {
-      const formatedTime = moment.unix(Number(aggBal.createdAt)).utc().format('DD-MM-YYYY')
+  aggregateBalances.forEach((aggBal: any) => {
+    const formatedTime = DateTime.fromSeconds(Number(aggBal.createdAt)).toISO().toString()
 
-      let tokenPrice = 0
-      let formattedBalance = 0
+    try {
+      const formattedBalance =
+        Number(
+          new TokenAmount(
+            new Token(aggBal.info.chainId, aggBal.token, aggBal.info.decimals),
+            aggBal.balance
+          ).toSignificant(3)
+        ) * tokensPrice[aggBal.token.toLowerCase()].usd
 
-      if (aggBal.info?.coingeckoId) {
-        tokenPrice = await getTokenPriceByDay(aggBal.info.coingeckoId, formatedTime)
-
-        formattedBalance =
-          Number(
-            new TokenAmount(
-              new Token(aggBal.info.chainId, aggBal.token, aggBal.info.decimals),
-              aggBal.balance
-            ).toSignificant(3)
-          ) * tokenPrice
-      }
-
-      tvlChart.push({
-        time: new Date(
-          Number(moment.unix(Number(aggBal.createdAt)).utc().format('YYYY')),
-          Number(moment.unix(Number(aggBal.createdAt)).utc().format('MM')) - 1,
-          Number(moment.unix(Number(aggBal.createdAt)).utc().format('DD'))
-        ),
-        value: formattedBalance
-      })
+      tvlChart.push({ time: formatedTime, value: Number(formattedBalance) })
 
       tvl += formattedBalance
 
@@ -366,10 +408,10 @@ export async function getAggregateBalances({
       if (aggBal.balanceType === 'CROSS_MARGIN_DEBT') {
         totalBorrowed += formattedBalance
       }
-
-      return aggBal
-    })
-  )
+    } catch (err) {
+      console.log('Token not found ::', aggBal.token)
+    }
+  })
 
   const swapResult = new Map()
   tvlChart.forEach(swap => {
@@ -382,7 +424,7 @@ export async function getAggregateBalances({
     totalBorrowed,
     totalLending,
     tvlChart: Array.from(swapResult, ([key, value]) => ({ time: key, value: value.toFixed(6) })).sort(
-      (a, b) => moment(a.time).utc().unix() - moment(b.time).utc().unix()
+      (a, b) => DateTime.fromISO(a.time).toMillis() - DateTime.fromISO(b.time).toMillis()
     )
   }
 }

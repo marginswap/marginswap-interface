@@ -3,6 +3,7 @@ import { Container, ButtonsContainer, Button } from './styled'
 import Plot from 'react-plotly.js'
 import { AggregateBalances, ChartData, GetAggregateBalances, VolumeSwaps } from '../types'
 import { getAggregateBalances, getVolume } from '../utils'
+import moment from 'moment'
 
 type ChartDataType = 'fees' | 'tld'
 
@@ -35,6 +36,10 @@ const Chart: React.FC<Props> = ({ aggregateBalancesData, swapVolumesData }) => {
       }
 
       return stateValue.map((row: ChartData) => {
+        if (key === 'time') {
+          return moment(row.time).utc().toDate()
+        }
+
         return row[key]
       })
     },
@@ -170,16 +175,12 @@ const Chart: React.FC<Props> = ({ aggregateBalancesData, swapVolumesData }) => {
           plot_bgcolor: 'transparent',
           barmode: 'relative',
           xaxis: {
-            range:
-              chartDataTypeActived === 'fees'
-                ? [...getValueByKey('time', 'volumeSwap')]
-                : [...getValueByKey('time', 'locked')],
+            range: [...getValueByKey('time', 'volumeSwap')],
             type: 'date',
             color: '#000'
           },
           yaxis: {
             autorange: true,
-            autotick: true,
             type: 'linear',
             color: '#000'
           }

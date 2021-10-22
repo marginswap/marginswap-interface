@@ -20,14 +20,10 @@ const Numbers: React.FC<Props> = ({ aggregateBalancesData, swapVolumesData }: Pr
   const [totalBorrowed, setTotalBorrowed] = useState<number>()
 
   const getDailyVolume = useCallback(async (VolumeSwap: ChartData[]) => {
-    const lastMonthSwaps = await VolumeSwap.filter(ds =>
-      moment(ds.time).utc().isAfter(moment().utc().subtract(1, 'months'))
-    )
+    const lastMonthSwaps = await VolumeSwap.filter(ds => moment(ds.time).utc().isAfter(moment().subtract(1, 'months')))
     const lastMonthVol = await lastMonthSwaps.map(s => Number(s.value)).reduce((acc, cur) => acc + cur, 0)
 
-    const last24HSwaps = await VolumeSwap.filter(ds =>
-      moment(ds.time).utc().isAfter(moment().utc().subtract(1, 'days'))
-    )
+    const last24HSwaps = await VolumeSwap.filter(ds => moment(ds.time).utc().isAfter(moment().subtract(1, 'days')))
     const last24hVol = await last24HSwaps.map(s => Number(s.value)).reduce((acc, cur) => acc + cur, 0)
 
     const montlyFees = lastMonthVol * (0.1 / 100)
@@ -55,6 +51,7 @@ const Numbers: React.FC<Props> = ({ aggregateBalancesData, swapVolumesData }: Pr
 
   useEffect(() => {
     if (swapVolumesData.avalancheData.length > 0 && swapVolumesData.polygonData.length > 0) {
+      console.log('swapVolumesData', swapVolumesData)
       getVolumeData(
         swapVolumesData.avalancheData,
         swapVolumesData.polygonData,
@@ -97,6 +94,7 @@ const Numbers: React.FC<Props> = ({ aggregateBalancesData, swapVolumesData }: Pr
 
   useEffect(() => {
     if (aggregateBalancesData.polygonData.length > 0 && aggregateBalancesData.avalancheData.length > 0) {
+      console.log('aggregateBalancesData', aggregateBalancesData)
       getTvl({
         aggregateBalancesBsc: aggregateBalancesData.bscData,
         aggregateBalancesPolygon: aggregateBalancesData.polygonData,
