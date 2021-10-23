@@ -15,11 +15,7 @@ const initialDate = moment('09-09-2019').utc().unix() //use this date to conside
 const lteValue = moment().utc().unix()
 
 const Analytics: React.FC = () => {
-  const {
-    data: avalancheDsvData,
-    loading: avalancheLoading,
-    error: avalancheError
-  } = useSwapVolumesQuery({
+  const { data: avalancheDsvData, loading: avalancheLoading } = useSwapVolumesQuery({
     variables: {
       gte: initialDate,
       lte: lteValue
@@ -27,11 +23,7 @@ const Analytics: React.FC = () => {
     client: avalancheClient
   })
 
-  const {
-    data: polygonDsvData,
-    loading: polygonDsvDataLoading,
-    error: polygonDsvDataError
-  } = useSwapVolumesQuery({
+  const { data: polygonDsvData, loading: polygonDsvDataLoading } = useSwapVolumesQuery({
     variables: {
       gte: initialDate,
       lte: lteValue
@@ -39,11 +31,7 @@ const Analytics: React.FC = () => {
     client: polygonClient
   })
 
-  const {
-    data: bscDsvData,
-    loading: bscDsvLoading,
-    error: bscDsvError
-  } = useSwapVolumesQuery({
+  const { data: bscDsvData, loading: bscDsvLoading } = useSwapVolumesQuery({
     variables: {
       gte: initialDate,
       lte: lteValue
@@ -51,11 +39,7 @@ const Analytics: React.FC = () => {
     client: bscClient
   })
 
-  const {
-    data: ethDsvData,
-    loading: ethDsvLoading,
-    error: ethDsvError
-  } = useSwapVolumesQuery({
+  const { data: ethDsvData, loading: ethDsvLoading } = useSwapVolumesQuery({
     variables: {
       gte: initialDate,
       lte: lteValue
@@ -68,10 +52,6 @@ const Analytics: React.FC = () => {
     [avalancheLoading, bscDsvLoading, ethDsvLoading, polygonDsvDataLoading]
   )
 
-  const errorsSwapVolumes = useMemo(
-    () => avalancheError || polygonDsvDataError || bscDsvError || ethDsvError,
-    [avalancheError, bscDsvError, ethDsvError, polygonDsvDataError]
-  )
   const swapVolumes = useMemo(() => {
     if (loadingSwapVolumes) {
       return {
@@ -90,11 +70,7 @@ const Analytics: React.FC = () => {
     }
   }, [loadingSwapVolumes]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const {
-    data: bscAggreateBalancesData,
-    loading: bscAggreateBalancesLoading,
-    error: bscAggBalError
-  } = useAggregatedBalancesQuery({
+  const { data: bscAggreateBalancesData, loading: bscAggreateBalancesLoading } = useAggregatedBalancesQuery({
     variables: {
       gte: initialDate,
       lte: lteValue
@@ -102,11 +78,7 @@ const Analytics: React.FC = () => {
     client: bscClient
   })
 
-  const {
-    data: polygonAggreateBalancesData,
-    loading: polygonAggreateBalancesLoading,
-    error: polygonAggBalError
-  } = useAggregatedBalancesQuery({
+  const { data: polygonAggreateBalancesData, loading: polygonAggreateBalancesLoading } = useAggregatedBalancesQuery({
     variables: {
       gte: initialDate,
       lte: lteValue
@@ -114,23 +86,17 @@ const Analytics: React.FC = () => {
     client: polygonClient
   })
 
-  const {
-    data: avalancheAggreateBalancesData,
-    loading: avalancheAggreateBalancesLoading,
-    error: avalancheAggBalError
-  } = useAggregatedBalancesQuery({
-    variables: {
-      gte: initialDate,
-      lte: lteValue
-    },
-    client: avalancheClient
-  })
+  const { data: avalancheAggreateBalancesData, loading: avalancheAggreateBalancesLoading } = useAggregatedBalancesQuery(
+    {
+      variables: {
+        gte: initialDate,
+        lte: lteValue
+      },
+      client: avalancheClient
+    }
+  )
 
-  const {
-    data: ethAggreateBalancesData,
-    loading: ethAggreateBalancesLoading,
-    error: ethAggBalError
-  } = useAggregatedBalancesQuery({
+  const { data: ethAggreateBalancesData, loading: ethAggreateBalancesLoading } = useAggregatedBalancesQuery({
     variables: {
       gte: initialDate,
       lte: lteValue
@@ -151,10 +117,7 @@ const Analytics: React.FC = () => {
       polygonAggreateBalancesLoading
     ]
   )
-  const errorsAggregateBalances = useMemo(
-    () => bscAggBalError || polygonAggBalError || avalancheAggBalError || ethAggBalError,
-    [bscAggBalError, polygonAggBalError, avalancheAggBalError, ethAggBalError]
-  )
+
   const aggregateBalances = useMemo(() => {
     if (loadingAggregateBalances) {
       return {
@@ -176,24 +139,19 @@ const Analytics: React.FC = () => {
   return (
     <Container>
       <h2>Marginswap Analytics</h2>
-      {errorsAggregateBalances && errorsSwapVolumes ? (
-        <div>Error. Contact Support</div>
-      ) : loadingAggregateBalances && loadingSwapVolumes ? (
-        <div>Loading</div>
-      ) : (
-        <>
-          <WarningBar>
-            Apologies: Analytics are currently out of order while we fix scaling issues with large subgraph queries.
-          </WarningBar>
 
-          <Chart aggregateBalancesData={aggregateBalances} swapVolumesData={swapVolumes} />
+      <>
+        <WarningBar>
+          Apologies: Analytics are currently out of order while we fix scaling issues with large subgraph queries.
+        </WarningBar>
 
-          <div style={{ marginTop: '10px' }}>
-            <Numbers aggregateBalancesData={aggregateBalances} swapVolumesData={swapVolumes} />
-            <TopTraders />
-          </div>
-        </>
-      )}
+        <Chart aggregateBalancesData={aggregateBalances} swapVolumesData={swapVolumes} />
+
+        <div style={{ marginTop: '10px' }}>
+          <Numbers aggregateBalancesData={aggregateBalances} swapVolumesData={swapVolumes} />
+          <TopTraders />
+        </div>
+      </>
     </Container>
   )
 }
