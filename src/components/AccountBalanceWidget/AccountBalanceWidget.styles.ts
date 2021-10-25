@@ -64,6 +64,8 @@ export const PrimaryButton = styled.button`
   min-width: 125px;
   border: none;
   height: 40px;
+  margin-right: 2px;
+  cursor: pointer;
 
   :hover {
     background: linear-gradient(90deg, rgba(59, 45, 196, 1) 0%, rgba(144, 26, 205, 1) 100%);
@@ -77,6 +79,8 @@ export const SecondaryButton = styled.button`
   min-width: 125px;
   border: none;
   height: 40px;
+  margin-left: 2px;
+  cursor: pointer;
 
   :hover {
     background-color: #37393a;
