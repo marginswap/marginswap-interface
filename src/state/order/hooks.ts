@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { AppDispatch, AppState } from '../index'
 import { useDispatch, useSelector } from 'react-redux'
-import { makeOrder } from '@marginswap/sdk'
+import { makeOrder, invalidateOrder } from '@marginswap/sdk'
 import { Currency, CurrencyAmount, ETHER, Token } from '@marginswap/sdk'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency } from '../../hooks/Tokens'
@@ -9,6 +9,7 @@ import { useBorrowable, useCurrencyBalances } from '../wallet/hooks'
 import { tryParseAmount } from 'state/swap/hooks'
 import { parseUnits } from '@ethersproject/units'
 import { Field, selectOrderCurrency, switchOrderCurrencies, typeOrderInput } from './actions'
+import { useTransactionAdder } from 'state/transactions/hooks'
 
 export function useOrderState(): AppState['order'] {
   return useSelector<AppState, AppState['order']>(state => state.order)
@@ -118,15 +119,17 @@ export function useOrderActionHandlers(): {
   }
 }
 
-export function useMakeOrder(provider: any): {
-  callback: null | (() => Promise<string>)
+export function useLimitOrders(provider: any): {
+  onMakeOrder: null | (() => Promise<string>)
+  onInvalidateOrder: null | ((orderId: string) => Promise<string>)
 } {
   const { chainId } = useActiveWeb3React()
   const { inAmount, outAmount, orderInput, orderOutput } = useOrderState()
   const { orderCurrencies } = useDerivedOrderInfo()
+  const addTransaction = useTransactionAdder()
 
   return {
-    callback: async function onOrder(): Promise<string> {
+    onMakeOrder: async function onOrder(): Promise<string> {
       const inAmt = parseUnits(inAmount, orderCurrencies[Field.INPUT]?.decimals).toString()
       const outAmt = parseUnits(outAmount, orderCurrencies[Field.OUTPUT]?.decimals).toString()
 
@@ -144,6 +147,33 @@ export function useMakeOrder(provider: any): {
           provider
         )
         const result = response as any
+        addTransaction(result, {
+          summary: `Order of ${inAmount} ${orderCurrencies[Field.INPUT].symbol} for ${outAmount} ${
+            orderCurrencies[Field.OUTPUT].symbol
+          }`
+        })
+
+        // order of 0.00001 WETH for 10000 USDT
+        return result.hash
+      } catch (error: any) {
+        if (error?.code === 4001) {
+          throw new Error(`Transaction rejected: ${error.message}`)
+        } else {
+          throw new Error(`Order failed: ${error.message}`)
+        }
+      }
+    },
+    onInvalidateOrder: async function onInvalidate(orderId: string): Promise<string> {
+      try {
+        if (!chainId || !provider) {
+          throw new Error('Missing dependencies')
+        }
+
+        const response = await invalidateOrder(orderId, chainId, provider)
+        const result = response as any
+        addTransaction(result, {
+          summary: `Limit Order Cancellation`
+        })
 
         return result.hash
       } catch (error: any) {
