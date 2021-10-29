@@ -45,7 +45,7 @@ import {
   useSwapState
 } from '../../state/swap/hooks'
 import CurrencyStyledInput from 'components/CurrencyStyledInput'
-import { useMakeOrder, useOrderActionHandlers, useOrderState, useDerivedOrderInfo } from '../../state/order/hooks'
+import { useLimitOrders, useOrderActionHandlers, useOrderState, useDerivedOrderInfo } from '../../state/order/hooks'
 import { selectOrderCurrency } from 'state/order/actions'
 import ConfirmOrderModal from './ConfirmOrderModal'
 
@@ -99,7 +99,7 @@ const OrderWidget = () => {
 
   const { onSwitchTokens, onUserInput, onSwitchLeverageType } = useSwapActionHandlers()
   const { onOrderSwitchTokens, onOrderUserInput } = useOrderActionHandlers()
-  const { callback: orderCallback } = useMakeOrder(provider)
+  const { onMakeOrder } = useLimitOrders(provider)
 
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(
     currencyBalances[Field.INPUT],
@@ -322,7 +322,7 @@ const OrderWidget = () => {
   const handleOrder = async () => {
     if (!chainId) return
 
-    if (!orderCallback) return
+    if (!onMakeOrder) return
 
     setOrderState({
       attemptingOrderTxn: true,
@@ -331,8 +331,9 @@ const OrderWidget = () => {
       orderTxHash: undefined
     })
 
-    orderCallback()
+    onMakeOrder()
       .then(hash => {
+        console.log('🚀 ~ file: index.tsx ~ line 336 ~ handleOrder ~ hash', hash)
         setOrderState({
           attemptingOrderTxn: false,
           showConfirmOrder,

@@ -17,7 +17,8 @@ export default function ConfirmSwapModal({
   toToken,
   inAmount,
   outAmount,
-  orderTxHash
+  orderTxHash,
+  cancelling
 }: {
   isOpen: boolean
   onConfirm: () => void
@@ -29,6 +30,7 @@ export default function ConfirmSwapModal({
   inAmount: string
   outAmount: string
   orderTxHash: string | undefined
+  cancelling?: boolean
 }) {
   const modalHeader = useCallback(() => {
     return <OrderModalHeader fromToken={fromToken} toToken={toToken} inAmount={inAmount} outAmount={outAmount} />
@@ -39,7 +41,9 @@ export default function ConfirmSwapModal({
   }, [onConfirm, fromToken, toToken, inAmount, outAmount])
 
   // text to show while loading
-  const pendingText = `Making an order of ${inAmount} ${fromToken.symbol} for ${outAmount} ${toToken.symbol}`
+  const pendingText = !cancelling
+    ? `Making an order of ${inAmount} ${fromToken.symbol} for ${outAmount} ${toToken.symbol}`
+    : 'Cancelling the order'
 
   const confirmationContent = useCallback(
     () =>
@@ -47,7 +51,7 @@ export default function ConfirmSwapModal({
         <TransactionErrorContent onDismiss={onDismiss} message={orderErrorMessage} />
       ) : (
         <ConfirmationModalContent
-          title="Confirm Order"
+          title={!cancelling ? 'Confirm Order' : 'Cancel Order'}
           onDismiss={onDismiss}
           topContent={modalHeader}
           bottomContent={modalBottom}
