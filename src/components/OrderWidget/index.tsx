@@ -333,7 +333,6 @@ const OrderWidget = () => {
 
     onMakeOrder()
       .then(hash => {
-        console.log('🚀 ~ file: index.tsx ~ line 336 ~ handleOrder ~ hash', hash)
         setOrderState({
           attemptingOrderTxn: false,
           showConfirmOrder,
@@ -414,7 +413,7 @@ const OrderWidget = () => {
         {leverageType === LeverageType.LIMIT_ORDER ? (
           <div>
             <CurrencyStyledInput
-              label={'From'}
+              label={'Amount'}
               symbol={orderCurrencies[Field.INPUT]?.symbol}
               placeholder="Amount"
               onChange={e => {
@@ -423,7 +422,7 @@ const OrderWidget = () => {
               value={inAmount}
             />
             <CurrencyStyledInput
-              label={'To'}
+              label={'Price'}
               symbol={orderCurrencies[Field.OUTPUT]?.symbol}
               placeholder="Price"
               onChange={e => {

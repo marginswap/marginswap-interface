@@ -1,4 +1,5 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client'
+import { ChainId } from '@marginswap/sdk'
 
 const bscClient = new ApolloClient({
   uri: process.env.REACT_APP_GRAPH_SERVER_BSC,
@@ -20,4 +21,17 @@ const ethereumClient = new ApolloClient({
   cache: new InMemoryCache()
 })
 
-export { bscClient, polygonClient, avalancheClient, ethereumClient }
+const apolloClient = (chainId: ChainId | undefined) => {
+  switch (chainId) {
+    case ChainId.AVALANCHE:
+      return avalancheClient
+    case ChainId.BSC:
+      return bscClient
+    case ChainId.MATIC:
+      return polygonClient
+    default:
+      return ethereumClient
+  }
+}
+
+export { apolloClient, bscClient, polygonClient, avalancheClient, ethereumClient }

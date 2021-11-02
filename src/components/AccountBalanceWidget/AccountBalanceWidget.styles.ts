@@ -14,8 +14,11 @@ export const Container = styled.div`
   border-radius: 7px;
   padding: 5px 10px;
   color: #fff;
-  width: 100%;
-  max-height: 470px;
+  width: 290px;
+  height: 400px;
+  max-height: 400px;
+  display: flex;
+  flex-direction: column;
 `
 
 export const Content = styled.div`
@@ -34,11 +37,13 @@ export const Row = styled.div`
   }
 
   > div:last-child {
-    text-align: right;
+    justify-content: flex-end;
   }
 `
 
 export const Item = styled.div`
+  display: flex;
+  align-items: center;
   font-size: 14px;
   width: 100%;
 `
@@ -47,7 +52,7 @@ export const Actions = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin-top: 15px;
+  margin-top: auto;
   margin-bottom: 15px;
 
   @media screen and (max-width: 1290px) {

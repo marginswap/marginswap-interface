@@ -7,8 +7,8 @@ export const Container = styled.div`
   flex-direction: column;
   background-color: #161618;
   width: 290px;
-  height: 470px;
-  max-height: 470px;
+  height: 400px;
+  max-height: 400px;
 `
 export const WidgetBgImg = styled.img`
   position: absolute;

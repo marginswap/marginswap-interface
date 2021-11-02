@@ -15,7 +15,7 @@ export const Container = styled.div`
   padding: 5px 10px;
   color: #fff;
   width: 100%;
-  max-height: 470px;
+  max-height: 405px;
 `
 
 export const Content = styled.div`
@@ -23,8 +23,8 @@ export const Content = styled.div`
   flex-wrap: wrap;
   overflow-y: auto;
   padding-left: 5px;
-  height: 350px;
-  max-height: 350px;
+  height: 300px;
+  max-height: 300px;
   margin-bottom: 15px;
 
   > div {

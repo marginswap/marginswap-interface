@@ -1,5 +1,14 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { Field, selectOrderCurrency, switchOrderCurrencies, replaceOrderState, typeOrderInput } from './actions'
+import { OrderList } from 'types'
+import {
+  Field,
+  selectOrderCurrency,
+  switchOrderCurrencies,
+  replaceOrderState,
+  typeOrderInput,
+  setLimitOrders,
+  setOrderHistory
+} from './actions'
 
 export interface OrderState {
   readonly orderIndependentField: Field
@@ -12,6 +21,8 @@ export interface OrderState {
   readonly orderOutput: {
     readonly currencyId: string | undefined
   }
+  readonly limitOrders?: OrderList
+  readonly orderHistory?: OrderList
 }
 
 const initialState: OrderState = {
@@ -83,6 +94,18 @@ export default createReducer<OrderState>(initialState, builder =>
           currencyId: state.orderOutput.currencyId
         },
         orderTypedValue
+      }
+    })
+    .addCase(setLimitOrders, (state, { payload: { orders } }) => {
+      return {
+        ...state,
+        limitOrders: orders
+      }
+    })
+    .addCase(setOrderHistory, (state, { payload: { orders } }) => {
+      return {
+        ...state,
+        orderHistory: orders
       }
     })
 )

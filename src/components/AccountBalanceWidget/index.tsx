@@ -34,6 +34,7 @@ import {
   SecondaryButton,
   WidgetHeader
 } from './AccountBalanceWidget.styles'
+import Logo from './Logo'
 
 const AccountBalance = () => {
   const { chainId } = useActiveWeb3React()
@@ -237,7 +238,9 @@ const AccountBalance = () => {
               if (tokenBalance > 0) {
                 return (
                   <Row key={token.symbol}>
-                    <Item>{token.symbol}</Item>
+                    <Item>
+                      <Logo address={token.address} /> {token.symbol}
+                    </Item>
                     <Item style={{ textAlign: 'right' }}>{utils.commify(tokenBalance.toFixed(6))}</Item>
                   </Row>
                 )

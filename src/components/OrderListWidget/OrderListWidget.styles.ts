@@ -1,12 +1,13 @@
 import styled from 'styled-components'
 import { Button } from '@material-ui/core'
+import { darken } from 'polished'
 
 export const Container = styled.div`
   background-color: #2b2b2c;
   border-radius: 7px;
   display: flex;
   flex-direction: column;
-  height: 383px;
+  height: 410px;
   margin-top: 10px;
 `
 
@@ -60,6 +61,7 @@ export const Row = styled.div`
   flex-direction: row;
   padding: 6px;
   width: 100%;
+  align-items: center;
 
   > div {
     display: flex;
@@ -67,4 +69,53 @@ export const Row = styled.div`
     font-size: 13px;
     width: 20%;
   }
+
+  :hover {
+    background: linear-gradient(90deg, rgba(34, 95, 74, 0.75) 0%, rgba(43, 50, 109, 0.75) 100%);
+  }
+`
+
+export const CancelButton = styled.div`
+  background-color: ${({ theme }) => theme.red1};
+  border: 1px solid ${({ theme }) => theme.red1};
+
+  align-items: center;
+  color: ${({ theme }) => theme.text1};
+
+  padding: 0.25em;
+  border-radius: 0.25rem;
+  width: 50%;
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:focus {
+    box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.05, theme.red1)};
+    background-color: ${({ theme }) => darken(0.05, theme.red1)};
+  }
+  &:hover {
+    background-color: ${({ theme }) => darken(0.05, theme.red1)};
+  }
+  &:active {
+    box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.1, theme.red1)};
+    background-color: ${({ theme }) => darken(0.1, theme.red1)};
+  }
+  &:disabled {
+    opacity: 50%;
+    cursor: auto;
+    box-shadow: none;
+    background-color: ${({ theme }) => theme.red1};
+    border: 1px solid ${({ theme }) => theme.red1};
+  }
+`
+
+export const Badge = styled.div`
+  align-items: center;
+  color: ${({ theme }) => theme.text1};
+  background-color: #444446;
+  padding: 0.25em;
+  border-radius: 0.25rem;
+  width: 50%;
+  text-align: center;
+  white-space: nowrap;
 `

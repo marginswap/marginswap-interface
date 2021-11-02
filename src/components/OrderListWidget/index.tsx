@@ -1,131 +1,134 @@
-import React, { useCallback, useState } from 'react'
-import { Currency } from '@marginswap/sdk'
-import { Button } from '@material-ui/core'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useActiveWeb3React } from 'hooks'
-import { useLimitOrders } from 'state/order/hooks'
+import { useLimitOrders, useOrderState } from 'state/order/hooks'
 import { getProviderOrSigner } from 'utils'
-
-import ConfirmOrderModal from '../OrderWidget/ConfirmOrderModal'
-
 import {
   Container,
   ActionsHeader,
   Header,
   Row,
   Item,
-  StyledDefaultButton,
-  GridContainer
+  GridContainer,
+  Badge,
+  CancelButton
 } from './OrderListWidget.styles'
+import { ToggleOption, ToggleWrapper } from 'components/ToggleButtonGroup/ToggleButtonGroup.styles'
+import ConfirmCancelOrderModal from './ConfirmCancelOrderModal'
+import { OrderInfo } from 'types'
+import FormattedDate from './FormattedDate'
+import FormattedPair from './FormattedPair'
+import FormattedAmount from './FormattedAmount'
+import FormattedPrice from './FormattedPrice'
+import { useLimitOrdersHistoryQuery, useLimitOrdersQuery } from 'graphql/queries/orderHistory'
+import { apolloClient } from 'config/apollo-config'
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from 'state'
+import { setLimitOrders, setOrderHistory } from 'state/order/actions'
+import Loader from 'components/Loader'
 
-const orders = [
-  {
-    id: 0,
-    date: '09/01/2021',
-    pair: 'ETH - DAI',
-    type: 'Buy',
-    amount: '$10.00',
-    total: '$10.00'
-  },
-  {
-    id: 1,
-    date: '09/01/2021',
-    pair: 'ETH - DAI',
-    type: 'Buy',
-    amount: '$10.00',
-    total: '$10.00'
-  },
-  {
-    id: 2,
-    date: '09/01/2021',
-    pair: 'ETH - DAI',
-    type: 'Buy',
-    amount: '$10.00',
-    total: '$10.00'
-  },
-  {
-    id: 3,
-    date: '09/01/2021',
-    pair: 'ETH - DAI',
-    type: 'Buy',
-    amount: '$10.00',
-    total: '$10.00'
-  },
-  {
-    id: 4,
-    date: '09/01/2021',
-    pair: 'ETH - DAI',
-    type: 'Buy',
-    amount: '$10.00',
-    total: '$10.00'
-  },
-  {
-    id: 5,
-    date: '09/01/2021',
-    pair: 'ETH - DAI',
-    type: 'Buy',
-    amount: '$10.00',
-    total: '$10.00'
-  },
-  {
-    id: 6,
-    date: '09/01/2021',
-    pair: 'ETH - DAI',
-    type: 'Buy',
-    amount: '$10.00',
-    total: '$10.00'
-  },
-  {
-    id: 7,
-    date: '09/01/2021',
-    pair: 'ETH - DAI',
-    type: 'Buy',
-    amount: '$10.00',
-    total: '$10.00'
-  },
-  {
-    id: 8,
-    date: '09/01/2021',
-    pair: 'ETH - DAI',
-    type: 'Buy',
-    amount: '$10.00',
-    total: '$10.00'
-  },
-  {
-    id: 9,
-    date: '09/01/2021',
-    pair: 'ETH - DAI',
-    type: 'Buy',
-    amount: '$10.00',
-    total: '$10.00'
-  }
-]
+enum OrderView {
+  LIMIT,
+  HISTORY
+}
+
+const DATA_POLLING_INTERVAL = 10 * 1000
 
 const OrdersWidget = () => {
+  const dispatch = useDispatch<AppDispatch>()
+  const [orderView, setOrderView] = useState(OrderView.LIMIT)
   const { library, account, chainId } = useActiveWeb3React()
+  const { limitOrders, orderHistory } = useOrderState()
+  const [orders, setOrders] = useState<OrderInfo[]>([])
+  const [pollingInterval, setPollingInterval] = useState<ReturnType<typeof setInterval> | null>()
+  const [triggerDataPoll, setTriggerDataPoll] = useState<boolean>(true)
+
   let provider: any
   if (library && account) {
     provider = getProviderOrSigner(library, account)
   }
   const { onInvalidateOrder } = useLimitOrders(provider)
 
-  const [{ showConfirmOrder, orderErrorMessage, attemptingOrderTxn, orderTxHash }, setOrderState] = useState<{
+  const [{ order, showConfirmOrder, orderErrorMessage, attemptingOrderTxn, orderTxHash }, setOrderState] = useState<{
+    order: OrderInfo
     showConfirmOrder: boolean
     attemptingOrderTxn: boolean
     orderErrorMessage: string | undefined
     orderTxHash: string | undefined
   }>({
+    order: {} as OrderInfo,
     showConfirmOrder: false,
     attemptingOrderTxn: false,
     orderErrorMessage: undefined,
     orderTxHash: undefined
   })
 
-  const handleOrderInvalidation = async () => {
+  const {
+    data: limitOrderData,
+    loading: loadingOrders,
+    refetch: reloadOrders
+  } = useLimitOrdersQuery({
+    variables: {
+      maker: account
+    },
+    client: apolloClient(chainId)
+  })
+
+  const {
+    data: orderHistoryData,
+    loading: loadingHistory,
+    refetch: reloadOrderHistory
+  } = useLimitOrdersHistoryQuery({
+    variables: {
+      maker: account
+    },
+    client: apolloClient(chainId)
+  })
+
+  // these next two useEffect hooks handle order data polling
+  useEffect(() => {
+    if (triggerDataPoll) {
+      try {
+        setTriggerDataPoll(false)
+        reloadOrders()
+        reloadOrderHistory()
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  }, [triggerDataPoll, library])
+
+  useEffect(() => {
+    const interval = setInterval(() => setTriggerDataPoll(true), DATA_POLLING_INTERVAL)
+    setPollingInterval(interval)
+
+    return () => {
+      if (pollingInterval) {
+        clearInterval(pollingInterval)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    if (limitOrderData && limitOrderData.orders) {
+      dispatch(setLimitOrders({ orders: limitOrderData }))
+    }
+  }, [limitOrderData])
+
+  useEffect(() => {
+    if (orderHistoryData && orderHistoryData.orders) {
+      dispatch(setOrderHistory({ orders: orderHistoryData }))
+    }
+  }, [orderHistoryData])
+
+  const handleCancelOrder = async () => {
     if (!chainId) return
 
     if (!onInvalidateOrder) return
 
+    if (!order) return
+
     setOrderState({
+      order: order,
       attemptingOrderTxn: true,
       showConfirmOrder,
       orderErrorMessage: undefined,
@@ -133,10 +136,10 @@ const OrdersWidget = () => {
     })
 
     //TODO: Still need to figure out where is the order id coming from... probably a from subgraph query?
-    onInvalidateOrder('1')
+    onInvalidateOrder(order?.id.toString())
       .then(hash => {
-        console.log('🚀 ~ file: index.tsx ~ line 336 ~ handleOrder ~ hash', hash)
         setOrderState({
+          order: {} as OrderInfo,
           attemptingOrderTxn: false,
           showConfirmOrder,
           orderErrorMessage: undefined,
@@ -144,8 +147,8 @@ const OrdersWidget = () => {
         })
       })
       .catch(error => {
-        console.log('🚀 ~ file: index.tsx ~ line 109 ~ handleOrderInvalidation ~ error', error)
         setOrderState({
+          order: {} as OrderInfo,
           attemptingOrderTxn: false,
           showConfirmOrder,
           orderErrorMessage: error.message,
@@ -155,58 +158,118 @@ const OrdersWidget = () => {
   }
 
   const handleCancelOrderDismiss = useCallback(() => {
-    setOrderState({ showConfirmOrder: false, attemptingOrderTxn, orderErrorMessage: undefined, orderTxHash })
+    setOrderState({
+      order: {} as OrderInfo,
+      showConfirmOrder: false,
+      attemptingOrderTxn,
+      orderErrorMessage: undefined,
+      orderTxHash
+    })
   }, [attemptingOrderTxn, orderErrorMessage, orderTxHash])
+
+  const handleOrderViewChange = (orderView: OrderView) => {
+    setOrderView(orderView)
+  }
+
+  const setOrderData = () => {
+    if (orderView === OrderView.LIMIT) {
+      setOrders(limitOrders ? limitOrders.orders : [])
+    } else {
+      setOrders(orderHistory ? orderHistory.orders : [])
+    }
+  }
+
+  useEffect(() => {
+    setOrderData()
+  }, [orderView, limitOrders, orderHistory])
 
   return (
     <Container>
-      <ConfirmOrderModal
-        isOpen={showConfirmOrder}
-        attemptingTxn={attemptingOrderTxn}
-        orderErrorMessage={orderErrorMessage}
-        onDismiss={handleCancelOrderDismiss}
-        onConfirm={handleOrderInvalidation}
-        orderTxHash={orderTxHash}
-        fromToken={Currency.ETHER}
-        toToken={Currency.ETHER}
-        inAmount={''}
-        outAmount={''}
-        cancelling={true}
-      />
+      {order.id && (
+        <ConfirmCancelOrderModal
+          isOpen={showConfirmOrder}
+          attemptingTxn={attemptingOrderTxn}
+          orderErrorMessage={orderErrorMessage}
+          onDismiss={handleCancelOrderDismiss}
+          onConfirm={handleCancelOrder}
+          orderTxHash={orderTxHash}
+          order={order}
+        />
+      )}
+
       <ActionsHeader>
-        <StyledDefaultButton>Limit Orders</StyledDefaultButton>
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={() => {
-            setOrderState({
-              attemptingOrderTxn: false,
-              orderErrorMessage: undefined,
-              showConfirmOrder: true,
-              orderTxHash: undefined
-            })
+        <ToggleWrapper
+          style={{
+            backgroundColor: '#161618',
+            padding: '0',
+            borderRadius: '8px',
+            width: '28%',
+            marginTop: '6px',
+            marginLeft: '4px'
           }}
         >
-          Order History
-        </Button>
+          <ToggleOption
+            onClick={() => handleOrderViewChange(OrderView.LIMIT)}
+            active={orderView === OrderView.LIMIT}
+            style={{ height: '28px', borderRadius: '6px' }}
+          >
+            Limit Orders
+          </ToggleOption>
+          <ToggleOption
+            onClick={() => handleOrderViewChange(OrderView.HISTORY)}
+            active={orderView === OrderView.HISTORY}
+            style={{ height: '28px', borderRadius: '6px' }}
+          >
+            Order History
+          </ToggleOption>
+        </ToggleWrapper>
       </ActionsHeader>
       <GridContainer>
         <Header>
           <Item>Date</Item>
           <Item>Pair</Item>
-          <Item>Type</Item>
           <Item>Amount</Item>
-          <Item>Total</Item>
+          <Item>Price</Item>
+          <Item>{orderView === OrderView.LIMIT ? 'Actions' : 'Status'}</Item>
         </Header>
-        {orders.map(order => (
-          <Row key={order.id}>
-            <Item>{order.date}</Item>
-            <Item>{order.pair}</Item>
-            <Item>{order.type}</Item>
-            <Item>{order.amount}</Item>
-            <Item>{order.total}</Item>
-          </Row>
-        ))}
+        <div style={{ height: '310px', overflowX: 'auto' }}>
+          {loadingOrders || loadingHistory ? <Loader /> : null}
+          {orders.map((order: OrderInfo) => (
+            <Row key={order.id}>
+              <Item>
+                <FormattedDate order={order} />
+              </Item>
+              <Item>
+                <FormattedPair order={order} />
+              </Item>
+              <Item>
+                <FormattedAmount order={order} />
+              </Item>
+              <Item>
+                <FormattedPrice order={order} />
+              </Item>
+              <Item>
+                {orderView === OrderView.LIMIT ? (
+                  <CancelButton
+                    onClick={() => {
+                      setOrderState({
+                        order: order,
+                        attemptingOrderTxn: false,
+                        orderErrorMessage: undefined,
+                        showConfirmOrder: true,
+                        orderTxHash: undefined
+                      })
+                    }}
+                  >
+                    Cancel
+                  </CancelButton>
+                ) : (
+                  <Badge>Cancelled</Badge>
+                )}
+              </Item>
+            </Row>
+          ))}
+        </div>
       </GridContainer>
     </Container>
   )

@@ -47,6 +47,7 @@ export const PrimaryButton = styled.button`
   width: 100%;
   border: none;
   height: 40px;
+  cursor: pointer;
 
   :hover {
     background: ${props =>

@@ -1,45 +1,49 @@
 import React, { useCallback } from 'react'
 import { Currency } from '@marginswap/sdk'
+import { OrderInfo } from 'types'
+import { formatUnits } from '@ethersproject/units'
+import OrderModalHeader from 'components/OrderWidget/OrderModalHeader'
 import TransactionConfirmationModal, {
   ConfirmationModalContent,
   TransactionErrorContent
 } from 'components/TransactionConfirmationModal'
-import OrderModalFooter from './OrderModalFooter'
-import OrderModalHeader from './OrderModalHeader'
+import { useCurrency } from 'hooks/Tokens'
+import CancelOrderModalFooter from './CancelOrderModalFooter'
 
-export default function ConfirmSwapModal({
+export default function ConfirmCancelOrderModal({
   onConfirm,
   onDismiss,
   attemptingTxn,
   orderErrorMessage,
   isOpen,
-  fromToken,
-  toToken,
-  inAmount,
-  outAmount,
-  orderTxHash
+  orderTxHash,
+  order
 }: {
   isOpen: boolean
   onConfirm: () => void
   attemptingTxn: boolean
   orderErrorMessage: string | undefined
   onDismiss: () => void
-  fromToken: Currency
-  toToken: Currency
-  inAmount: string
-  outAmount: string
   orderTxHash: string | undefined
+  cancelling?: boolean
+  order: OrderInfo
 }) {
+  const fromToken = useCurrency(order.fromToken) || Currency.ETHER
+  const toToken = useCurrency(order.toToken) || Currency.ETHER
+
+  const inAmount = formatUnits(order.inAmount.toString(), fromToken.decimals)
+  const outAmount = formatUnits(order.outAmount.toString(), toToken.decimals)
+
   const modalHeader = useCallback(() => {
     return <OrderModalHeader fromToken={fromToken} toToken={toToken} inAmount={inAmount} outAmount={outAmount} />
   }, [fromToken, toToken, inAmount, outAmount])
 
   const modalBottom = useCallback(() => {
-    return <OrderModalFooter onConfirm={onConfirm} orderErrorMessage={orderErrorMessage} />
+    return <CancelOrderModalFooter onConfirm={onConfirm} orderErrorMessage={orderErrorMessage} />
   }, [onConfirm, fromToken, toToken, inAmount, outAmount])
 
   // text to show while loading
-  const pendingText = `Making an order of ${inAmount} ${fromToken.symbol} for ${outAmount} ${toToken.symbol}`
+  const pendingText = 'Cancelling the order'
 
   const confirmationContent = useCallback(
     () =>
@@ -47,7 +51,7 @@ export default function ConfirmSwapModal({
         <TransactionErrorContent onDismiss={onDismiss} message={orderErrorMessage} />
       ) : (
         <ConfirmationModalContent
-          title="Confirm Order"
+          title="Cancel Order"
           onDismiss={onDismiss}
           topContent={modalHeader}
           bottomContent={modalBottom}
