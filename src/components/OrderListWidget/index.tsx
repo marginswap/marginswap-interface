@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useActiveWeb3React } from 'hooks'
 import { useLimitOrders, useOrderState } from 'state/order/hooks'
 import { getProviderOrSigner } from 'utils'
+import { DateTime } from 'luxon'
 import {
   Container,
   ActionsHeader,
@@ -15,7 +16,6 @@ import {
 import { ToggleOption, ToggleWrapper } from 'components/ToggleButtonGroup/ToggleButtonGroup.styles'
 import ConfirmCancelOrderModal from './ConfirmCancelOrderModal'
 import { OrderInfo } from 'types'
-import FormattedDate from './FormattedDate'
 import FormattedPair from './FormattedPair'
 import FormattedAmount from './FormattedAmount'
 import FormattedPrice from './FormattedPrice'
@@ -183,6 +183,10 @@ const OrdersWidget = () => {
     setOrderData()
   }, [orderView, limitOrders, orderHistory])
 
+  const dateItem = (timestamp: string) => {
+    return <span>{DateTime.fromMillis(+timestamp * 1000).toLocaleString(DateTime.DATE_SHORT)}</span>
+  }
+
   return (
     <Container>
       {order.id && (
@@ -236,9 +240,7 @@ const OrdersWidget = () => {
           {loadingOrders || loadingHistory ? <Loader /> : null}
           {orders.map((order: OrderInfo) => (
             <Row key={order.id}>
-              <Item>
-                <FormattedDate order={order} />
-              </Item>
+              <Item>{dateItem(order.createdAt)}</Item>
               <Item>
                 <FormattedPair order={order} />
               </Item>
