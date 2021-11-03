@@ -78,16 +78,16 @@ export const Row = styled.div`
 export const CancelButton = styled.div`
   background-color: ${({ theme }) => theme.red1};
   border: 1px solid ${({ theme }) => theme.red1};
-
   align-items: center;
   color: ${({ theme }) => theme.text1};
-
-  padding: 0.25em;
+  padding: 0.35em 0.65em;
   border-radius: 0.25rem;
   width: 50%;
   text-align: center;
   white-space: nowrap;
   cursor: pointer;
+  display: inline-block;
+  line-height: 1;
 
   &:focus {
     box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.05, theme.red1)};
@@ -113,9 +113,11 @@ export const Badge = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.text1};
   background-color: #444446;
-  padding: 0.25em;
+  padding: 0.35em 0.65em;
   border-radius: 0.25rem;
   width: 50%;
   text-align: center;
   white-space: nowrap;
+  display: inline-block;
+  line-height: 1;
 `

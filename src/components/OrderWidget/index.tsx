@@ -359,6 +359,10 @@ const OrderWidget = () => {
     }
   }, [attemptingOrderTxn, orderErrorMessage, orderTxHash])
 
+  useEffect(() => {
+    onSwitchLeverageType(LeverageType.CROSS_MARGIN)
+  }, [])
+
   return (
     <div>
       <Container>
@@ -397,8 +401,8 @@ const OrderWidget = () => {
         </ToggleWrapper>
         <ToggleWrapper>
           <FlatToggleOption
-            onClick={() => onSwitchLeverageType(LeverageType.SPOT)}
-            active={leverageType === LeverageType.SPOT}
+            onClick={() => onSwitchLeverageType(LeverageType.CROSS_MARGIN)}
+            active={leverageType === LeverageType.CROSS_MARGIN}
           >
             Market
           </FlatToggleOption>
@@ -461,7 +465,7 @@ const OrderWidget = () => {
           </div>
         )}
 
-        <SettingsContainer show={leverageType === LeverageType.SPOT}>
+        <SettingsContainer show={leverageType === LeverageType.CROSS_MARGIN}>
           <span>Advanced Settings</span>
           <Settings centered />
         </SettingsContainer>
