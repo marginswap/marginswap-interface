@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
-
+import { getProviderOrSigner } from 'utils'
 import {
+  ChainId,
   getAccountBalances,
   getAccountBorrowTotal,
   getAccountHoldingTotal,
@@ -37,7 +38,7 @@ import {
 import Logo from './Logo'
 
 const AccountBalance = () => {
-  const { chainId } = useActiveWeb3React()
+  const { chainId, library } = useActiveWeb3React()
   const { account } = useWeb3React()
 
   const [tokens, setTokens] = useState<TokenInfo[]>([])
@@ -50,7 +51,15 @@ const AccountBalance = () => {
   const [, setWithdrawableAmounts] = useState<Record<string, TokenAmount>>({})
   const [, setTokenBalances] = useState<Record<string, number>>({})
 
-  const queryProvider = getDefaultProvider(chainId && NETWORK_URLS[chainId])
+  let provider: any
+  if (library && account) {
+    provider = getProviderOrSigner(library, account)
+  }
+
+  const queryProvider =
+    chainId && ![ChainId.MAINNET, ChainId.AVALANCHE, ChainId.KOVAN].includes(chainId)
+      ? getDefaultProvider(chainId && NETWORK_URLS[chainId])
+      : provider
 
   useEffect(() => {
     const tokensToSet = tokensList.tokens.filter(t => t.chainId === chainId)
