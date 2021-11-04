@@ -76,16 +76,15 @@ export const Row = styled.div`
 `
 
 export const CancelButton = styled.div`
-  background-color: ${({ theme }) => theme.red1};
-  border: 1px solid ${({ theme }) => theme.red1};
+  cursor: pointer;
   align-items: center;
   color: ${({ theme }) => theme.text1};
+  background-color: ${({ theme }) => theme.red1};
   padding: 0.35em 0.65em;
   border-radius: 0.25rem;
   width: 50%;
   text-align: center;
   white-space: nowrap;
-  cursor: pointer;
   display: inline-block;
   line-height: 1;
 

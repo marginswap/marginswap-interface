@@ -14,16 +14,16 @@ import {
   CancelButton
 } from './OrderListWidget.styles'
 import { ToggleOption, ToggleWrapper } from 'components/ToggleButtonGroup/ToggleButtonGroup.styles'
-import ConfirmCancelOrderModal from './ConfirmCancelOrderModal'
 import { OrderInfo } from 'types'
-import FormattedPair from './FormattedPair'
-import FormattedAmount from './FormattedAmount'
-import FormattedPrice from './FormattedPrice'
 import { useLimitOrdersHistoryQuery, useLimitOrdersQuery } from 'graphql/queries/orderHistory'
 import { apolloClient } from 'config/apollo-config'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
 import { setLimitOrders, setOrderHistory } from 'state/order/actions'
+import ConfirmCancelOrderModal from './ConfirmCancelOrderModal'
+import FormattedPair from './FormattedPair'
+import FormattedAmount from './FormattedAmount'
+import FormattedPrice from './FormattedPrice'
 import Loader from 'components/Loader'
 
 enum OrderView {
