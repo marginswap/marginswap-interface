@@ -20,6 +20,7 @@ export const Container = styled.div`
 
 export const Content = styled.div`
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
   overflow-y: auto;
   padding-left: 5px;
@@ -43,11 +44,11 @@ export const Row = styled.div`
   width: 100%;
 
   > div {
-    width: 30%;
+    width: 28%;
   }
 
   > div:last-child {
-    width: 40%;
+    width: 45%;
   }
 `
 

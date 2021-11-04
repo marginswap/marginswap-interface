@@ -1,130 +1,117 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Container, Content, Header, Item, Row, WidgetHeader } from './MarketTrades.styles'
+import { useMarketTradesQuery } from 'graphql/queries/trades'
+import { apolloClient } from 'config/apollo-config'
+import { useActiveWeb3React } from 'hooks'
+import { SwapInfo } from 'types'
+import { DateTime } from 'luxon'
+import { getPegCurrency, USDT_MAINNET } from '../../constants'
+import { formatUnits } from '@ethersproject/units'
+import { ETHER, Token } from '@marginswap/sdk'
+import { ProUIContext } from 'pages/Pro'
+import FormatTradePrice from './FormatTradePrice'
+import Loader from 'components/Loader'
 
-const trades = [
-  {
-    id: 1,
-    size: '0.1284',
-    price: '38046.5',
-    time: '2021/08/31 12:55'
-  },
-  {
-    id: 2,
-    size: '0.1710',
-    price: '38078.7',
-    time: '2021/08/31 12:54'
-  },
-  {
-    id: 3,
-    size: '0.2560',
-    price: '38069.5',
-    time: '2021/08/31 12:49'
-  },
-  {
-    id: 4,
-    size: '0.09305',
-    price: '38032.0',
-    time: '2021/08/31 12:42'
-  },
-  {
-    id: 5,
-    size: '0.2560',
-    price: '37994.50',
-    time: '2021/08/31 12:38'
-  },
-  {
-    id: 6,
-    size: '0.2560',
-    price: '37939.60',
-    time: '2021/08/31 12:36'
-  },
-  {
-    id: 7,
-    size: '0.1773',
-    price: '37931.20',
-    time: '2021/08/31 12:36'
-  },
-  {
-    id: 8,
-    size: '0.1720',
-    price: '37968.60',
-    time: '2021/08/31 12:35'
-  },
-  {
-    id: 9,
-    size: '0.1360',
-    price: '38001.70',
-    time: '2021/08/31 12:34'
-  },
-  {
-    id: 10,
-    size: '0.1771',
-    price: '38035.30',
-    time: '2021/08/31 12:32'
-  },
-  {
-    id: 11,
-    size: '0.1284',
-    price: '38046.5',
-    time: '2021/08/31 12:55'
-  },
-  {
-    id: 12,
-    size: '0.1710',
-    price: '38078.7',
-    time: '2021/08/31 12:54'
-  },
-  {
-    id: 13,
-    size: '0.2560',
-    price: '38069.5',
-    time: '2021/08/31 12:49'
-  },
-  {
-    id: 14,
-    size: '0.09305',
-    price: '38032.0',
-    time: '2021/08/31 12:42'
-  },
-  {
-    id: 15,
-    size: '0.2560',
-    price: '37994.50',
-    time: '2021/08/31 12:38'
-  },
-  {
-    id: 16,
-    size: '0.2560',
-    price: '37939.60',
-    time: '2021/08/31 12:36'
-  },
-  {
-    id: 17,
-    size: '0.1773',
-    price: '37931.20',
-    time: '2021/08/31 12:36'
-  },
-  {
-    id: 18,
-    size: '0.1720',
-    price: '37968.60',
-    time: '2021/08/31 12:35'
-  },
-  {
-    id: 19,
-    size: '0.1360',
-    price: '38001.70',
-    time: '2021/08/31 12:34'
-  },
-  {
-    id: 20,
-    size: '0.1771',
-    price: '38035.30',
-    time: '2021/08/31 12:32'
-  }
-]
+// Poll for new swap entities on an interval that matches the polling for margin account data
+const DATA_POLLING_INTERVAL = 60 * 1000
 
 const MarketTrades = () => {
+  const { library, account, chainId } = useActiveWeb3React()
+  const [trades, setTrades] = useState<SwapInfo[]>([])
+  const { currentPair } = useContext(ProUIContext)
+  const [pollingInterval, setPollingInterval] = useState<ReturnType<typeof setInterval> | null>()
+  const [triggerDataPoll, setTriggerDataPoll] = useState<boolean>(true)
+
+  const {
+    data: tradeData,
+    loading: loadingTrades,
+    refetch: reloadTrades
+  } = useMarketTradesQuery({
+    variables: {
+      trader: account,
+      tokens: [currentPair && currentPair[0].address, currentPair && currentPair[1].address]
+    },
+    client: apolloClient(chainId)
+  })
+
+  const filterTradesByCurrentPair = () => {
+    if (!tradeData) return
+
+    const pair1 = currentPair && currentPair[0].address.toUpperCase()
+    const pair2 = currentPair && currentPair[1].address.toUpperCase()
+
+    const filteredPairs = tradeData.swaps.filter(
+      t =>
+        (t.fromToken.toUpperCase() === pair1 && t.toToken.toUpperCase() == pair2) ||
+        (t.toToken.toUpperCase() == pair1 && t.fromToken.toUpperCase() == pair2)
+    )
+
+    setTrades(filteredPairs)
+  }
+
+  useEffect(() => {
+    if (tradeData) {
+      filterTradesByCurrentPair()
+    }
+  }, [tradeData])
+
+  useEffect(() => {
+    reloadTrades()
+  }, [currentPair])
+
+  // these next two useEffect hooks handle order data polling
+  useEffect(() => {
+    if (triggerDataPoll) {
+      try {
+        setTriggerDataPoll(false)
+        reloadTrades()
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  }, [triggerDataPoll, library])
+
+  useEffect(() => {
+    const interval = setInterval(() => setTriggerDataPoll(true), DATA_POLLING_INTERVAL)
+    setPollingInterval(interval)
+
+    return () => {
+      if (pollingInterval) {
+        clearInterval(pollingInterval)
+      }
+    }
+  }, [])
+
+  const renderDateTime = (timestamp: string) => {
+    return <span>{DateTime.fromMillis(+timestamp * 1000).toLocaleString(DateTime.DATETIME_SHORT)}</span>
+  }
+
+  const renderSize = (swap: SwapInfo) => {
+    const pegCurrency = getPegCurrency(chainId) ?? (USDT_MAINNET as Token)
+
+    if (pegCurrency.address === swap.fromToken) {
+      return formatUnits(swap.toAmount, ETHER.decimals)
+    }
+
+    return formatUnits(swap.fromAmount, ETHER.decimals)
+  }
+
+  const renderTrades = () => {
+    if (trades) {
+      return trades.map((swap: SwapInfo) => (
+        <Row key={swap.id}>
+          <Item>{renderSize(swap)}</Item>
+          <Item>
+            <FormatTradePrice swap={swap} />
+          </Item>
+          <Item>{renderDateTime(swap.createdAt)}</Item>
+        </Row>
+      ))
+    }
+
+    return null
+  }
+
   return (
     <Container>
       <WidgetHeader>Market Trades</WidgetHeader>
@@ -133,15 +120,7 @@ const MarketTrades = () => {
         <Item>Price</Item>
         <Item>Time</Item>
       </Header>
-      <Content>
-        {trades.map(e => (
-          <Row key={e.id}>
-            <Item>{e.size}</Item>
-            <Item>{e.price}</Item>
-            <Item>{e.time}</Item>
-          </Row>
-        ))}
-      </Content>
+      <Content>{loadingTrades ? <Loader /> : renderTrades()}</Content>
     </Container>
   )
 }
