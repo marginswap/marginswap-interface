@@ -11,7 +11,8 @@ import {
   Item,
   GridContainer,
   Badge,
-  CancelButton
+  CancelButton,
+  Span
 } from './OrderListWidget.styles'
 import { ToggleOption, ToggleWrapper } from 'components/ToggleButtonGroup/ToggleButtonGroup.styles'
 import { OrderInfo } from 'types'
@@ -215,14 +216,14 @@ const OrdersWidget = () => {
           <ToggleOption
             onClick={() => handleOrderViewChange(OrderView.LIMIT)}
             active={orderView === OrderView.LIMIT}
-            style={{ height: '28px', borderRadius: '6px' }}
+            style={{ height: '28px', borderRadius: '6px', minWidth: '7rem' }}
           >
             Limit Orders
           </ToggleOption>
           <ToggleOption
             onClick={() => handleOrderViewChange(OrderView.HISTORY)}
             active={orderView === OrderView.HISTORY}
-            style={{ height: '28px', borderRadius: '6px' }}
+            style={{ height: '28px', borderRadius: '6px', minWidth: '7rem' }}
           >
             Order History
           </ToggleOption>
@@ -240,7 +241,9 @@ const OrdersWidget = () => {
           {loadingOrders || loadingHistory ? <Loader /> : null}
           {orders.map((order: OrderInfo) => (
             <Row key={order.id}>
-              <Item>{dateItem(order.createdAt)}</Item>
+              <Item>
+                <Span>{dateItem(order.createdAt)}</Span>
+              </Item>
               <Item>
                 <FormattedPair order={order} />
               </Item>

@@ -14,11 +14,11 @@ export const Container = styled.div`
   border-radius: 7px;
   padding: 5px 10px;
   color: #fff;
-  width: 290px;
   height: 400px;
   max-height: 400px;
   display: flex;
   flex-direction: column;
+  width: 100%;
 `
 
 export const Content = styled.div`
@@ -75,6 +75,10 @@ export const PrimaryButton = styled.button`
   :hover {
     background: linear-gradient(90deg, rgba(59, 45, 196, 1) 0%, rgba(144, 26, 205, 1) 100%);
   }
+
+  @media (max-width: 600px) {
+    width: 100%;
+  }
 `
 
 export const SecondaryButton = styled.button`
@@ -89,5 +93,9 @@ export const SecondaryButton = styled.button`
 
   :hover {
     background-color: #37393a;
+  }
+
+  @media (max-width: 600px) {
+    width: 100%;
   }
 `

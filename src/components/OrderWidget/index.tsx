@@ -24,7 +24,7 @@ import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } 
 import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { AutoRow } from '../../components/Row'
-import { Container, SettingsContainer, BottomGrouping } from './OrderWidget.styles'
+import { OrderContainer, Container, SettingsContainer, BottomGrouping } from './OrderWidget.styles'
 import { SwapCallbackError } from '../../components/swap/styleds'
 import { CurrencyAmount, JSBI, LeverageType, Trade } from '@marginswap/sdk'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
@@ -364,7 +364,7 @@ const OrderWidget = () => {
   }, [])
 
   return (
-    <div>
+    <OrderContainer>
       <Container>
         <ConfirmSwapModal
           isOpen={showConfirm}
@@ -574,7 +574,7 @@ const OrderWidget = () => {
       ) : (
         <UnsupportedCurrencyFooter show={swapIsUnsupported} currencies={[currencies.INPUT, currencies.OUTPUT]} />
       )}
-    </div>
+    </OrderContainer>
   )
 }
 

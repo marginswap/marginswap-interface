@@ -88,6 +88,11 @@ export const CancelButton = styled.div`
   display: inline-block;
   line-height: 1;
 
+  @media (max-width: 600px) {
+    width: 100%;
+    padding: 0.25em;
+  }
+
   &:focus {
     box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.05, theme.red1)};
     background-color: ${({ theme }) => darken(0.05, theme.red1)};
@@ -119,4 +124,16 @@ export const Badge = styled.div`
   white-space: nowrap;
   display: inline-block;
   line-height: 1;
+
+  @media (max-width: 600px) {
+    width: 100%;
+    padding: 0.25em;
+    font-size: 0.75em;
+  }
+`
+
+export const Span = styled.span`
+  @media (max-width: 600px) {
+    font-size: 0.75em;
+  }
 `

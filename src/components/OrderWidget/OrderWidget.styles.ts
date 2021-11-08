@@ -2,12 +2,18 @@ import styled from 'styled-components'
 import { Settings } from 'react-feather'
 import { Tab, TextField } from '@material-ui/core'
 
+export const OrderContainer = styled.div`
+  @media (max-width: 600px) {
+    width: 100%;
+  }
+`
+
 export const Container = styled.div`
   border-radius: 7px;
   display: flex;
   flex-direction: column;
   background-color: #161618;
-  max-width: 290px;
+  width: 100%;
   padding: 10px;
   max-height: 470px;
 `
