@@ -1,49 +1,77 @@
 import styled from 'styled-components'
+import { DEVICE } from 'theme/device'
 
 export const Container = styled.div`
   display: flex;
   flex-direction: row;
-  width: 90%;
 
-  @media screen and (max-width: 960px) {
+  @media ${DEVICE.mobileS} {
     flex-direction: column;
-    width: 80%;
   }
 
-  @media screen and (max-width: 480px) {
+  @media ${DEVICE.tablet} {
     flex-direction: column;
-    width: 90%;
+  }
+
+  @media ${DEVICE.laptop} {
+    max-width: 95%;
+    flex-direction: row;
   }
 `
 
 export const LeftContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 25%;
+  width: 21%;
 
-  @media screen and (max-width: 960px) {
+  @media ${DEVICE.mobileS} {
     flex-direction: row;
     width: 100%;
   }
 
-  @media screen and (max-width: 480px) {
-    flex-direction: column;
-    width: 100%;
+  @media ${DEVICE.laptop} {
+    flex-direction: row;
+    width: 20%;
   }
 `
 
 export const CenterContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 58%;
 
   > div {
     border: 1px solid #525252;
   }
 
-  @media screen and (max-width: 960px) {
+  @media ${DEVICE.mobileS} {
+    flex-direction: column;
     width: 100%;
-    margin-bottom: 10px;
+  }
+
+  @media ${DEVICE.tablet} {
+    flex-direction: column;
+  }
+
+  @media ${DEVICE.laptop} {
+    margin: 0 10px 10px 10px;
+    width: 60%;
+  }
+`
+
+export const RightContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 21%;
+
+  @media ${DEVICE.mobileS} {
+    flex-direction: row;
+    width: 100%;
+  }
+
+  @media ${DEVICE.laptop} {
+    flex-direction: row;
+    width: 20%;
   }
 `
 
@@ -51,37 +79,23 @@ export const ChartContainer = styled.div`
   height: 400px;
 `
 
-export const RightContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 25%;
-
-  @media screen and (max-width: 960px) {
-    flex-direction: row;
-    width: 100%;
-  }
-
-  @media screen and (max-width: 480px) {
-    flex-direction: column;
-    width: 100%;
-  }
-`
-
 export const WidgetContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 0 10px 10px 10px;
   gap: 2vh;
 
-  @media screen and (max-width: 960px) {
-    flex-direction: row;
-    margin: 0 0px 10px 0px;
+  @media ${DEVICE.mobileS} {
+    flex-direction: column;
     width: 100%;
   }
 
-  @media screen and (max-width: 480px) {
+  @media ${DEVICE.tablet} {
+    flex-direction: row;
+    width: 100%;
+  }
+
+  @media ${DEVICE.laptop} {
     flex-direction: column;
-    margin: 0 0px 10px 0px;
     width: 100%;
   }
 `

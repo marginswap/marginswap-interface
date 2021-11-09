@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { DEVICE } from 'theme/device'
 
 export const WidgetHeader = styled.div`
   padding-top: 10px;
@@ -18,7 +19,16 @@ export const Container = styled.div`
   max-height: 400px;
   display: flex;
   flex-direction: column;
-  width: 100%;
+
+  @media ${DEVICE.tablet} {
+    width: 50%;
+    margin-top: 10px;
+  }
+
+  @media ${DEVICE.laptop} {
+    width: 100%;
+    margin-top: 0;
+  }
 `
 
 export const Content = styled.div`
@@ -50,14 +60,17 @@ export const Item = styled.div`
 
 export const Actions = styled.div`
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 1vh;
   margin-top: auto;
   margin-bottom: 15px;
 
-  @media screen and (max-width: 1290px) {
-    flex-direction: column;
-    gap: 1vh;
+  @media ${DEVICE.laptop} {
+    justify-content: space-between;
+  }
+
+  @media ${DEVICE.laptopL} {
+    flex-direction: row;
   }
 `
 
@@ -66,7 +79,7 @@ export const PrimaryButton = styled.button`
   background: linear-gradient(90deg, rgba(46, 32, 185, 1) 0%, rgba(128, 11, 188, 1) 100%);
   border-radius: 25px;
   color: white;
-  min-width: 125px;
+  min-width: 100px;
   border: none;
   height: 40px;
   margin-right: 2px;
@@ -76,8 +89,12 @@ export const PrimaryButton = styled.button`
     background: linear-gradient(90deg, rgba(59, 45, 196, 1) 0%, rgba(144, 26, 205, 1) 100%);
   }
 
-  @media (max-width: 600px) {
+  @media ${DEVICE.mobileS} {
     width: 100%;
+  }
+
+  @media ${DEVICE.laptop} {
+    min-width: 120px;
   }
 `
 
@@ -85,7 +102,7 @@ export const SecondaryButton = styled.button`
   background-color: #2e3233;
   border-radius: 25px;
   color: white;
-  min-width: 125px;
+  min-width: 100px;
   border: none;
   height: 40px;
   margin-left: 2px;
@@ -95,7 +112,11 @@ export const SecondaryButton = styled.button`
     background-color: #37393a;
   }
 
-  @media (max-width: 600px) {
+  @media ${DEVICE.mobileS} {
     width: 100%;
+  }
+
+  @media ${DEVICE.laptop} {
+    min-width: 120px;
   }
 `

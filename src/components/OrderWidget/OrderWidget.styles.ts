@@ -1,9 +1,14 @@
 import styled from 'styled-components'
 import { Settings } from 'react-feather'
 import { Tab, TextField } from '@material-ui/core'
+import { DEVICE } from 'theme/device'
 
 export const OrderContainer = styled.div`
-  @media (max-width: 600px) {
+  @media ${DEVICE.tablet} {
+    width: 50%;
+  }
+
+  @media ${DEVICE.laptop} {
     width: 100%;
   }
 `

@@ -10,25 +10,19 @@ import { formatUnits } from '@ethersproject/units'
 import { ETHER, Token } from '@marginswap/sdk'
 import { ProUIContext } from 'pages/Pro'
 import FormatTradePrice from './FormatTradePrice'
-import Loader from 'components/Loader'
 
 // Poll for new swap entities on an interval that matches the polling for margin account data
 const DATA_POLLING_INTERVAL = 60 * 1000
 
 const MarketTrades = () => {
-  const { library, account, chainId } = useActiveWeb3React()
+  const { library, chainId } = useActiveWeb3React()
   const [trades, setTrades] = useState<SwapInfo[]>([])
   const { currentPair } = useContext(ProUIContext)
   const [pollingInterval, setPollingInterval] = useState<ReturnType<typeof setInterval> | null>()
   const [triggerDataPoll, setTriggerDataPoll] = useState<boolean>(true)
 
-  const {
-    data: tradeData,
-    loading: loadingTrades,
-    refetch: reloadTrades
-  } = useMarketTradesQuery({
+  const { data: tradeData, refetch: reloadTrades } = useMarketTradesQuery({
     variables: {
-      trader: account,
       tokens: [currentPair && currentPair[0].address, currentPair && currentPair[1].address]
     },
     client: apolloClient(chainId)
@@ -88,16 +82,18 @@ const MarketTrades = () => {
 
   const renderSize = (swap: SwapInfo) => {
     const pegCurrency = getPegCurrency(chainId) ?? (USDT_MAINNET as Token)
+    let size
 
     if (pegCurrency.address === swap.fromToken) {
-      return formatUnits(swap.toAmount, ETHER.decimals)
+      size = formatUnits(swap.toAmount, ETHER.decimals)
     }
 
-    return formatUnits(swap.fromAmount, ETHER.decimals)
+    size = formatUnits(swap.fromAmount, ETHER.decimals)
+    return parseFloat(size).toFixed(4)
   }
 
   const renderTrades = () => {
-    if (trades) {
+    if (trades && trades.length > 0) {
       return trades.map((swap: SwapInfo) => (
         <Row key={swap.id}>
           <Item>{renderSize(swap)}</Item>
@@ -107,9 +103,13 @@ const MarketTrades = () => {
           <Item>{renderDateTime(swap.createdAt)}</Item>
         </Row>
       ))
+    } else {
+      return (
+        <div style={{ position: 'relative', top: '50%', transform: 'translateY(-50%)', textAlign: 'center' }}>
+          No Market Trades yet...
+        </div>
+      )
     }
-
-    return null
   }
 
   return (
@@ -120,7 +120,7 @@ const MarketTrades = () => {
         <Item>Price</Item>
         <Item>Time</Item>
       </Header>
-      <Content>{loadingTrades ? <Loader /> : renderTrades()}</Content>
+      <Content>{renderTrades()}</Content>
     </Container>
   )
 }

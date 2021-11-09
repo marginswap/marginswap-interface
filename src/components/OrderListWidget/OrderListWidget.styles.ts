@@ -46,7 +46,11 @@ export const Header = styled.div`
 
   > div {
     font-size: 12px;
-    width: 20%;
+    width: 22.5%;
+  }
+
+  > div:last-child {
+    width: 10%;
   }
 `
 
@@ -67,7 +71,11 @@ export const Row = styled.div`
     display: flex;
     flex-direction: column;
     font-size: 13px;
-    width: 20%;
+    width: 22.5%;
+  }
+
+  > div:last-child {
+    width: 10%;
   }
 
   :hover {
@@ -87,9 +95,13 @@ export const CancelButton = styled.div`
   white-space: nowrap;
   display: inline-block;
   line-height: 1;
+  font-size: 0.7rem;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 
   @media (max-width: 600px) {
-    width: 100%;
     padding: 0.25em;
   }
 
@@ -119,16 +131,18 @@ export const Badge = styled.div`
   background-color: #444446;
   padding: 0.35em 0.65em;
   border-radius: 0.25rem;
-  width: 50%;
   text-align: center;
   white-space: nowrap;
   display: inline-block;
   line-height: 1;
+  font-size: 0.7rem;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 
   @media (max-width: 600px) {
-    width: 100%;
     padding: 0.25em;
-    font-size: 0.75em;
   }
 `
 

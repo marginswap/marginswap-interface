@@ -6,8 +6,14 @@ import { Span } from './OrderListWidget.styles'
 
 const FormattedPrice = ({ order }: { order: OrderInfo }) => {
   const currency = useCurrency(order.fromToken)
+  const priceSymbol = useCurrency(order.toToken)?.symbol
+
   const outAmount = formatUnits(order.outAmount.toString(), currency?.decimals)
-  return <Span>{outAmount}</Span>
+  return (
+    <Span>
+      {outAmount} {priceSymbol}
+    </Span>
+  )
 }
 
 export default FormattedPrice

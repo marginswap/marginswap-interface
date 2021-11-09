@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { DEVICE } from 'theme/device'
 
 export const StyledInputWrapper = styled.div`
   display: flex;
@@ -14,8 +15,16 @@ export const StyledInputContainer = styled.div`
   display: flex;
   flex-direction: column;
   color: white;
-  width: 70%;
   padding: 7px;
+  width: 70%;
+
+  @media ${DEVICE.laptop} {
+    width: 60%;
+  }
+
+  @media ${DEVICE.laptopL} {
+    width: 70%;
+  }
 
   > label {
     color: #b2b2b2;
@@ -41,11 +50,19 @@ export const StyledInputContainer = styled.div`
 `
 
 export const StyledInputAdornment = styled.div`
-  width: 30%;
   background-color: #3d3d3d;
   color: white;
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
   text-align: center;
   font-size: 1.12rem;
+  width: 30%;
+
+  @media ${DEVICE.laptop} {
+    width: 40%;
+  }
+
+  @media ${DEVICE.laptopL} {
+    width: 30%;
+  }
 `

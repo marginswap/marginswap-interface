@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { Star } from 'react-feather'
+import { DEVICE } from 'theme/device'
 
 export const Container = styled.div`
   border-radius: 7px;
@@ -9,6 +10,14 @@ export const Container = styled.div`
   width: 100%;
   height: 400px;
   max-height: 400px;
+
+  @media ${DEVICE.tablet} {
+    width: 50%;
+  }
+
+  @media ${DEVICE.laptop} {
+    width: 100%;
+  }
 `
 export const WidgetBgImg = styled.img`
   position: absolute;
@@ -84,6 +93,7 @@ export const Row = styled.div`
   flex-direction: row;
   width: 100%;
   padding: 10px;
+  cursor: pointer;
 
   > div:first-child {
     width: 116px;

@@ -25,7 +25,6 @@ import ConfirmCancelOrderModal from './ConfirmCancelOrderModal'
 import FormattedPair from './FormattedPair'
 import FormattedAmount from './FormattedAmount'
 import FormattedPrice from './FormattedPrice'
-import Loader from 'components/Loader'
 
 enum OrderView {
   LIMIT,
@@ -63,22 +62,14 @@ const OrdersWidget = () => {
     orderTxHash: undefined
   })
 
-  const {
-    data: limitOrderData,
-    loading: loadingOrders,
-    refetch: reloadOrders
-  } = useLimitOrdersQuery({
+  const { data: limitOrderData, refetch: reloadOrders } = useLimitOrdersQuery({
     variables: {
       maker: account
     },
     client: apolloClient(chainId)
   })
 
-  const {
-    data: orderHistoryData,
-    loading: loadingHistory,
-    refetch: reloadOrderHistory
-  } = useLimitOrdersHistoryQuery({
+  const { data: orderHistoryData, refetch: reloadOrderHistory } = useLimitOrdersHistoryQuery({
     variables: {
       maker: account
     },
@@ -238,7 +229,11 @@ const OrdersWidget = () => {
           <Item>{orderView === OrderView.LIMIT ? 'Actions' : 'Status'}</Item>
         </Header>
         <div style={{ height: '310px', overflowX: 'auto' }}>
-          {loadingOrders || loadingHistory ? <Loader /> : null}
+          {orders.length === 0 && (
+            <div style={{ position: 'relative', top: '50%', transform: 'translateY(-50%)', textAlign: 'center' }}>
+              {orderView === OrderView.LIMIT ? 'No Limit Orders yet...' : 'No Order History yet...'}
+            </div>
+          )}
           {orders.map((order: OrderInfo) => (
             <Row key={order.id}>
               <Item>

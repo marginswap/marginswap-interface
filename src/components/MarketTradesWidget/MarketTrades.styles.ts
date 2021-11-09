@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { DEVICE } from 'theme/device'
 
 export const WidgetHeader = styled.div`
   padding-top: 10px;
@@ -14,13 +15,22 @@ export const Container = styled.div`
   border-radius: 7px;
   padding: 5px 10px;
   color: #fff;
-  width: 100%;
   max-height: 405px;
+
+  @media ${DEVICE.tablet} {
+    width: 50%;
+    margin-top: 10px;
+  }
+
+  @media ${DEVICE.laptop} {
+    width: 100%;
+    margin-top: 0;
+  }
 `
 
 export const Content = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   flex-wrap: wrap;
   overflow-y: auto;
   padding-left: 5px;

@@ -13,9 +13,9 @@ const FormatTradePrice = ({ swap }: { swap: SwapInfo }) => {
 
   // from token is the peg currency. dividing peg / non-peg
   if (pegCurrency.address === swap.fromToken) {
-    return <span>{(swap.fromAmount / swap.toAmount).toFixed(4)}</span>
+    return <span>{(swap.fromAmount / swap.toAmount).toFixed(2)}</span>
   } else {
-    return <span>{(swap.toAmount / swap.fromAmount).toFixed(4)}</span>
+    return <span>{(swap.toAmount / swap.fromAmount).toFixed(2)}</span>
   }
 }
 

@@ -5,8 +5,8 @@ import { SwapList } from 'types'
 // the selected pair. It does not matter which token is from and which is to - only that the Swap
 // has the same tokens as the selected pair
 export const marketTradesGQL = gql`
-  query marketTrades($trader: Bytes, $tokens: [String]) {
-    swaps(orderBy: createdAt, orderDirection: desc, where: { trader: $trader, fromToken_in: $tokens }) {
+  query marketTrades($tokens: [String]) {
+    swaps(orderBy: createdAt, orderDirection: desc, where: { fromToken_in: $tokens }) {
       id
       trader
       fromToken
