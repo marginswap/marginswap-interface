@@ -15,6 +15,7 @@ export const Container = styled.div`
   border-radius: 7px;
   padding: 5px 10px;
   color: #fff;
+  height: 405px;
   max-height: 405px;
 
   @media ${DEVICE.tablet} {
@@ -33,32 +34,35 @@ export const Content = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   overflow-y: auto;
-  padding-left: 5px;
-  height: 300px;
   max-height: 300px;
   margin-bottom: 15px;
-
-  > div {
-    margin-bottom: 10px;
-  }
 `
 
 export const Item = styled.div`
   font-size: 12px;
   width: 100%;
+  display: flex;
+  flex-direction: row;
+
+  > button {
+    float: none;
+    background-color: #6a6a6a;
+    margin-top: -4px;
+  }
 `
 
 export const Row = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
+  line-height: 1.8;
 
   > div {
-    width: 28%;
+    width: 30%;
   }
 
   > div:last-child {
-    width: 45%;
+    width: 40%;
   }
 `
 
@@ -66,7 +70,7 @@ export const Header = styled.div`
   background-color: #2b2b2c;
   display: flex;
   flex-direction: row;
-  padding: 8px;
+  padding: 8px 8px 4px 8px;
   width: 100%;
   margin-bottom: 4px;
 

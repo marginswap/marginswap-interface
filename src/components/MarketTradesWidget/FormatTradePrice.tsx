@@ -1,22 +1,27 @@
 import React from 'react'
-import { useActiveWeb3React } from 'hooks'
-import { getPegCurrency, USDT_MAINNET } from '../../constants'
-import { Token } from '@marginswap/sdk'
+import { ETHER, Price } from '@marginswap/sdk'
 import { SwapInfo } from 'types'
+import { useCurrency } from '../../hooks/Tokens'
+import { parseUnits } from '@ethersproject/units'
 
 // the Price value is calculated by dividing the peg currency by the non-peg currency.
 // So for example, if the fromToken is ETH and the toToken is USDT, the price is calculated
 // by dividing the toToken amount by the fromToken amount
-const FormatTradePrice = ({ swap }: { swap: SwapInfo }) => {
-  const { chainId } = useActiveWeb3React()
-  const pegCurrency = getPegCurrency(chainId) ?? (USDT_MAINNET as Token)
+const FormatTradePrice = ({ swap, invert }: { swap: SwapInfo; invert: boolean }) => {
+  const pair1 = useCurrency(swap.fromToken) || ETHER
+  const pair2 = useCurrency(swap.toToken) || ETHER
 
-  // from token is the peg currency. dividing peg / non-peg
-  if (pegCurrency.address === swap.fromToken) {
-    return <span>{(swap.fromAmount / swap.toAmount).toFixed(2)}</span>
-  } else {
-    return <span>{(swap.toAmount / swap.fromAmount).toFixed(2)}</span>
-  }
+  const inAmount = parseUnits(swap.fromAmount.toString(), pair1.decimals)
+  const outAmount = parseUnits(swap.toAmount.toString(), pair2.decimals)
+
+  const tradePrice = new Price(pair1, pair2, inAmount.toBigInt(), outAmount.toBigInt())
+  const displayPrice = !invert ? tradePrice.toSignificant(4) : tradePrice.invert().toSignificant(6)
+
+  return (
+    <span title={displayPrice} style={{ overflowX: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+      {displayPrice}
+    </span>
+  )
 }
 
 export default FormatTradePrice

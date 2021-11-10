@@ -10,6 +10,8 @@ import { formatUnits } from '@ethersproject/units'
 import { ETHER, Token } from '@marginswap/sdk'
 import { ProUIContext } from 'pages/Pro'
 import FormatTradePrice from './FormatTradePrice'
+import { StyledBalanceMaxMini } from 'components/swap/styleds'
+import { Repeat } from 'react-feather'
 
 // Poll for new swap entities on an interval that matches the polling for margin account data
 const DATA_POLLING_INTERVAL = 60 * 1000
@@ -20,6 +22,7 @@ const MarketTrades = () => {
   const { currentPair } = useContext(ProUIContext)
   const [pollingInterval, setPollingInterval] = useState<ReturnType<typeof setInterval> | null>()
   const [triggerDataPoll, setTriggerDataPoll] = useState<boolean>(true)
+  const [showInverted, setShowInverted] = useState<boolean>(false)
 
   const { data: tradeData, refetch: reloadTrades } = useMarketTradesQuery({
     variables: {
@@ -89,7 +92,7 @@ const MarketTrades = () => {
     }
 
     size = formatUnits(swap.fromAmount, ETHER.decimals)
-    return parseFloat(size).toFixed(4)
+    return parseFloat(size).toFixed(6)
   }
 
   const renderTrades = () => {
@@ -98,7 +101,7 @@ const MarketTrades = () => {
         <Row key={swap.id}>
           <Item>{renderSize(swap)}</Item>
           <Item>
-            <FormatTradePrice swap={swap} />
+            <FormatTradePrice swap={swap} invert={showInverted} />
           </Item>
           <Item>{renderDateTime(swap.createdAt)}</Item>
         </Row>
@@ -117,7 +120,12 @@ const MarketTrades = () => {
       <WidgetHeader>Market Trades</WidgetHeader>
       <Header>
         <Item>Size</Item>
-        <Item>Price</Item>
+        <Item>
+          Price
+          <StyledBalanceMaxMini onClick={() => setShowInverted(!showInverted)}>
+            <Repeat size={14} />
+          </StyledBalanceMaxMini>
+        </Item>
         <Item>Time</Item>
       </Header>
       <Content>{renderTrades()}</Content>
