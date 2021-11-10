@@ -7,7 +7,6 @@ export const WidgetHeader = styled.div`
   text-align: center;
   height: 40px;
   border-bottom: 1px solid #373738;
-  margin-bottom: 15px;
 `
 
 export const Container = styled.div`
@@ -34,8 +33,12 @@ export const Content = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   overflow-y: auto;
-  max-height: 300px;
+  max-height: 330px;
   margin-bottom: 15px;
+
+  > div:nth-of-type(odd) {
+    background-color: #262626;
+  }
 `
 
 export const Item = styled.div`
