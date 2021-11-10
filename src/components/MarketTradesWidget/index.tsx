@@ -106,13 +106,9 @@ const MarketTrades = () => {
           <Item>{renderDateTime(swap.createdAt)}</Item>
         </Row>
       ))
-    } else {
-      return (
-        <div style={{ position: 'relative', top: '50%', transform: 'translateY(-50%)', textAlign: 'center' }}>
-          No Market Trades yet...
-        </div>
-      )
     }
+
+    return null
   }
 
   return (
