@@ -11,12 +11,28 @@ export const Container = styled.div`
   height: 400px;
   max-height: 400px;
 
+  @media ${DEVICE.mobileS} {
+    width: 322px;
+  }
+
+  @media ${DEVICE.mobileM} {
+    width: 343px;
+  }
+
+  @media ${DEVICE.mobileL} {
+    width: 393px;
+  }
+
   @media ${DEVICE.tablet} {
-    width: 50%;
+    width: 376px;
+    height: 432px;
+    max-height: 432px;
   }
 
   @media ${DEVICE.laptop} {
     width: 100%;
+    height: 400px;
+    max-height: 400px;
   }
 `
 export const WidgetBgImg = styled.img`

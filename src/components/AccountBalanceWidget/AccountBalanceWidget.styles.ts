@@ -2,12 +2,13 @@ import styled from 'styled-components'
 import { DEVICE } from 'theme/device'
 
 export const WidgetHeader = styled.div`
-  padding-top: 10px;
+  padding-top: 15px;
   color: white;
   text-align: center;
-  height: 40px;
+  height: 57px;
   border-bottom: 1px solid #373738;
   margin-bottom: 15px;
+  font-size: 18px;
 `
 
 export const Container = styled.div`
@@ -23,6 +24,11 @@ export const Container = styled.div`
   @media ${DEVICE.tablet} {
     width: 50%;
     margin-top: 10px;
+  }
+
+  @media ${DEVICE.laptop} {
+    width: 243px;
+    margin-top: 0;
   }
 
   @media ${DEVICE.laptop} {

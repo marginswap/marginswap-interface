@@ -5,7 +5,7 @@ import { DEVICE } from 'theme/device'
 
 export const OrderContainer = styled.div`
   @media ${DEVICE.tablet} {
-    width: 50%;
+    width: 376px;
   }
 
   @media ${DEVICE.laptop} {
@@ -110,4 +110,12 @@ export const StyledTab = styled(Tab)`
 
 export const BottomGrouping = styled.div`
   margin-top: 1rem;
+`
+
+export const Borrowable = styled.div`
+  text-align: right;
+
+  @media ${DEVICE.laptop} {
+    font-size: 0.8em;
+  }
 `

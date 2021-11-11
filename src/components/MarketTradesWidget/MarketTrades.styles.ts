@@ -2,10 +2,11 @@ import styled from 'styled-components'
 import { DEVICE } from 'theme/device'
 
 export const WidgetHeader = styled.div`
-  padding-top: 10px;
+  padding-top: 15px;
   color: white;
   text-align: center;
-  height: 40px;
+  height: 57px;
+  font-size: 18px;
   border-bottom: 1px solid #373738;
 `
 

@@ -31,7 +31,12 @@ export const LeftContainer = styled.div`
 
   @media ${DEVICE.laptop} {
     flex-direction: row;
-    width: 20%;
+    width: 25%;
+  }
+
+  @media ${DEVICE.laptopL} {
+    flex-direction: row;
+    width: 280px;
   }
 `
 
@@ -55,7 +60,11 @@ export const CenterContainer = styled.div`
 
   @media ${DEVICE.laptop} {
     margin: 0 10px 10px 10px;
-    width: 60%;
+    width: 50%;
+  }
+
+  @media ${DEVICE.laptopL} {
+    width: 800px;
   }
 `
 
@@ -71,18 +80,35 @@ export const RightContainer = styled.div`
 
   @media ${DEVICE.laptop} {
     flex-direction: row;
-    width: 20%;
+    width: 25%;
+  }
+
+  @media ${DEVICE.laptopL} {
+    flex-direction: row;
+    width: 280px;
   }
 `
 
 export const ChartContainer = styled.div`
   height: 400px;
+
+  @media ${DEVICE.laptop} {
+    width: 484px;
+  }
+
+  @media ${DEVICE.laptopL} {
+    width: 800px;
+  }
+
+  @media ${DEVICE.desktop} {
+    width: 100%;
+  }
 `
 
 export const WidgetContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 2vh;
+  gap: 1vh;
 
   @media ${DEVICE.mobileS} {
     flex-direction: column;
