@@ -15,8 +15,8 @@ export const Container = styled.div`
   border-radius: 7px;
   padding: 5px 10px;
   color: #fff;
-  height: 405px;
-  max-height: 405px;
+  height: 427px;
+  max-height: 427px;
 
   @media ${DEVICE.tablet} {
     width: 50%;
@@ -34,7 +34,7 @@ export const Content = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   overflow-y: auto;
-  max-height: 330px;
+  max-height: 355px;
   margin-bottom: 15px;
 
   > div:nth-of-type(odd) {

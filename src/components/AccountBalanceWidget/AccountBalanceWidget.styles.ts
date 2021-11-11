@@ -24,11 +24,15 @@ export const Container = styled.div`
   @media ${DEVICE.tablet} {
     width: 50%;
     margin-top: 10px;
+    height: 425px;
+    max-height: 425px;
   }
 
   @media ${DEVICE.laptop} {
     width: 243px;
     margin-top: 0;
+    height: 400px;
+    max-height: 400px;
   }
 
   @media ${DEVICE.laptop} {

@@ -228,7 +228,7 @@ const OrdersWidget = () => {
           <Item>Price</Item>
           <Item>{orderView === OrderView.LIMIT ? 'Actions' : 'Status'}</Item>
         </Header>
-        <div style={{ height: '310px', overflowX: 'auto' }}>
+        <div style={{ height: '325px', overflowX: 'auto' }}>
           {orders.length === 0 && (
             <div style={{ position: 'relative', top: '50%', transform: 'translateY(-50%)', textAlign: 'center' }}>
               {orderView === OrderView.LIMIT ? 'No Limit Orders yet...' : 'No Order History yet...'}
