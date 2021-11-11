@@ -31,13 +31,13 @@ import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { RowBetween } from 'components/Row'
 import { Text } from 'rebass'
 import { useActiveWeb3React } from '../../hooks'
-import { useLendingAvailable } from '../../state/wallet/hooks'
 import { getProviderOrSigner } from '../../utils'
 import { useMarginSwapTokenList } from '../../state/lists/hooks'
 import { FlatToggleOption, ToggleOption, ToggleWrapper } from 'components/ToggleButtonGroup/ToggleButtonGroup.styles'
 import { ButtonError, ButtonLight, ButtonPrimary, ButtonConfirmed } from '../../components/Button'
 import { GreyCard } from '../../components/Card'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
+import { useBorrowable, useLendingAvailable } from '../../state/wallet/hooks'
 import {
   useDefaultsFromURLSearch,
   useDerivedSwapInfo,
@@ -85,6 +85,17 @@ const OrderWidget = () => {
   const { inAmount, outAmount } = useOrderState()
   const [isExpertMode] = useExpertModeManager()
   const { address: recipientAddress } = useENSAddress(recipient)
+
+  const borrowableBalance = useBorrowable(currencies[Field.INPUT] ?? undefined)
+  const [maxBorrow, setMaxBorrow] = useState<number | undefined>()
+
+  useEffect(() => {
+    const maxBorrow = Math.min(
+      borrowableBalance ? parseFloat(borrowableBalance.toSignificant(6)) : 0,
+      lendingAvailable ? parseFloat(lendingAvailable.toSignificant(6)) : 0
+    )
+    setMaxBorrow(maxBorrow)
+  }, [borrowableBalance, lendingAvailable])
 
   const {
     wrapType,
@@ -419,7 +430,7 @@ const OrderWidget = () => {
             <CurrencyStyledInput
               label={'Amount'}
               symbol={orderCurrencies[Field.INPUT]?.symbol}
-              placeholder="Amount"
+              placeholder="0.0"
               onChange={e => {
                 onOrderUserInput(Field.INPUT, e.currentTarget.value)
               }}
@@ -428,7 +439,7 @@ const OrderWidget = () => {
             <CurrencyStyledInput
               label={'Price'}
               symbol={orderCurrencies[Field.OUTPUT]?.symbol}
-              placeholder="Price"
+              placeholder="0.0"
               onChange={e => {
                 onOrderUserInput(Field.OUTPUT, e.currentTarget.value)
               }}
@@ -440,21 +451,24 @@ const OrderWidget = () => {
             <CurrencyStyledInput
               label={independentField === Field.OUTPUT && !showWrap && trade ? 'From (estimated)' : 'From'}
               symbol={currencies[Field.INPUT]?.symbol}
-              placeholder="Amount"
+              placeholder="0.0"
               onChange={e => {
                 onUserInput(Field.INPUT, e.currentTarget.value)
               }}
               value={formattedAmounts[Field.INPUT]}
             />
+            <span>
+              Borrowable:
+              {` ${maxBorrow ? maxBorrow : '-'}`}
+            </span>
             <CurrencyStyledInput
               label={independentField === Field.INPUT && !showWrap && trade ? 'To (estimated)' : 'To'}
               symbol={currencies[Field.OUTPUT]?.symbol}
-              placeholder="Price"
+              placeholder="0.0"
               onChange={e => {
                 onUserInput(Field.OUTPUT, e.currentTarget.value)
               }}
               value={formattedAmounts[Field.OUTPUT]}
-              readOnly
             />
             <RowBetween align="center">
               <Text fontWeight={500} fontSize={14} color={theme.text2}>

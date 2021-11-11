@@ -4,7 +4,6 @@ import { useMarketTradesQuery } from 'graphql/queries/trades'
 import { apolloClient } from 'config/apollo-config'
 import { useActiveWeb3React } from 'hooks'
 import { SwapInfo } from 'types'
-import { DateTime } from 'luxon'
 import { ProUIContext } from 'pages/Pro'
 import TradeItem from './TradeItem'
 
@@ -75,7 +74,7 @@ const MarketTrades = () => {
 
   const renderTrades = () => {
     if (trades && trades.length > 0) {
-      return trades.map((swap: SwapInfo) => <TradeItem trade={swap} />)
+      return trades.map((trade: SwapInfo) => <TradeItem key={trade.id} trade={trade} />)
     }
 
     return null
