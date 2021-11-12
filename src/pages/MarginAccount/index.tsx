@@ -32,7 +32,6 @@ import { ErrorBar, WarningBar } from '../../components/Placeholders'
 import { useActiveWeb3React } from '../../hooks'
 import { getProviderOrSigner } from '../../utils'
 import { BigNumber } from '@ethersproject/bignumber'
-import { getDefaultProvider } from '@ethersproject/providers'
 import { StyledTableContainer } from './styled'
 import { StyledMobileOnlyRow } from './styled'
 import { StyledWrapperDiv } from './styled'
@@ -45,7 +44,6 @@ import { setInterval } from 'timers'
 import { valueInPeg2token, useETHBalances } from 'state/wallet/hooks'
 import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 import { TransactionDetails } from '../../state/transactions/reducer'
-import { NETWORK_URLS } from '../../constants/networks'
 
 type AccountBalanceData = {
   img: string
@@ -174,8 +172,6 @@ export const MarginAccount = () => {
     provider = getProviderOrSigner(library, account)
   }
 
-  const queryProvider = getDefaultProvider(chainId && NETWORK_URLS[chainId])
-
   const BORROW_ACCOUNT_ACTION = [
     {
       name: 'Borrow',
@@ -303,7 +299,7 @@ export const MarginAccount = () => {
       getBorrowInterestRates(
         tokens.map(token => token.address),
         chainId,
-        queryProvider
+        provider
       ),
       // liquidities (max lending available by token)
       Promise.all(
@@ -311,7 +307,7 @@ export const MarginAccount = () => {
           const tokenToken = new Token(chainId, token.address, token.decimals)
           return new TokenAmount(
             tokenToken,
-            ((await totalLendingAvailable(token.address, chainId, queryProvider)) ?? utils.parseUnits('0')).toString()
+            ((await totalLendingAvailable(token.address, chainId, provider)) ?? utils.parseUnits('0')).toString()
           )
         })
       )
@@ -372,25 +368,25 @@ export const MarginAccount = () => {
       _debtTotal
     ] = await Promise.all([
       // margin account balances (array)
-      getAccountBalances(account, chainId, queryProvider),
+      getAccountBalances(account, chainId, provider),
       // which tokens have approved the marginswap contract
       getTokenAllowances(
         account,
         tokens.map(token => token.address),
         chainId,
-        queryProvider
+        provider
       ),
       // borrowable amounts (max borrowable by token)
       Promise.all(
         tokens.map(async token => {
           const tokenToken = new Token(chainId, token.address, token.decimals)
-          const bipString = await borrowableInPeg(account, chainId, queryProvider)
+          const bipString = await borrowableInPeg(account, chainId, provider)
           const bip = new TokenAmount(getPegCurrency(chainId) ?? USDT_MAINNET, bipString)
 
           if (bip) {
             return new TokenAmount(
               tokenToken,
-              ((await valueInPeg2token(bip, tokenToken, chainId, queryProvider)) ?? utils.parseUnits('0')).toString()
+              ((await valueInPeg2token(bip, tokenToken, chainId, provider)) ?? utils.parseUnits('0')).toString()
             )
           } else {
             return new TokenAmount(tokenToken, '0')
@@ -401,12 +397,12 @@ export const MarginAccount = () => {
       Promise.all(
         tokens.map(async token => {
           const tokenToken = new Token(chainId, token.address, token.decimals)
-          const wipString = await withdrawableInPeg(account, chainId, queryProvider)
+          const wipString = await withdrawableInPeg(account, chainId, provider)
           const wip = new TokenAmount(getPegCurrency(chainId) ?? USDT_MAINNET, wipString)
 
           if (wip) {
             const tokenAmount = (
-              (await valueInPeg2token(wip, tokenToken, chainId, queryProvider)) ?? utils.parseUnits('0')
+              (await valueInPeg2token(wip, tokenToken, chainId, provider)) ?? utils.parseUnits('0')
             ).toString()
 
             return new TokenAmount(tokenToken, tokenAmount)
@@ -416,16 +412,16 @@ export const MarginAccount = () => {
         })
       ),
       // wallet token balances
-      Promise.all(tokens.map(token => getTokenBalance(account, token.address, queryProvider))),
+      Promise.all(tokens.map(token => getTokenBalance(account, token.address, provider))),
       // holding total (sum of all account balances)
       new TokenAmount(
         getPegCurrency(chainId) ?? USDT_MAINNET,
-        (await getAccountHoldingTotal(account, chainId, queryProvider)).toString()
+        (await getAccountHoldingTotal(account, chainId, provider)).toString()
       ),
       // debt total (sum of all debt balances)
       new TokenAmount(
         getPegCurrency(chainId) ?? USDT_MAINNET,
-        (await getAccountBorrowTotal(account, chainId, queryProvider)).toString()
+        (await getAccountBorrowTotal(account, chainId, provider)).toString()
       )
     ])
 
