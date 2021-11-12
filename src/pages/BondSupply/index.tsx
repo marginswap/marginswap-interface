@@ -9,6 +9,7 @@ import { getDefaultProvider } from '@ethersproject/providers'
 import { useActiveWeb3React } from '../../hooks'
 import { getProviderOrSigner, TokenInfoWithCoingeckoId } from '../../utils'
 import {
+  ChainId,
   getHourlyBondBalances,
   getHourlyBondInterestRates,
   getHourlyBondMaturities,
@@ -141,7 +142,10 @@ export const BondSupply = () => {
     provider = getProviderOrSigner(library, account)
   }
 
-  const queryProvider = getDefaultProvider(chainId && NETWORK_URLS[chainId])
+  const queryProvider =
+    chainId && ![ChainId.MAINNET, ChainId.AVALANCHE, ChainId.KOVAN].includes(chainId)
+      ? getDefaultProvider(chainId && NETWORK_URLS[chainId])
+      : provider
 
   /**
    *

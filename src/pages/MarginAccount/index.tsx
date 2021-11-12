@@ -9,6 +9,7 @@ import RiskMeter from '../../components/Riskmeter'
 import VideoExplainerLink from '../../components/VideoExplainerLink'
 import { useWeb3React } from '@web3-react/core'
 import {
+  ChainId,
   getAccountBalances,
   getAccountBorrowTotal,
   getAccountHoldingTotal,
@@ -174,7 +175,10 @@ export const MarginAccount = () => {
     provider = getProviderOrSigner(library, account)
   }
 
-  const queryProvider = getDefaultProvider(chainId && NETWORK_URLS[chainId])
+  const queryProvider =
+    chainId && ![ChainId.MAINNET, ChainId.AVALANCHE, ChainId.KOVAN].includes(chainId)
+      ? getDefaultProvider(chainId && NETWORK_URLS[chainId])
+      : provider
 
   const BORROW_ACCOUNT_ACTION = [
     {
