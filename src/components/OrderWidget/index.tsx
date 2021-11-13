@@ -192,8 +192,8 @@ const OrderWidget = () => {
   }, [approval, approvalSubmitted])
 
   useEffect(() => {
-    const currencyAddress1: string = currentPair ? currentPair[0].address : ''
-    const currencyAddress2: string = currentPair ? currentPair[1].address : ''
+    const currencyAddress1: string = currentPair ? currentPair[1].address : ''
+    const currencyAddress2: string = currentPair ? currentPair[0].address : ''
 
     if (leverageType !== LeverageType.LIMIT_ORDER) {
       dispatch(
@@ -433,60 +433,127 @@ const OrderWidget = () => {
 
         {leverageType === LeverageType.LIMIT_ORDER ? (
           <div>
-            <CurrencyStyledInput
-              label={'Amount'}
-              symbol={orderCurrencies[Field.INPUT]?.symbol}
-              placeholder="0.0"
-              onChange={e => {
-                onOrderUserInput(Field.INPUT, e.currentTarget.value)
-              }}
-              value={inAmount}
-            />
-            <CurrencyStyledInput
-              label={'Price'}
-              symbol={orderCurrencies[Field.OUTPUT]?.symbol}
-              placeholder="0.0"
-              onChange={e => {
-                onOrderUserInput(Field.OUTPUT, e.currentTarget.value)
-              }}
-              value={outAmount}
-            />
-            <RowBetween align="center">
-              <Text fontWeight={500} fontSize={14} color={theme.text2}>
-                Price
-              </Text>
-              <LimitOrderPrice
-                amount={inAmount}
-                price={outAmount}
-                currency1={orderCurrencies[Field.INPUT]}
-                currency2={orderCurrencies[Field.OUTPUT]}
-              />
-            </RowBetween>
+            {orderType === OrderType.BUY ? (
+              <>
+                <CurrencyStyledInput
+                  label={'Amount'}
+                  symbol={orderCurrencies[Field.OUTPUT]?.symbol}
+                  placeholder="0.0"
+                  onChange={e => {
+                    onOrderUserInput(Field.OUTPUT, e.currentTarget.value)
+                  }}
+                  value={outAmount}
+                />
+                <CurrencyStyledInput
+                  label={'Price'}
+                  symbol={orderCurrencies[Field.INPUT]?.symbol}
+                  placeholder="0.0"
+                  onChange={e => {
+                    onOrderUserInput(Field.INPUT, e.currentTarget.value)
+                  }}
+                  value={inAmount}
+                />
+                <RowBetween align="center">
+                  <Text fontWeight={500} fontSize={14} color={theme.text2}>
+                    Total
+                  </Text>
+                  <LimitOrderPrice
+                    amount={outAmount}
+                    price={inAmount}
+                    currency1={orderCurrencies[Field.OUTPUT]}
+                    currency2={orderCurrencies[Field.INPUT]}
+                  />
+                </RowBetween>
+              </>
+            ) : (
+              <>
+                {' '}
+                <CurrencyStyledInput
+                  label={'Amount'}
+                  symbol={orderCurrencies[Field.INPUT]?.symbol}
+                  placeholder="0.0"
+                  onChange={e => {
+                    onOrderUserInput(Field.INPUT, e.currentTarget.value)
+                  }}
+                  value={inAmount}
+                />
+                <CurrencyStyledInput
+                  label={'Price'}
+                  symbol={orderCurrencies[Field.OUTPUT]?.symbol}
+                  placeholder="0.0"
+                  onChange={e => {
+                    onOrderUserInput(Field.OUTPUT, e.currentTarget.value)
+                  }}
+                  value={outAmount}
+                />
+                <RowBetween align="center">
+                  <Text fontWeight={500} fontSize={14} color={theme.text2}>
+                    Total
+                  </Text>
+                  <LimitOrderPrice
+                    amount={inAmount}
+                    price={outAmount}
+                    currency1={orderCurrencies[Field.INPUT]}
+                    currency2={orderCurrencies[Field.OUTPUT]}
+                  />
+                </RowBetween>
+              </>
+            )}
           </div>
         ) : (
           <div>
-            <CurrencyStyledInput
-              label={independentField === Field.OUTPUT && !showWrap && trade ? 'Amount (estimated)' : 'Amount'}
-              symbol={currencies[Field.INPUT]?.symbol}
-              placeholder="0.0"
-              onChange={e => {
-                onUserInput(Field.INPUT, e.currentTarget.value)
-              }}
-              value={formattedAmounts[Field.INPUT]}
-            />
-            <Borrowable>
-              Borrowable:
-              {` ${maxBorrow ? maxBorrow : '-'}`}
-            </Borrowable>
-            <CurrencyStyledInput
-              label={independentField === Field.INPUT && !showWrap && trade ? 'Total (estimated)' : 'Total'}
-              symbol={currencies[Field.OUTPUT]?.symbol}
-              placeholder="0.0"
-              onChange={e => {
-                onUserInput(Field.OUTPUT, e.currentTarget.value)
-              }}
-              value={formattedAmounts[Field.OUTPUT]}
-            />
+            {orderType === OrderType.BUY ? (
+              <>
+                <CurrencyStyledInput
+                  label={independentField === Field.INPUT && !showWrap && trade ? 'Amount (estimated)' : 'Amount'}
+                  symbol={currencies[Field.OUTPUT]?.symbol}
+                  placeholder="0.0"
+                  onChange={e => {
+                    onUserInput(Field.OUTPUT, e.currentTarget.value)
+                  }}
+                  value={formattedAmounts[Field.OUTPUT]}
+                />
+                <Borrowable>
+                  Borrowable:
+                  {` ${maxBorrow ? maxBorrow : '-'}`}
+                </Borrowable>
+                <CurrencyStyledInput
+                  label={independentField === Field.OUTPUT && !showWrap && trade ? 'Total (estimated)' : 'Total'}
+                  symbol={currencies[Field.INPUT]?.symbol}
+                  placeholder="0.0"
+                  onChange={e => {
+                    onUserInput(Field.INPUT, e.currentTarget.value)
+                  }}
+                  value={formattedAmounts[Field.INPUT]}
+                />{' '}
+              </>
+            ) : (
+              <>
+                <CurrencyStyledInput
+                  label={independentField === Field.OUTPUT && !showWrap && trade ? 'Amount (estimated)' : 'Amount'}
+                  symbol={currencies[Field.INPUT]?.symbol}
+                  placeholder="0.0"
+                  onChange={e => {
+                    onUserInput(Field.INPUT, e.currentTarget.value)
+                  }}
+                  value={formattedAmounts[Field.INPUT]}
+                />
+                <Borrowable>
+                  Borrowable:
+                  {` ${maxBorrow ? maxBorrow : '-'}`}
+                </Borrowable>
+                <CurrencyStyledInput
+                  label={independentField === Field.INPUT && !showWrap && trade ? 'Total (estimated)' : 'Total'}
+                  symbol={currencies[Field.OUTPUT]?.symbol}
+                  placeholder="0.0"
+                  onChange={e => {
+                    onUserInput(Field.OUTPUT, e.currentTarget.value)
+                  }}
+                  value={formattedAmounts[Field.OUTPUT]}
+                />
+              </>
+            )}
+
             <RowBetween align="center">
               <Text fontWeight={500} fontSize={14} color={theme.text2}>
                 Price
