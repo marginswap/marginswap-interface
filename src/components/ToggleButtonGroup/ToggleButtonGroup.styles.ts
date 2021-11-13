@@ -5,7 +5,7 @@ export const ToggleWrapper = styled(RowBetween)`
   background-color: #191919;
   padding: 6px;
 `
-export const ToggleOption = styled.div<{ active?: boolean; big?: boolean }>`
+export const ToggleOption = styled.div<{ active?: boolean; big?: boolean; error?: boolean }>`
   width: 50%;
   padding: 10px;
   display: flex;
@@ -14,7 +14,7 @@ export const ToggleOption = styled.div<{ active?: boolean; big?: boolean }>`
   border-radius: 8px;
   font-weight: 600;
   font-size: 14px;
-  background-color: ${({ active }) => (active ? '#2172E5' : '#2e3233')};
+  background-color: ${({ active, error, theme }) => (active ? (error ? theme.red1 : '#2172E5') : '#2e3233')};
   color: white;
   user-select: none;
   height: ${({ big }) => (big ? '70px' : '')};

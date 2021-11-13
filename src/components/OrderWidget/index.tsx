@@ -48,6 +48,7 @@ import CurrencyStyledInput from 'components/CurrencyStyledInput'
 import { useLimitOrders, useOrderActionHandlers, useOrderState, useDerivedOrderInfo } from '../../state/order/hooks'
 import { selectOrderCurrency } from 'state/order/actions'
 import ConfirmOrderModal from './ConfirmOrderModal'
+import LimitOrderPrice from './LimitOrderPrice'
 
 enum OrderType {
   BUY,
@@ -288,6 +289,7 @@ const OrderWidget = () => {
     if (!swapCallback) {
       return
     }
+
     setSwapState({ attemptingTxn: true, tradeToConfirm, showConfirm, swapErrorMessage: undefined, txHash: undefined })
     swapCallback()
       .then(hash => {
@@ -406,7 +408,11 @@ const OrderWidget = () => {
           <ToggleOption onClick={() => handleChangeOrderType(OrderType.BUY)} active={orderType === OrderType.BUY}>
             Buy
           </ToggleOption>
-          <ToggleOption onClick={() => handleChangeOrderType(OrderType.SELL)} active={orderType === OrderType.SELL}>
+          <ToggleOption
+            onClick={() => handleChangeOrderType(OrderType.SELL)}
+            active={orderType === OrderType.SELL}
+            error
+          >
             Sell
           </ToggleOption>
         </ToggleWrapper>
@@ -445,11 +451,22 @@ const OrderWidget = () => {
               }}
               value={outAmount}
             />
+            <RowBetween align="center">
+              <Text fontWeight={500} fontSize={14} color={theme.text2}>
+                Price
+              </Text>
+              <LimitOrderPrice
+                amount={inAmount}
+                price={outAmount}
+                currency1={orderCurrencies[Field.INPUT]}
+                currency2={orderCurrencies[Field.OUTPUT]}
+              />
+            </RowBetween>
           </div>
         ) : (
           <div>
             <CurrencyStyledInput
-              label={independentField === Field.OUTPUT && !showWrap && trade ? 'From (estimated)' : 'From'}
+              label={independentField === Field.OUTPUT && !showWrap && trade ? 'Amount (estimated)' : 'Amount'}
               symbol={currencies[Field.INPUT]?.symbol}
               placeholder="0.0"
               onChange={e => {
@@ -462,7 +479,7 @@ const OrderWidget = () => {
               {` ${maxBorrow ? maxBorrow : '-'}`}
             </Borrowable>
             <CurrencyStyledInput
-              label={independentField === Field.INPUT && !showWrap && trade ? 'To (estimated)' : 'To'}
+              label={independentField === Field.INPUT && !showWrap && trade ? 'Total (estimated)' : 'Total'}
               symbol={currencies[Field.OUTPUT]?.symbol}
               placeholder="0.0"
               onChange={e => {

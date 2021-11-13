@@ -93,7 +93,7 @@ export const ChartContainer = styled.div`
   height: 400px;
 
   @media ${DEVICE.laptop} {
-    width: 484px;
+    width: 100%;
   }
 
   @media ${DEVICE.laptopL} {
