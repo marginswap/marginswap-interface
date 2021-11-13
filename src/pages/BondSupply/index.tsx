@@ -5,7 +5,6 @@ import VideoExplainerLink from '../../components/VideoExplainerLink'
 import IconMoneyStackLocked from '../../icons/IconMoneyStackLocked'
 import IconMoneyStack from '../../icons/IconMoneyStack'
 import { useWeb3React } from '@web3-react/core'
-import { getDefaultProvider } from '@ethersproject/providers'
 import { useActiveWeb3React } from '../../hooks'
 import { getProviderOrSigner, TokenInfoWithCoingeckoId } from '../../utils'
 import {
@@ -32,7 +31,6 @@ import { getPegCurrency, USDT_MAINNET } from '../../constants'
 import { setInterval } from 'timers'
 import tokensList from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 import { TransactionDetails } from '../../state/transactions/reducer'
-import { NETWORK_URLS } from '../../constants/networks'
 import Tooltip from '@material-ui/core/Tooltip'
 
 const DATA_POLLING_INTERVAL = 25 * 1000
@@ -141,8 +139,6 @@ export const BondSupply = () => {
     provider = getProviderOrSigner(library, account)
   }
 
-  const queryProvider = getDefaultProvider(chainId && NETWORK_URLS[chainId])
-
   /**
    *
    *
@@ -158,24 +154,24 @@ export const BondSupply = () => {
       getHourlyBondIncentiveInterestRates(
         tokens.map(t => new Token(chainId, t.address, t.decimals, t.symbol, t.name, t.coingeckoId)),
         chainId,
-        queryProvider
+        provider
       ),
       getHourlyBondInterestRates(
         tokens.map(t => t.address),
         chainId,
-        queryProvider
+        provider
       ),
       getHourlyBondMaturities(
         account,
         tokens.map(t => t.address),
         chainId,
-        queryProvider
+        provider
       ),
       getBondsCostInDollars(
         account,
         tokens.map(t => t.address),
         chainId,
-        queryProvider
+        provider
       )
     ])
 
@@ -247,15 +243,15 @@ export const BondSupply = () => {
         account,
         tokens.map(t => t.address),
         chainId,
-        queryProvider
+        provider
       ),
       getTokenAllowances(
         account,
         tokens.map(t => t.address),
         chainId,
-        queryProvider
+        provider
       ),
-      Promise.all(tokens.map(token => getTokenBalance(account, token.address, queryProvider)))
+      Promise.all(tokens.map(token => getTokenBalance(account, token.address, provider)))
     ])
 
     /*** now set the state for all that data ***/
