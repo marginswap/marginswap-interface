@@ -7,17 +7,16 @@ import { ThemeContext } from 'styled-components'
 interface LimitOrderPriceProps {
   amount: string
   price: string
-  currency1?: Currency
-  currency2?: Currency
+  currency?: Currency
 }
 
-export default function LimitOrderPrice({ amount, price, currency1, currency2 }: LimitOrderPriceProps) {
+export default function LimitOrderPrice({ amount, price, currency }: LimitOrderPriceProps) {
   const theme = useContext(ThemeContext)
 
-  const formattedPrice = (parseFloat(price) / parseFloat(amount)).toFixed(2)
+  const formattedPrice = (parseFloat(price) * parseFloat(amount)).toFixed(2)
 
   const show = amount && price
-  const label = `${currency2?.symbol} per ${currency1?.symbol}`
+  const label = `${currency?.symbol}`
 
   return (
     <Text

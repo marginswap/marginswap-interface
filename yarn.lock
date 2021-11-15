@@ -2360,6 +2360,11 @@
   resolved "https://registry.yarnpkg.com/@marginswap/core-abi/-/core-abi-1.5.1.tgz#1fb4b8da535e84f814312e09395d3739f1bd0761"
   integrity sha512-3A2ncRGZ+inyAjZPt+/Mmwkf4LEDA3Oxj4FireOYARsC51OAs7Ph2RAgbDLXswaS/ZwGub8d41N5VDLxfOJosA==
 
+"@marginswap/core-abi@^1.5.2":
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/@marginswap/core-abi/-/core-abi-1.5.2.tgz#3ced0bdd06246570d2b511a31da64ce0346067dc"
+  integrity sha512-QGL17Fl91Aza9xDgPbIjwT0MMpD6/dMLpYqcEAYCMfsg0SDms5l6iC/BBBQ42V4j5CZf9NPBGDWAgDyHAuv37Q==
+
 "@marginswap/sdk@4.5.2":
   version "4.5.2"
   resolved "https://registry.yarnpkg.com/@marginswap/sdk/-/sdk-4.5.2.tgz#96d0e50d9e408fa4ab8d13aaa810bfe8cc327dfc"

@@ -457,12 +457,7 @@ const OrderWidget = () => {
                   <Text fontWeight={500} fontSize={14} color={theme.text2}>
                     Total
                   </Text>
-                  <LimitOrderPrice
-                    amount={outAmount}
-                    price={inAmount}
-                    currency1={orderCurrencies[Field.OUTPUT]}
-                    currency2={orderCurrencies[Field.INPUT]}
-                  />
+                  <LimitOrderPrice amount={outAmount} price={inAmount} currency={orderCurrencies[Field.INPUT]} />
                 </RowBetween>
               </>
             ) : (
@@ -490,12 +485,7 @@ const OrderWidget = () => {
                   <Text fontWeight={500} fontSize={14} color={theme.text2}>
                     Total
                   </Text>
-                  <LimitOrderPrice
-                    amount={inAmount}
-                    price={outAmount}
-                    currency1={orderCurrencies[Field.INPUT]}
-                    currency2={orderCurrencies[Field.OUTPUT]}
-                  />
+                  <LimitOrderPrice amount={inAmount} price={outAmount} currency={orderCurrencies[Field.OUTPUT]} />
                 </RowBetween>
               </>
             )}
