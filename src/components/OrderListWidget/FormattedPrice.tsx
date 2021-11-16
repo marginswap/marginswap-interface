@@ -5,13 +5,13 @@ import { useCurrency } from '../../hooks/Tokens'
 import { Span } from './OrderListWidget.styles'
 
 const FormattedPrice = ({ order }: { order: OrderInfo }) => {
-  const currency = useCurrency(order.fromToken)
-  const priceSymbol = useCurrency(order.toToken)?.symbol
+  const currency = useCurrency(order.toToken)
+  const priceSymbol = useCurrency(order.fromToken)?.symbol
 
-  const outAmount = formatUnits(order.outAmount.toString(), currency?.decimals)
+  const inAmount = formatUnits(order.inAmount.toString(), currency?.decimals)
   return (
     <Span>
-      {outAmount} {priceSymbol}
+      {inAmount} {priceSymbol}
     </Span>
   )
 }

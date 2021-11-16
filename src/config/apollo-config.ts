@@ -21,6 +21,11 @@ const ethereumClient = new ApolloClient({
   cache: new InMemoryCache()
 })
 
+const localClient = new ApolloClient({
+  uri: process.env.REACT_APP_GRAPH_SERVER_LOCAL,
+  cache: new InMemoryCache()
+})
+
 const apolloClient = (chainId: ChainId | undefined) => {
   switch (chainId) {
     case ChainId.AVALANCHE:
@@ -29,6 +34,8 @@ const apolloClient = (chainId: ChainId | undefined) => {
       return bscClient
     case ChainId.MATIC:
       return polygonClient
+    case ChainId.LOCAL:
+      return localClient
     default:
       return ethereumClient
   }
