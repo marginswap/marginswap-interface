@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { Currency } from '@marginswap/sdk'
-import { OrderInfo } from 'types'
+import { LimitOrder, OrderInfo } from 'types'
 import { formatUnits } from '@ethersproject/units'
 import OrderModalHeader from 'components/OrderWidget/OrderModalHeader'
 import TransactionConfirmationModal, {
@@ -26,7 +26,7 @@ export default function ConfirmCancelOrderModal({
   onDismiss: () => void
   orderTxHash: string | undefined
   cancelling?: boolean
-  order: OrderInfo
+  order: LimitOrder
 }) {
   const fromToken = useCurrency(order.fromToken) || Currency.ETHER
   const toToken = useCurrency(order.toToken) || Currency.ETHER

@@ -1,13 +1,15 @@
+import { BigNumber } from '@ethersproject/bignumber'
+
 export interface OrderInfo {
   readonly id: string
   readonly maker: string
   readonly fromToken: string
   readonly toToken: string
-  readonly inAmount: number
-  readonly outAmount: number
-  readonly amountTaken: number
-  readonly remainingInAmount: number
-  readonly expiration: number
+  readonly inAmount: BigNumber
+  readonly outAmount: BigNumber
+  readonly amountTaken: BigNumber
+  readonly remainingInAmount: BigNumber
+  readonly expiration: BigNumber
   readonly createdAt: string
   readonly updatedAt: string
 }
@@ -29,4 +31,14 @@ export interface SwapInfo {
 
 export interface SwapList {
   readonly swaps: SwapInfo[]
+}
+
+export interface LimitOrder {
+  readonly id: string
+  readonly maker: string
+  readonly fromToken: string
+  readonly toToken: string
+  readonly inAmount: BigNumber
+  readonly outAmount: BigNumber
+  readonly expiration: BigNumber
 }

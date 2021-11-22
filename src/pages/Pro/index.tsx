@@ -12,7 +12,7 @@ import { AdvancedChart } from 'react-tradingview-embed'
 import AccountBalance from 'components/AccountBalanceWidget'
 import MarketTrades from 'components/MarketTradesWidget'
 import MarketWidget from 'components/MarketWidget'
-import OrdersWidget from 'components/OrderListWidget'
+import OrderListWidget from 'components/OrderListWidget'
 import OrderWidget from 'components/OrderWidget'
 
 export type CoinPair = {
@@ -27,11 +27,15 @@ export type CoinPair = {
 export type Context = {
   currentPair: [CoinPair, CoinPair] | null
   setCurrentPair: (c: [CoinPair, CoinPair]) => void
+  pendingOrderTx: string | null
+  setPendingOrderTx: (pendingTx: string) => void
 }
 
 export const ProUIContext = createContext<Context>({
   currentPair: null,
-  setCurrentPair: () => null
+  setCurrentPair: () => null,
+  pendingOrderTx: null,
+  setPendingOrderTx: () => null
 })
 
 const Pro = () => {
@@ -41,6 +45,7 @@ const Pro = () => {
   ])
   const [, setCurrentSymbol] = useState<string>('WETHUSDT')
   const [advancedChart, setAdvancedChart] = useState<JSX.Element>()
+  const [pendingOrderTx, setPendingOrderTx] = useState('')
 
   useEffect(() => {
     if (currentPair && currentPair[0].unwrappedSymbol) {
@@ -67,7 +72,7 @@ const Pro = () => {
   }, [currentPair])
 
   return (
-    <ProUIContext.Provider value={{ currentPair, setCurrentPair }}>
+    <ProUIContext.Provider value={{ currentPair, setCurrentPair, pendingOrderTx, setPendingOrderTx }}>
       <Container>
         <LeftContainer>
           <WidgetContainer>
@@ -77,7 +82,7 @@ const Pro = () => {
         </LeftContainer>
         <CenterContainer>
           <ChartContainer>{advancedChart}</ChartContainer>
-          <OrdersWidget />
+          <OrderListWidget />
         </CenterContainer>
         <RightContainer>
           <WidgetContainer>

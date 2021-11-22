@@ -79,7 +79,7 @@ const OrderWidget = () => {
   const token = tokenList.find(t => t.symbol === currencySymbol)
   const lendingAvailable = useLendingAvailable(chainId, token, provider)
   const dispatch = useDispatch<AppDispatch>()
-  const { currentPair } = useContext(ProUIContext)
+  const { currentPair, setPendingOrderTx } = useContext(ProUIContext)
   const [orderType, setOrderType] = useState(OrderType.BUY)
   const [showInverted, setShowInverted] = useState<boolean>(false)
   const { independentField, typedValue, recipient, leverageType } = useSwapState()
@@ -352,6 +352,8 @@ const OrderWidget = () => {
           orderErrorMessage: undefined,
           orderTxHash: hash
         })
+
+        setPendingOrderTx(hash)
       })
       .catch(error => {
         setOrderState({

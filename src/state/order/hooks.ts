@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { AppDispatch, AppState } from '../index'
 import { useDispatch, useSelector } from 'react-redux'
-import { makeOrder, invalidateOrder } from '@marginswap/sdk'
+import { makeOrder, invalidateOrder, getOrdersPerUser, OrderRecord } from '@marginswap/sdk'
 import { Currency, CurrencyAmount, ETHER, Token } from '@marginswap/sdk'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency } from '../../hooks/Tokens'
@@ -122,6 +122,7 @@ export function useOrderActionHandlers(): {
 export function useLimitOrders(provider: any): {
   onMakeOrder: null | (() => Promise<string>)
   onInvalidateOrder: null | ((orderId: string) => Promise<string>)
+  onGetLimitOrders: null | ((address: string) => Promise<Record<number, OrderRecord>>)
 } {
   const { chainId } = useActiveWeb3React()
   const { inAmount, outAmount, orderInput, orderOutput } = useOrderState()
@@ -183,6 +184,15 @@ export function useLimitOrders(provider: any): {
           throw new Error(`Order failed: ${error.message}`)
         }
       }
+    },
+    onGetLimitOrders: async function onGetOrdersPerUser(address: string): Promise<Record<number, OrderRecord>> {
+      if (!chainId || !provider) {
+        throw new Error('Missing dependencies')
+      }
+
+      const orders = await getOrdersPerUser(address, chainId, provider)
+
+      return orders
     }
   }
 }

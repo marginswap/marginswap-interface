@@ -1,15 +1,15 @@
 import React from 'react'
-import { OrderInfo } from 'types'
 import { formatUnits } from '@ethersproject/units'
 import { useCurrency } from '../../hooks/Tokens'
 import { Span } from './OrderListWidget.styles'
+import { OrderRecord } from '@marginswap/sdk'
 
-const FormattedAmount = ({ order }: { order: OrderInfo }) => {
-  const tokenSymbol = useCurrency(order.toToken)?.symbol
-  const currency = useCurrency(order.fromToken)
+const FormattedAmount = ({ order }: { order: OrderRecord }) => {
+  const toToken = useCurrency(order.toToken)
+
   return (
     <Span>
-      {formatUnits(order.outAmount.toString(), currency?.decimals)} {tokenSymbol}
+      {formatUnits(order.outAmount.toString(), toToken?.decimals)} {toToken?.symbol}
     </Span>
   )
 }
