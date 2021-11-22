@@ -90,9 +90,9 @@ const OrderListWidget = () => {
 
     onGetLimitOrders(account)
       .then((result: Record<number, Record<number, OrderRecord>>) => {
-        let orders: LimitOrder[] = []
+        const orders: LimitOrder[] = []
 
-        Object.entries(result).forEach(([k, v]) => {
+        Object.entries(result).forEach(([, v]) => {
           const orderId = v[0] as any
           const orderRecord: OrderRecord = v[1]
 

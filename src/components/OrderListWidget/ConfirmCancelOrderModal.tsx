@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { Currency } from '@marginswap/sdk'
-import { LimitOrder, OrderInfo } from 'types'
+import { LimitOrder } from 'types'
 import { formatUnits } from '@ethersproject/units'
 import OrderModalHeader from 'components/OrderWidget/OrderModalHeader'
 import TransactionConfirmationModal, {
