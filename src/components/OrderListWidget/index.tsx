@@ -261,7 +261,7 @@ const OrderListWidget = () => {
       </ActionsHeader>
       <GridContainer>
         <Header>
-          {orderView === OrderView.HISTORY ? <Item>Date</Item> : <Item>Id</Item>}
+          {orderView === OrderView.HISTORY ? <Item>Date</Item> : <Item>Order #</Item>}
           <Item>Pair</Item>
           <Item>Amount</Item>
           <Item>Price</Item>
