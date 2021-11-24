@@ -178,6 +178,10 @@ export async function getTopTraders({ polygonData, avalancheData, bscData, ethDa
   const swapWithTokensUsdValue = swaps.map(swap => {
     const mult = tokensPrice[swap.fromToken]?.usd || 0
 
+    if (!swap.info.chainId) {
+      return { ...swap, usdTokenValue: 0 }
+    }
+
     return {
       ...swap,
       usdTokenValue:
