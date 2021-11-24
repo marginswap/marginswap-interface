@@ -16,7 +16,11 @@ import { gql, useQuery } from '@apollo/client'
 // Change the value of "type" to SPOT to get daily volume of spot trades
 export const swapVolumesGQL = gql`
   query swapVolumes($gte: Int, $lte: Int) {
-    dailySwapVolumes(where: { type: MARGIN, createdAt_gte: $gte, createdAt_lte: $lte }, orderBy: createdAt) {
+    dailySwapVolumes(
+      where: { type: MARGIN, createdAt_gte: $gte, createdAt_lte: $lte }
+      orderBy: createdAt
+      first: 1000
+    ) {
       id
       token
       volume
@@ -41,10 +45,11 @@ export const swapVolumesGQL = gql`
 // see above for how to display volume numbers and token abbreviations/logos
 
 export const dailySwapVolumesByMonthGQL = gql`
-  query dailySwapVolumes {
+  query dailySwapVolumes($gte: Int, $lte: Int) {
     dailySwapVolumes(
-      where: { type: MARGIN, createdAt_gte: "1624999268", createdAt_lte: "1625735219" }
+      where: { type: MARGIN, createdAt_gte: $gte, createdAt_lte: $lte }
       orderBy: createdAt
+      first: 1000
     ) {
       id
       token
@@ -68,7 +73,7 @@ export const dailySwapVolumesByMonthGQL = gql`
 // - display the trader addresses and USD trading volume in order from greatest to least
 export const swapsGQL = gql`
   query swaps($gte: Int, $lte: Int) {
-    swaps(where: { type: MARGIN, createdAt_gte: $gte, createdAt_lte: $lte }, orderBy: createdAt) {
+    swaps(where: { type: MARGIN, createdAt_gte: $gte, createdAt_lte: $lte }, orderBy: createdAt, first: 1000) {
       id
       trader
       fromAmount
@@ -90,8 +95,8 @@ export const swapsGQL = gql`
 // The balance types are CROSS_MARGIN_HOLDING, CROSS_MARGIN_DEBT, and BOND_DEPOSIT
 
 export const aggregatedBalancesGQL = gql`
-  query aggregatedBalances {
-    aggregatedBalances {
+  query aggregatedBalances($gte: Int, $lte: Int) {
+    aggregatedBalances(where: { createdAt_gte: $gte, createdAt_lte: $lte }, first: 1000) {
       id
       token
       contract
