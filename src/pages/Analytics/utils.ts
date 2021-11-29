@@ -11,9 +11,8 @@ import legacyAvalancheData from '../../data/legacy-data/avalanche-aug-2021.json'
 import {
   AggregateBalance,
   ChartData,
-  DailyVolume,
   GetAggregateBalances,
-  GetDailyVolume,
+  MarginswapData,
   MarginswapDayData,
   Swap,
   SwapVolume,
@@ -241,63 +240,13 @@ export async function getTopTraders({ polygonData, avalancheData, bscData, ethDa
   })
 }
 
-export async function getVolume({
-  dailyPolygonSwapVolumes,
-  dailyAvalancheSwapVolumes,
-  dailyBscSwapVolumes,
-  dailyEthSwapVolumes
-}: GetDailyVolume) {
-  // avalancheTokenAddresses ->  WE ARE GETTING THIS FROM A STATIC FILE
-  const polygonTokenAddresses = dailyPolygonSwapVolumes.map(dsv => dsv.token)
-  const bscTokenAddresses = dailyBscSwapVolumes.map(dsv => dsv.token)
-  const ethTokenAddresses = dailyEthSwapVolumes.map(dsv => dsv.token)
-
-  const filterPolygonTokenAddresses: string[] = []
-  const filterEthTokenAddresses: string[] = []
-  const filterbscTokenAddresses: string[] = []
-
-  ethTokenAddresses.map(address => {
-    if (filterEthTokenAddresses.includes(address)) {
-      return
-    }
-
-    filterEthTokenAddresses.push(address)
-  })
-
-  bscTokenAddresses.map(address => {
-    if (filterbscTokenAddresses.includes(address)) {
-      return
-    }
-    filterbscTokenAddresses.push(address)
-  })
-
-  polygonTokenAddresses.map(address => {
-    if (filterPolygonTokenAddresses.includes(address)) {
-      return
-    }
-
-    filterPolygonTokenAddresses.push(address)
-  })
-
+export async function getVolume() {
   const tokensAvalanchePrice = await getAvalancheTokenUSDPrice()
-  const tokensPolygonPrice = await getPolygonTokenUSDPrice(filterPolygonTokenAddresses)
-  const tokensBscPrice = await getBscTokenUSDPrice(filterbscTokenAddresses)
-  const tokensEthPrice = await getEthTokenUSDPrice(filterEthTokenAddresses)
-
-  const tokensPrice = { ...tokensAvalanchePrice, ...tokensPolygonPrice, ...tokensBscPrice, ...tokensEthPrice }
+  const tokensPrice = { ...tokensAvalanchePrice }
 
   let dailyVolume = 0
   const legacyAvalanche = await Promise.all(legacyAvalancheData.dailySwapVolumes.filter(la => la.type === 'MARGIN'))
-
-  const swapVolumes = await Promise.all(
-    [
-      ...dailyPolygonSwapVolumes,
-      ...dailyAvalancheSwapVolumes,
-      ...legacyAvalanche,
-      ...dailyBscSwapVolumes,
-      ...dailyEthSwapVolumes
-    ].map(t => adjustTokenValue(t))
-  )
+  const swapVolumes = await Promise.all([...legacyAvalanche].map(t => adjustTokenValue(t)))
 
   const dailySwap = swapVolumes.map((token: any) => {
     let formattedVolume = 0
@@ -461,17 +410,91 @@ export async function getMonthlyVolumeForNetwork(marginswapDayData: MarginswapDa
 }
 
 export async function getDailyVolumeForNetwork(marginswapDayData: MarginswapDayData | undefined) {
-  if (marginswapDayData && marginswapDayData.dailyVolume && marginswapDayData.dailyVolume.length > 0) {
-    return marginswapDayData.dailyVolume[0].dailyVolumeUSD
+  if (marginswapDayData && marginswapDayData.currentVolume && marginswapDayData.currentVolume.length > 0) {
+    return marginswapDayData.currentVolume[0].dailyVolumeUSD
   }
 
   return 0
 }
 
 export async function getFormattedVolume(amount: number, chainId: ChainId) {
-  //console.log('🚀 ~ file: utils.ts ~ line 473 ~ getFormattedVolume ~ amount', amount, chainId)
   const networkPegCurrency = getPegCurrency(chainId)
   const totalUsdFormatted = Number(utils.formatUnits(amount, networkPegCurrency.decimals))
 
   return totalUsdFormatted
+}
+
+export async function getMarginswapDailyTotalVolume(marginswapData: MarginswapData) {
+  const avaxFormattedDailyVolume = await getFormattedDailyVolume(marginswapData.avaxMarginswapData, ChainId.AVALANCHE)
+  const bscFormattedDailyVolume = await getFormattedDailyVolume(marginswapData.bscMarginswapData, ChainId.BSC)
+  const etcFormattedDailyVolume = await getFormattedDailyVolume(marginswapData.ethMarginswapData, ChainId.MAINNET)
+  const maticFormattedDailyVolume = await getFormattedDailyVolume(marginswapData.maticMarginswapData, ChainId.MATIC)
+  const avaxLegacyDailyVolume = await getAvalancheLegacyData()
+
+  const dailyVolumes = [
+    ...avaxFormattedDailyVolume,
+    ...bscFormattedDailyVolume,
+    ...etcFormattedDailyVolume,
+    ...maticFormattedDailyVolume,
+    ...avaxLegacyDailyVolume
+  ]
+
+  const result = new Map()
+  dailyVolumes.forEach(day => {
+    if (result.has(day.time)) result.set(day.time, result.get(day.time) + day.value)
+    else result.set(day.time, day.value)
+  })
+
+  return {
+    dailySwap: Array.from(result, ([key, value]) => ({ time: key, value: value.toFixed(6) })).sort(
+      (a, b) => DateTime.fromISO(a.time).toMillis() - DateTime.fromISO(b.time).toMillis()
+    )
+  }
+}
+
+async function getAvalancheLegacyData() {
+  const tokensAvalanchePrice = await getAvalancheTokenUSDPrice()
+  const tokensPrice = { ...tokensAvalanchePrice }
+  const legacyAvalanche = await Promise.all(legacyAvalancheData.dailySwapVolumes.filter(la => la.type === 'MARGIN'))
+  const swapVolumes = await Promise.all([...legacyAvalanche].map(t => adjustTokenValue(t)))
+
+  const avalancheLegacyData = swapVolumes.map((token: any) => {
+    let formattedVolume = 0
+    try {
+      formattedVolume =
+        Number(
+          new TokenAmount(new Token(token.info.chainId, token.token, token.info.decimals), token.volume).toSignificant(
+            3
+          )
+        ) * tokensPrice[token.token.toLowerCase()].usd
+    } catch (err) {
+      formattedVolume = 0
+      console.log('Not found :::', token)
+    }
+
+    return {
+      time: DateTime.fromSeconds(Number(token.createdAt)).toISO().toString(),
+      value: Number(formattedVolume)
+    }
+  })
+
+  return avalancheLegacyData
+}
+
+async function getFormattedDailyVolume(marginswapDayData: MarginswapDayData | undefined, chainId: ChainId) {
+  const networkPegCurrency = getPegCurrency(chainId)
+
+  if (marginswapDayData && marginswapDayData.dailyVolume) {
+    const chartData: ChartData[] = marginswapDayData.dailyVolume.map(dv => {
+      const formattedVolumeUsd = Number(utils.formatUnits(dv.dailyVolumeUSD, networkPegCurrency.decimals))
+
+      return {
+        time: DateTime.fromSeconds(Number(dv.createdAt)).toISO().toString(),
+        value: formattedVolumeUsd
+      }
+    })
+    return chartData
+  }
+
+  return []
 }

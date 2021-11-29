@@ -77,16 +77,19 @@ export interface ChartData {
 export interface TotalVolume {
   id: string | ''
   totalVolumeUSD: number | 0
+  createdAt: string | ''
 }
 
 export interface DailyVolume {
   id: string | ''
   dailyVolumeUSD: number | 0
+  createdAt: string | ''
 }
 export interface MarginswapDayData {
   totalVolume: TotalVolume[]
   monthlyVolume: DailyVolume[]
   dailyVolume: DailyVolume[]
+  currentVolume: DailyVolume[]
 }
 
 export interface MarginswapData {

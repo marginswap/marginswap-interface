@@ -114,14 +114,25 @@ export const marginswapData = gql`
     totalVolume: marginswapDayDatas(orderBy: createdAt, orderDirection: desc, first: 1) {
       id
       totalVolumeUSD
+      createdAt
     }
-    monthlyVolume: marginswapDayDatas(where: { createdAt_gte: $startOfMonth, createdAt_lte: $endOfMonth }) {
+    monthlyVolume: marginswapDayDatas(
+      orderBy: createdAt
+      where: { createdAt_gte: $startOfMonth, createdAt_lte: $endOfMonth }
+    ) {
       id
       dailyVolumeUSD
+      createdAt
     }
-    dailyVolume: marginswapDayDatas(where: { id: $currentDay }) {
+    dailyVolume: marginswapDayDatas(orderBy: createdAt, first: 1000) {
       id
       dailyVolumeUSD
+      createdAt
+    }
+    currentVolume: marginswapDayDatas(where: { id: $currentDay }) {
+      id
+      dailyVolumeUSD
+      createdAt
     }
   }
 `

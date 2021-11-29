@@ -1,18 +1,18 @@
 import React, { useCallback, useEffect, useState, useMemo } from 'react'
 import { Container, ButtonsContainer, Button } from './styled'
 import Plot from 'react-plotly.js'
-import { AggregateBalances, ChartData, GetAggregateBalances, VolumeSwaps } from '../types'
-import { getAggregateBalances, getVolume } from '../utils'
+import { AggregateBalances, ChartData, GetAggregateBalances, MarginswapData } from '../types'
+import { getAggregateBalances, getMarginswapDailyTotalVolume } from '../utils'
 import moment from 'moment'
 
 type ChartDataType = 'fees' | 'tld'
 
 interface Props {
   aggregateBalancesData: AggregateBalances
-  swapVolumesData: VolumeSwaps
+  marginswapData: MarginswapData
 }
 
-const Chart: React.FC<Props> = ({ aggregateBalancesData, swapVolumesData }) => {
+const Chart: React.FC<Props> = ({ aggregateBalancesData, marginswapData }) => {
   const [chartDataTypeActived, setChartDataTypeActived] = useState<ChartDataType | null>('fees')
   const [chartData, setChartData] = useState<any>([])
   const [volumeSwap, setVolumeSwap] = useState<ChartData[]>([])
@@ -46,13 +46,8 @@ const Chart: React.FC<Props> = ({ aggregateBalancesData, swapVolumesData }) => {
     [fees, locked, volumeSwap]
   )
 
-  const getVolumeSwap = useCallback(async (avalancheDsv: any, polygonDsv: any, bscDsv: any, ethDsv: any) => {
-    const dailySwapFormatted = await getVolume({
-      dailyAvalancheSwapVolumes: avalancheDsv || [],
-      dailyPolygonSwapVolumes: polygonDsv || [],
-      dailyBscSwapVolumes: bscDsv || [],
-      dailyEthSwapVolumes: ethDsv || []
-    })
+  const getVolumeSwap = useCallback(async () => {
+    const dailySwapFormatted = await getMarginswapDailyTotalVolume(marginswapData)
 
     setFees(
       dailySwapFormatted.dailySwap.map(item => ({
@@ -61,28 +56,7 @@ const Chart: React.FC<Props> = ({ aggregateBalancesData, swapVolumesData }) => {
       }))
     )
     setVolumeSwap(dailySwapFormatted.dailySwap)
-  }, [])
-
-  useEffect(() => {
-    if (swapVolumesData.avalancheData.length > 0 && swapVolumesData.polygonData.length > 0) {
-      getVolumeSwap(
-        swapVolumesData.avalancheData,
-        swapVolumesData.polygonData,
-        swapVolumesData.bscData,
-        swapVolumesData.ethData
-      )
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    swapVolumesData.avalancheData.length,
-    swapVolumesData.polygonData.length,
-    swapVolumesData.bscData.length,
-    swapVolumesData.ethData.length,
-    swapVolumesData.avalancheData,
-    swapVolumesData.polygonData,
-    swapVolumesData.bscData,
-    swapVolumesData.ethData
-  ])
+  }, [marginswapData])
 
   const getTvl = useCallback(
     async ({
@@ -119,6 +93,10 @@ const Chart: React.FC<Props> = ({ aggregateBalancesData, swapVolumesData }) => {
     aggregateBalancesData.ethData,
     aggregateBalancesData.polygonData
   ])
+
+  useEffect(() => {
+    getVolumeSwap()
+  }, [marginswapData])
 
   const setChartDataByType = useCallback(
     (type: ChartDataType) => {

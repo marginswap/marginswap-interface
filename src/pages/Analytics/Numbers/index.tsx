@@ -3,34 +3,22 @@ import { Container } from './styled'
 import Stats from '../Stats'
 import {
   getAggregateBalances,
-  getVolume,
   getFormattedVolume,
   getTotalVolumeForNetwork,
   getMonthlyVolumeForNetwork,
   getDailyVolumeForNetwork
 } from '../utils'
-import {
-  AggregateBalances,
-  ChartData,
-  GetAggregateBalances,
-  MarginswapData,
-  StatsProps,
-  TotalVolume,
-  VolumeSwaps
-} from '../types'
-import moment from 'moment'
+import { AggregateBalances, GetAggregateBalances, MarginswapData } from '../types'
 import { ChainId } from '@marginswap/sdk'
 
 interface Props {
   aggregateBalancesData: AggregateBalances
-  swapVolumesData: VolumeSwaps
   marginswapData: MarginswapData
 }
 
-const Numbers: React.FC<Props> = ({ aggregateBalancesData, swapVolumesData, marginswapData }: Props) => {
-  const [volumeSwap, setVolumeSwap] = useState<StatsProps>()
-  const [dailySwap, setDailySwap] = useState<StatsProps>()
-  const [lastMonthSwapVolume, setLastMonthSwapVolume] = useState<StatsProps>()
+const LEGACY_AVALANCHE_TOTAL_VOLUME = 6076197.33
+
+const Numbers: React.FC<Props> = ({ aggregateBalancesData, marginswapData }: Props) => {
   const [montlyFees, setMontlyFees] = useState<number>()
   const [aggregateBalances, setAggregateBalances] = useState<number>()
   const [totalLending, setTotalLending] = useState<number>()
@@ -38,36 +26,6 @@ const Numbers: React.FC<Props> = ({ aggregateBalancesData, swapVolumesData, marg
   const [totalVolumeUsd, setTotalVolumeUsd] = useState<number>(0)
   const [montlyVolumeUsd, setMonthlyVolumeUsd] = useState<number>(0)
   const [dailyVolumeUsd, setDailyVolumeUsd] = useState<number>(0)
-
-  const getDailyVolume = useCallback(async (VolumeSwap: ChartData[]) => {
-    const lastMonthSwaps = await VolumeSwap.filter(ds => moment(ds.time).utc().isAfter(moment().subtract(1, 'months')))
-    const lastMonthVol = await lastMonthSwaps.map(s => Number(s.value)).reduce((acc, cur) => acc + cur, 0)
-
-    const last24HSwaps = await VolumeSwap.filter(ds => moment(ds.time).utc().isAfter(moment().subtract(1, 'days')))
-    const last24hVol = await last24HSwaps.map(s => Number(s.value)).reduce((acc, cur) => acc + cur, 0)
-
-    const montlyFees = lastMonthVol * (0.1 / 100)
-
-    setMontlyFees(Number(montlyFees.toFixed(2)))
-
-    setDailySwap({ totalDailyVolume: last24hVol, dailySwap: last24HSwaps })
-    setLastMonthSwapVolume({ totalDailyVolume: lastMonthVol, dailySwap: lastMonthSwaps })
-  }, [])
-
-  const getVolumeData = useCallback(
-    async (avalancheDsv: any, polygonDsv: any, bscDsv: any, ethDsv: any) => {
-      const dailySwapFormatted = await getVolume({
-        dailyAvalancheSwapVolumes: avalancheDsv || [],
-        dailyPolygonSwapVolumes: polygonDsv || [],
-        dailyBscSwapVolumes: bscDsv || [],
-        dailyEthSwapVolumes: ethDsv || []
-      })
-
-      setVolumeSwap(dailySwapFormatted)
-      getDailyVolume(dailySwapFormatted.dailySwap)
-    },
-    [getDailyVolume]
-  )
 
   const getTotalVolumeData = useCallback(async (marginswapData: MarginswapData) => {
     let totalVolumeUsd = 0
@@ -82,7 +40,7 @@ const Numbers: React.FC<Props> = ({ aggregateBalancesData, swapVolumesData, marg
     totalVolumeUsd += await getFormattedVolume(bscTotalVolume, ChainId.BSC)
     totalVolumeUsd += await getFormattedVolume(ethTotalVolume, ChainId.MAINNET)
 
-    setTotalVolumeUsd(totalVolumeUsd)
+    setTotalVolumeUsd(totalVolumeUsd + LEGACY_AVALANCHE_TOTAL_VOLUME)
   }, [])
 
   const getMonthlyVolumeData = useCallback(async (marginswapData: MarginswapData) => {
@@ -129,27 +87,6 @@ const Numbers: React.FC<Props> = ({ aggregateBalancesData, swapVolumesData, marg
     setMontlyFees(Number(montlyFees.toFixed(2)))
   }, [montlyVolumeUsd])
 
-  useEffect(() => {
-    //if (swapVolumesData.avalancheData.length > 0 && swapVolumesData.polygonData.length > 0) {
-    getVolumeData(
-      swapVolumesData.avalancheData,
-      swapVolumesData.polygonData,
-      swapVolumesData.bscData,
-      swapVolumesData.ethData
-    )
-    //}
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    swapVolumesData.avalancheData.length,
-    swapVolumesData.polygonData.length,
-    swapVolumesData.bscData.length,
-    swapVolumesData.ethData.length,
-    swapVolumesData.avalancheData,
-    swapVolumesData.polygonData,
-    swapVolumesData.bscData,
-    swapVolumesData.ethData
-  ])
-
   const getTvl = useCallback(
     async ({
       aggregateBalancesBsc,
@@ -172,14 +109,12 @@ const Numbers: React.FC<Props> = ({ aggregateBalancesData, swapVolumesData, marg
   )
 
   useEffect(() => {
-    //if (aggregateBalancesData.polygonData.length > 0 && aggregateBalancesData.avalancheData.length > 0) {
     getTvl({
       aggregateBalancesBsc: aggregateBalancesData.bscData,
       aggregateBalancesPolygon: aggregateBalancesData.polygonData,
       aggregateBalancesAvalanche: aggregateBalancesData.avalancheData,
       aggregateBalancesEth: aggregateBalancesData.ethData
     })
-    //}
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     aggregateBalancesData.avalancheData,

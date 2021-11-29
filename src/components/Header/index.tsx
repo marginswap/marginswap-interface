@@ -39,7 +39,7 @@ const headerLinks = [
   { path: '/margin-account', name: 'Margin Account' },
   { path: '/bond-supply', name: 'Bond Lending' },
   { path: '/stake', name: 'Stake' },
-  { path: '/Analytics', name: 'Analytics' }
+  { path: '/analytics', name: 'Analytics' }
 ]
 
 /*const NETWORK_LABELS: { [chainId in ChainId]?: string } = {

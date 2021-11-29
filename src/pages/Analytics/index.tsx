@@ -3,33 +3,19 @@ import Chart from './Chart'
 import Numbers from './Numbers'
 import TopTraders from './TopTraders'
 import { Container } from './styled'
-import {
-  useSwapVolumesQuery,
-  useAggregatedBalancesQuery,
-  useMarginswapDayDataQuery
-} from '../../graphql/queries/analytics'
+import { useAggregatedBalancesQuery, useMarginswapDayDataQuery } from '../../graphql/queries/analytics'
 import { apolloClient } from '../../config/apollo-config'
 import { ChainId } from '@marginswap/sdk'
 import { MarginswapData, MarginswapDayData } from './types'
-import { WarningBar } from '../../components/Placeholders'
 import moment from 'moment'
 
 const initialDate = moment('09-09-2019').utc().unix() //use this date to consider all the historical data - Sep 9, 2019
 const lteValue = moment().utc().unix()
-
 const startOfMonth = moment().startOf('month').startOf('day').utc().unix()
 const endOfMonth = moment().endOf('month').endOf('day').utc().unix()
 const currentDayId = Math.floor(lteValue / 86400)
 
 const Analytics: React.FC = () => {
-  const { data: ethDsvData, loading: ethDsvLoading } = useSwapVolumesQuery({
-    variables: {
-      gte: initialDate,
-      lte: lteValue
-    },
-    client: apolloClient(ChainId.MAINNET)
-  })
-
   const { data: polygonMarginswapData, loading: maticDataLoading } = useMarginswapDayDataQuery({
     variables: {
       startOfMonth: startOfMonth,
@@ -88,26 +74,6 @@ const Analytics: React.FC = () => {
       ethMarginswapData: ethereumMarginswapData
     }
   }, [loadingMarginswapData]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  const loadingSwapVolumes = useMemo(() => ethDsvLoading, [ethDsvLoading])
-
-  const swapVolumes = useMemo(() => {
-    if (loadingSwapVolumes) {
-      return {
-        avalancheData: [],
-        polygonData: [],
-        bscData: [],
-        ethData: []
-      }
-    }
-
-    return {
-      avalancheData: [],
-      polygonData: [],
-      bscData: [],
-      ethData: ethDsvData?.dailySwapVolumes || []
-    }
-  }, [loadingSwapVolumes]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const { data: bscAggreateBalancesData, loading: bscAggreateBalancesLoading } = useAggregatedBalancesQuery({
     variables: {
@@ -178,28 +144,12 @@ const Analytics: React.FC = () => {
   return (
     <Container>
       <h2>Marginswap Analytics</h2>
+      <Chart aggregateBalancesData={aggregateBalances} marginswapData={marginSwapData} />
 
-      <>
-        <WarningBar>
-          Apologies: Analytics are currently out of order while we fix scaling issues with large subgraph queries.
-        </WarningBar>
-
-        <Chart aggregateBalancesData={aggregateBalances} swapVolumesData={swapVolumes} />
-
-        <div style={{ marginTop: '10px' }}>
-          {!loadingAggregateBalances && !loadingSwapVolumes && !loadingMarginswapData ? (
-            <div>Finished loading all data</div>
-          ) : (
-            <div>Still loading</div>
-          )}
-          <Numbers
-            aggregateBalancesData={aggregateBalances}
-            swapVolumesData={swapVolumes}
-            marginswapData={marginSwapData}
-          />
-          <TopTraders />
-        </div>
-      </>
+      <div style={{ marginTop: '10px' }}>
+        <Numbers aggregateBalancesData={aggregateBalances} marginswapData={marginSwapData} />
+        <TopTraders />
+      </div>
     </Container>
   )
 }
