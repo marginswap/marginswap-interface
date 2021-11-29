@@ -73,3 +73,25 @@ export interface ChartData {
   time: string
   value: number
 }
+
+export interface TotalVolume {
+  id: string | ''
+  totalVolumeUSD: number | 0
+}
+
+export interface DailyVolume {
+  id: string | ''
+  dailyVolumeUSD: number | 0
+}
+export interface MarginswapDayData {
+  totalVolume: TotalVolume[]
+  monthlyVolume: DailyVolume[]
+  dailyVolume: DailyVolume[]
+}
+
+export interface MarginswapData {
+  avaxMarginswapData: MarginswapDayData | undefined
+  maticMarginswapData: MarginswapDayData | undefined
+  bscMarginswapData: MarginswapDayData | undefined
+  ethMarginswapData: MarginswapDayData | undefined
+}

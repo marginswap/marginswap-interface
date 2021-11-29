@@ -3,54 +3,93 @@ import Chart from './Chart'
 import Numbers from './Numbers'
 import TopTraders from './TopTraders'
 import { Container } from './styled'
-import { useSwapVolumesQuery, useAggregatedBalancesQuery } from '../../graphql/queries/analytics'
-import { avalancheClient } from '../../config/apollo-config'
-import { polygonClient } from '../../config/apollo-config'
-import { bscClient } from '../../config/apollo-config'
-import { ethereumClient } from '../../config/apollo-config'
+import {
+  useSwapVolumesQuery,
+  useAggregatedBalancesQuery,
+  useMarginswapDayDataQuery
+} from '../../graphql/queries/analytics'
+import { apolloClient } from '../../config/apollo-config'
+import { ChainId } from '@marginswap/sdk'
+import { MarginswapData, MarginswapDayData } from './types'
 import { WarningBar } from '../../components/Placeholders'
 import moment from 'moment'
 
 const initialDate = moment('09-09-2019').utc().unix() //use this date to consider all the historical data - Sep 9, 2019
 const lteValue = moment().utc().unix()
 
+const startOfMonth = moment().startOf('month').startOf('day').utc().unix()
+const endOfMonth = moment().endOf('month').endOf('day').utc().unix()
+const currentDayId = Math.floor(lteValue / 86400)
+
 const Analytics: React.FC = () => {
-  const { data: avalancheDsvData, loading: avalancheLoading } = useSwapVolumesQuery({
-    variables: {
-      gte: initialDate,
-      lte: lteValue
-    },
-    client: avalancheClient
-  })
-
-  const { data: polygonDsvData, loading: polygonDsvDataLoading } = useSwapVolumesQuery({
-    variables: {
-      gte: initialDate,
-      lte: lteValue
-    },
-    client: polygonClient
-  })
-
-  const { data: bscDsvData, loading: bscDsvLoading } = useSwapVolumesQuery({
-    variables: {
-      gte: initialDate,
-      lte: lteValue
-    },
-    client: bscClient
-  })
-
   const { data: ethDsvData, loading: ethDsvLoading } = useSwapVolumesQuery({
     variables: {
       gte: initialDate,
       lte: lteValue
     },
-    client: ethereumClient
+    client: apolloClient(ChainId.MAINNET)
   })
 
-  const loadingSwapVolumes = useMemo(
-    () => avalancheLoading || polygonDsvDataLoading || bscDsvLoading || ethDsvLoading,
-    [avalancheLoading, bscDsvLoading, ethDsvLoading, polygonDsvDataLoading]
+  const { data: polygonMarginswapData, loading: maticDataLoading } = useMarginswapDayDataQuery({
+    variables: {
+      startOfMonth: startOfMonth,
+      endOfMonth: endOfMonth,
+      currentDay: currentDayId
+    },
+    client: apolloClient(ChainId.MATIC)
+  })
+
+  const { data: avalancheMarginswapData, loading: avaxDataLoading } = useMarginswapDayDataQuery({
+    variables: {
+      startOfMonth: startOfMonth,
+      endOfMonth: endOfMonth,
+      currentDay: currentDayId
+    },
+    client: apolloClient(ChainId.AVALANCHE)
+  })
+
+  const { data: bscMarginswapData, loading: bscDataLoading } = useMarginswapDayDataQuery({
+    variables: {
+      startOfMonth: startOfMonth,
+      endOfMonth: endOfMonth,
+      currentDay: currentDayId
+    },
+    client: apolloClient(ChainId.BSC)
+  })
+
+  const { data: ethereumMarginswapData, loading: ethereumDataLoading } = useMarginswapDayDataQuery({
+    variables: {
+      startOfMonth: startOfMonth,
+      endOfMonth: endOfMonth,
+      currentDay: currentDayId
+    },
+    client: apolloClient(ChainId.MAINNET)
+  })
+
+  const loadingMarginswapData = useMemo(
+    () => avaxDataLoading || maticDataLoading || bscDataLoading || ethereumDataLoading,
+    [avaxDataLoading, bscDataLoading, maticDataLoading, ethereumDataLoading]
   )
+
+  const marginSwapData: MarginswapData = useMemo(() => {
+    if (loadingMarginswapData) {
+      return {
+        avaxMarginswapData: {} as MarginswapDayData,
+        maticMarginswapData: {} as MarginswapDayData,
+        bscMarginswapData: {} as MarginswapDayData,
+        ethMarginswapData: {} as MarginswapDayData
+      }
+    }
+
+    return {
+      avaxMarginswapData: avalancheMarginswapData,
+      maticMarginswapData: polygonMarginswapData,
+      bscMarginswapData: bscMarginswapData,
+      ethMarginswapData: ethereumMarginswapData
+    }
+  }, [loadingMarginswapData]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const loadingSwapVolumes = useMemo(() => ethDsvLoading, [ethDsvLoading])
 
   const swapVolumes = useMemo(() => {
     if (loadingSwapVolumes) {
@@ -63,9 +102,9 @@ const Analytics: React.FC = () => {
     }
 
     return {
-      avalancheData: avalancheDsvData?.dailySwapVolumes || [],
-      polygonData: polygonDsvData?.dailySwapVolumes || [],
-      bscData: bscDsvData?.dailySwapVolumes || [],
+      avalancheData: [],
+      polygonData: [],
+      bscData: [],
       ethData: ethDsvData?.dailySwapVolumes || []
     }
   }, [loadingSwapVolumes]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -75,7 +114,7 @@ const Analytics: React.FC = () => {
       gte: initialDate,
       lte: lteValue
     },
-    client: bscClient
+    client: apolloClient(ChainId.BSC)
   })
 
   const { data: polygonAggreateBalancesData, loading: polygonAggreateBalancesLoading } = useAggregatedBalancesQuery({
@@ -83,7 +122,7 @@ const Analytics: React.FC = () => {
       gte: initialDate,
       lte: lteValue
     },
-    client: polygonClient
+    client: apolloClient(ChainId.MATIC)
   })
 
   const { data: avalancheAggreateBalancesData, loading: avalancheAggreateBalancesLoading } = useAggregatedBalancesQuery(
@@ -92,7 +131,7 @@ const Analytics: React.FC = () => {
         gte: initialDate,
         lte: lteValue
       },
-      client: avalancheClient
+      client: apolloClient(ChainId.AVALANCHE)
     }
   )
 
@@ -101,7 +140,7 @@ const Analytics: React.FC = () => {
       gte: initialDate,
       lte: lteValue
     },
-    client: ethereumClient
+    client: apolloClient(ChainId.MAINNET)
   })
 
   const loadingAggregateBalances = useMemo(
@@ -148,7 +187,16 @@ const Analytics: React.FC = () => {
         <Chart aggregateBalancesData={aggregateBalances} swapVolumesData={swapVolumes} />
 
         <div style={{ marginTop: '10px' }}>
-          <Numbers aggregateBalancesData={aggregateBalances} swapVolumesData={swapVolumes} />
+          {!loadingAggregateBalances && !loadingSwapVolumes && !loadingMarginswapData ? (
+            <div>Finished loading all data</div>
+          ) : (
+            <div>Still loading</div>
+          )}
+          <Numbers
+            aggregateBalancesData={aggregateBalances}
+            swapVolumesData={swapVolumes}
+            marginswapData={marginSwapData}
+          />
           <TopTraders />
         </div>
       </>

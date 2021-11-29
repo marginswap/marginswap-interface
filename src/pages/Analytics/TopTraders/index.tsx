@@ -7,11 +7,9 @@ import { Container, Content, Title, TableHead, WalletsList, Cell, WalletListItem
 import { Trader } from '../types'
 import { getTopTraders } from '../utils'
 import { useSwapsQuery } from 'graphql/queries/analytics'
-import { avalancheClient } from '../../../config/apollo-config'
-import { polygonClient } from '../../../config/apollo-config'
-import { bscClient } from '../../../config/apollo-config'
-import { ethereumClient } from '../../../config/apollo-config'
+import { apolloClient } from '../../../config/apollo-config'
 import moment from 'moment'
+import { ChainId } from '@marginswap/sdk'
 
 type Order = '+' | '-'
 
@@ -32,7 +30,7 @@ const TopTraders: React.FC = () => {
   const dummyData = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
 
   const { data: avaSwapsData, loading: avaSwapsLoading } = useSwapsQuery({
-    client: avalancheClient,
+    client: apolloClient(ChainId.AVALANCHE),
     variables: {
       gte: gteValue,
       lte: lteValue
@@ -40,7 +38,7 @@ const TopTraders: React.FC = () => {
   })
 
   const { data: polySwapsData, loading: polySwapsLoading } = useSwapsQuery({
-    client: polygonClient,
+    client: apolloClient(ChainId.MATIC),
     variables: {
       gte: gteValue,
       lte: lteValue
@@ -48,7 +46,7 @@ const TopTraders: React.FC = () => {
   })
 
   const { data: bscSwapsData, loading: bscSwapsLoading } = useSwapsQuery({
-    client: bscClient,
+    client: apolloClient(ChainId.BSC),
     variables: {
       gte: gteValue,
       lte: lteValue
@@ -56,7 +54,7 @@ const TopTraders: React.FC = () => {
   })
 
   const { data: ethSwapsData, loading: ethSwapsLoading } = useSwapsQuery({
-    client: ethereumClient,
+    client: apolloClient(ChainId.MAINNET),
     variables: {
       gte: gteValue,
       lte: lteValue

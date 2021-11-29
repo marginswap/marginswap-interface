@@ -1,4 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
+import { MarginswapDayData } from 'pages/Analytics/types'
 
 // Daily Volume for all available dates (this will get too heavy to do on the client at some point)
 // Convert createdAt to a javascript date like this:
@@ -108,7 +109,25 @@ export const aggregatedBalancesGQL = gql`
   }
 `
 
+export const marginswapData = gql`
+  query marginswapData($currentDay: BigInt, $startOfMonth: BigInt, $endOfMonth: BigInt) {
+    totalVolume: marginswapDayDatas(orderBy: createdAt, orderDirection: desc, first: 1) {
+      id
+      totalVolumeUSD
+    }
+    monthlyVolume: marginswapDayDatas(where: { createdAt_gte: $startOfMonth, createdAt_lte: $endOfMonth }) {
+      id
+      dailyVolumeUSD
+    }
+    dailyVolume: marginswapDayDatas(where: { id: $currentDay }) {
+      id
+      dailyVolumeUSD
+    }
+  }
+`
+
 export const useSwapVolumesQuery = (options = {}) => useQuery(swapVolumesGQL, options)
 export const useDailySwapVolumesByMonthQuery = (options = {}) => useQuery(dailySwapVolumesByMonthGQL, options)
 export const useSwapsQuery = (options = {}) => useQuery(swapsGQL, options)
 export const useAggregatedBalancesQuery = (options = {}) => useQuery(aggregatedBalancesGQL, options)
+export const useMarginswapDayDataQuery = (options = {}) => useQuery<MarginswapDayData>(marginswapData, options)

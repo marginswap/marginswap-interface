@@ -3,14 +3,18 @@ import { DateTime } from 'luxon'
 import groupby from 'lodash.groupby'
 import tokenListMarginSwap from '../../constants/tokenLists/marginswap-default.tokenlist.json'
 import { AVALANCHE_TOKENS_LIST } from '../../constants'
-import { TokenAmount, Token } from '@marginswap/sdk'
+import { TokenAmount, Token, ChainId } from '@marginswap/sdk'
 import transform from 'lodash.transform'
+import { getPegCurrency } from '../../constants'
+import { utils } from 'ethers'
 import legacyAvalancheData from '../../data/legacy-data/avalanche-aug-2021.json'
 import {
   AggregateBalance,
   ChartData,
+  DailyVolume,
   GetAggregateBalances,
   GetDailyVolume,
+  MarginswapDayData,
   Swap,
   SwapVolume,
   TokensMap,
@@ -284,6 +288,7 @@ export async function getVolume({
 
   let dailyVolume = 0
   const legacyAvalanche = await Promise.all(legacyAvalancheData.dailySwapVolumes.filter(la => la.type === 'MARGIN'))
+
   const swapVolumes = await Promise.all(
     [
       ...dailyPolygonSwapVolumes,
@@ -431,4 +436,42 @@ export async function getAggregateBalances({
       (a, b) => DateTime.fromISO(a.time).toMillis() - DateTime.fromISO(b.time).toMillis()
     )
   }
+}
+
+export async function getTotalVolumeForNetwork(marginswapDayData: MarginswapDayData | undefined) {
+  if (marginswapDayData && marginswapDayData.totalVolume && marginswapDayData.totalVolume.length > 0) {
+    return marginswapDayData.totalVolume[0].totalVolumeUSD
+  }
+
+  return 0
+}
+
+export async function getMonthlyVolumeForNetwork(marginswapDayData: MarginswapDayData | undefined, chainId: ChainId) {
+  let monthlyTotal = 0
+
+  if (marginswapDayData && marginswapDayData.monthlyVolume && marginswapDayData.monthlyVolume.length > 0) {
+    for (const dailyVolume of marginswapDayData.monthlyVolume) {
+      monthlyTotal += await getFormattedVolume(dailyVolume.dailyVolumeUSD, chainId)
+    }
+
+    return monthlyTotal
+  }
+
+  return 0
+}
+
+export async function getDailyVolumeForNetwork(marginswapDayData: MarginswapDayData | undefined) {
+  if (marginswapDayData && marginswapDayData.dailyVolume && marginswapDayData.dailyVolume.length > 0) {
+    return marginswapDayData.dailyVolume[0].dailyVolumeUSD
+  }
+
+  return 0
+}
+
+export async function getFormattedVolume(amount: number, chainId: ChainId) {
+  //console.log('🚀 ~ file: utils.ts ~ line 473 ~ getFormattedVolume ~ amount', amount, chainId)
+  const networkPegCurrency = getPegCurrency(chainId)
+  const totalUsdFormatted = Number(utils.formatUnits(amount, networkPegCurrency.decimals))
+
+  return totalUsdFormatted
 }
