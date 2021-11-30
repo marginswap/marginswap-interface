@@ -8,17 +8,16 @@ import {
   getMonthlyVolumeForNetwork,
   getDailyVolumeForNetwork
 } from '../utils'
-import { AggregateBalances, GetAggregateBalances, MarginswapData } from '../types'
+import { GetAggregateBalances, MarginswapData } from '../types'
 import { ChainId } from '@marginswap/sdk'
 
 interface Props {
-  aggregateBalancesData: AggregateBalances
   marginswapData: MarginswapData
 }
 
 const LEGACY_AVALANCHE_TOTAL_VOLUME = 6076197.33
 
-const Numbers: React.FC<Props> = ({ aggregateBalancesData, marginswapData }: Props) => {
+const Numbers: React.FC<Props> = ({ marginswapData }: Props) => {
   const [montlyFees, setMontlyFees] = useState<number>()
   const [aggregateBalances, setAggregateBalances] = useState<number>()
   const [totalLending, setTotalLending] = useState<number>()
@@ -110,18 +109,13 @@ const Numbers: React.FC<Props> = ({ aggregateBalancesData, marginswapData }: Pro
 
   useEffect(() => {
     getTvl({
-      aggregateBalancesBsc: aggregateBalancesData.bscData,
-      aggregateBalancesPolygon: aggregateBalancesData.polygonData,
-      aggregateBalancesAvalanche: aggregateBalancesData.avalancheData,
-      aggregateBalancesEth: aggregateBalancesData.ethData
+      aggregateBalancesBsc: marginswapData.bscMarginswapData?.aggregatedBalances || [],
+      aggregateBalancesPolygon: marginswapData.maticMarginswapData?.aggregatedBalances || [],
+      aggregateBalancesAvalanche: marginswapData.avaxMarginswapData?.aggregatedBalances || [],
+      aggregateBalancesEth: marginswapData.ethMarginswapData?.aggregatedBalances || []
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    aggregateBalancesData.avalancheData,
-    aggregateBalancesData.bscData,
-    aggregateBalancesData.ethData,
-    aggregateBalancesData.polygonData
-  ])
+  }, [marginswapData])
 
   return (
     <Container>

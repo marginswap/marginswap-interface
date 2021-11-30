@@ -3,7 +3,7 @@ import Chart from './Chart'
 import Numbers from './Numbers'
 import TopTraders from './TopTraders'
 import { Container } from './styled'
-import { useAggregatedBalancesQuery, useMarginswapDayDataQuery } from '../../graphql/queries/analytics'
+import { useMarginswapDayDataQuery } from '../../graphql/queries/analytics'
 import { apolloClient } from '../../config/apollo-config'
 import { ChainId } from '@marginswap/sdk'
 import { MarginswapData, MarginswapDayData } from './types'
@@ -20,7 +20,9 @@ const Analytics: React.FC = () => {
     variables: {
       startOfMonth: startOfMonth,
       endOfMonth: endOfMonth,
-      currentDay: currentDayId
+      currentDay: currentDayId,
+      gte: initialDate,
+      lte: lteValue
     },
     client: apolloClient(ChainId.MATIC)
   })
@@ -29,7 +31,9 @@ const Analytics: React.FC = () => {
     variables: {
       startOfMonth: startOfMonth,
       endOfMonth: endOfMonth,
-      currentDay: currentDayId
+      currentDay: currentDayId,
+      gte: initialDate,
+      lte: lteValue
     },
     client: apolloClient(ChainId.AVALANCHE)
   })
@@ -38,7 +42,9 @@ const Analytics: React.FC = () => {
     variables: {
       startOfMonth: startOfMonth,
       endOfMonth: endOfMonth,
-      currentDay: currentDayId
+      currentDay: currentDayId,
+      gte: initialDate,
+      lte: lteValue
     },
     client: apolloClient(ChainId.BSC)
   })
@@ -47,7 +53,9 @@ const Analytics: React.FC = () => {
     variables: {
       startOfMonth: startOfMonth,
       endOfMonth: endOfMonth,
-      currentDay: currentDayId
+      currentDay: currentDayId,
+      gte: initialDate,
+      lte: lteValue
     },
     client: apolloClient(ChainId.MAINNET)
   })
@@ -75,79 +83,13 @@ const Analytics: React.FC = () => {
     }
   }, [loadingMarginswapData]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const { data: bscAggreateBalancesData, loading: bscAggreateBalancesLoading } = useAggregatedBalancesQuery({
-    variables: {
-      gte: initialDate,
-      lte: lteValue
-    },
-    client: apolloClient(ChainId.BSC)
-  })
-
-  const { data: polygonAggreateBalancesData, loading: polygonAggreateBalancesLoading } = useAggregatedBalancesQuery({
-    variables: {
-      gte: initialDate,
-      lte: lteValue
-    },
-    client: apolloClient(ChainId.MATIC)
-  })
-
-  const { data: avalancheAggreateBalancesData, loading: avalancheAggreateBalancesLoading } = useAggregatedBalancesQuery(
-    {
-      variables: {
-        gte: initialDate,
-        lte: lteValue
-      },
-      client: apolloClient(ChainId.AVALANCHE)
-    }
-  )
-
-  const { data: ethAggreateBalancesData, loading: ethAggreateBalancesLoading } = useAggregatedBalancesQuery({
-    variables: {
-      gte: initialDate,
-      lte: lteValue
-    },
-    client: apolloClient(ChainId.MAINNET)
-  })
-
-  const loadingAggregateBalances = useMemo(
-    () =>
-      bscAggreateBalancesLoading ||
-      polygonAggreateBalancesLoading ||
-      avalancheAggreateBalancesLoading ||
-      ethAggreateBalancesLoading,
-    [
-      avalancheAggreateBalancesLoading,
-      bscAggreateBalancesLoading,
-      ethAggreateBalancesLoading,
-      polygonAggreateBalancesLoading
-    ]
-  )
-
-  const aggregateBalances = useMemo(() => {
-    if (loadingAggregateBalances) {
-      return {
-        bscData: [],
-        polygonData: [],
-        avalancheData: [],
-        ethData: []
-      }
-    }
-
-    return {
-      bscData: bscAggreateBalancesData?.aggregatedBalances || [],
-      polygonData: polygonAggreateBalancesData?.aggregatedBalances || [],
-      avalancheData: avalancheAggreateBalancesData?.aggregatedBalances || [],
-      ethData: ethAggreateBalancesData?.aggregatedBalances || []
-    }
-  }, [loadingAggregateBalances]) // eslint-disable-line react-hooks/exhaustive-deps
-
   return (
     <Container>
       <h2>Marginswap Analytics</h2>
-      <Chart aggregateBalancesData={aggregateBalances} marginswapData={marginSwapData} />
+      <Chart marginswapData={marginSwapData} />
 
       <div style={{ marginTop: '10px' }}>
-        <Numbers aggregateBalancesData={aggregateBalances} marginswapData={marginSwapData} />
+        <Numbers marginswapData={marginSwapData} />
         <TopTraders />
       </div>
     </Container>

@@ -90,6 +90,7 @@ export interface MarginswapDayData {
   monthlyVolume: DailyVolume[]
   dailyVolume: DailyVolume[]
   currentVolume: DailyVolume[]
+  aggregatedBalances: AggregateBalance[]
 }
 
 export interface MarginswapData {

@@ -1,18 +1,17 @@
 import React, { useCallback, useEffect, useState, useMemo } from 'react'
 import { Container, ButtonsContainer, Button } from './styled'
 import Plot from 'react-plotly.js'
-import { AggregateBalances, ChartData, GetAggregateBalances, MarginswapData } from '../types'
+import { ChartData, GetAggregateBalances, MarginswapData } from '../types'
 import { getAggregateBalances, getMarginswapDailyTotalVolume } from '../utils'
 import moment from 'moment'
 
 type ChartDataType = 'fees' | 'tld'
 
 interface Props {
-  aggregateBalancesData: AggregateBalances
   marginswapData: MarginswapData
 }
 
-const Chart: React.FC<Props> = ({ aggregateBalancesData, marginswapData }) => {
+const Chart: React.FC<Props> = ({ marginswapData }) => {
   const [chartDataTypeActived, setChartDataTypeActived] = useState<ChartDataType | null>('fees')
   const [chartData, setChartData] = useState<any>([])
   const [volumeSwap, setVolumeSwap] = useState<ChartData[]>([])
@@ -78,21 +77,14 @@ const Chart: React.FC<Props> = ({ aggregateBalancesData, marginswapData }) => {
   )
 
   useEffect(() => {
-    if (aggregateBalancesData.polygonData.length > 0 && aggregateBalancesData.avalancheData.length > 0) {
-      getTvl({
-        aggregateBalancesBsc: aggregateBalancesData.bscData,
-        aggregateBalancesPolygon: aggregateBalancesData.polygonData,
-        aggregateBalancesAvalanche: aggregateBalancesData.avalancheData,
-        aggregateBalancesEth: aggregateBalancesData.ethData
-      })
-    }
+    getTvl({
+      aggregateBalancesBsc: marginswapData.bscMarginswapData?.aggregatedBalances || [],
+      aggregateBalancesPolygon: marginswapData.maticMarginswapData?.aggregatedBalances || [],
+      aggregateBalancesAvalanche: marginswapData.avaxMarginswapData?.aggregatedBalances || [],
+      aggregateBalancesEth: marginswapData.ethMarginswapData?.aggregatedBalances || []
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    aggregateBalancesData.avalancheData,
-    aggregateBalancesData.bscData,
-    aggregateBalancesData.ethData,
-    aggregateBalancesData.polygonData
-  ])
+  }, [marginswapData])
 
   useEffect(() => {
     getVolumeSwap()
