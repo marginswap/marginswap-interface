@@ -473,7 +473,7 @@ async function getAvalancheLegacyData() {
     }
 
     return {
-      time: DateTime.fromSeconds(Number(token.createdAt)).toISO().toString(),
+      time: DateTime.fromSeconds(Number(token.createdAt)).startOf('day').toISO().toString(),
       value: Number(formattedVolume)
     }
   })
@@ -489,7 +489,7 @@ async function getFormattedDailyVolume(marginswapDayData: MarginswapDayData | un
       const formattedVolumeUsd = Number(utils.formatUnits(dv.dailyVolumeUSD, networkPegCurrency.decimals))
 
       return {
-        time: DateTime.fromSeconds(Number(dv.createdAt)).toISO().toString(),
+        time: DateTime.fromSeconds(Number(dv.createdAt)).startOf('day').toISO().toString(),
         value: formattedVolumeUsd
       }
     })
