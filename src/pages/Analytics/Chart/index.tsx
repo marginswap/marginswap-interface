@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState, useMemo } from 'react'
-import { Container, ButtonsContainer, Button } from './styled'
+import { Container } from './styled'
 import { ChartData, GetAggregateBalances, MarginswapData } from '../types'
 import { getAggregateBalances, getMarginswapDailyTotalVolume } from '../utils'
 import createPlotlyComponent from 'react-plotly.js/factory'
@@ -163,19 +163,7 @@ const Chart: React.FC<Props> = ({ marginswapData }) => {
     [chartData]
   )
 
-  return (
-    <Container>
-      <ButtonsContainer>
-        <Button
-          onClick={() => setChartDataByType('fees')}
-          className={`${chartDataTypeActived === 'fees' ? 'active' : ''}`}
-        >
-          Volumes & Fees
-        </Button>
-      </ButtonsContainer>
-      {renderPlot}
-    </Container>
-  )
+  return <Container>{renderPlot}</Container>
 }
 
 export default Chart
