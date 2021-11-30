@@ -172,12 +172,6 @@ const Chart: React.FC<Props> = ({ marginswapData }) => {
         >
           Volumes & Fees
         </Button>
-        <Button
-          onClick={() => setChartDataByType('tld')}
-          className={`${chartDataTypeActived === 'tld' ? 'active' : ''}`}
-        >
-          Total Locked
-        </Button>
       </ButtonsContainer>
       {renderPlot}
     </Container>
