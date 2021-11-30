@@ -459,6 +459,7 @@ async function getAvalancheLegacyData() {
   const swapVolumes = await Promise.all([...legacyAvalanche].map(t => adjustTokenValue(t)))
 
   const avalancheLegacyData = swapVolumes.map((token: any) => {
+    const volumeDateTime = Math.floor(Number(token.createdAt) / 86400) * 86400
     let formattedVolume = 0
     try {
       formattedVolume =
@@ -473,7 +474,7 @@ async function getAvalancheLegacyData() {
     }
 
     return {
-      time: DateTime.fromSeconds(Number(token.createdAt)).startOf('day').toISO().toString(),
+      time: DateTime.fromSeconds(volumeDateTime).toISO().toString(),
       value: Number(formattedVolume)
     }
   })
@@ -486,10 +487,11 @@ async function getFormattedDailyVolume(marginswapDayData: MarginswapDayData | un
 
   if (marginswapDayData && marginswapDayData.dailyVolume) {
     const chartData: ChartData[] = marginswapDayData.dailyVolume.map(dv => {
+      const volumeDateTime = Math.floor(Number(dv.createdAt) / 86400) * 86400
       const formattedVolumeUsd = Number(utils.formatUnits(dv.dailyVolumeUSD, networkPegCurrency.decimals))
 
       return {
-        time: DateTime.fromSeconds(Number(dv.createdAt)).startOf('day').toISO().toString(),
+        time: DateTime.fromSeconds(volumeDateTime).toISO().toString(),
         value: formattedVolumeUsd
       }
     })

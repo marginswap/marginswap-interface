@@ -123,7 +123,7 @@
     "multicodec": "^3.0.1",
     "multihashes": "^4.0.2",
     "node-vibrant": "3.1.5",
-    "plotly.js": "^2.5.1",
+    "plotly.js-basic-dist-min": "^2.6.4",
     "polished": "^4.1.1",
     "qs": "^6.10.1",
     "react": "^17.0.1",

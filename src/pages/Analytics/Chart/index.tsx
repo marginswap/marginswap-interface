@@ -1,12 +1,15 @@
 import React, { useCallback, useEffect, useState, useMemo } from 'react'
 import { Container, ButtonsContainer, Button } from './styled'
-import Plot from 'react-plotly.js'
 import { ChartData, GetAggregateBalances, MarginswapData } from '../types'
 import { getAggregateBalances, getMarginswapDailyTotalVolume } from '../utils'
+import createPlotlyComponent from 'react-plotly.js/factory'
 import moment from 'moment'
 
 type ChartDataType = 'fees' | 'tld'
 
+// eslint-disable-next-line
+const Plotly = require('plotly.js-basic-dist-min')
+const Plot = createPlotlyComponent(Plotly)
 interface Props {
   marginswapData: MarginswapData
 }
