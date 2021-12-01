@@ -11,8 +11,8 @@ import moment from 'moment'
 
 const initialDate = moment('09-09-2019').utc().unix() //use this date to consider all the historical data - Sep 9, 2019
 const lteValue = moment().utc().unix()
-const startOfMonth = moment().startOf('month').startOf('day').utc().unix()
-const endOfMonth = moment().endOf('month').endOf('day').utc().unix()
+const startOfMonth = moment().utc().startOf('day').subtract(30, 'days').utc().unix()
+const endOfMonth = moment().utc().endOf('day').utc().unix()
 const currentDayId = Math.floor(lteValue / 86400)
 
 const Analytics: React.FC = () => {

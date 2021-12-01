@@ -17,6 +17,7 @@ type OrderKey = 'dailyVolume' | 'weeklyVolume' | 'monthlyVolume'
 
 const gteValue = moment
   .utc()
+  .startOf('day')
   .subtract(Number(moment().format('D')) - 1, 'days')
   .unix()
 const lteValue = moment.utc().unix()
