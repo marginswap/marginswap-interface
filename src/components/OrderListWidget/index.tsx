@@ -90,7 +90,6 @@ const OrderListWidget = () => {
 
     onGetLimitOrders(account)
       .then((result: Record<number, Record<number, OrderRecord>>) => {
-        console.log('🚀 ~ file: index.tsx ~ line 93 ~ .then ~ result', result)
         const orders: LimitOrder[] = []
 
         Object.entries(result).forEach(([, v]) => {

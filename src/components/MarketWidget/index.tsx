@@ -68,7 +68,7 @@ const MarketWidget = () => {
 
   useEffect(() => {
     processPairs()
-  }, [])
+  }, [chainId])
 
   useEffect(() => {
     setCurrentPair(pairData[0])

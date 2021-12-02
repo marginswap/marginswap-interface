@@ -10,6 +10,8 @@ export const updateLeverageType = createAction<{ leverageType: LeverageType }>('
 export const selectCurrency = createAction<{ field: Field; currencyId: string }>('swap/selectCurrency')
 export const switchCurrencies = createAction<void>('swap/switchCurrencies')
 export const typeInput = createAction<{ field: Field; typedValue: string }>('swap/typeInput')
+export const setSwapCurrencies =
+  createAction<{ inputCurrency: string; outputCurrency: string }>('swap/setSwapCurrencies')
 export const replaceSwapState = createAction<{
   field: Field
   typedValue: string

@@ -7,7 +7,8 @@ import {
   replaceOrderState,
   typeOrderInput,
   setLimitOrders,
-  setOrderHistory
+  setOrderHistory,
+  setOrderCurrencies
 } from './actions'
 
 export interface OrderState {
@@ -57,14 +58,12 @@ export default createReducer<OrderState>(initialState, builder =>
       if (field === Field.INPUT) {
         return {
           ...state,
-          orderIndependentField: state.orderIndependentField === Field.INPUT ? Field.OUTPUT : Field.INPUT,
           orderInput: { currencyId: currencyId },
           inAmount: ''
         }
       } else {
         return {
           ...state,
-          orderIndependentField: state.orderIndependentField === Field.INPUT ? Field.OUTPUT : Field.INPUT,
           orderOutput: { currencyId: currencyId },
           outAmount: ''
         }
@@ -74,7 +73,6 @@ export default createReducer<OrderState>(initialState, builder =>
       const inAmt = state.inAmount
       return {
         ...state,
-        orderIndependentField: state.orderIndependentField === Field.INPUT ? Field.OUTPUT : Field.INPUT,
         inAmount: state.outAmount,
         outAmount: inAmt,
         orderInput: { currencyId: state.orderOutput.currencyId },
@@ -84,7 +82,6 @@ export default createReducer<OrderState>(initialState, builder =>
     .addCase(typeOrderInput, (state, { payload: { field, orderTypedValue } }) => {
       return {
         ...state,
-        orderIndependentField: field,
         inAmount: field === Field.INPUT ? orderTypedValue : state.inAmount,
         outAmount: field === Field.OUTPUT ? orderTypedValue : state.outAmount,
         orderInput: {
@@ -106,6 +103,16 @@ export default createReducer<OrderState>(initialState, builder =>
       return {
         ...state,
         orderHistory: orders
+      }
+    })
+    .addCase(setOrderCurrencies, (state, { payload: { inputCurrency, outputCurrency } }) => {
+      const inAmt = state.inAmount
+      return {
+        ...state,
+        inAmount: state.outAmount,
+        outAmount: inAmt,
+        orderInput: { currencyId: inputCurrency },
+        orderOutput: { currencyId: outputCurrency }
       }
     })
 )

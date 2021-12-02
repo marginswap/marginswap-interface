@@ -11,6 +11,8 @@ export const switchOrderCurrencies = createAction<void>('order/switchOrderCurren
 export const typeOrderInput = createAction<{ field: Field; orderTypedValue: string }>('order/typeOrderInput')
 export const setLimitOrders = createAction<{ orders: OrderList }>('order/limitOrders')
 export const setOrderHistory = createAction<{ orders: OrderList }>('order/orderHistory')
+export const setOrderCurrencies =
+  createAction<{ inputCurrency: string; outputCurrency: string }>('order/setOrderCurrencies')
 export const replaceOrderState = createAction<{
   field: Field
   orderTypedValue: string

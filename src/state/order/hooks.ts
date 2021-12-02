@@ -8,7 +8,7 @@ import { useCurrency } from '../../hooks/Tokens'
 import { useBorrowable, useCurrencyBalances } from '../wallet/hooks'
 import { tryParseAmount } from 'state/swap/hooks'
 import { parseUnits } from '@ethersproject/units'
-import { Field, selectOrderCurrency, switchOrderCurrencies, typeOrderInput } from './actions'
+import { Field, selectOrderCurrency, switchOrderCurrencies, setOrderCurrencies, typeOrderInput } from './actions'
 import { useTransactionAdder } from 'state/transactions/hooks'
 
 export function useOrderState(): AppState['order'] {
@@ -87,6 +87,7 @@ export function useOrderActionHandlers(): {
   onOrderCurrencySelection: (field: Field, currency: Currency) => void
   onOrderSwitchTokens: () => void
   onOrderUserInput: (field: Field, typedValue: string) => void
+  onSetOrderTokens: (inputCurrency: string, outputCurrency: string) => void
 } {
   const dispatch = useDispatch<AppDispatch>()
   const onOrderCurrencySelection = useCallback(
@@ -105,6 +106,13 @@ export function useOrderActionHandlers(): {
     dispatch(switchOrderCurrencies())
   }, [dispatch])
 
+  const onSetOrderTokens = useCallback(
+    (inputCurrency, outputCurrency) => {
+      dispatch(setOrderCurrencies({ inputCurrency, outputCurrency }))
+    },
+    [dispatch]
+  )
+
   const onOrderUserInput = useCallback(
     (field: Field, orderTypedValue: string) => {
       dispatch(typeOrderInput({ field, orderTypedValue }))
@@ -115,7 +123,8 @@ export function useOrderActionHandlers(): {
   return {
     onOrderSwitchTokens,
     onOrderCurrencySelection,
-    onOrderUserInput
+    onOrderUserInput,
+    onSetOrderTokens
   }
 }
 

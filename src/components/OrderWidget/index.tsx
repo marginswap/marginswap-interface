@@ -26,7 +26,7 @@ import { useWalletModalToggle } from '../../state/application/hooks'
 import { AutoRow } from '../../components/Row'
 import { OrderContainer, Container, SettingsContainer, BottomGrouping, Borrowable } from './OrderWidget.styles'
 import { SwapCallbackError } from '../../components/swap/styleds'
-import { CurrencyAmount, JSBI, LeverageType, Trade } from '@marginswap/sdk'
+import { Currency, CurrencyAmount, JSBI, LeverageType, Trade } from '@marginswap/sdk'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { RowBetween } from 'components/Row'
 import { Text } from 'rebass'
@@ -46,7 +46,6 @@ import {
 } from '../../state/swap/hooks'
 import CurrencyStyledInput from 'components/CurrencyStyledInput'
 import { useLimitOrders, useOrderActionHandlers, useOrderState, useDerivedOrderInfo } from '../../state/order/hooks'
-import { selectOrderCurrency } from 'state/order/actions'
 import ConfirmOrderModal from './ConfirmOrderModal'
 import LimitOrderPrice from './LimitOrderPrice'
 
@@ -86,9 +85,11 @@ const OrderWidget = () => {
   const { inAmount, outAmount } = useOrderState()
   const [isExpertMode] = useExpertModeManager()
   const { address: recipientAddress } = useENSAddress(recipient)
-
-  const borrowableBalance = useBorrowable(currencies[Field.INPUT] ?? undefined)
   const [maxBorrow, setMaxBorrow] = useState<number | undefined>()
+  const [pair1Symbol, setPair1Symbol] = useState<string>('')
+  const [pair2Symbol, setPair2Symbol] = useState<string>('')
+  const [borrowableCurrency, setBorrowableCurrency] = useState<Currency | undefined>()
+  const borrowableBalance = useBorrowable(borrowableCurrency ?? undefined)
 
   useEffect(() => {
     const maxBorrow = Math.min(
@@ -109,8 +110,8 @@ const OrderWidget = () => {
     timeout: ReturnType<typeof setTimeout> | undefined
   }>({ isLoading: false, timeout: undefined })
 
-  const { onSwitchTokens, onUserInput, onSwitchLeverageType } = useSwapActionHandlers()
-  const { onOrderSwitchTokens, onOrderUserInput } = useOrderActionHandlers()
+  const { onUserInput, onSwitchLeverageType, onSetSwapTokens } = useSwapActionHandlers()
+  const { onOrderUserInput, onSetOrderTokens } = useOrderActionHandlers()
   const { onMakeOrder } = useLimitOrders(provider)
 
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(
@@ -194,6 +195,8 @@ const OrderWidget = () => {
   useEffect(() => {
     const currencyAddress1: string = currentPair ? currentPair[1].address : ''
     const currencyAddress2: string = currentPair ? currentPair[0].address : ''
+    setPair1Symbol(currentPair ? currentPair[0].symbol : '')
+    setPair2Symbol(currentPair ? currentPair[1].symbol : '')
 
     if (leverageType !== LeverageType.LIMIT_ORDER) {
       dispatch(
@@ -210,29 +213,15 @@ const OrderWidget = () => {
         })
       )
     }
-
-    if (leverageType === LeverageType.LIMIT_ORDER) {
-      dispatch(
-        selectOrderCurrency({
-          field: Field.INPUT,
-          currencyId: currencyAddress1
-        })
-      )
-
-      dispatch(
-        selectOrderCurrency({
-          field: Field.OUTPUT,
-          currencyId: currencyAddress2
-        })
-      )
-    }
   }, [currentPair, loadedUrlParams])
 
   const handleChangeOrderType = (orderType: OrderType) => {
     setApprovalSubmitted(false)
     setOrderType(orderType)
-    onSwitchTokens()
-    onOrderSwitchTokens()
+
+    if (leverageType === LeverageType.CROSS_MARGIN) {
+      setBorrowableCurrency(currencies[Field.OUTPUT])
+    }
   }
 
   useEffect(() => {
@@ -331,6 +320,32 @@ const OrderWidget = () => {
     trade,
     singleHopOnly
   ])
+
+  useEffect(() => {
+    if (leverageType === LeverageType.LIMIT_ORDER) {
+      if (currentPair) {
+        if (orderType === OrderType.BUY) {
+          onSetOrderTokens(currentPair[1].address, currentPair[0].address)
+        }
+
+        if (orderType === OrderType.SELL) {
+          onSetOrderTokens(currentPair[0].address, currentPair[1].address)
+        }
+      }
+    }
+
+    if (leverageType === LeverageType.CROSS_MARGIN) {
+      if (currentPair) {
+        if (orderType === OrderType.BUY) {
+          onSetSwapTokens(currentPair[1].address, currentPair[0].address)
+        }
+
+        if (orderType === OrderType.SELL) {
+          onSetSwapTokens(currentPair[0].address, currentPair[1].address)
+        }
+      }
+    }
+  }, [orderType, leverageType])
 
   const handleOrder = async () => {
     if (!chainId) return
@@ -439,7 +454,7 @@ const OrderWidget = () => {
               <>
                 <CurrencyStyledInput
                   label={'Amount'}
-                  symbol={orderCurrencies[Field.OUTPUT]?.symbol}
+                  symbol={pair1Symbol}
                   placeholder="0.0"
                   onChange={e => {
                     onOrderUserInput(Field.OUTPUT, e.currentTarget.value)
@@ -448,7 +463,7 @@ const OrderWidget = () => {
                 />
                 <CurrencyStyledInput
                   label={'Price'}
-                  symbol={orderCurrencies[Field.INPUT]?.symbol}
+                  symbol={pair2Symbol}
                   placeholder="0.0"
                   onChange={e => {
                     onOrderUserInput(Field.INPUT, e.currentTarget.value)
@@ -467,7 +482,7 @@ const OrderWidget = () => {
                 {' '}
                 <CurrencyStyledInput
                   label={'Amount'}
-                  symbol={orderCurrencies[Field.INPUT]?.symbol}
+                  symbol={pair1Symbol}
                   placeholder="0.0"
                   onChange={e => {
                     onOrderUserInput(Field.INPUT, e.currentTarget.value)
@@ -476,7 +491,7 @@ const OrderWidget = () => {
                 />
                 <CurrencyStyledInput
                   label={'Price'}
-                  symbol={orderCurrencies[Field.OUTPUT]?.symbol}
+                  symbol={pair2Symbol}
                   placeholder="0.0"
                   onChange={e => {
                     onOrderUserInput(Field.OUTPUT, e.currentTarget.value)
@@ -498,7 +513,7 @@ const OrderWidget = () => {
               <>
                 <CurrencyStyledInput
                   label={independentField === Field.INPUT && !showWrap && trade ? 'Amount (estimated)' : 'Amount'}
-                  symbol={currencies[Field.OUTPUT]?.symbol}
+                  symbol={pair1Symbol}
                   placeholder="0.0"
                   onChange={e => {
                     onUserInput(Field.OUTPUT, e.currentTarget.value)
@@ -511,7 +526,7 @@ const OrderWidget = () => {
                 </Borrowable>
                 <CurrencyStyledInput
                   label={independentField === Field.OUTPUT && !showWrap && trade ? 'Total (estimated)' : 'Total'}
-                  symbol={currencies[Field.INPUT]?.symbol}
+                  symbol={pair2Symbol}
                   placeholder="0.0"
                   onChange={e => {
                     onUserInput(Field.INPUT, e.currentTarget.value)
@@ -523,7 +538,7 @@ const OrderWidget = () => {
               <>
                 <CurrencyStyledInput
                   label={independentField === Field.OUTPUT && !showWrap && trade ? 'Amount (estimated)' : 'Amount'}
-                  symbol={currencies[Field.INPUT]?.symbol}
+                  symbol={pair1Symbol}
                   placeholder="0.0"
                   onChange={e => {
                     onUserInput(Field.INPUT, e.currentTarget.value)
@@ -536,7 +551,7 @@ const OrderWidget = () => {
                 </Borrowable>
                 <CurrencyStyledInput
                   label={independentField === Field.INPUT && !showWrap && trade ? 'Total (estimated)' : 'Total'}
-                  symbol={currencies[Field.OUTPUT]?.symbol}
+                  symbol={pair2Symbol}
                   placeholder="0.0"
                   onChange={e => {
                     onUserInput(Field.OUTPUT, e.currentTarget.value)
