@@ -67,11 +67,12 @@ export const WalletListItem = styled.div`
   }
 `
 
-export const WalletListItemText = styled.span`
+export const WalletListItemText = styled.span<{ monospaced?: boolean }>`
   width: 16.6%;
   text-align: end;
-  font-size: 12px;
+  font-size: ${props => (props.monospaced ? '0.9rem' : '12px')};
   line-height: 15px;
+  font-family: ${props => props.monospaced && 'monospace !important'};
 
   &:first-child {
     width: 50%;

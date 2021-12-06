@@ -15,11 +15,7 @@ type Order = '+' | '-'
 
 type OrderKey = 'dailyVolume' | 'weeklyVolume' | 'monthlyVolume'
 
-const gteValue = moment
-  .utc()
-  .startOf('day')
-  .subtract(Number(moment().format('D')) - 1, 'days')
-  .unix()
+const gteValue = moment.utc().startOf('day').subtract(30, 'days').unix()
 const lteValue = moment.utc().unix()
 
 const TopTraders: React.FC = () => {
@@ -174,7 +170,7 @@ const TopTraders: React.FC = () => {
               <>
                 {sortTraders.map(({ address, dailyVolume, weeklyVolume, monthlyVolume }: Trader) => (
                   <WalletListItem key={address}>
-                    <WalletListItemText>{address}</WalletListItemText>
+                    <WalletListItemText monospaced>{address}</WalletListItemText>
                     <WalletListItemText>${numberFormat.format(dailyVolume)}</WalletListItemText>
                     <WalletListItemText>${numberFormat.format(weeklyVolume)}</WalletListItemText>
                     <WalletListItemText>${numberFormat.format(monthlyVolume)}</WalletListItemText>
