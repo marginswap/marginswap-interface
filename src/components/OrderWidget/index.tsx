@@ -522,7 +522,7 @@ const OrderWidget = () => {
                 />
                 <Borrowable>
                   Borrowable:
-                  {` ${maxBorrow ? maxBorrow : '-'}`}
+                  {` ${maxBorrow ? maxBorrow : '-'} ${token?.symbol}`}
                 </Borrowable>
                 <CurrencyStyledInput
                   label={independentField === Field.OUTPUT && !showWrap && trade ? 'Total (estimated)' : 'Total'}
@@ -547,7 +547,7 @@ const OrderWidget = () => {
                 />
                 <Borrowable>
                   Borrowable:
-                  {` ${maxBorrow ? maxBorrow : '-'}`}
+                  {` ${maxBorrow ? maxBorrow : '-'} ${token?.symbol}`}
                 </Borrowable>
                 <CurrencyStyledInput
                   label={independentField === Field.INPUT && !showWrap && trade ? 'Total (estimated)' : 'Total'}
