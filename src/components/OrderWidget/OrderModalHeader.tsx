@@ -32,7 +32,7 @@ const OrderModalHeader = ({
         <RowFixed gap={'0px'}>
           <CurrencyLogo currency={fromToken} size={'24px'} style={{ marginRight: '12px' }} />
           <TruncatedText fontSize={24} fontWeight={500} color={theme.primary1}>
-            {inAmount}
+            {(parseFloat(inAmount) * parseFloat(outAmount)).toFixed(2)}
           </TruncatedText>
         </RowFixed>
         <RowFixed gap={'0px'}>
