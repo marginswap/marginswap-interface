@@ -15,6 +15,7 @@ import VotePage from './Vote/VotePage'
 import BondSupply from './BondSupply'
 import Stake from './Stake'
 import { Analytics } from './Analytics'
+import GetTradersByPeriod from './Analytics/GetTradersByPeriod'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -71,6 +72,7 @@ export default function App() {
               <Route exact strict path="/margin-account" component={MarginAccount} />
               <Route exact strict path="/bond-supply" component={BondSupply} />
               <Route exact strict path="/analytics" component={Analytics} />
+              <Route exact strict path="/analytics/avalanche-traders" component={GetTradersByPeriod} />
               <Route exact strict path="/gas-fees" component={GasFees} />
               <Route exact strict path="/vote" component={Vote} />
               <Route exact strict path="/vote/:id" component={VotePage} />

@@ -363,3 +363,41 @@ export async function getAggregateBalances({
 
   return { tvl, totalBorrowed, totalLending }
 }
+
+export async function getAvalancheTopTraders(avalancheData: ISwap[]): Promise<TopTradersProps[]> {
+  const avalancheTokensPrice = await getAvalancheTokenUSDPrice()
+
+  let swaps = []
+  swaps = await Promise.all([...avalancheData].map(t => adjustTokenValueForTraders(t)))
+
+  const tokensPrice = { ...avalancheTokensPrice }
+
+  const swapWithTokensUsdValue = swaps.map(swap => {
+    const mult = tokensPrice[swap.fromToken]?.usd || 0
+    return {
+      ...swap,
+      usdTokenValue:
+        Number(
+          new TokenAmount(
+            new Token(swap.info.chainId, swap.fromToken, swap.info.decimals),
+            swap.fromAmount
+          ).toSignificant(3)
+        ) * mult
+    }
+  })
+
+  const tradersInfo = await groupby(swapWithTokensUsdValue, (swap: { trader: any }) => swap.trader)
+
+  return await Object.keys(tradersInfo)
+    .map(trader => {
+      const volumeValue = tradersInfo[trader]
+        .map(traderInfo => traderInfo.usdTokenValue)
+        .reduce((acc, cur) => acc + cur)
+
+      return {
+        trader: trader,
+        volume: Number(volumeValue.toFixed(6))
+      }
+    })
+    .sort((a, b) => b.volume - a.volume)
+}

@@ -103,6 +103,23 @@ export const aggregatedBalancesGQL = gql`
   }
 `
 
+export const swapsByPeriodGQL = gql`
+  query swapsByPeriod($gte: Int, $lte: Int, $first: Int, $skip: Int) {
+    swaps(
+      where: { type: MARGIN, createdAt_gte: $gte, createdAt_lte: $lte }
+      orderBy: createdAt
+      first: $first
+      skip: $skip
+    ) {
+      id
+      trader
+      fromAmount
+      fromToken
+      createdAt
+    }
+  }
+`
+
 export const useSwapVolumesQuery = (options = {}) => useQuery(swapVolumesGQL, options)
 export const useDailySwapVolumesByMonthQuery = (options = {}) => useQuery(dailySwapVolumesByMonthGQL, options)
 export const useSwapsQuery = (options = {}) => useQuery(swapsGQL, options)

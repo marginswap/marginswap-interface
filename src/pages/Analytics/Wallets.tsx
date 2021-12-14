@@ -90,13 +90,14 @@ export const Wallets = ({ swaps }: WalletProps) => {
   const [topTraders, setTopTraders] = useState<TopTradersProps[]>([])
 
   useEffect(() => {
-    const getTraderData = async (polygonData: any, avalancheData: any, bscData: any, ethData: any) => {
+    const getTraderData = async (avalancheData: any, polygonData: any, bscData: any, ethData: any) => {
       const tradersData = await getTopTraders({
         polygonData,
         avalancheData,
         bscData,
         ethData
       })
+
       setTopTraders(tradersData)
     }
 
