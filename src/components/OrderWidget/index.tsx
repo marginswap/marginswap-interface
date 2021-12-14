@@ -198,21 +198,19 @@ const OrderWidget = () => {
     setPair1Symbol(currentPair ? currentPair[0].symbol : '')
     setPair2Symbol(currentPair ? currentPair[1].symbol : '')
 
-    if (leverageType !== LeverageType.LIMIT_ORDER) {
-      dispatch(
-        selectCurrency({
-          field: Field.INPUT,
-          currencyId: currencyAddress1
-        })
-      )
+    dispatch(
+      selectCurrency({
+        field: Field.INPUT,
+        currencyId: currencyAddress1
+      })
+    )
 
-      dispatch(
-        selectCurrency({
-          field: Field.OUTPUT,
-          currencyId: currencyAddress2
-        })
-      )
-    }
+    dispatch(
+      selectCurrency({
+        field: Field.OUTPUT,
+        currencyId: currencyAddress2
+      })
+    )
   }, [currentPair, loadedUrlParams])
 
   const handleChangeOrderType = (orderType: OrderType) => {
@@ -461,6 +459,10 @@ const OrderWidget = () => {
                   }}
                   value={outAmount}
                 />
+                <Borrowable>
+                  Borrowable:
+                  {` ${maxBorrow ? maxBorrow : '-'} ${token?.symbol}`}
+                </Borrowable>
                 <CurrencyStyledInput
                   label={'Price'}
                   symbol={pair2Symbol}
@@ -489,6 +491,10 @@ const OrderWidget = () => {
                   }}
                   value={inAmount}
                 />
+                <Borrowable>
+                  Borrowable:
+                  {` ${maxBorrow ? maxBorrow : '-'} ${token?.symbol}`}
+                </Borrowable>
                 <CurrencyStyledInput
                   label={'Price'}
                   symbol={pair2Symbol}
