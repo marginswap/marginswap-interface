@@ -85,7 +85,7 @@ const StyledMenu = styled.div`
   text-align: left;
 `
 
-const MenuFlyout = styled.span`
+const MenuFlyout = styled.span<{ centered?: boolean }>`
   min-width: 20.125rem;
   background-color: ${({ theme }) => theme.bg2};
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
@@ -95,8 +95,8 @@ const MenuFlyout = styled.span`
   flex-direction: column;
   font-size: 1rem;
   position: absolute;
-  top: 3rem;
-  right: 0rem;
+  top: ${props => (props.centered ? '-14rem' : '3rem')};
+  right: ${props => (props.centered ? '1rem' : '0rem')};
   z-index: 100;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
@@ -119,7 +119,7 @@ const ModalContentWrapper = styled.div`
   border-radius: 20px;
 `
 
-export default function SettingsTab() {
+export default function SettingsTab({ centered = false }: { centered?: boolean }) {
   const node = useRef<HTMLDivElement>()
   const open = useModalOpen(ApplicationModal.SETTINGS)
   const toggle = useToggleSettingsMenu()
@@ -189,7 +189,7 @@ export default function SettingsTab() {
         ) : null}
       </StyledMenuButton>
       {open && (
-        <MenuFlyout>
+        <MenuFlyout centered={centered}>
           <AutoColumn gap="md" style={{ padding: '1rem' }}>
             <Text fontWeight={600} fontSize={14}>
               Transaction Settings

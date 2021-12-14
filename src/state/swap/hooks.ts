@@ -16,7 +16,8 @@ import {
   setRecipient,
   switchCurrencies,
   typeInput,
-  updateLeverageType
+  updateLeverageType,
+  setSwapCurrencies
 } from './actions'
 import { useUserSlippageTolerance } from '../user/hooks'
 import { computeSlippageAdjustedAmounts } from '../../utils/prices'
@@ -35,6 +36,7 @@ export function useSwapActionHandlers(): {
   onUserInput: (field: Field, typedValue: string) => void
   onChangeRecipient: (recipient: string | null) => void
   onSwitchLeverageType: (leverageType: number) => void
+  onSetSwapTokens: (inputCurrency: string, outputCurrency: string) => void
 } {
   const dispatch = useDispatch<AppDispatch>()
   const onCurrencySelection = useCallback(
@@ -74,12 +76,20 @@ export function useSwapActionHandlers(): {
     [dispatch]
   )
 
+  const onSetSwapTokens = useCallback(
+    (inputCurrency, outputCurrency) => {
+      dispatch(setSwapCurrencies({ inputCurrency, outputCurrency }))
+    },
+    [dispatch]
+  )
+
   return {
     onSwitchTokens,
     onCurrencySelection,
     onUserInput,
     onChangeRecipient,
-    onSwitchLeverageType
+    onSwitchLeverageType,
+    onSetSwapTokens
   }
 }
 

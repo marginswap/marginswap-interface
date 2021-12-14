@@ -19,3 +19,20 @@ export function unwrappedToken(token: Token): Currency {
   if (token.equals(WETH[token.chainId])) return ETHER
   return token
 }
+
+export function unwrappedTokenBySymbol(symbol: string | undefined): string {
+  switch (symbol) {
+    case 'WMATIC':
+      return 'MATIC'
+    case 'WAVAX':
+      return 'AVAX'
+    case 'WBNB':
+      return 'BNB'
+    case 'WBTC':
+      return 'BTC'
+    case 'WETH':
+      return 'ETH'
+    default:
+      return symbol || ''
+  }
+}

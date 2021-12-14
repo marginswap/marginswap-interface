@@ -5,6 +5,7 @@ import {
   replaceSwapState,
   selectCurrency,
   setRecipient,
+  setSwapCurrencies,
   switchCurrencies,
   typeInput,
   updateLeverageType
@@ -25,7 +26,7 @@ export interface SwapState {
 }
 
 const initialState: SwapState = {
-  leverageType: LeverageType.CROSS_MARGIN,
+  leverageType: LeverageType.SPOT,
   independentField: Field.INPUT,
   typedValue: '',
   [Field.INPUT]: {
@@ -98,5 +99,13 @@ export default createReducer<SwapState>(initialState, builder =>
     })
     .addCase(setRecipient, (state, { payload: { recipient } }) => {
       state.recipient = recipient
+    })
+    .addCase(setSwapCurrencies, (state, { payload: { inputCurrency, outputCurrency } }) => {
+      return {
+        ...state,
+        independentField: Field.INPUT,
+        [Field.INPUT]: { currencyId: inputCurrency },
+        [Field.OUTPUT]: { currencyId: outputCurrency }
+      }
     })
 )
