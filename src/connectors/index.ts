@@ -19,14 +19,14 @@ if (typeof NETWORK_URL === 'undefined') {
 export const network = new NetworkConnector({
   urls: {
     // [NETWORK_CHAIN_ID]: NETWORK_URL,
-    // 1: 'https://mainnet.infura.io/v3/ae52aea5aa2b41e287d72e10b1175491',
+    1: 'https://eth-mainnet.alchemyapi.io/v2/AcIJPH41nagmF3o1sPArEns8erN9N691',
     // 42: 'https://kovan.infura.io/v3/ae52aea5aa2b41e287d72e10b1175491',
     43114: 'https://api.avax.network/ext/bc/C/rpc'
     // 31337: 'http://localhost:8545',
     // 137: 'https://rpc-mainnet.maticvigil.com/v1/b0858bc7aa27b1333df19546c12718235bd11785',
     // 56: 'https://bsc-dataseed.binance.org/'
   },
-  defaultChainId: 43114
+  defaultChainId: 1
 })
 
 // let networkLibrary: Web3Provider | undefined
