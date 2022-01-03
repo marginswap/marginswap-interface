@@ -15,6 +15,15 @@
   "tokens": [
     {
       "chainId": 43114,
+      "address": "0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd",
+      "decimals": 18,
+      "name": "Joe Token",
+      "symbol": "JOE",
+      "logoURI": "https://raw.githubusercontent.com/pangolindex/tokens/main/assets/0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd/logo.png",
+      "coingeckoId": "joe"
+    },
+    {
+      "chainId": 43114,
       "address": "0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5",
       "decimals": 18,
       "name": "BENQI",
